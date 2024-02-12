@@ -1,41 +1,43 @@
 import { useState, useCallback } from "react";
+import Dropzone from "react-dropzone";
 import {
   Container,
   Typography,
-  TextField,
   Button,
   Box,
   Select,
   MenuItem,
   InputLabel,
   FormControl,
+  TextField,
 } from "@mui/material";
 import "./App.css";
+import { baseStyle } from "./styles"; // 導入樣式
 
 function App() {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
-  const [language, setLanguage] = useState("zh");
+  const [language, setLanguage] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
+  const [fileSize, setFileSize] = useState("");
+  const [responseFormat, setResponseFormat] = useState("json");
 
-  const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
-    setFileName(event.target.files[0].name);
+  const handleFileChange = (files) => {
+    console.log(files);
+    setFile(files[0]);
+    setFileName(files[0].name);
+    setFileSize(files[0].size);
   };
 
   const handleLanguageChange = (event) => {
     setLanguage(event.target.value);
   };
 
-  const handleDragOver = useCallback((e) => {
-    e.preventDefault(); // 防止瀏覽器默認處理拖放
-  }, []);
+  const handleFormatChange = (event) => {
+    setResponseFormat(event.target.value);
+  };
 
-  const handleDrop = useCallback((e) => {
-    console.log(testing);
-    e.preventDefault();
-    handleFileChange(e); // 重用檔案處理邏輯
-  }, []);
+  const exportSrt = () => {};
 
   const handleSubmit = async () => {
     if (!file) {
@@ -46,6 +48,7 @@ function App() {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("language", language);
+    formData.append("response_format", responseFormat);
 
     try {
       const response = await fetch("/api/transcribe", {
@@ -59,7 +62,13 @@ function App() {
 
       const result = await response.json();
       console.log("轉寫結果:", result);
-      setResponseMessage(result.message);
+      switch (responseFormat) {
+        case "srt":
+          setResponseMessage(result);
+          break;
+        default:
+          setResponseMessage(result.text);
+      }
     } catch (error) {
       console.error("轉寫錯誤:", error);
     }
@@ -69,28 +78,63 @@ function App() {
     <>
       <Container maxWidth="sm">
         <Typography variant="h4" component="h1" gutterBottom>
-          音頻轉寫工具
+          Audio Transcriber
         </Typography>
-        <Typography variant="body1">{responseMessage}</Typography>
         <Box sx={{ "& > :not(style)": { m: 1 } }}>
           <FormControl fullWidth>
             <InputLabel>語言選擇</InputLabel>
             <Select
+              displayEmpty
               value={language}
               label="語言選擇"
               onChange={handleLanguageChange}
             >
-              <MenuItem value="zh">中文</MenuItem>
-              <MenuItem value="de">德語</MenuItem>
-              <MenuItem value="en">英語</MenuItem>
+              <MenuItem value="">自動</MenuItem>
+              <MenuItem value="zh">🇨🇳 中文</MenuItem>
+              <MenuItem value="en">🇬🇧 英語</MenuItem>
               {/* 根據需要添加更多語言選項 */}
             </Select>
           </FormControl>
-            <Button variant="contained" component="label">
-              {fileName || "上傳檔案"}
-              <input type="file" hidden onChange={handleFileChange} />
-              {fileName && <p> 選擇的檔案: {fileName}</p>}
-            </Button>
+          <Dropzone
+            onDrop={(acceptedFiles) => handleFileChange(acceptedFiles)}
+            maxFiles={1}
+            multiple={false}
+          >
+            {({ getRootProps, getInputProps }) => (
+              <section>
+                <div {...getRootProps({ style: baseStyle })}>
+                  <input {...getInputProps()} />
+                  <Typography>
+                    Drag 'n' drop some files here, or click to select files
+                  </Typography>
+                </div>
+              </section>
+            )}
+          </Dropzone>
+
+          {fileName && (
+            <p>
+              {" "}
+              已選擇的檔案: {fileName} - {fileSize}bytes
+            </p>
+          )}
+
+          <FormControl fullWidth>
+            <InputLabel>格式選擇</InputLabel>
+            <Select
+              displayEmpty
+              value={responseFormat}
+              label="格式選擇"
+              onChange={handleFormatChange}
+            >
+              <MenuItem value="json">自動</MenuItem>
+              <MenuItem value="text">text</MenuItem>
+              <MenuItem value="srt">srt</MenuItem>
+              <MenuItem value="vtt">vtt</MenuItem>
+              {/* 根據需要添加更多語言選項 */}
+            </Select>
+          </FormControl>
+
           <Button
             fullWidth
             variant="contained"
@@ -99,6 +143,18 @@ function App() {
           >
             提交
           </Button>
+
+          <Typography variant="h5" component="h2" gutterBottom>
+            Result:
+          </Typography>
+          <TextField
+            multiline
+            fullWidth
+            variant="outlined"
+            rows={30} // 設置文本框的行數，可以根據需要調整
+            value={responseMessage} // 將 SRT 內容傳遞給文本框的 value 屬性
+            InputProps={{ readOnly: true }} // 設置文本框為只讀模式，以防止用戶編輯內容
+          />
         </Box>
       </Container>
     </>
