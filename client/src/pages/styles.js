@@ -7,7 +7,7 @@ export const baseStyle = {
     alignItems: "center",
     padding: "20px",
     borderWidth: 2,
-    borderRadius: 2,
+    borderRadius: 10,
     borderColor: "#eeeeee",
     borderStyle: "dashed",
     backgroundColor: "#fafafa",
@@ -27,4 +27,5 @@ export const baseStyle = {
   export const rejectStyle = {
     borderColor: "#ff1744",
   };
+  
   
