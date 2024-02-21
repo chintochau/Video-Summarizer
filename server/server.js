@@ -21,7 +21,7 @@ const openai = new OpenAI({
 app.use(bodyParser.json());
 
 //PRIVATE transcribe Audio
-async function transcribe(filePath, language, response_format) {
+async function transcribeWithWhisperApi(filePath, language, response_format) {
   let transcription;
 
   switch (response_format) {
@@ -124,7 +124,7 @@ function pad(num, size = 2) {
 }
 
 // 設置路由處理轉寫請求
-app.post("/api/transcribe", upload.single("file"), async (req, res) => {
+app.post("/api/transcribeAudio", upload.single("file"), async (req, res) => {
   console.log(req.body);
   const { language, response_format } = req.body;
   const file = req.file;
@@ -139,7 +139,7 @@ app.post("/api/transcribe", upload.single("file"), async (req, res) => {
 
     fs.renameSync(file.path, filePath);
 
-    const result = await transcribe(filePath, language, response_format);
+    const result = await transcribeWithWhisperApi(filePath, language, response_format);
 
     res.json(result);
   } catch (error) {

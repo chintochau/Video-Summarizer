@@ -1,3 +1,77 @@
+
+
+
+// Chat GPT related
+export const askChatGPT = async (prompt,language, completionHandler) => {
+  console.log(language);
+  try {
+    const response = await fetch("/api/stream-response", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt, language }),
+    });
+
+    const reader = response.body
+      .pipeThrough(new TextDecoderStream())
+      .getReader();
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      completionHandler(null, value);
+    }
+  } catch (error) {
+    completionHandler(error, null);
+  }
+};
+
+
+export const callWhisperAPI = async({file, language="", responseFormat}) => {
+  if (!file ) {
+    return null;
+  }
+
+  const audioTypes = ['audio/mp3', 'audio/mpeg', 'audio/wav', 'audio/m4a'];
+  const videoTypes = ['video/mp4', 'video/quicktime'];
+  console.log(file);
+
+
+  if (file.type.startsWith('audio/')) {
+    console.log("audio");
+
+    const formData = new FormData()
+    formData.append('file', file)
+    
+    try {
+      const response = await fetch ('/api/transcribeAudio', {
+        method:'POST',
+        body:formData,
+      })
+
+      if (!response.ok) {
+        throw new Error('Server Error - callwhisperapi(1)-Utils.js')
+      }
+
+
+      const result = await response.json()
+      console.log(result);
+
+    } catch (error) {
+      console.error("upload error", error);
+    }
+
+  } else  if (file.type.startsWith('video/')){
+    console.log('video');
+  } else {
+    console.error("please upload a video or audio file");
+    return null
+  }
+
+
+
+}
+
+
+// Youtube related
 export const getYoutubeTranscript = async ({ youtubeLink }) => {
   const data = { youtubeLink };
   try {
@@ -22,27 +96,8 @@ export const getYoutubeTranscript = async ({ youtubeLink }) => {
   }
 };
 
-export const askChatGPT = async (prompt,language, completionHandler) => {
-  console.log(language);
-  try {
-    const response = await fetch("/api/stream-response", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt, language }),
-    });
 
-    const reader = response.body
-      .pipeThrough(new TextDecoderStream())
-      .getReader();
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      completionHandler(null, value);
-    }
-  } catch (error) {
-    completionHandler(error, null);
-  }
-};
+//Frontend Related
 
 // 將SRT轉換為可編輯文本與時間戳的函數
 export const parseSRT = (srt) => {

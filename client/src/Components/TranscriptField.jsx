@@ -99,6 +99,9 @@ const TranscriptField = ({ youtubeId, videoRef, setParentTranscriptText }) => {
   };
 
   useEffect(() => {
+    if(!videoRef) {
+      return
+    }
     if (videoRef.current.props.videoId !== "") {
       setVideoValid(true);
       loadTranscript();
