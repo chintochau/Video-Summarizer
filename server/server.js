@@ -3,43 +3,69 @@ import bodyParser from "body-parser";
 import multer from "multer";
 import "dotenv/config";
 import OpenAI from "openai";
-import * as fs from "fs";
+import fs from "fs";
 import { setTimeout } from "timers";
 import path from "path";
 import ytdl from "ytdl-core";
-import { jsonDemo, srtDdemo,youtubeDemoTranscript } from "./demovalue.js";
+import { jsonDemo, srtDdemo, youtubeDemoTranscript } from "./demovalue.js";
 import { YoutubeTranscript } from "youtube-transcript";
+import { AssemblyAI } from "assemblyai";
+import ffmpeg from "fluent-ffmpeg";
 
 const app = express();
 const upload = multer({ dest: "uploads/" });
 const port = process.env.PORT || 3000;
 const openai = new OpenAI({
-  apiKey: process.env["OPENAI_API_KEY"], // This is the default and can be omitted
+  apiKey: process.env["OPENAI_API_KEY"],
+});
+const assembly = new AssemblyAI({
+  apiKey: process.env["ASSEMBLY_CPI_KEY"],
 });
 
 // 中間件
 app.use(bodyParser.json());
 
 //PRIVATE transcribe Audio
-async function transcribeWithWhisperApi(filePath, language, response_format) {
+async function transcribeWithWhisperApi(data) {
+const {filePath, language, response_format} = data
   let transcription;
 
-  switch (response_format) {
-    case "srt":
-      transcription = srtDdemo;
-      break;
-    default:
-      transcription = jsonDemo;
-  }
+  // 模擬一段延遲時間
+  await new Promise((resolve) => setTimeout(resolve, 2000)); // 假設延遲時間為2秒
 
-  // const transcription = await openai.audio.transcriptions.create({
-  //   file: fs.createReadStream(filePath),
-  //   model: "whisper-1", // this is optional but helps the model
-  //   language: language,
-  //   response_format: response_format,
-  // });
+  // console.log("Whisper is not active, using dummy value");
+  // switch (response_format) {
+  //   case "jason":
+  //     transcription = jsonDemo;
+  //     break;
+  //   default:
+  //     transcription = srtDdemo;
+  // }
+
+  console.log("default set to srt");
+  transcription = await openai.audio.transcriptions.create({
+    file: fs.createReadStream(filePath),
+    model: "whisper-1", // this is optional but helps the model
+    language: language,
+    response_format: "srt",
+  });
 
   return transcription;
+}
+
+async function transcribeWithAssemblyAI(data) {
+  const {filePath, language} = data
+  const transcript = await assembly.transcripts.transcribe({
+    audio: filePath,
+    language_code: language,
+  });
+
+  console.log("response in full: ", );
+  console.log(transcript.text);
+
+  const srt = await assembly.transcripts.subtitles(transcript.id, "srt");
+
+  return srt;
 }
 
 function YTconvertToPlainText(transcript) {
@@ -123,23 +149,71 @@ function pad(num, size = 2) {
   return s;
 }
 
+// Function to extract audio from video
+function extractAudioFromVideo(videoFilePath, outputAudioFilePath) {
+  return new Promise((resolve, reject) => {
+    console.log("only pass the first 5 mins of audio");
+    ffmpeg(videoFilePath)
+      .output(outputAudioFilePath)
+      .audioCodec("pcm_s16le") // Setting audio codec to pcm_s16le for compatibility
+      .setStartTime('00:00:00') // Start at the beginning, remove this line
+      .duration(300) // Limit to 300 seconds (5 minutes), remove this line when not needed
+      .on("end", () => resolve(outputAudioFilePath))
+      .on("error", (err) => reject(err))
+      .run();
+  });
+}
+
+const videoExtensions = ['.mp4', '.mkv', '.webm', '.avi', '.mov'];
+
+
 // 設置路由處理轉寫請求
 app.post("/api/transcribeAudio", upload.single("file"), async (req, res) => {
+  const { language, response_format, selectedModel } = req.body;
   console.log(req.body);
-  const { language, response_format } = req.body;
   const file = req.file;
+  const model = selectedModel|| "assembly";
+  let result;
+  let filePath
+  let originalFilePath
 
-  let filePath;
+
   if (!file) {
     return res.status(400).send("請上傳一個檔案");
   }
 
   try {
-    filePath = path.join("uploads/", file.originalname);
+    originalFilePath = path.join("uploads/", file.originalname);
+    fs.renameSync(file.path, originalFilePath);
 
-    fs.renameSync(file.path, filePath);
+    filePath = originalFilePath
+    // Check if the file is a video, and extract audio if necessary
 
-    const result = await transcribeWithWhisperApi(filePath, language, response_format);
+    console.log("Start: ",filePath);
+
+    if (file.mimetype.startsWith("video") || videoExtensions.includes(path.extname(originalFilePath).toLowerCase())) {
+      console.log("getting audio from video");
+      const audioFilePath = originalFilePath.replace(
+        path.extname(originalFilePath),
+        ".wav"
+      );
+      await extractAudioFromVideo(originalFilePath, audioFilePath);
+      filePath = audioFilePath;
+    }
+
+    switch (model) {
+      case "assembly": //assembly ai
+      console.log("Using Assembly");
+        result = await transcribeWithAssemblyAI({filePath, language});
+        break;
+      default: //openai
+      console.log("Using Whisper");
+        result = await transcribeWithWhisperApi({
+          filePath,
+          language,
+          response_format}
+        );
+    }
 
     res.json(result);
   } catch (error) {
@@ -147,15 +221,17 @@ app.post("/api/transcribeAudio", upload.single("file"), async (req, res) => {
     res.status(500).send("轉寫過程中發生錯誤");
   } finally {
     // 完成轉寫後，刪除上傳的檔案
-
     if (filePath) {
       fs.unlinkSync(filePath);
+    }
+    if (filePath !== originalFilePath) {
+      fs.unlinkSync(originalFilePath); // Delete extracted audio file if it's different from the original upload
     }
   }
 });
 
 //Download Youtube Audio
-app.post("/api/downloadAudio", upload.single("file"), async (req, res) => {
+app.post("/api/downloadAudio", async (req, res) => {
   const { youtubeLink } = req.body;
 
   const videoInfo = await ytdl.getInfo(youtubeLink);
@@ -165,8 +241,6 @@ app.post("/api/downloadAudio", upload.single("file"), async (req, res) => {
   if (audioFormats.length === 0) {
     return res.status(400).send("無法獲取視頻的音頻");
   }
-
-  console.log(videoInfo);
 
   // 設置響應標頭，指定檔案名稱並將音頻發送給客戶端
   res.set(
@@ -181,9 +255,9 @@ app.post("/api/transcribeYoutube", async (req, res) => {
   const { youtubeLink } = req.body;
 
   try {
-    // const transcript = await YoutubeTranscript.fetchTranscript(youtubeLink);
-    console.log("change this line after testing ling 185 server.js");
-    const transcript = youtubeDemoTranscript
+    const transcript = await YoutubeTranscript.fetchTranscript(youtubeLink);
+    // console.log("change this line after testing ling 185 server.js");
+    // const transcript = youtubeDemoTranscript
 
     const result = {
       srt: YTconvertToSrt(transcript),
@@ -200,6 +274,8 @@ app.post("/api/transcribeYoutube", async (req, res) => {
 });
 
 app.post("/api/stream-response", async (req, res) => {
+  console.log(req.body);
+
   const { prompt, language } = req.body;
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
@@ -208,9 +284,9 @@ app.post("/api/stream-response", async (req, res) => {
   let outputLanguage;
 
   if (language === "auto") {
-    outputLanguage = "second half part of the input language"
-  }else {
-    outputLanguage = language
+    outputLanguage = "second half part of the input language";
+  } else {
+    outputLanguage = language;
   }
 
   const response = openai.beta.chat.completions.stream({
@@ -218,7 +294,7 @@ app.post("/api/stream-response", async (req, res) => {
     messages: [
       {
         role: "system",
-        content: "answer must be given in the language of:" + outputLanguage,
+        content: "Summarize, answer must be given in the language of:" + outputLanguage,
       },
       {
         role: "user",
@@ -226,11 +302,8 @@ app.post("/api/stream-response", async (req, res) => {
       },
     ],
     stream: true,
-    seed:99912345
   });
 
-  console.log("Full Response : ", response);
-  console.log("Content Response : ");
   response.on("content", (delta, snapshot) => {
     process.stdout.write(delta);
     res.write(delta);

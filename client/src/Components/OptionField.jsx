@@ -1,20 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 
 const summarizeOptions = [
+  {
+    title: "Custom Prompt:",
+    description: "",
+  },
   {
     title: "Default",
     description: `Summary
 Analogy
 Notes
-Bulletpoint
-Keywords`,
+Q&A`,
     prompt: `Your output should use the following template:
 ### Summary
 ### Analogy
 ### Notes
 - [Emoji] Bulletpoint
-### Keywords
-- Explanation
+### Q&A
+- 
 
 You have been tasked with creating a concise summary of a YouTube video using its transcription to supply college student notes to use himself. You are to act like an expert in the subject the transcription is written about.
 
@@ -24,9 +27,10 @@ Additionally make a short complex analogy to give context and/or analogy from da
 
 Create 10 bullet points (each with an appropriate emoji) that summarize the key points or important moments from the video's transcription.
 
-In addition to the bullet points, extract the most important keywords and any complex words not known to the average reader aswell as any acronyms mentioned. For each keyword and complex word, provide an explanation and definition based on its occurrence in the transcription.
+In addition to the bullet points, give several questions and answers based on the video content
 
-You are also a transcription AI and you have been provided with a text that may contain mentions of sponsorships or brand names. Your task write what you have been said to do while avoiding any mention of sponsorships or brand names.
+In Q&A section, give 3 questions with answers based on the video content, helping the read think and understand more about the video.
+the video transcript is as follows
 
 Please ensure that the summary, bullet points, and explanations fit within the 330-word limit, while still offering a comprehensive and clear understanding of the video's content. Use the text above: {{Title}} {{Transcript}}.`,
   },
@@ -35,16 +39,11 @@ Please ensure that the summary, bullet points, and explanations fit within the 3
     description: `Explore a topic from multiple perspectives and reach a conclusion.
 
 Introduction
-perspective 1
-    - Supporting
-    - Supporting
-perspective 2
-    - Supporting
-    - Supporting
-    ……
+perspectives
 Conclusion
 Q&A
-`,prompt:`Your output should use the following template:
+`,
+    prompt: `Your output should use the following template:
 1. ### Introduction
 2. ### Main Body
 #### perspective - title
@@ -71,42 +70,55 @@ For the part 2, you must list out the main perspectives and the title of that fr
 For conclusion part, briefly summary the video
 
 In Q&A section, give 5 questions with answers based on the video content, helping the read think and understand more about the video.
-the video transcript is as follows`
+the video transcript is as follows`,
   },
   {
-    title: "Lecture",
-    description: `Abstract
-`,
+    title: "Rewrite",
+    description: `Rewrite the script into a well structure article.`,
+    prompt: `You are an SEO expert, You are given a script from the video, it can be any type of video. You task is to write an article based on the video content, that i can use to post on my blog. The article must provide title, and grab the main points of the script, for each main point, wrtie a subtitle for that, and explain the idea in detail. provide as much main point as possible, also provide a conslution, and 3Q&A based on the contents using the below format
+    ### Title
+    abstract of the whole article
+    #### 1. Subtitle
+    main idea 1
+    #### 2. Subtitle
+    main idea 2
+    #### 3. Subittle
+    ...
+    ### Conclusion
+    ###Q&A
+
+    `,
   },
   {
-    title: "Podcast",
-    description: `Abstract
-`,
-  },
-  {
-    title: "Podcast",
-    description: `Abstract
-`,
-  },
-  {
-    title: "Custom",
-    description: `Abstract
+    title: "List",
+    description: "Summarize the text in a list",
+    prompt: `Summarize the text, give a brief about the script, then, List out all the keypoint for the video transcript in a list format, as much key point as possible, for each point, give a timestamp reference. drop all unrelated info, such as advertising
 `,
   },
 ];
 
 const OptionCard = ({ option, handleClick }) => {
+  const [customPrompt, setCustomPrompt] = useState("");
   const { title, description, prompt } = option;
   return (
-    <div className="bg-white rounded shadow-md mb-4 cursor-pointer text-left flex justify-between">
-      <div className="p-4">
-        <div className="text-xl font-bold mb-2">{title}</div>
-        <div className="text-gray-600 text-sm whitespace-pre text-wrap ">{description}</div>
+    <div className="bg-white rounded shadow-md mb-4 text-left flex justify-between ">
+      <div className="p-4 w-full">
+        <div className="text-xl font-bold mb-2 ">{title}</div>
+        <div className="text-gray-600 text-sm whitespace-pre text-wrap ">
+          {description}
+        </div>
+        {title === "Custom Prompt:" && (
+            <textarea value={customPrompt} onChange={(e) => {
+              setCustomPrompt(e.target.value)
+
+            }} className="w-full outline-2 outline-indigo-200 outline rounded-md"></textarea>
+
+        )}
       </div>
       <div className=" flex-col items-start text-center p-4">
         <button
           className={`px-1.5 py-1 bg-white text-indigo-600 border border-indigo-600 rounded-md hover:bg-indigo-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 text-sm`}
-          onClick={() => handleClick(prompt)}
+          onClick={() => handleClick(title === "Custom Prompt:" ? customPrompt + "Answer based on the below script from an video": prompt)}
         >
           Summarize
         </button>

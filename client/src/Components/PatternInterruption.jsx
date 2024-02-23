@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const PatternInterruption = () => {
   // Placeholder for video URL or interactive demo link
@@ -19,7 +20,9 @@ const PatternInterruption = () => {
             className="w-full aspect-video"
           ></iframe>
         </div>
+        <Link to="summarizer">
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition duration-300">Try Demo Now</button>
+        </Link>
       </div>
     </div>
   );

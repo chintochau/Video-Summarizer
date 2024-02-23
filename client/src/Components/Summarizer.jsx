@@ -8,10 +8,9 @@ import {
   acceptStyle,
 } from "../pages/styles";
 import VideoField from "./VideoField";
-import { callWhisperAPI, formatFileSize } from "./Utils";
+import {  formatFileSize } from "./Utils";
 import TranscriptField from "./TranscriptField";
 import SummaryField from "./SummaryField";
-import GeneralButton from "./GeneralButton";
 
 export default function Summarizer() {
   const [file, setFile] = useState(null);
@@ -32,6 +31,7 @@ export default function Summarizer() {
   };
 
   const videoRef = useRef(null);
+  const uploadRef = useRef(null);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -54,6 +54,7 @@ export default function Summarizer() {
       setFile(files[0]);
       setFileName(files[0].name);
       setFileSize(files[0].size);
+      setUploadMode(true);
       if (files[0].type.startsWith("video/")) {
         console.log(files[0]);
         const src = URL.createObjectURL(files[0]);
@@ -81,15 +82,6 @@ export default function Summarizer() {
       }
     };
   }, [videoSrc, audioSrc]);
-
-  const handleFileUpload = async () => {
-    setUploadMode(true);
-    try {
-      const result = await callWhisperAPI({ file });
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({
@@ -205,7 +197,7 @@ export default function Summarizer() {
 
           {/*Dropzone*/}
           <div className="flex-col justify-center py-4">
-            <div className="w-[600px] mx-auto">
+            <div className="w-[600px] mx-auto cursor-pointer">
               <div {...getRootProps({ style })}>
                 <input {...getInputProps()} />
                 {fileName ? (
@@ -221,6 +213,7 @@ export default function Summarizer() {
             {videoSrc && (
               <video
                 src={videoSrc}
+                ref={uploadRef}
                 controls
                 className="mx-auto my-2 w-full max-w-7xl "
               >
@@ -231,6 +224,7 @@ export default function Summarizer() {
             {audioSrc && (
               <audio
                 src={audioSrc}
+                ref={uploadRef}
                 className="mx-auto my-2 w-full max-w-7xl"
                 controls
               >
@@ -238,20 +232,17 @@ export default function Summarizer() {
               </audio>
             )}
 
-            {uploadMode ? (
+            {uploadMode && (
               // Upload Mode shows
-              <div className="max-w-screen-2xl mx-auto flex flex-wrap rounded-lg bg-gray-50">
+              <div className="max-w-screen-2xl mx-auto flex flex-wrap rounded-lg bg-gray-50 my-2">
                 <div className="w-full lg:w-1/2 p-1">
-                  <TranscriptField />
+                  <TranscriptField videoRef={uploadRef} uploadMode={true}  file={file} 
+                      setParentTranscriptText={setParentTranscriptText}/>
                 </div>
                 <div className="w-full lg:w-1/2 p-1">
-                  <SummaryField />
+                  <SummaryField parentTranscriptText={parentTranscriptText}/>
                 </div>
               </div>
-            ) : (
-              <GeneralButton className="mt-2" onClick={handleFileUpload}>
-                Upload and Start
-              </GeneralButton>
             )}
           </div>
         </div>

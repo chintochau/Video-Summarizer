@@ -3,6 +3,7 @@ import React from 'react';
 import UploadIcon from '@mui/icons-material/Upload';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import NotesIcon from '@mui/icons-material/Notes';
+import { Link } from 'react-router-dom';
 
 const HowItWorks = () => {
   const steps = [
@@ -42,8 +43,10 @@ const HowItWorks = () => {
             </div>
           ))}
         </div>
-        <div className="text-center mt-12">
+        <div className="text-center mt-12">        
+        <Link to="summarizer">
           <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition duration-300">Start Summarizing</button>
+        </Link>
         </div>
       </div>
     </div>

@@ -1,5 +1,19 @@
+import { FFmpeg } from '@ffmpeg/ffmpeg';
+const ffmpeg = new FFmpeg({log:true})
 
+async function extractAudio(videoBlob) {
+  // Write the video file to FFmpeg's virtual file system
+  ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(videoBlob));
 
+  // Run FFmpeg command to extract the audio to an output file
+  await ffmpeg.run('-i', 'input.mp4', '-vn', '-acodec', 'copy', 'output.aac');
+
+  // Read the resulting audio file from FFmpeg's file system
+  const audioData = ffmpeg.FS('readFile', 'output.aac');
+
+  // Convert the audio file to a Blob
+  return new Blob([audioData.buffer], { type: 'audio/aac' });
+}
 
 // Chat GPT related
 export const askChatGPT = async (prompt,language, completionHandler) => {
@@ -25,21 +39,20 @@ export const askChatGPT = async (prompt,language, completionHandler) => {
 };
 
 
-export const callWhisperAPI = async({file, language="", responseFormat}) => {
+export const transcribeWithAI = async({file, language="", responseFormat, selectedModel}) => {
   if (!file ) {
     return null;
   }
 
+  console.log(selectedModel);
+
   const audioTypes = ['audio/mp3', 'audio/mpeg', 'audio/wav', 'audio/m4a'];
   const videoTypes = ['video/mp4', 'video/quicktime'];
-  console.log(file);
-
-
-  if (file.type.startsWith('audio/')) {
-    console.log("audio");
 
     const formData = new FormData()
     formData.append('file', file)
+    formData.append('selectedModel', selectedModel)
+    formData.append('language', language)
     
     try {
       const response = await fetch ('/api/transcribeAudio', {
@@ -53,18 +66,12 @@ export const callWhisperAPI = async({file, language="", responseFormat}) => {
 
 
       const result = await response.json()
-      console.log(result);
+      return result
 
     } catch (error) {
       console.error("upload error", error);
     }
 
-  } else  if (file.type.startsWith('video/')){
-    console.log('video');
-  } else {
-    console.error("please upload a video or audio file");
-    return null
-  }
 
 
 
@@ -99,7 +106,26 @@ export const getYoutubeTranscript = async ({ youtubeLink }) => {
 
 //Frontend Related
 
-// 將SRT轉換為可編輯文本與時間戳的函數
+/**
+ * 將 SRT 字幕格式的字符串轉換為一個物件陣列，每個物件包含字幕的索引、開始時間、結束時間以及對應的文本。
+ * 
+ * @param {string} srt 代表 SRT 字幕的原始字符串。
+ * @returns {Array<Object>} 一個物件陣列，每個物件表示一段字幕，包含以下屬性：
+ *                          - index: 字幕的序號。
+ *                          - start: 字幕的開始時間。
+ *                          - end: 字幕的結束時間。
+ *                          - text: 字幕的文本內容。
+ * 
+ * @example
+ * const srtExample = "1\n00:00:01,000 --> 00:00:02,000\nHello World\n\n2\n00:00:03,000 --> 00:00:04,000\nThis is an example";
+ * const parsed = parseSRT(srtExample);
+ * console.log(parsed);
+ * // 輸出:
+ * // [
+ * //   { index: "1", start: "00:00:01,000", end: "00:00:02,000", text: "Hello World" },
+ * //   { index: "2", start: "00:00:03,000", end: "00:00:04,000", text: "This is an example" }
+ * // ]
+ */
 export const parseSRT = (srt) => {
   return srt
     .split("\n\n")
