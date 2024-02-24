@@ -314,6 +314,10 @@ app.post("/api/stream-response", async (req, res) => {
   res.end();
 });
 
+app.get("/",(req,res) => {
+  res.send("Running~")
+})
+
 // 啟動服務器
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
