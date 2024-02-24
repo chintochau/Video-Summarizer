@@ -11,8 +11,10 @@ import { jsonDemo, srtDdemo, youtubeDemoTranscript } from "./demovalue.js";
 import { YoutubeTranscript } from "youtube-transcript";
 import { AssemblyAI } from "assemblyai";
 import ffmpeg from "fluent-ffmpeg";
+import cors from 'cors'
 
 const app = express();
+
 const upload = multer({ dest: "uploads/" });
 const port = process.env.PORT || 3000;
 const openai = new OpenAI({
@@ -24,6 +26,7 @@ const assembly = new AssemblyAI({
 
 // 中間件
 app.use(bodyParser.json());
+app.use(cors());
 
 //PRIVATE transcribe Audio
 async function transcribeWithWhisperApi(data) {
@@ -168,7 +171,7 @@ const videoExtensions = ['.mp4', '.mkv', '.webm', '.avi', '.mov'];
 
 
 // 設置路由處理轉寫請求
-app.post("/api/transcribeAudio", upload.single("file"), async (req, res) => {
+app.post("/api/transcribeAudio",cors(), upload.single("file"), async (req, res) => {
   const { language, response_format, selectedModel } = req.body;
   console.log(req.body);
   const file = req.file;
@@ -231,7 +234,7 @@ app.post("/api/transcribeAudio", upload.single("file"), async (req, res) => {
 });
 
 //Download Youtube Audio
-app.post("/api/downloadAudio", async (req, res) => {
+app.post("/api/downloadAudio",cors(), async (req, res) => {
   const { youtubeLink } = req.body;
 
   const videoInfo = await ytdl.getInfo(youtubeLink);
@@ -251,7 +254,7 @@ app.post("/api/downloadAudio", async (req, res) => {
 });
 
 //Transcribe Youtube with Free API
-app.post("/api/transcribeYoutube", async (req, res) => {
+app.post("/api/transcribeYoutube",cors(), async (req, res) => {
   const { youtubeLink } = req.body;
 
   try {
@@ -273,7 +276,7 @@ app.post("/api/transcribeYoutube", async (req, res) => {
   }
 });
 
-app.post("/api/stream-response", async (req, res) => {
+app.post("/api/stream-response",cors(), async (req, res) => {
   console.log(req.body);
 
   const { prompt, language } = req.body;

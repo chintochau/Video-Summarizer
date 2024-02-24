@@ -1,4 +1,5 @@
 import { FFmpeg } from '@ffmpeg/ffmpeg';
+const apiUrl = `${import.meta.env.VITE_API_BASE_URL}`
 const ffmpeg = new FFmpeg({log:true})
 
 async function extractAudio(videoBlob) {
@@ -19,7 +20,7 @@ async function extractAudio(videoBlob) {
 export const askChatGPT = async (prompt,language, completionHandler) => {
   console.log(language);
   try {
-    const response = await fetch("/api/stream-response", {
+    const response = await fetch(apiUrl+"/api/stream-response", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt, language }),
@@ -55,7 +56,7 @@ export const transcribeWithAI = async({file, language="", responseFormat, select
     formData.append('language', language)
     
     try {
-      const response = await fetch ('/api/transcribeAudio', {
+      const response = await fetch (apiUrl+'/api/transcribeAudio', {
         method:'POST',
         body:formData,
       })
@@ -80,9 +81,10 @@ export const transcribeWithAI = async({file, language="", responseFormat, select
 
 // Youtube related
 export const getYoutubeTranscript = async ({ youtubeLink }) => {
+  console.log(apiUrl);
   const data = { youtubeLink };
   try {
-    const response = await fetch("/api/transcribeYoutube", {
+    const response = await fetch(apiUrl+"/api/transcribeYoutube", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
