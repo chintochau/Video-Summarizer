@@ -151,7 +151,7 @@ export default function Summarizer() {
                     Get YouTube transcript and use AI to summarize YouTube
                     videos in one click for free online.
                   </p>
-                  <div className="mx-auto my-2 max-w-7xl flex justify-between outline-dashed outline-2 outline-red-400 p-2 rounded-md w-[800px]">
+                  <div className="mx-auto my-2 max-w-3xl flex justify-between outline-dashed outline-2 outline-red-400 p-2 rounded-md ">
                     <input
                       placeholder="Youtube"
                       className=" flex-1 mr-1 py-2.5 indent-2 rounded-md outline-1"
@@ -197,7 +197,7 @@ export default function Summarizer() {
 
           {/*Dropzone*/}
           <div className="flex-col justify-center py-4">
-            <div className="w-[600px] mx-auto cursor-pointer">
+            <div className="max-w-[600px] mx-auto cursor-pointer">
               <div {...getRootProps({ style })}>
                 <input {...getInputProps()} />
                 {fileName ? (
