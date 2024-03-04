@@ -243,7 +243,7 @@ const TranscriptField = ({
               </div>
             ) : (
               <div className="flex-col">
-                <div class="mx-auto animate-spin rounded-full h-10 w-10 border-r-2 border-b-2 border-indigo-600" />{" "}
+                <div className="mx-auto animate-spin rounded-full h-10 w-10 border-r-2 border-b-2 border-indigo-600" />{" "}
                 <div>Fetching Transcript...</div>
               </div>
             )}
