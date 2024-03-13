@@ -52,6 +52,7 @@ const TranscriptField = ({
   setParentTranscriptText,
   uploadMode,
   file,
+  setParentSrtText
 }) => {
   const [editableTranscript, setEditableTranscript] = useState([]);
   const [viewMode, setViewMode] = useState("transcript"); // 新增狀態變量
@@ -83,8 +84,10 @@ const TranscriptField = ({
       const result = await transcribeWithAI({ file, selectedModel, language });
 
       console.log(result);
-
+      // parse SRT file to a formatted transcript
       const parsedTranscript = parseSRT(result);
+      setParentSrtText(result)
+      console.log(result);
 
       setEditableTranscript(parsedTranscript.map((entry) => ({ ...entry }))); // 深拷貝以獨立編輯
       setTranscriptAvailable(true);
@@ -106,6 +109,7 @@ const TranscriptField = ({
       const result = await getYoutubeTranscript({ youtubeLink: youtubeId });
 
       const parsedTranscript = parseSRT(result.srt);
+      setParentSrtText(result.srt)
 
       setEditableTranscript(parsedTranscript.map((entry) => ({ ...entry }))); // 深拷貝以獨立編輯
       setTranscriptAvailable(true);

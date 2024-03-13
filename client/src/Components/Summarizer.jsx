@@ -23,6 +23,7 @@ export default function Summarizer() {
   );
   const [youtubeId, setYoutubeId] = useState("");
   const [parentTranscriptText, setParentTranscriptText] = useState("");
+  const [parentSrtText, setParentSrtText] = useState("");
   const [videoSrc, setVideoSrc] = useState(null);
   const [audioSrc, setAudioSrc] = useState(null);
 
@@ -183,10 +184,11 @@ export default function Summarizer() {
                       youtubeId={youtubeId}
                       videoRef={videoRef}
                       setParentTranscriptText={setParentTranscriptText}
+                      setParentSrtText={setParentSrtText}
                     />
                   </div>
                   <div className="w-full lg:w-1/2 p-1">
-                    <SummaryField parentTranscriptText={parentTranscriptText} />
+                    <SummaryField parentTranscriptText={parentTranscriptText} parentSrtText={parentSrtText} />
                   </div>
                 </div>
               )}

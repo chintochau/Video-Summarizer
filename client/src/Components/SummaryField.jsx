@@ -1,26 +1,44 @@
 import React, { useEffect, useState } from "react";
 import GeneralButton, { OutlinedButton } from "./GeneralButton";
-import { askChatGPT } from "./Utils";
+import { askChatGPT, calculateCredit } from "./Utils";
 import Markdown from "react-markdown";
 
 import remarkGfm from "remark-gfm";
 import OptionField from "./OptionField";
+import { get_encoding } from "tiktoken";
 
-const SummaryField = ({ parentTranscriptText }) => {
+const SummaryField = ({ parentTranscriptText, parentSrtText }) => {
   const [response, setResponse] = useState("");
   const [language, setLanguage] = useState("auto");
   const [transcriptAvailable, setTranscriptAvailable] = useState(false);
+  const [interval, setInterval] = useState(300);
+  const [creditCount, setCreditCount] = useState(0);
+
+  useEffect(() => {
+    if (parentTranscriptText) {
+      setCreditCount(calculateCredit(parentTranscriptText));
+    }
+
+    return () => {};
+  }, [parentTranscriptText]);
 
   const handleLanguageChange = (e) => {
     setLanguage(e.target.value);
   };
 
-  const startSummary = (prompt) => {
-    console.log(language);
-    askChatGPT(prompt + parentTranscriptText,language , (error, data) => {
-      console.log(data);
-      setResponse((prev) => prev + data);
-    });
+  const startSummary = (option) => {
+    askChatGPT(
+      // if option === 6, send srt, otherwise send parent text
+      {
+        option,
+        transcript: option.id === 6 ? parentSrtText : parentTranscriptText,
+        language,
+        interval,
+      },
+      (error, data) => {
+        setResponse((prev) => prev + data);
+      }
+    );
   };
 
   const handleMenuClick = () => {
@@ -70,7 +88,12 @@ const SummaryField = ({ parentTranscriptText }) => {
       </div>
       {response === "" ? (
         <div className="overflow-y-auto max-h-[calc(100%-50px)]">
-          <OptionField handleClick={startSummary} />
+          <OptionField
+            handleClick={startSummary}
+            creditCount={creditCount}
+            setInterval={setInterval}
+            interval={interval}
+          />
         </div>
       ) : (
         <div className="overflow-y-auto max-h-[calc(100%-50px)]">

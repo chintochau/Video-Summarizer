@@ -11,7 +11,8 @@ import { jsonDemo, srtDdemo, youtubeDemoTranscript } from "./demovalue.js";
 import { YoutubeTranscript } from "youtube-transcript";
 import { AssemblyAI } from "assemblyai";
 import ffmpeg from "fluent-ffmpeg";
-import cors from 'cors'
+import cors from "cors";
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 
 const app = express();
 
@@ -30,7 +31,7 @@ app.use(cors());
 
 //PRIVATE transcribe Audio
 async function transcribeWithWhisperApi(data) {
-const {filePath, language, response_format} = data
+  const { filePath, language, response_format } = data;
   let transcription;
 
   // 模擬一段延遲時間
@@ -57,13 +58,13 @@ const {filePath, language, response_format} = data
 }
 
 async function transcribeWithAssemblyAI(data) {
-  const {filePath, language} = data
+  const { filePath, language } = data;
   const transcript = await assembly.transcripts.transcribe({
     audio: filePath,
     language_code: language,
   });
 
-  console.log("response in full: ", );
+  console.log("response in full: ");
   console.log(transcript.text);
 
   const srt = await assembly.transcripts.subtitles(transcript.id, "srt");
@@ -159,7 +160,7 @@ function extractAudioFromVideo(videoFilePath, outputAudioFilePath) {
     ffmpeg(videoFilePath)
       .output(outputAudioFilePath)
       .audioCodec("pcm_s16le") // Setting audio codec to pcm_s16le for compatibility
-      .setStartTime('00:00:00') // Start at the beginning, remove this line
+      .setStartTime("00:00:00") // Start at the beginning, remove this line
       .duration(300) // Limit to 300 seconds (5 minutes), remove this line when not needed
       .on("end", () => resolve(outputAudioFilePath))
       .on("error", (err) => reject(err))
@@ -167,74 +168,80 @@ function extractAudioFromVideo(videoFilePath, outputAudioFilePath) {
   });
 }
 
-const videoExtensions = ['.mp4', '.mkv', '.webm', '.avi', '.mov'];
-
+const videoExtensions = [".mp4", ".mkv", ".webm", ".avi", ".mov"];
 
 // 設置路由處理轉寫請求
-app.post("/api/transcribeAudio",cors(), upload.single("file"), async (req, res) => {
-  const { language, response_format, selectedModel } = req.body;
-  console.log(req.body);
-  const file = req.file;
-  const model = selectedModel|| "assembly";
-  let result;
-  let filePath
-  let originalFilePath
+app.post(
+  "/api/transcribeAudio",
+  cors(),
+  upload.single("file"),
+  async (req, res) => {
+    const { language, response_format, selectedModel } = req.body;
+    console.log(req.body);
+    const file = req.file;
+    const model = selectedModel || "assembly";
+    let result;
+    let filePath;
+    let originalFilePath;
 
-
-  if (!file) {
-    return res.status(400).send("請上傳一個檔案");
-  }
-
-  try {
-    originalFilePath = path.join("uploads/", file.originalname);
-    fs.renameSync(file.path, originalFilePath);
-
-    filePath = originalFilePath
-    // Check if the file is a video, and extract audio if necessary
-
-    console.log("Start: ",filePath);
-
-    if (file.mimetype.startsWith("video") || videoExtensions.includes(path.extname(originalFilePath).toLowerCase())) {
-      console.log("getting audio from video");
-      const audioFilePath = originalFilePath.replace(
-        path.extname(originalFilePath),
-        ".wav"
-      );
-      await extractAudioFromVideo(originalFilePath, audioFilePath);
-      filePath = audioFilePath;
+    if (!file) {
+      return res.status(400).send("請上傳一個檔案");
     }
 
-    switch (model) {
-      case "assembly": //assembly ai
-      console.log("Using Assembly");
-        result = await transcribeWithAssemblyAI({filePath, language});
-        break;
-      default: //openai
-      console.log("Using Whisper");
-        result = await transcribeWithWhisperApi({
-          filePath,
-          language,
-          response_format}
+    try {
+      originalFilePath = path.join("uploads/", file.originalname);
+      fs.renameSync(file.path, originalFilePath);
+
+      filePath = originalFilePath;
+      // Check if the file is a video, and extract audio if necessary
+
+      console.log("Start: ", filePath);
+
+      if (
+        file.mimetype.startsWith("video") ||
+        videoExtensions.includes(path.extname(originalFilePath).toLowerCase())
+      ) {
+        console.log("getting audio from video");
+        const audioFilePath = originalFilePath.replace(
+          path.extname(originalFilePath),
+          ".wav"
         );
-    }
+        await extractAudioFromVideo(originalFilePath, audioFilePath);
+        filePath = audioFilePath;
+      }
 
-    res.json(result);
-  } catch (error) {
-    console.error("轉寫過程出錯:", error);
-    res.status(500).send("轉寫過程中發生錯誤");
-  } finally {
-    // 完成轉寫後，刪除上傳的檔案
-    if (filePath) {
-      fs.unlinkSync(filePath);
-    }
-    if (filePath !== originalFilePath) {
-      fs.unlinkSync(originalFilePath); // Delete extracted audio file if it's different from the original upload
+      switch (model) {
+        case "assembly": //assembly ai
+          console.log("Using Assembly");
+          result = await transcribeWithAssemblyAI({ filePath, language });
+          break;
+        default: //openai
+          console.log("Using Whisper");
+          result = await transcribeWithWhisperApi({
+            filePath,
+            language,
+            response_format,
+          });
+      }
+
+      res.json(result);
+    } catch (error) {
+      console.error("轉寫過程出錯:", error);
+      res.status(500).send("轉寫過程中發生錯誤");
+    } finally {
+      // 完成轉寫後，刪除上傳的檔案
+      if (filePath) {
+        fs.unlinkSync(filePath);
+      }
+      if (filePath !== originalFilePath) {
+        fs.unlinkSync(originalFilePath); // Delete extracted audio file if it's different from the original upload
+      }
     }
   }
-});
+);
 
 //Download Youtube Audio
-app.post("/api/downloadAudio",cors(), async (req, res) => {
+app.post("/api/downloadAudio", cors(), async (req, res) => {
   const { youtubeLink } = req.body;
 
   const videoInfo = await ytdl.getInfo(youtubeLink);
@@ -254,7 +261,7 @@ app.post("/api/downloadAudio",cors(), async (req, res) => {
 });
 
 //Transcribe Youtube with Free API
-app.post("/api/transcribeYoutube",cors(), async (req, res) => {
+app.post("/api/transcribeYoutube", cors(), async (req, res) => {
   const { youtubeLink } = req.body;
 
   try {
@@ -276,10 +283,10 @@ app.post("/api/transcribeYoutube",cors(), async (req, res) => {
   }
 });
 
-app.post("/api/stream-response",cors(), async (req, res) => {
-  console.log(req.body);
+app.post("/api/stream-response", cors(), async (req, res) => {
+  const { option, transcript, language } = req.body;
+  const { prompt, id } = option;
 
-  const { prompt, language } = req.body;
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
@@ -287,7 +294,7 @@ app.post("/api/stream-response",cors(), async (req, res) => {
   let outputLanguage;
 
   if (language === "auto") {
-    outputLanguage = "second half part of the input language";
+    outputLanguage = "input language of the transcript";
   } else {
     outputLanguage = language;
   }
@@ -297,11 +304,13 @@ app.post("/api/stream-response",cors(), async (req, res) => {
     messages: [
       {
         role: "system",
-        content: "Summarize, answer must be given in the language of:" + outputLanguage,
+        content:
+          "Summarize, answer must be given in the language of:" +
+          outputLanguage,
       },
       {
         role: "user",
-        content: prompt,
+        content: prompt + transcript,
       },
     ],
     stream: true,
@@ -314,12 +323,177 @@ app.post("/api/stream-response",cors(), async (req, res) => {
 
   const chatCompletion = await response.finalChatCompletion();
   console.log(chatCompletion);
+  console.log(response);
   res.end();
 });
 
-app.get("/",(req,res) => {
-  res.send("Running~")
-})
+/*
+This is a comment block that can be seen largely on the minimap.
+It can have multiple lines and can be used to describe sections of your code.
+*/
+// #======= This is an important section comment ========#
+function parseTimestamp(timestamp) {
+  // Converts a SRT timestamp to milliseconds.
+  const parts = timestamp.split(":");
+  const millis = parts[2].split(",")[1] || "0";
+  return (
+    Number(parts[0]) * 3600000 +
+    Number(parts[1]) * 60000 +
+    Number(parts[2].split(",")[0]) * 1000 +
+    Number(millis)
+  );
+}
+
+function secondsToMMSS(seconds) {
+  // Converts seconds to mm:ss format.
+  const mm = Math.floor(seconds / 60);
+  const ss = seconds % 60;
+  return `${mm.toString().padStart(2, "0")}:${ss.toString().padStart(2, "0")}`;
+}
+
+function groupSubtitlesByInterval(subtitles, intervalInSeconds = 300) {
+  // Groups subtitles text by every 'interval' seconds.
+  const blocks = subtitles.trim().split("\n\n");
+  const interval = intervalInSeconds * 1000; // Convert interval to milliseconds for all calculations
+  let currentIntervalStart = 0;
+  const intervalTexts = {};
+  let currentText = [];
+
+  blocks.forEach((block) => {
+    const lines = block.split("\n");
+    if (lines.length < 3) return; // Safety check
+
+    const [startTimestamp] = lines[1].split(" --> ");
+    const startMilliseconds = parseTimestamp(startTimestamp);
+
+    if (startMilliseconds >= currentIntervalStart + interval) {
+      // Adjusted to include the last second of each interval by subtracting 1 from next interval start time
+      const currentIntervalEnd = currentIntervalStart + interval - 1000;
+
+      // Save the current interval text and reset for the next interval
+      const intervalKey = `${secondsToMMSS(
+        currentIntervalStart / 1000
+      )}-${secondsToMMSS(currentIntervalEnd / 1000)}`;
+      intervalTexts[intervalKey] = currentText.join(" ");
+      currentText = [];
+
+      // Update the interval start time to the next interval that includes the current subtitle start time
+      while (startMilliseconds >= currentIntervalStart + interval) {
+        currentIntervalStart += interval;
+      }
+    }
+
+    // Add current subtitle text to the current interval's text
+    currentText.push(lines.slice(2).join(" "));
+  });
+
+  // Add the last interval's text if there is any
+  if (currentText.length > 0) {
+    const currentIntervalEnd = currentIntervalStart + interval - 1000; // Including the last second of the final interval
+    const intervalKey = `${secondsToMMSS(
+      currentIntervalStart / 1000
+    )}-${secondsToMMSS(currentIntervalEnd / 1000)}`;
+    intervalTexts[intervalKey] = currentText.join(" ");
+  }
+
+  return intervalTexts;
+}
+
+const formatGroupedSubtitle = (groupSubtitleByInterval) => {
+
+
+
+  let outputString = "";
+  // for (let x in groupSubtitleByInterval) {
+  //   outputString = outputString + x + " " + groupSubtitleByInterval[x] + "\n"
+  // }
+  return outputString
+};
+
+app.post("/api/stream-response-series", cors(), async (req, res) => {
+  // must input srt transcript, if not, will not produce desired result
+  const { option, transcript, language, interval } = req.body;
+  const { id, title, description, prompt } = option;
+
+  console.log(interval);
+
+  const formattedScript = formatGroupedSubtitle(groupSubtitlesByInterval(transcript, interval))
+
+
+  res.end()
+  return
+
+  const splitter = new RecursiveCharacterTextSplitter({
+    chunkSize: 1000,
+    chunkOverlap: 1,
+    separators: ["\n\n", "\n", " ", ""],
+  });
+
+  const chunks = await splitter.createDocuments([transcript]);
+
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  // Wrap the summary task in a function that returns a promise.
+  const summarizePrompt = async (prompt) => {
+    return new Promise((resolve, reject) => {
+      const response = openai.beta.chat.completions.stream({
+        model: "gpt-3.5-turbo-0125",
+        messages: [
+          {
+            role: "system",
+            content:
+              "Summarize, answer must be given in the language of:" +
+              outputLanguage,
+          },
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+        stream: true,
+      });
+
+      response.on("content", (delta, snapshot) => {
+        process.stdout.write(delta);
+        res.write(delta); // This will write each response back to the client as it's received.
+      });
+
+      response
+        .finalChatCompletion()
+        .then((chatCompletion) => {
+          console.log(chatCompletion);
+          resolve(chatCompletion);
+        })
+        .catch(reject);
+    });
+  };
+
+  let outputLanguage =
+    language === "auto" ? "based on the transcript input language" : language;
+
+  const summarizePromptsSeries = async () => {
+    for (let i = 0; i < chunks.length; i++) {
+      try {
+        const summary = await summarizePrompt(prompt + chunks[i].pageContent);
+        console.log(summary);
+        res.write("\n");
+      } catch (error) {
+        console.error("An error occurred:", error);
+        res.write("An error occurred: " + error.message);
+      }
+    }
+  };
+
+  await summarizePromptsSeries();
+
+  res.end();
+});
+
+app.get("/", (req, res) => {
+  res.send("Running~");
+});
 
 // 啟動服務器
 app.listen(port, () => {

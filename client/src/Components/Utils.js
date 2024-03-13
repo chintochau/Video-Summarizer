@@ -1,29 +1,61 @@
-import { FFmpeg } from '@ffmpeg/ffmpeg';
-const apiUrl = `${import.meta.env.VITE_API_BASE_URL}`
-const ffmpeg = new FFmpeg({log:true})
+import { FFmpeg } from "@ffmpeg/ffmpeg";
+const apiUrl = `${import.meta.env.VITE_API_BASE_URL}`;
+const ffmpeg = new FFmpeg({ log: true });
+import { get_encoding } from "tiktoken";
 
 async function extractAudio(videoBlob) {
   // Write the video file to FFmpeg's virtual file system
-  ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(videoBlob));
+  ffmpeg.FS("writeFile", "input.mp4", await fetchFile(videoBlob));
 
   // Run FFmpeg command to extract the audio to an output file
-  await ffmpeg.run('-i', 'input.mp4', '-vn', '-acodec', 'copy', 'output.aac');
+  await ffmpeg.run("-i", "input.mp4", "-vn", "-acodec", "copy", "output.aac");
 
   // Read the resulting audio file from FFmpeg's file system
-  const audioData = ffmpeg.FS('readFile', 'output.aac');
+  const audioData = ffmpeg.FS("readFile", "output.aac");
 
   // Convert the audio file to a Blob
-  return new Blob([audioData.buffer], { type: 'audio/aac' });
+  return new Blob([audioData.buffer], { type: "audio/aac" });
 }
 
 // Chat GPT related
-export const askChatGPT = async (prompt,language, completionHandler) => {
-  console.log(language);
+/*
+data = {
+  option,
+  language,
+  transcript
+}
+*/
+
+export const calculateCredit = (transcript, model) => {
+  const encoding = get_encoding('cl100k_base')
+  const tokens = encoding.encode(transcript)
+
+  switch(model) {
+    default:
+      // GPT35 (input/1000*0.0005 + output/1000*0.0015)*1.5*100
+      // return tokens.length // comment out to to return token length
+      return ((tokens.length*0.0005+800*0.0015)*1.5/1000*100).toFixed(1)
+  }
+}
+
+
+export const askChatGPT = async (data, completionHandler) => {
+  const { option, language, transcript, interval } = data;
+  const { prompt } = option;
+
+  const apiRequest =
+    option.id === 6 ? "/api/stream-response-series" : "/api/stream-response";
+
   try {
-    const response = await fetch(apiUrl+"/api/stream-response", {
+    const response = await fetch(apiUrl + apiRequest, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt, language }),
+      body: JSON.stringify({
+        option: option,
+        transcript: transcript,
+        language: language,
+        interval: interval,
+      }),
     });
 
     const reader = response.body
@@ -39,52 +71,49 @@ export const askChatGPT = async (prompt,language, completionHandler) => {
   }
 };
 
-
-export const transcribeWithAI = async({file, language="", responseFormat, selectedModel}) => {
-  if (!file ) {
+export const transcribeWithAI = async ({
+  file,
+  language = "",
+  responseFormat,
+  selectedModel,
+}) => {
+  if (!file) {
     return null;
   }
 
   console.log(selectedModel);
 
-  const audioTypes = ['audio/mp3', 'audio/mpeg', 'audio/wav', 'audio/m4a'];
-  const videoTypes = ['video/mp4', 'video/quicktime'];
+  const audioTypes = ["audio/mp3", "audio/mpeg", "audio/wav", "audio/m4a"];
+  const videoTypes = ["video/mp4", "video/quicktime"];
 
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('selectedModel', selectedModel)
-    formData.append('language', language)
-    
-    try {
-      const response = await fetch (apiUrl+'/api/transcribeAudio', {
-        method:'POST',
-        body:formData,
-      })
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("selectedModel", selectedModel);
+  formData.append("language", language);
 
-      if (!response.ok) {
-        throw new Error('Server Error - callwhisperapi(1)-Utils.js')
-      }
+  try {
+    const response = await fetch(apiUrl + "/api/transcribeAudio", {
+      method: "POST",
+      body: formData,
+    });
 
-
-      const result = await response.json()
-      return result
-
-    } catch (error) {
-      console.error("upload error", error);
+    if (!response.ok) {
+      throw new Error("Server Error - callwhisperapi(1)-Utils.js");
     }
 
-
-
-
-}
-
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("upload error", error);
+  }
+};
 
 // Youtube related
 export const getYoutubeTranscript = async ({ youtubeLink }) => {
   console.log(apiUrl);
   const data = { youtubeLink };
   try {
-    const response = await fetch(apiUrl+"/api/transcribeYoutube", {
+    const response = await fetch(apiUrl + "/api/transcribeYoutube", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -105,19 +134,18 @@ export const getYoutubeTranscript = async ({ youtubeLink }) => {
   }
 };
 
-
 //Frontend Related
 
 /**
  * 將 SRT 字幕格式的字符串轉換為一個物件陣列，每個物件包含字幕的索引、開始時間、結束時間以及對應的文本。
- * 
+ *
  * @param {string} srt 代表 SRT 字幕的原始字符串。
  * @returns {Array<Object>} 一個物件陣列，每個物件表示一段字幕，包含以下屬性：
  *                          - index: 字幕的序號。
  *                          - start: 字幕的開始時間。
  *                          - end: 字幕的結束時間。
  *                          - text: 字幕的文本內容。
- * 
+ *
  * @example
  * const srtExample = "1\n00:00:01,000 --> 00:00:02,000\nHello World\n\n2\n00:00:03,000 --> 00:00:04,000\nThis is an example";
  * const parsed = parseSRT(srtExample);
