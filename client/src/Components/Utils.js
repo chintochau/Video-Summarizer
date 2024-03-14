@@ -39,12 +39,23 @@ export const calculateCredit = (transcript, model) => {
 }
 
 
+const summaryApiCall = (id) => {
+  switch (id) {
+    case 1:
+      return "/api/stream-response-large-text"
+    case 6:
+      return "/api/stream-response-series"
+    default:
+      return "/api/stream-response"
+  }
+};
+
+
 export const askChatGPT = async (data, completionHandler) => {
   const { option, language, transcript, interval } = data;
   const { prompt } = option;
 
-  const apiRequest =
-    option.id === 6 ? "/api/stream-response-series" : "/api/stream-response";
+  const apiRequest = summaryApiCall(option.id)
 
   try {
     const response = await fetch(apiUrl + apiRequest, {

@@ -12,7 +12,12 @@ import { YoutubeTranscript } from "youtube-transcript";
 import { AssemblyAI } from "assemblyai";
 import ffmpeg from "fluent-ffmpeg";
 import cors from "cors";
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import {
+  RecursiveCharacterTextSplitter,
+  CharacterTextSplitter,
+} from "langchain/text_splitter";
+import { get_encoding } from "tiktoken";
+import { kmeans } from "ml-kmeans";
 
 const app = express();
 
@@ -28,6 +33,27 @@ const assembly = new AssemblyAI({
 // 中間件
 app.use(bodyParser.json());
 app.use(cors());
+
+//PRIVATE calculate tokens
+const tikCalculateToken = (transcript, model) => {
+  const encoding = get_encoding("cl100k_base");
+  const tokens = encoding.encode(transcript);
+
+  switch (model) {
+    default:
+      return tokens.length;
+  }
+};
+
+const tikVectorize = (transcript, model) => {
+  const encoding = get_encoding("cl100k_base");
+  const tokens = encoding.encode(transcript);
+
+  switch (model) {
+    default:
+      return tokens;
+  }
+};
 
 //PRIVATE transcribe Audio
 async function transcribeWithWhisperApi(data) {
@@ -304,9 +330,7 @@ app.post("/api/stream-response", cors(), async (req, res) => {
     messages: [
       {
         role: "system",
-        content:
-          "Summarize, answer must be given in the language of:" +
-          outputLanguage,
+        content: "read user input, answer in " + outputLanguage + ". and give your result in a markdown",
       },
       {
         role: "user",
@@ -314,6 +338,7 @@ app.post("/api/stream-response", cors(), async (req, res) => {
       },
     ],
     stream: true,
+    temperature:0.4,
   });
 
   response.on("content", (delta, snapshot) => {
@@ -351,7 +376,7 @@ function secondsToMMSS(seconds) {
   return `${mm.toString().padStart(2, "0")}:${ss.toString().padStart(2, "0")}`;
 }
 
-function groupSubtitlesByInterval(subtitles, intervalInSeconds = 300) {
+function groupSubtitlesByInterval(subtitles, intervalInSeconds) {
   // Groups subtitles text by every 'interval' seconds.
   const blocks = subtitles.trim().split("\n\n");
   const interval = intervalInSeconds * 1000; // Convert interval to milliseconds for all calculations
@@ -400,14 +425,17 @@ function groupSubtitlesByInterval(subtitles, intervalInSeconds = 300) {
 }
 
 const formatGroupedSubtitle = (groupSubtitleByInterval) => {
-
-
-
   let outputString = "";
-  // for (let x in groupSubtitleByInterval) {
-  //   outputString = outputString + x + " " + groupSubtitleByInterval[x] + "\n"
-  // }
-  return outputString
+  for (let x in groupSubtitleByInterval) {
+    outputString =
+      outputString +
+      "----------" +
+      x +
+      " " +
+      groupSubtitleByInterval[x] +
+      "\n\n";
+  }
+  return outputString;
 };
 
 app.post("/api/stream-response-series", cors(), async (req, res) => {
@@ -415,22 +443,19 @@ app.post("/api/stream-response-series", cors(), async (req, res) => {
   const { option, transcript, language, interval } = req.body;
   const { id, title, description, prompt } = option;
 
-  console.log(interval);
+  // transcript is in srt format
+  const formattedScript = formatGroupedSubtitle(
+    groupSubtitlesByInterval(transcript, interval)
+  );
 
-  const formattedScript = formatGroupedSubtitle(groupSubtitlesByInterval(transcript, interval))
-
-
-  res.end()
-  return
-
-  const splitter = new RecursiveCharacterTextSplitter({
-    chunkSize: 1000,
-    chunkOverlap: 1,
-    separators: ["\n\n", "\n", " ", ""],
+  const splitter = new CharacterTextSplitter({
+    separator: "----------",
   });
 
-  const chunks = await splitter.createDocuments([transcript]);
-
+  const chunks = await splitter.createDocuments([formattedScript]);
+  console.log(chunks);
+  // res.end()
+  // return
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
@@ -444,7 +469,7 @@ app.post("/api/stream-response-series", cors(), async (req, res) => {
           {
             role: "system",
             content:
-              "Summarize, answer must be given in the language of:" +
+              "Give your response in a markdown ,Summarize, answer must be given in the language of:" +
               outputLanguage,
           },
           {
@@ -453,6 +478,7 @@ app.post("/api/stream-response-series", cors(), async (req, res) => {
           },
         ],
         stream: true,
+        temperature: 0.5,
       });
 
       response.on("content", (delta, snapshot) => {
@@ -478,6 +504,234 @@ app.post("/api/stream-response-series", cors(), async (req, res) => {
       try {
         const summary = await summarizePrompt(prompt + chunks[i].pageContent);
         console.log(summary);
+        res.write("\n");
+      } catch (error) {
+        console.error("An error occurred:", error);
+        res.write("An error occurred: " + error.message);
+      }
+    }
+  };
+
+  await summarizePromptsSeries();
+
+  res.end();
+});
+
+app.post("/api/stream-response-large-text", cors(), async (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  // must input srt transcript, if not, will not produce desired result
+  const { option, transcript, language, interval } = req.body;
+  const { id, title, description, prompt } = option;
+
+  // transcript is in srt format
+  const formattedScript = formatGroupedSubtitle(
+    groupSubtitlesByInterval(transcript, 60)
+  );
+
+  // 1. break down large srt into chunks
+  const splitter = new CharacterTextSplitter({
+    separator: "----------",
+    chunkSize: 500,
+  });
+
+  const chunks = await splitter.createDocuments([formattedScript]);
+
+  let embeddingArray = [];
+
+  // res.end();
+  // return;
+
+  // // 2. get embeddings from openai
+  // const embeddingSeries = async () => {
+  //   for (let i = 0; i < chunks.length; i++) {
+  //     try {
+  //       const embedding = await openai.embeddings.create({
+  //         model: "text-embedding-3-small",
+  //         input: chunks[i].pageContent,
+  //         encoding_format: "float",
+  //       });
+  //       embeddingArray.push(embedding.data[0].embedding)
+  //     } catch (error) {}
+  //   }
+  // };
+
+  // await embeddingSeries()
+
+  // // 3. wrtie response from chatgpt, fot later use
+  // fs.writeFile("output.txt", JSON.stringify(embeddingArray), (err) => {
+  //   if (err) {
+  //     console.error(err);
+  //     return;
+  //   }
+  //   console.log("Array data has been written to output.txt file");
+  // });
+
+  // res.end();
+  // return;
+
+  // use dummy data for testing
+  const data = fs.readFileSync("output.txt", "utf8");
+  // Parse the data as JSON if it contains JSON formatted data
+  embeddingArray = JSON.parse(data);
+
+  let ans = kmeans(embeddingArray, parseInt(chunks.length / 3));
+
+  let paragraphs = [];
+  chunks.map((chunk) => {
+    paragraphs.push(chunk.pageContent);
+  });
+
+  const a = ans.clusters;
+
+  res.write("analyzing...\n");
+
+  // Function to determine if the current paragraph is similar to the previous ones based on the rules
+  const isSimilar = (currentCluster, previousClusters) => {
+    return previousClusters.some((cluster) => cluster === currentCluster);
+  };
+
+  let groupedParagraphs = [];
+  let currentGroup = [];
+  let lastTwoClusters = [];
+
+  paragraphs.forEach((paragraph, index) => {
+    const currentCluster = a[index];
+    if (isSimilar(currentCluster, lastTwoClusters)) {
+      currentGroup.push(paragraph);
+    } else {
+      // Before starting a new group, push the currentGroup (if it has paragraphs) to groupedParagraphs
+      if (currentGroup.length > 0) groupedParagraphs.push(currentGroup);
+      currentGroup = [paragraph];
+    }
+    // Update the lastTwoClusters
+    lastTwoClusters.push(currentCluster);
+    if (lastTwoClusters.length > 2) lastTwoClusters.shift();
+  });
+
+  // Add the final group if not yet added
+  if (currentGroup.length > 0) {
+    groupedParagraphs.push(currentGroup);
+  }
+
+  // Handle standalone paragraphs by merging them into the nearest group
+  groupedParagraphs = groupedParagraphs.reduce(
+    (acc, group, index, originalArray) => {
+      if (group.length === 1) {
+        if (index > 0) {
+          // If not the first group, merge with the previous group
+          acc[acc.length - 1] = acc[acc.length - 1].concat(group);
+        } else if (originalArray.length > 1) {
+          // If it's the first group but not the only group, merge with the next group
+          originalArray[index + 1] = group.concat(originalArray[index + 1]);
+        } else {
+          // If it's a standalone paragraph with no groups before or after, keep it as is
+          acc.push(group);
+        }
+      } else {
+        acc.push(group);
+      }
+      return acc;
+    },
+    []
+  );
+
+  // paragraphs after initial grouping
+  // console.log(groupedParagraphs);
+  // res.end();
+  // return;
+  // Wrap the summary task in a function that returns a promise.
+  const summarizePrompt = async (prompt, context) => {
+    return new Promise((resolve, reject) => {
+      const response = openai.beta.chat.completions.stream({
+        model: "gpt-3.5-turbo-0125",
+        messages: [
+          {
+            role: "system",
+            content:
+              "answer must be given in the language of:" + outputLanguage,
+          },
+          {
+            role: "user",
+            content: "Give an abstract of the video",
+          },
+          {
+            role: "assistant",
+            content: `${context}`,
+          },
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+        stream: true,
+        temperature: 0.3,
+      });
+
+      response.on("content", (delta, snapshot) => {
+        process.stdout.write(delta);
+        res.write(delta); // This will write each response back to the client as it's received.
+      });
+
+      response
+        .finalChatCompletion()
+        .then((chatCompletion) => {
+          console.log(chatCompletion);
+          resolve(chatCompletion);
+        })
+        .catch(reject);
+    });
+  };
+
+  let outputLanguage =
+    language === "auto" ? "based on the transcript input language" : language;
+
+  const summarizePromptsSeries = async () => {
+    let abstract = "";
+
+    try {
+      const completion = await openai.chat.completions.create({
+        messages: [
+          { role: "system", content: "You are a helpful assistant." },
+          {
+            role: "user",
+            content: `
+          you are given first few minutes of subtitle text of a video, based on the subtitle, give an abstract for the video. the abstract will be used as the context when the other part of the video being summarized. text as below : ${groupedParagraphs[0]}
+          `,
+          },
+        ],
+        model: "gpt-3.5-turbo",
+        temperature: 0.4,
+      });
+      abstract = completion.choices[0].message.content;
+
+      res.write("\n");
+    } catch (error) {
+      console.error("An error occurred:", error);
+      res.write("An error occurred: " + error.message);
+    }
+
+    for (let i = 0; i < groupedParagraphs.length; i++) {
+      const startTimestamp = groupedParagraphs[i][0].split("-")[0];
+      try {
+        res.write(JSON.stringify({ part: i + 1, timestamp: startTimestamp }));
+        const summary = await summarizePrompt(
+          `
+        summarize the below part of the video, write in a explanatory tone that assume you are the author instead of repost. 
+        Use the below template when give your answer
+
+        ***Template***
+        #### {Title}
+        {Summary}
+        ##### {TLDR}
+        ***End of template***
+        
+        input script:
+        ${groupedParagraphs[i]}`,
+          abstract
+        );
         res.write("\n");
       } catch (error) {
         console.error("An error occurred:", error);

@@ -8,7 +8,7 @@ import {
   acceptStyle,
 } from "../pages/styles";
 import VideoField from "./VideoField";
-import {  formatFileSize } from "./Utils";
+import { formatFileSize } from "./Utils";
 import TranscriptField from "./TranscriptField";
 import SummaryField from "./SummaryField";
 
@@ -188,7 +188,10 @@ export default function Summarizer() {
                     />
                   </div>
                   <div className="w-full lg:w-1/2 p-1">
-                    <SummaryField parentTranscriptText={parentTranscriptText} parentSrtText={parentSrtText} />
+                    <SummaryField
+                      parentTranscriptText={parentTranscriptText}
+                      parentSrtText={parentSrtText}
+                    />
                   </div>
                 </div>
               )}
@@ -238,11 +241,15 @@ export default function Summarizer() {
               // Upload Mode shows
               <div className="max-w-screen-2xl mx-auto flex flex-wrap rounded-lg bg-gray-50 my-2">
                 <div className="w-full lg:w-1/2 p-1">
-                  <TranscriptField videoRef={uploadRef} uploadMode={true}  file={file} 
-                      setParentTranscriptText={setParentTranscriptText}/>
+                  <TranscriptField
+                    videoRef={uploadRef}
+                    uploadMode={true}
+                    file={file}
+                    setParentTranscriptText={setParentTranscriptText}
+                  />
                 </div>
                 <div className="w-full lg:w-1/2 p-1">
-                  <SummaryField parentTranscriptText={parentTranscriptText}/>
+                  <SummaryField parentTranscriptText={parentTranscriptText} />
                 </div>
               </div>
             )}

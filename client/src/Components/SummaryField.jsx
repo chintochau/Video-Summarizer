@@ -2,10 +2,8 @@ import React, { useEffect, useState } from "react";
 import GeneralButton, { OutlinedButton } from "./GeneralButton";
 import { askChatGPT, calculateCredit } from "./Utils";
 import Markdown from "react-markdown";
-
 import remarkGfm from "remark-gfm";
 import OptionField from "./OptionField";
-import { get_encoding } from "tiktoken";
 
 const SummaryField = ({ parentTranscriptText, parentSrtText }) => {
   const [response, setResponse] = useState("");
@@ -26,17 +24,39 @@ const SummaryField = ({ parentTranscriptText, parentSrtText }) => {
     setLanguage(e.target.value);
   };
 
+  const inputTranscript = (id) => {
+    switch (id) {
+      case 1:
+        return parentSrtText;
+      case 6:
+        return parentSrtText;
+      default:
+        return parentTranscriptText;
+    }
+  };
+
   const startSummary = (option) => {
     askChatGPT(
-      // if option === 6, send srt, otherwise send parent text
       {
         option,
-        transcript: option.id === 6 ? parentSrtText : parentTranscriptText,
+        transcript: inputTranscript(option.id),
         language,
         interval,
       },
       (error, data) => {
-        setResponse((prev) => prev + data);
+        let receivedData;
+
+        try {
+          // Try to parse the received data as JSON
+          receivedData = JSON.parse(data);
+          // If parsing was successful, then data is a JSON object
+          console.log("Received JSON object:", receivedData.timestamp);
+          setResponse((prev) => prev + `\n${receivedData.timestamp}\n`);
+        } catch (error) {
+          // If parsing fails, data is treated as a simple string
+          receivedData = data;
+          setResponse((prev) => prev + receivedData);
+        }
       }
     );
   };
