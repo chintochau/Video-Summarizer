@@ -742,6 +742,7 @@ app.post("/api/stream-response-large-text", cors(), async (req, res) => {
 
   await summarizePromptsSeries();
 
+  res.write("---End---")
   res.end();
 });
 
