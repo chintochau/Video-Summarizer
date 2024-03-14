@@ -3,6 +3,7 @@ import GeneralButton, { OutlinedButton } from "./GeneralButton";
 import { askChatGPT, calculateCredit } from "./Utils";
 import Markdown from "react-markdown";
 import OptionField from "./OptionField";
+import remarkGfm from "remark-gfm";
 
 const SummaryField = ({ parentTranscriptText, parentSrtText }) => {
   const [response, setResponse] = useState("");
@@ -35,6 +36,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText }) => {
   };
 
   const startSummary = (option) => {
+    setResponse("Loading Summary...\n");
     askChatGPT(
       {
         option,
@@ -43,19 +45,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText }) => {
         interval,
       },
       (error, data) => {
-        let receivedData;
-
-        try {
-          // Try to parse the received data as JSON
-          receivedData = JSON.parse(data);
-          // If parsing was successful, then data is a JSON object
-          console.log("Received JSON object:", receivedData.timestamp);
-          setResponse((prev) => prev + `\n${receivedData.timestamp}\n`);
-        } catch (error) {
-          // If parsing fails, data is treated as a simple string
-          receivedData = data;
-          setResponse((prev) => prev + receivedData);
-        }
+        setResponse((prev) => prev + data);
       }
     );
   };
@@ -118,6 +108,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText }) => {
         <div className="overflow-y-auto max-h-[calc(100%-50px)]">
           <Markdown
             className="prose h-full p-2 text-start leading-5"
+            remarkPlugins={[remarkGfm]}
           >
             {response}
           </Markdown>

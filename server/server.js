@@ -547,21 +547,21 @@ app.post("/api/stream-response-large-text", cors(), async (req, res) => {
   // res.end();
   // return;
 
-  // // 2. get embeddings from openai
-  // const embeddingSeries = async () => {
-  //   for (let i = 0; i < chunks.length; i++) {
-  //     try {
-  //       const embedding = await openai.embeddings.create({
-  //         model: "text-embedding-3-small",
-  //         input: chunks[i].pageContent,
-  //         encoding_format: "float",
-  //       });
-  //       embeddingArray.push(embedding.data[0].embedding)
-  //     } catch (error) {}
-  //   }
-  // };
+  // 2. get embeddings from openai
+  const embeddingSeries = async () => {
+    for (let i = 0; i < chunks.length; i++) {
+      try {
+        const embedding = await openai.embeddings.create({
+          model: "text-embedding-3-small",
+          input: chunks[i].pageContent,
+          encoding_format: "float",
+        });
+        embeddingArray.push(embedding.data[0].embedding)
+      } catch (error) {}
+    }
+  };
 
-  // await embeddingSeries()
+  await embeddingSeries()
 
   // // 3. wrtie response from chatgpt, fot later use
   // fs.writeFile("output.txt", JSON.stringify(embeddingArray), (err) => {
@@ -572,13 +572,10 @@ app.post("/api/stream-response-large-text", cors(), async (req, res) => {
   //   console.log("Array data has been written to output.txt file");
   // });
 
-  // res.end();
-  // return;
-
-  // use dummy data for testing
-  const data = fs.readFileSync("output.txt", "utf8");
-  // Parse the data as JSON if it contains JSON formatted data
-  embeddingArray = JSON.parse(data);
+  // // use dummy data for testing
+  // const data = fs.readFileSync("output.txt", "utf8");
+  // // Parse the data as JSON if it contains JSON formatted data
+  // embeddingArray = JSON.parse(data);
 
   let ans = kmeans(embeddingArray, parseInt(chunks.length / 3));
 
@@ -588,6 +585,8 @@ app.post("/api/stream-response-large-text", cors(), async (req, res) => {
   });
 
   const a = ans.clusters;
+
+  console.log(a);
 
   // Function to determine if the current paragraph is similar to the previous ones based on the rules
   const isSimilar = (currentCluster, previousClusters) => {
