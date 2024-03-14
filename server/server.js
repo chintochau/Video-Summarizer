@@ -330,7 +330,10 @@ app.post("/api/stream-response", cors(), async (req, res) => {
     messages: [
       {
         role: "system",
-        content: "read user input, answer in " + outputLanguage + ". and give your result in a markdown",
+        content:
+          "read user input, answer in " +
+          outputLanguage +
+          ". and give your result in a markdown",
       },
       {
         role: "user",
@@ -338,7 +341,7 @@ app.post("/api/stream-response", cors(), async (req, res) => {
       },
     ],
     stream: true,
-    temperature:0.4,
+    temperature: 0.4,
   });
 
   response.on("content", (delta, snapshot) => {
@@ -716,7 +719,7 @@ app.post("/api/stream-response-large-text", cors(), async (req, res) => {
     for (let i = 0; i < groupedParagraphs.length; i++) {
       const startTimestamp = groupedParagraphs[i][0].split("-")[0];
       try {
-        res.write(JSON.stringify({ part: i + 1, timestamp: startTimestamp }));
+        res.write(`Part ${i + 1} : ${startTimestamp}`);
         const summary = await summarizePrompt(
           `
         summarize the below part of the video, write in a explanatory tone that assume you are the author instead of repost. 
