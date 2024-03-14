@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import GeneralButton, { OutlinedButton } from "./GeneralButton";
 import { askChatGPT, calculateCredit } from "./Utils";
 import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import OptionField from "./OptionField";
 
 const SummaryField = ({ parentTranscriptText, parentSrtText }) => {
@@ -119,7 +118,6 @@ const SummaryField = ({ parentTranscriptText, parentSrtText }) => {
         <div className="overflow-y-auto max-h-[calc(100%-50px)]">
           <Markdown
             className="prose h-full p-2 text-start leading-5"
-            remarkPlugins={[remarkGfm]}
           >
             {response}
           </Markdown>

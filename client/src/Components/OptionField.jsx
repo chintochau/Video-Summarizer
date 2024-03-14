@@ -29,10 +29,10 @@ const OptionCard = ({
   };
 
   return (
-    <div className="bg-white rounded shadow-md mb-4 text-left flex justify-between ">
-      <div className="p-4 w-full">
+    <div className="bg-white rounded shadow-md mb-4 text-left flex justify-between">
+      <div className="p-4 w-full ">
         <div className="text-xl font-bold mb-2 ">{title}</div>
-        <div className="text-gray-600 text-sm whitespace-pre text-wrap ">
+        <div className="text-gray-600 text-sm text-wrap w-full">
           {description}
         </div>
         {id === 6 && (
