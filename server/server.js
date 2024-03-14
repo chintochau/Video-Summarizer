@@ -726,7 +726,6 @@ app.post("/api/stream-response-large-text", cors(), async (req, res) => {
         ***Template***
         #### {Title}
         {Summary}
-        ##### {TLDR}
         ***End of template***
         
         input script:
