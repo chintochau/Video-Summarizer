@@ -589,8 +589,6 @@ app.post("/api/stream-response-large-text", cors(), async (req, res) => {
 
   const a = ans.clusters;
 
-  res.write("analyzing...\n");
-
   // Function to determine if the current paragraph is similar to the previous ones based on the rules
   const isSimilar = (currentCluster, previousClusters) => {
     return previousClusters.some((cluster) => cluster === currentCluster);
@@ -719,7 +717,7 @@ app.post("/api/stream-response-large-text", cors(), async (req, res) => {
     for (let i = 0; i < groupedParagraphs.length; i++) {
       const startTimestamp = groupedParagraphs[i][0].split("-")[0];
       try {
-        res.write(`Part ${i + 1} : ${startTimestamp}`);
+        res.write(`\nPart ${i + 1} : ${startTimestamp}\n`);
         const summary = await summarizePrompt(
           `
         summarize the below part of the video, write in a explanatory tone that assume you are the author instead of repost. 
