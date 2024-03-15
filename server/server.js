@@ -358,7 +358,7 @@ app.post("/api/stream-response", cors(), async (req, res) => {
   //   messages: [
   //     { role: "user", content: "give your response in a makrdown and use the language" + language + "\n" + prompt + transcript },
   //   ],
-  //   model: "claude-3-opus-20240229",
+  //   model: "claude-3-haiku-20240307",
   //   stream: true,
   // });
 
