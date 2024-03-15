@@ -246,6 +246,7 @@ export default function Summarizer() {
                     uploadMode={true}
                     file={file}
                     setParentTranscriptText={setParentTranscriptText}
+                    setParentSrtText={setParentSrtText}
                   />
                 </div>
                 <div className="w-full lg:w-1/2 p-1">

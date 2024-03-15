@@ -20,7 +20,7 @@ const OptionCard = ({
   const credit = () => {
     switch (id) {
       case 1:
-        return <span>{creditCount * 1.8}</span>;
+        return <span>{(creditCount * 1.8).toFixed(1)}</span>;
       case 6:
         return <span>{adjustableCreditCount}</span>;
       default:
@@ -62,7 +62,7 @@ const OptionCard = ({
               id,
               title,
               description,
-              prompt: id === 1 ? customPrompt : prompt,
+              prompt: prompt,
             })
           }
         >

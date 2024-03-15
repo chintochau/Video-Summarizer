@@ -45,6 +45,18 @@ const SummaryField = ({ parentTranscriptText, parentSrtText }) => {
         interval,
       },
       (error, data) => {
+        if (error) {
+          // Handle error
+          console.error("An error occurred:", error);
+          return;
+        }
+        // Check if the data signals completion
+        if (data && data.completed) {
+          console.log("Summary process completed.");
+          // Optionally, add any actions to be taken upon completion
+          return; // Stop further processing
+        }
+        // Append the received data to the response
         setResponse((prev) => prev + data);
       }
     );

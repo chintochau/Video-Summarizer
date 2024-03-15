@@ -18,6 +18,7 @@ import {
 } from "langchain/text_splitter";
 import { get_encoding } from "tiktoken";
 import { kmeans } from "ml-kmeans";
+import Anthropic from "@anthropic-ai/sdk";
 
 const app = express();
 
@@ -29,6 +30,7 @@ const openai = new OpenAI({
 const assembly = new AssemblyAI({
   apiKey: process.env["ASSEMBLY_CPI_KEY"],
 });
+const anthropic = new Anthropic();
 
 // 中間件
 app.use(bodyParser.json());
@@ -325,6 +327,7 @@ app.post("/api/stream-response", cors(), async (req, res) => {
     outputLanguage = language;
   }
 
+  // openai
   const response = openai.beta.chat.completions.stream({
     model: "gpt-3.5-turbo-0125",
     messages: [
@@ -343,23 +346,39 @@ app.post("/api/stream-response", cors(), async (req, res) => {
     stream: true,
     temperature: 0.4,
   });
-
   response.on("content", (delta, snapshot) => {
-    process.stdout.write(delta);
+    process.stdout.write(delta); // = console.log without a linebreak at the end
     res.write(delta);
   });
+  await response.finalChatCompletion();
 
-  const chatCompletion = await response.finalChatCompletion();
-  console.log(chatCompletion);
-  console.log(response);
+  // anthropic AI
+  // const stream = await anthropic.messages.create({
+  //   max_tokens: 1024,
+  //   messages: [
+  //     { role: "user", content: "give your response in a makrdown and use the language" + language + "\n" + prompt + transcript },
+  //   ],
+  //   model: "claude-3-opus-20240229",
+  //   stream: true,
+  // });
+
+  // for await (const messageStreamEvent of stream) {
+  //   if (
+  //     messageStreamEvent &&
+  //     messageStreamEvent.delta &&
+  //     messageStreamEvent.delta.text
+  //   ) {
+  //     res.write(messageStreamEvent.delta.text);
+  //   } else {
+  //     console.log(
+  //       "The 'text' property is undefined or does not exist in the delta object."
+  //     );
+  //   }
+  // }
+
   res.end();
 });
 
-/*
-This is a comment block that can be seen largely on the minimap.
-It can have multiple lines and can be used to describe sections of your code.
-*/
-// #======= This is an important section comment ========#
 function parseTimestamp(timestamp) {
   // Converts a SRT timestamp to milliseconds.
   const parts = timestamp.split(":");
@@ -556,12 +575,12 @@ app.post("/api/stream-response-large-text", cors(), async (req, res) => {
           input: chunks[i].pageContent,
           encoding_format: "float",
         });
-        embeddingArray.push(embedding.data[0].embedding)
+        embeddingArray.push(embedding.data[0].embedding);
       } catch (error) {}
     }
   };
 
-  await embeddingSeries()
+  await embeddingSeries();
 
   // // 3. wrtie response from chatgpt, fot later use
   // fs.writeFile("output.txt", JSON.stringify(embeddingArray), (err) => {
@@ -741,7 +760,7 @@ app.post("/api/stream-response-large-text", cors(), async (req, res) => {
 
   await summarizePromptsSeries();
 
-  res.write("\n---End---")
+  res.write("\n---End---");
   res.end();
 });
 

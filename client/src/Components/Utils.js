@@ -27,35 +27,59 @@ data = {
 */
 
 export const calculateCredit = (transcript, model) => {
-  const encoding = get_encoding('cl100k_base')
-  const tokens = encoding.encode(transcript)
+  const encoding = get_encoding("cl100k_base");
+  const tokens = encoding.encode(transcript);
 
-  switch(model) {
+  switch (model) {
     default:
       // GPT35 (input/1000*0.0005 + output/1000*0.0015)*1.5*100
       // return tokens.length // comment out to to return token length
-      return ((tokens.length*0.0005+800*0.0015)*1.5/1000*100).toFixed(1)
+      return (
+        (((tokens.length * 0.0005 + 800 * 0.0015) * 1.5) / 1000) *
+        100
+      ).toFixed(1);
   }
-}
-
+};
 
 const summaryApiCall = (id) => {
   switch (id) {
     case 1:
-      return "/api/stream-response-large-text"
+      return "/api/stream-response-large-text";
     case 6:
-      return "/api/stream-response-series"
+      return "/api/stream-response-series";
     default:
-      return "/api/stream-response"
+      return "/api/stream-response";
   }
 };
 
+/**
+ * Asynchronously sends a request to the ChatGPT API to process input data and handles the response.
+ *
+ * This function constructs and executes a POST request to the ChatGPT API, sending along a payload that contains
+ * data such as transcription text, language preference, and other options. The options may include ID and a prompt
+ * for ChatGPT among others. The specific API endpoint is determined by appending an option-related request path
+ * to a base `apiUrl`, which is assumed to be defined externally. Responses from the API are streamed and
+ * handled in chunks. As each chunk of the response is read, it is passed to a completion handler callback function,
+ * which the caller provides, allowing for asynchronous handling of partial or full response data as it's received.
+ * Errors during the API call or processing are caught and passed to the completion handler along with a null data
+ * argument for appropriate error handling.
+ *
+ * @param {Object} data - An object containing details for the API request, including:
+ *      - `option`: An object specifying details such as the ChatGPT prompt and other identifiers.
+ *      - `language`: A string indicating the preferred language for processing the transcript.
+ *      - `transcript`: A string containing the text to be processed by ChatGPT.
+ *      - `interval`: Potential additional data required for processing (usage context-dependent).
+ * @param {Function} completionHandler - A callback function that is called with the result of the API call.
+ *      The function should accept two arguments: an error (if any occurred) and the response data from the API.
+ *      If an error occurs, the first argument is populated with the error object, and the second argument is null.
+ *      On successful data retrieval, the first argument is null, and the second argument contains the response data.
+ */
 
 export const askChatGPT = async (data, completionHandler) => {
   const { option, language, transcript, interval } = data;
   const { prompt } = option;
 
-  const apiRequest = summaryApiCall(option.id)
+  const apiRequest = summaryApiCall(option.id);
 
   try {
     const response = await fetch(apiUrl + apiRequest, {
@@ -74,7 +98,11 @@ export const askChatGPT = async (data, completionHandler) => {
       .getReader();
     while (true) {
       const { value, done } = await reader.read();
-      if (done) break;
+      if (done) {
+        // Signal completion - Sending a specific value to indicate completion
+        completionHandler(null, { completed: true });
+        break;
+      }
       completionHandler(null, value);
     }
   } catch (error) {
