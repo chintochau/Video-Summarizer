@@ -19,8 +19,14 @@ import {
 import { get_encoding } from "tiktoken";
 import { kmeans } from "ml-kmeans";
 import Anthropic from "@anthropic-ai/sdk";
+import tmp from 'tmp';
+import { pipeline } from 'stream';
+import util from 'util';
 
 const app = express();
+
+const pipelineAsync = util.promisify(pipeline);
+
 
 const upload = multer({ dest: "uploads/" });
 const port = process.env.PORT || 3000;
@@ -268,28 +274,85 @@ app.post(
   }
 );
 
+// Example processAudioFile function
+async function processAudioFile(filePath) {
+  // Process the file here
+  console.log(`Processing file: ${filePath}`);
+  // Note: Be sure to handle file cleanup if this function also creates temporary files or resources.
+}
+
+app.post("/api/transcribeYoutubeVideo", cors(), async (req, res) => {
+  const { youtubeLink } = req.body;
+  console.log(youtubeLink);
+  try {
+    const videoInfo = await ytdl.getInfo(youtubeLink);
+
+    // Check if the video has available audio streams
+    const audioFormats = ytdl.filterFormats(videoInfo.formats, "audioonly");
+    if (audioFormats.length === 0) {
+      return res.status(400).send("Unable to obtain video audio.");
+    }
+
+    // Generate a temporary file path
+    const tempFilePath = tmp.tmpNameSync({ postfix: '.mp3' });
+
+    // Download the audio and save it to the temp file
+    const audioStream = ytdl(youtubeLink, { filter: "audioonly" });
+    const fileStream = fs.createWriteStream(tempFilePath);
+    await pipelineAsync(audioStream, fileStream);
+
+    // Now the file is saved, you can process it
+    await processAudioFile(tempFilePath);
+
+    // Now the file is saved, you can process it
+
+    const result = await transcribeWithWhisperApi({
+      filePath:tempFilePath
+    });
+
+    // Clean up: Delete the temporary file if no longer needed
+    fs.unlink(tempFilePath, (err) => {
+      if (err) throw err;
+      console.log('Temp file deleted');
+    });
+
+    res.json(result)
+  } catch (error) {
+    // 将错误消息发送回客户端
+    console.error(error);
+    res.status(500).json("Transcript is disabled on this video");
+  }
+});
+
 //Download Youtube Audio
-app.post("/api/downloadAudio", cors(), async (req, res) => {
+app.post("/api/downloadAudio", cors({
+  exposedHeaders: ['Content-Disposition']
+}), async (req, res) => {
   const { youtubeLink } = req.body;
 
   const videoInfo = await ytdl.getInfo(youtubeLink);
 
-  // 檢查視頻是否有可用的音頻流
-  const audioFormats = ytdl.filterFormats(videoInfo.formats, "audioonly");
-  if (audioFormats.length === 0) {
-    return res.status(400).send("無法獲取視頻的音頻");
+  try {
+    // 檢查視頻是否有可用的音頻流
+    const audioFormats = ytdl.filterFormats(videoInfo.formats, "audioonly");
+    if (audioFormats.length === 0) {
+      return res.status(400).send("無法獲取視頻的音頻");
+    }
+    // 設置響應標頭，指定檔案名稱並將音頻發送給客戶端
+    res.set(
+      "Content-Disposition",
+      `attachment; filename="${encodeURIComponent(videoInfo.videoDetails.title).replace(/%20/g, ' ')}.mp3"`
+    );
+    ytdl(youtubeLink, { filter: "audioonly" }).pipe(res);
+
+  } catch (error) {
+    console.error(error.message);
   }
 
-  // 設置響應標頭，指定檔案名稱並將音頻發送給客戶端
-  res.set(
-    "Content-Disposition",
-    `attachment; filename="${videoInfo.title}.mp3"`
-  );
-  ytdl(youtubeLink, { format: "140" }).pipe(res);
 });
 
 //Transcribe Youtube with Free API
-app.post("/api/transcribeYoutube", cors(), async (req, res) => {
+app.post("/api/getYoutubeTranscript", cors(), async (req, res) => {
   const { youtubeLink } = req.body;
 
   try {
@@ -346,11 +409,19 @@ app.post("/api/stream-response", cors(), async (req, res) => {
     stream: true,
     temperature: 0.4,
   });
+
   response.on("content", (delta, snapshot) => {
     process.stdout.write(delta); // = console.log without a linebreak at the end
     res.write(delta);
   });
-  await response.finalChatCompletion();
+
+  try {
+
+    await response.finalChatCompletion();
+  } catch (error) {
+    console.log(error.message);
+    res.write("exceed length")
+  }
 
   // anthropic AI
   // const stream = await anthropic.messages.create({
@@ -576,7 +647,7 @@ app.post("/api/stream-response-large-text", cors(), async (req, res) => {
           encoding_format: "float",
         });
         embeddingArray.push(embedding.data[0].embedding);
-      } catch (error) {}
+      } catch (error) { }
     }
   };
 

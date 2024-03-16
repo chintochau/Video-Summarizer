@@ -5,6 +5,7 @@ import {
   parseSRT,
   exportSRT,
   transcribeWithAI,
+  transcribeYoutubeVideo,
 } from "./Utils";
 import GeneralButton, { OutlinedButton } from "./GeneralButton";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -126,6 +127,41 @@ const TranscriptField = ({
     }
   };
 
+  // generate transcript with AI
+  const generateTranscriptWithAI = async () => {
+    setFetchingTranscript(true)
+    try {
+      const srtTranscript = await transcribeYoutubeVideo({ youtubeId })
+
+      console.log(srtTranscript);
+
+      if (!srtTranscript) {
+        setFetchingTranscript(false);
+        setTranscriptAvailable(false);
+        setParentTranscriptText("");
+
+      }
+
+      const parsedTranscript = parseSRT(srtTranscript);
+      setParentSrtText(srtTranscript)
+
+      setEditableTranscript(parsedTranscript.map((entry) => ({ ...entry }))); // 深拷貝以獨立編輯
+      setTranscriptAvailable(true);
+      setFetchingTranscript(false);
+      setParentTranscriptText(
+        parsedTranscript
+          .map(({ start, text }) => start.split(",")[0] + " " + text)
+          .join("\n")
+      );
+
+    } catch (error) {
+      setFetchingTranscript(false);
+      setTranscriptAvailable(false);
+      setParentTranscriptText("");
+
+    }
+  }
+
   // 切換到轉錄模式
   const handleTranscriptMode = () => {
     setViewMode("transcript");
@@ -176,8 +212,10 @@ const TranscriptField = ({
     };
   }, [youtubeId]);
 
+
+
   return (
-    <div className="h-[70vw] max-h-[60vh] flex-col">
+    <div className="flex-col h-full">
       {videoValid || uploadMode ? (
         fetchingTranscript ? (
           <div className="flex justify-center h-full items-center">
@@ -194,7 +232,7 @@ const TranscriptField = ({
                     </GeneralButton>
                   </div>
                 ) : (
-                  <div className="flex-col">
+                  <div className="flex-col ">
                     <div>Generate Transcript with AI</div>
                     <div className="flex mx-auto  ">
                       <label
@@ -253,28 +291,26 @@ const TranscriptField = ({
             )}
           </div>
         ) : (
-          <div className="h-[70vw] max-h-[60vh] flex-col">
+          <div className="flex-col h-full pt-1">
             {transcriptAvailable ? (
-              <div className="h-full ">
+              <div className="h-full flex flex-col">
                 <div className=" flex pl-2 justify-between">
                   <div className=" flex items-end">
                     <button
                       onClick={handleTranscriptMode}
-                      className={` px-2 py-1 rounded-t-md hover:text-indigo-400 ${
-                        viewMode === "transcript"
-                          ? " text-indigo-600 bg-white "
-                          : " text-gray-600"
-                      }`}
+                      className={` px-2 py-1 rounded-t-md hover:text-indigo-400 ${viewMode === "transcript"
+                        ? " text-indigo-600 bg-white "
+                        : " text-gray-600"
+                        }`}
                     >
                       Transcript
                     </button>
                     <button
                       onClick={handleTextMode}
-                      className={` px-2 py-1 rounded-t-md hover:text-indigo-400 ${
-                        viewMode !== "transcript"
-                          ? " text-indigo-600 bg-white "
-                          : " text-gray-600"
-                      }`}
+                      className={` px-2 py-1 rounded-t-md hover:text-indigo-400 ${viewMode !== "transcript"
+                        ? " text-indigo-600 bg-white "
+                        : " text-gray-600"
+                        }`}
                     >
                       Text
                     </button>
@@ -311,11 +347,10 @@ const TranscriptField = ({
                     </button>
                   </div>
                 </div>
-                {/* transcript box */}
-
                 {/* 根據viewMode渲染不同的內容 */}
+                {/* Transcript Box */}
                 {viewMode === "transcript" ? (
-                  <div className="h-[calc(100%-50px)] overflow-y-auto max-h-[calc(100%-50px)]">
+                  <div className="overflow-auto">
                     {editableTranscript.map(({ start, text }, index) => (
                       <TranscriptBox
                         key={index}
@@ -328,9 +363,9 @@ const TranscriptField = ({
                     ))}
                   </div>
                 ) : (
-                  <div className="h-[calc(100%-50px)]">
+                  <div className="h-full pl-2 overflow-hidden">
                     <textarea
-                      className="w-full h-full p-2 mx-2"
+                      className="w-full h-full px-2"
                       value={editableTranscript
                         .map(({ text }) => text)
                         .join("\n")}
@@ -344,7 +379,10 @@ const TranscriptField = ({
                 <div>
                   Transcript Not Available
                   <div className=" mx-8">
-                    (AI Transcript is currently not available for Youtube Video)
+                    <button className="px-3.5 py-2.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-400 "
+                      onClick={generateTranscriptWithAI}>
+                      Generate Transcript
+                    </button>
                   </div>
                 </div>
               </div>

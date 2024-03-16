@@ -75,7 +75,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText }) => {
   }, [parentTranscriptText]);
 
   return (
-    <div className="h-[70vw] max-h-[60vh] relative">
+    <div className="relative h-full flex flex-col">
       {transcriptAvailable ? null : (
         <div className="absolute w-full h-full bg-gray-50 opacity-70 rounded-md flex justify-center items-center">
           <div>Transcript Not Available</div>
@@ -108,7 +108,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText }) => {
         </button>
       </div>
       {response === "" ? (
-        <div className="overflow-y-auto max-h-[calc(100%-50px)]">
+        <div className="overflow-y-auto ">
           <OptionField
             handleClick={startSummary}
             creditCount={creditCount}
@@ -117,7 +117,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText }) => {
           />
         </div>
       ) : (
-        <div className="overflow-y-auto max-h-[calc(100%-50px)]">
+        <div className="overflow-y-auto ">
           <Markdown
             className="prose h-full p-2 text-start leading-5"
             remarkPlugins={[remarkGfm]}

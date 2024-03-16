@@ -6,8 +6,6 @@ import SummaryField from "./SummaryField";
 import YouTube from "react-youtube";
 
 const VideoField = ({ fileName, youtubeId, videoRef }) => {
-  console.log("rerendered");
-
   const opts = {
     height: "auto",
     width: "auto",
@@ -17,7 +15,7 @@ const VideoField = ({ fileName, youtubeId, videoRef }) => {
     },
   };
   return (
-    <div className="w-full p-2">
+    <div className="w-full">
       <YouTube
         iframeClassName="w-full aspect-video"
         ref={videoRef}
