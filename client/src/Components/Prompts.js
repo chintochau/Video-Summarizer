@@ -28,6 +28,12 @@ export const summarizeOptions = [
   },
   {
     id: 3,
+    title: "Quick Table",
+    description: `Explore the video content in a table format`,
+    prompt: `List out the key items in the video in a table format, the table should include the item name, description, the timestamp, and price if applicable`,
+  },
+  {
+    id: 3,
     title: "Quick Essay",
     description: `Explore a topic from multiple perspectives and reach a conclusion.`,
     prompt: `Your output should use the following template:
@@ -76,16 +82,13 @@ export const summarizeOptions = [
   {
     id: 6,
     title: "Detail Summary: by Length",
-    description: `Summarize a large text.`,
-    prompt: `below is a part of a large script, summarize it and give a related title for this part. write your summary as if this is a article in a blog. the format should be return as below.
-
-    when writing the content, write in a explanatory tone that assume you are the writer instead of repost.
+    description: `Explain the ideas in detail.`,
+    prompt: `below is a part of a large script, rewrite the key ideas of the text in short paragraphs, bold the keywords, and give a related title for this part. write your paragraph as in a precise manor, and summarize. the format should be return as below.
     
     ***Template***
     ### Title 
     ##### mm:ss - mm:ss
-    [content]
-    [one sentense summary]
+    [rewritten paragraph]
     ******
     `,
   },

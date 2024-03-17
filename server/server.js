@@ -809,13 +809,12 @@ app.post("/api/stream-response-large-text", cors(), async (req, res) => {
         res.write(`\nPart ${i + 1} : ${startTimestamp}\n`);
         const summary = await summarizePrompt(
           `
-        summarize the below part of the video, write in a explanatory tone that assume you are the author instead of repost. 
-        Use the below template when give your answer
+        You are given the below text as part of a video, rewrite the key ideas into short paragraphs, bold the inportant informations. I would like to get the main ideas of the text easily.
 
         ***Template***
-        #### {Title}
-        {Summary}
-        ***End of template***
+        #### [Tittle]
+        [rewritten paragraph]
+        ---------------------------------
         
         input script:
         ${groupedParagraphs[i]}`,

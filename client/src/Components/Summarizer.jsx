@@ -125,25 +125,28 @@ export default function Summarizer() {
             //Youtube Mode
             <div className="">
               {hasYTResult ? (
-                <div className="outline-red-400 mx-auto my-1 flex justify-between outline-dashed outline-2 p-1 rounded-md max-w-[1280px]">
+                <div className="outline-red-400 mx-auto my-1 flex flex-wrap justify-between outline-dashed outline-2 p-1 rounded-md max-w-[1280px]">
                   <input
                     placeholder="Youtube"
                     className=" flex-1 mr-1 py-2.5 indent-2 rounded-md outline-1"
                     value={youtubeLink}
                     onChange={handleInputChange}
                   />
-                  <button
-                    className="px-3.5 py-2.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600  "
-                    onClick={handleSubmit}
-                    type="submit"
-                  >
-                    Generate Summary
-                  </button>
-                  <button className=" text-indigo-600 hover:text-indigo-400 outline outline-2 rounded-md ml-1 px-3.5 py-1"
-                  onClick={() => getYoutubeAudio({youtubeLink})}
-                  >
-                    <DownloadIcon /> Audio
-                  </button>
+                  <div>
+                    <button
+                      className="px-3.5 py-2.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600  "
+                      onClick={handleSubmit}
+                      type="submit"
+                    >
+                      Generate Summary
+                    </button>
+                    <button className=" text-indigo-600 hover:text-indigo-400 outline outline-2 rounded-md ml-1 px-3.5 py-2.5"
+                      onClick={() => getYoutubeAudio({ youtubeLink })}
+                    >
+                      <DownloadIcon style={{ width: "20px", height: "20px" }} />
+                      Audio
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div
@@ -201,6 +204,7 @@ export default function Summarizer() {
                   </div>
                   <div className="w-full md:w-1/2 lg:w-1/3 h-1/2  md:h-full p-1">
                     <SummaryField
+                        videoRef={videoRef}
                       parentTranscriptText={parentTranscriptText}
                       parentSrtText={parentSrtText}
                     />
@@ -262,7 +266,9 @@ export default function Summarizer() {
                   />
                 </div>
                 <div className="w-full lg:w-1/2 p-1">
-                  <SummaryField parentTranscriptText={parentTranscriptText} />
+                  <SummaryField 
+                    videoRef={uploadRef}
+                    parentTranscriptText={parentTranscriptText} />
                 </div>
               </div>
             )}

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import GeneralButton, { OutlinedButton } from "./GeneralButton";
 import { askChatGPT, calculateCredit } from "./Utils";
-import Markdown from "react-markdown";
 import OptionField from "./OptionField";
-import remarkGfm from "remark-gfm";
+import Markdown from 'markdown-to-jsx'
 
-const SummaryField = ({ parentTranscriptText, parentSrtText }) => {
+const SummaryField = ({ parentTranscriptText, parentSrtText,videoRef }) => {
   const [response, setResponse] = useState("");
   const [language, setLanguage] = useState("auto");
   const [transcriptAvailable, setTranscriptAvailable] = useState(false);
@@ -17,7 +16,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText }) => {
       setCreditCount(calculateCredit(parentTranscriptText));
     }
 
-    return () => {};
+    return () => { };
   }, [parentTranscriptText]);
 
   const handleLanguageChange = (e) => {
@@ -62,10 +61,6 @@ const SummaryField = ({ parentTranscriptText, parentSrtText }) => {
     );
   };
 
-  const handleMenuClick = () => {
-    setMenuActive(!menuActive);
-  };
-
   useEffect(() => {
     if (parentTranscriptText && parentTranscriptText !== "") {
       setTranscriptAvailable(true);
@@ -73,6 +68,48 @@ const SummaryField = ({ parentTranscriptText, parentSrtText }) => {
       setTranscriptAvailable(false);
     }
   }, [parentTranscriptText]);
+
+  // 點擊轉錄時跳轉視頻
+  const handleTimestampClick = (time) => {
+    let [hours, minutes, seconds] = time.split(":");
+    let secondsTotal;
+
+    if (time.split(":").length === 2) {
+        secondsTotal = (parseInt(hours) * 60) + parseFloat(minutes);
+    } else if (time.split(":").length === 3) {
+        secondsTotal = (parseInt(hours) * 3600) + (parseInt(minutes) * 60) + parseFloat(seconds);
+    }
+
+    if (videoRef && videoRef.current) {
+        videoRef.current.currentTime = secondsTotal;
+        if (videoRef.current.internalPlayer) {
+            videoRef.current.internalPlayer.seekTo(secondsTotal);
+        }
+    }
+};
+  const linkOverride = {
+    a: {
+      component: ({ children, href, ...props }) => {
+        if (href.startsWith("#timestamp")) {
+          const timestamp = children[0];
+          return (
+            <a className={"text-blue-500 cursor-pointer"}
+              onClick={() => handleTimestampClick(timestamp)}>
+              {children}
+            </a>
+          );
+        }
+        return <a href={href} {...props}>{children}</a>;
+      }
+    }
+  };
+
+  const transformArticleWithClickableTimestamps = (articleContent) => {
+    // Updated regex to match both hh:mm:ss and mm:ss formats
+    const timestampRegex = /((\d{2}:)?\d{2}:\d{2})/g;
+    
+    return articleContent.replace(timestampRegex, (match) => `[${match}](#timestamp-${match})`);
+  };
 
   return (
     <div className="relative h-full flex flex-col">
@@ -120,9 +157,9 @@ const SummaryField = ({ parentTranscriptText, parentSrtText }) => {
         <div className="overflow-y-auto ">
           <Markdown
             className="prose h-full p-2 text-start leading-5"
-            remarkPlugins={[remarkGfm]}
+            options={{ overrides: linkOverride }}
           >
-            {response}
+            {transformArticleWithClickableTimestamps(response)}
           </Markdown>
         </div>
       )}
@@ -131,3 +168,4 @@ const SummaryField = ({ parentTranscriptText, parentSrtText }) => {
 };
 
 export default SummaryField;
+
