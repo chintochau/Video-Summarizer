@@ -19,14 +19,13 @@ import {
 import { get_encoding } from "tiktoken";
 import { kmeans } from "ml-kmeans";
 import Anthropic from "@anthropic-ai/sdk";
-import tmp from 'tmp';
-import { pipeline } from 'stream';
-import util from 'util';
+import tmp from "tmp";
+import { pipeline } from "stream";
+import util from "util";
 
 const app = express();
 
 const pipelineAsync = util.promisify(pipeline);
-
 
 const upload = multer({ dest: "uploads/" });
 const port = process.env.PORT || 3000;
@@ -294,7 +293,7 @@ app.post("/api/transcribeYoutubeVideo", cors(), async (req, res) => {
     }
 
     // Generate a temporary file path
-    const tempFilePath = tmp.tmpNameSync({ postfix: '.mp3' });
+    const tempFilePath = tmp.tmpNameSync({ postfix: ".mp3" });
 
     // Download the audio and save it to the temp file
     const audioStream = ytdl(youtubeLink, { filter: "audioonly" });
@@ -307,16 +306,16 @@ app.post("/api/transcribeYoutubeVideo", cors(), async (req, res) => {
     // Now the file is saved, you can process it
 
     const result = await transcribeWithWhisperApi({
-      filePath:tempFilePath
+      filePath: tempFilePath,
     });
 
     // Clean up: Delete the temporary file if no longer needed
     fs.unlink(tempFilePath, (err) => {
       if (err) throw err;
-      console.log('Temp file deleted');
+      console.log("Temp file deleted");
     });
 
-    res.json(result)
+    res.json(result);
   } catch (error) {
     // 将错误消息发送回客户端
     console.error(error);
@@ -325,31 +324,35 @@ app.post("/api/transcribeYoutubeVideo", cors(), async (req, res) => {
 });
 
 //Download Youtube Audio
-app.post("/api/downloadAudio", cors({
-  exposedHeaders: ['Content-Disposition']
-}), async (req, res) => {
-  const { youtubeLink } = req.body;
+app.post(
+  "/api/downloadAudio",
+  cors({
+    exposedHeaders: ["Content-Disposition"],
+  }),
+  async (req, res) => {
+    const { youtubeLink } = req.body;
 
-  const videoInfo = await ytdl.getInfo(youtubeLink);
+    const videoInfo = await ytdl.getInfo(youtubeLink);
 
-  try {
-    // 檢查視頻是否有可用的音頻流
-    const audioFormats = ytdl.filterFormats(videoInfo.formats, "audioonly");
-    if (audioFormats.length === 0) {
-      return res.status(400).send("無法獲取視頻的音頻");
+    try {
+      // 檢查視頻是否有可用的音頻流
+      const audioFormats = ytdl.filterFormats(videoInfo.formats, "audioonly");
+      if (audioFormats.length === 0) {
+        return res.status(400).send("無法獲取視頻的音頻");
+      }
+      // 設置響應標頭，指定檔案名稱並將音頻發送給客戶端
+      res.set(
+        "Content-Disposition",
+        `attachment; filename="${encodeURIComponent(
+          videoInfo.videoDetails.title
+        ).replace(/%20/g, " ")}.mp3"`
+      );
+      ytdl(youtubeLink, { filter: "audioonly" }).pipe(res);
+    } catch (error) {
+      console.error(error.message);
     }
-    // 設置響應標頭，指定檔案名稱並將音頻發送給客戶端
-    res.set(
-      "Content-Disposition",
-      `attachment; filename="${encodeURIComponent(videoInfo.videoDetails.title).replace(/%20/g, ' ')}.mp3"`
-    );
-    ytdl(youtubeLink, { filter: "audioonly" }).pipe(res);
-
-  } catch (error) {
-    console.error(error.message);
   }
-
-});
+);
 
 //Transcribe Youtube with Free API
 app.post("/api/getYoutubeTranscript", cors(), async (req, res) => {
@@ -375,7 +378,7 @@ app.post("/api/getYoutubeTranscript", cors(), async (req, res) => {
 });
 
 app.post("/api/stream-response", cors(), async (req, res) => {
-  const { option, transcript, language } = req.body;
+  const { option, transcript, language, selectedModel } = req.body;
   const { prompt, id } = option;
 
   res.setHeader("Content-Type", "text/event-stream");
@@ -390,61 +393,72 @@ app.post("/api/stream-response", cors(), async (req, res) => {
     outputLanguage = language;
   }
 
-  // openai
-  // const response = openai.beta.chat.completions.stream({
-  //   model: "gpt-3.5-turbo-0125",
-  //   messages: [
-  //     {
-  //       role: "system",
-  //       content:
-  //         "read user input, answer in " +
-  //         outputLanguage +
-  //         ". and give your result in a markdown",
-  //     },
-  //     {
-  //       role: "user",
-  //       content: prompt + transcript,
-  //     },
-  //   ],
-  //   stream: true,
-  //   temperature: 0.4,
-  // });
+  switch (selectedModel) {
+    case "gpt35":
+      // openai
+      const response = openai.beta.chat.completions.stream({
+        model: "gpt-3.5-turbo-0125",
+        messages: [
+          {
+            role: "system",
+            content:
+              "read user input, answer in " +
+              outputLanguage +
+              ". and give your result in a markdown",
+          },
+          {
+            role: "user",
+            content: prompt + transcript,
+          },
+        ],
+        stream: true,
+        temperature: 0.4,
+      });
 
-  // response.on("content", (delta, snapshot) => {
-  //   process.stdout.write(delta); // = console.log without a linebreak at the end
-  //   res.write(delta);
-  // });
+      response.on("content", (delta, snapshot) => {
+        process.stdout.write(delta); // = console.log without a linebreak at the end
+        res.write(delta);
+      });
 
-  // try {
+      try {
+        await response.finalChatCompletion();
+      } catch (error) {
+        console.log(error.message);
+        res.write("exceed length");
+      }
+      break
+    default:
+      // anthropic AI
+      const stream = await anthropic.messages.create({
+        max_tokens: 1024,
+        messages: [
+          {
+            role: "user",
+            content:
+              "give your response in a makrdown, dont use a code interpreter and use the language" +
+              language +
+              "\n" +
+              prompt +
+              transcript,
+          },
+        ],
+        model: "claude-3-haiku-20240307",
+        stream: true,
+      });
 
-  //   await response.finalChatCompletion();
-  // } catch (error) {
-  //   console.log(error.message);
-  //   res.write("exceed length")
-  // }
-
-  // anthropic AI
-  const stream = await anthropic.messages.create({
-    max_tokens: 1024,
-    messages: [
-      { role: "user", content: "give your response in a makrdown, dont use a code interpreter and use the language" + language + "\n" + prompt + transcript },
-    ],
-    model: "claude-3-haiku-20240307",
-    stream: true,
-  });
-
-  for await (const messageStreamEvent of stream) {
-    if (
-      messageStreamEvent &&
-      messageStreamEvent.delta &&
-      messageStreamEvent.delta.text
-    ) {
-      res.write(messageStreamEvent.delta.text);
-    } else {
-      console.log(
-        "The 'text' property is undefined or does not exist in the delta object."
-      );
-    }
+      for await (const messageStreamEvent of stream) {
+        if (
+          messageStreamEvent &&
+          messageStreamEvent.delta &&
+          messageStreamEvent.delta.text
+        ) {
+          res.write(messageStreamEvent.delta.text);
+        } else {
+          console.log(
+            "The 'text' property is undefined or does not exist in the delta object."
+          );
+        }
+      }
   }
 
   res.end();
@@ -647,7 +661,7 @@ app.post("/api/stream-response-large-text", cors(), async (req, res) => {
           encoding_format: "float",
         });
         embeddingArray.push(embedding.data[0].embedding);
-      } catch (error) { }
+      } catch (error) {}
     }
   };
 
@@ -667,7 +681,9 @@ app.post("/api/stream-response-large-text", cors(), async (req, res) => {
   // // Parse the data as JSON if it contains JSON formatted data
   // embeddingArray = JSON.parse(data);
 
+  console.log(parseInt(chunks.length/3)); 
   let ans = kmeans(embeddingArray, parseInt(chunks.length / 3));
+
 
   let paragraphs = [];
   chunks.map((chunk) => {

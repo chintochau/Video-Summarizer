@@ -12,15 +12,20 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
   const [transcriptAvailable, setTranscriptAvailable] = useState(false);
   const [interval, setInterval] = useState(300);
   const [creditCount, setCreditCount] = useState(0);
-  const [setselectedModel, setsetselectedModel] = useState("claude3h")
+  const [selectedModel, setselectedModel] = useState("claude3h");
 
   useEffect(() => {
     if (parentTranscriptText) {
-      setCreditCount(calculateCredit(parentTranscriptText));
+      setCreditCount(
+        calculateCredit({
+          transcript: parentTranscriptText,
+          model: selectedModel,
+        })
+      );
     }
 
     return () => {};
-  }, [parentTranscriptText]);
+  }, [parentTranscriptText,selectedModel]);
 
   const handleLanguageChange = (e) => {
     setLanguage(e.target.value);
@@ -45,6 +50,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
         transcript: inputTranscript(option.id),
         language,
         interval,
+        selectedModel,
       },
       (error, data) => {
         if (error) {
@@ -71,6 +77,10 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
       setTranscriptAvailable(false);
     }
   }, [parentTranscriptText]);
+
+  const handleModelChange = (e) => {
+    setselectedModel(e.target.value);
+  };
 
   // 點擊轉錄時跳轉視頻
   const handleTimestampClick = (time) => {
@@ -150,19 +160,23 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
             {/* Add more languages as needed */}
           </select>
           <select
-            id="language-select"
-            value={language}
-            onChange={handleLanguageChange}
+            id="model-select"
+            value={selectedModel}
+            onChange={handleModelChange}
             className="bg-gray-50 border border-indigo-300 text-indigo-600 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block hover:text-indigo-400 "
           >
             {usableModels
               ? usableModels.map((item) => (
-                  <option key={item.name} disabled={!item.available}>
+                  <option
+                    key={item.name}
+                    disabled={!item.available}
+                    value={item.id}
+                  >
                     {item.name}
                   </option>
                 ))
               : defaultModels.map((item) => (
-                  <option key={item.name} disabled={!item.available}>
+                  <option key={item.name} value={item.id}>
                     {item.name}
                   </option>
                 ))}

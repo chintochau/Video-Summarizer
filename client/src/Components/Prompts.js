@@ -19,11 +19,11 @@ export const summarizeOptions = [
     title: "Quick Summary",
     description: `General summary of the text`,
     prompt: `Your output should use the following template:
-Summary
-Analogy
-Notes
+  ### Summary
+  ### Analogy
+  ### Notes
   - [Emoji] Bulletpoint
-Q&A
+  ### Q&A
   - 
   
   You have been tasked with creating a concise summary of a YouTube video using its transcription to supply college student notes to use himself. You are to act like an expert in the subject the transcription is written about.
@@ -32,7 +32,7 @@ Q&A
   
   Additionally make a short complex analogy to give context and/or analogy from day-to-day life from the transcript.
   
-  Create 10 bullet points (each with an appropriate emoji) that summarize the key points or important moments from the video's transcription.
+  Create 10 bullet points (each with an appropriate emoji and refer to the timestamp) that summarize the key points or important moments from the video's transcription. 
   
   In addition to the bullet points, give several questions and answers based on the video content
   

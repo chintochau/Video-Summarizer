@@ -10,13 +10,13 @@ const Header = () => {
 
   return (
     <div className=" bg-white w-full flex justify-center sticky top-0 z-50">
-      <div className="w-[1280px] flex justify-between items-center bg-white sm:px-8 px-4 py-4 border-b border-b-[#e6ebf4] ">
+      <div className="w-[1280px] flex justify-between items-center bg-white sm:px-8 px-4 py-2 border-b border-b-[#e6ebf4] ">
         <div className="flex align-middle content-center items-center">
           <Link to="/">
-            <img className=" w-11 h-11" src={logo} />
+            <img className=" w-8 h-8" src={logo} />
           </Link>
           <Link to="/" className=" text-blue-800 text-2xl">
-            Fusion AI Video Assistant
+            FusionAI Video Notes
           </Link>
         </div>
 

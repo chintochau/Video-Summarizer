@@ -183,7 +183,7 @@ export default function Summarizer() {
 
               {hasYTResult && (
                 <div className="max-w-[1920px] mx-auto flex bg-gray-50 h-[calc(80vh)] flex-1 flex-col md:flex-row min-h-[800px] overflow-auto">
-                  <div className="w-full md:w-1/2 lg:w-2/3 flex flex-col h-full p-1">
+                  <div className="w-full md:w-1/2 lg:w-3/5 flex flex-col h-full p-1">
                     <div className="w-full">
                       <VideoField
                         fileName={fileName}
@@ -202,7 +202,7 @@ export default function Summarizer() {
                     </div>
 
                   </div>
-                  <div className="w-full md:w-1/2 lg:w-1/3 h-1/2  md:h-full p-1">
+                  <div className="w-full md:w-1/2 lg:w-2/5 h-1/2  md:h-full p-1">
                     <SummaryField
                         videoRef={videoRef}
                       parentTranscriptText={parentTranscriptText}

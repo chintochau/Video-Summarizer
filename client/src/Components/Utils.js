@@ -26,11 +26,22 @@ data = {
 }
 */
 
-export const calculateCredit = (transcript, model) => {
+export const calculateCredit = ({ transcript, model }) => {
   const encoding = get_encoding("cl100k_base");
   const tokens = encoding.encode(transcript);
 
+  console.log(model);
   switch (model) {
+    case "claude3h":
+      return (
+        (((tokens.length * 0.00025 + 800 * 0.00125) * 1.5) / 1000) *
+        100
+      ).toFixed(1);
+    case "gpt4":
+      return (
+        (((tokens.length * 0.01 + 1000 * 0.03) * 1.5) / 1000) *
+        100
+      ).toFixed(1);
     default:
       // GPT35 (input/1000*0.0005 + output/1000*0.0015)*1.5*100
       // return tokens.length // comment out to to return token length
@@ -76,7 +87,7 @@ const summaryApiCall = (id) => {
  */
 
 export const askChatGPT = async (data, completionHandler) => {
-  const { option, language, transcript, interval } = data;
+  const { option, language, transcript, interval, selectedModel } = data;
   const { prompt } = option;
 
   const apiRequest = summaryApiCall(option.id);
@@ -90,6 +101,7 @@ export const askChatGPT = async (data, completionHandler) => {
         transcript: transcript,
         language: language,
         interval: interval,
+        selectedModel: selectedModel,
       }),
     });
 
@@ -149,7 +161,7 @@ export const transcribeWithAI = async ({
 
 // Youtube related
 export const transcribeYoutubeVideo = async ({ youtubeId }) => {
-  const data = { youtubeLink:youtubeId };
+  const data = { youtubeLink: youtubeId };
   try {
     const response = await fetch(apiUrl + "/api/transcribeYoutubeVideo", {
       method: "POST",
@@ -170,8 +182,7 @@ export const transcribeYoutubeVideo = async ({ youtubeId }) => {
     console.error(error);
     return error.message;
   }
-}
-
+};
 
 export const getYoutubeTranscript = async ({ youtubeLink }) => {
   const data = { youtubeLink };
@@ -198,15 +209,15 @@ export const getYoutubeTranscript = async ({ youtubeLink }) => {
 };
 
 export const getYoutubeAudio = async ({ youtubeLink }) => {
-  const data = { youtubeLink }
+  const data = { youtubeLink };
   try {
     const response = await fetch(apiUrl + "/api/downloadAudio", {
-      method: 'POST',
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data)
-    })
+      body: JSON.stringify(data),
+    });
     if (!response.ok) {
       const errorMessage = await response.text();
       throw new Error(`Download failed: ${errorMessage}`);
@@ -215,8 +226,8 @@ export const getYoutubeAudio = async ({ youtubeLink }) => {
     const blob = await response.blob();
     const url = URL.createObjectURL(blob);
 
-    const contentDisposition = response.headers.get('Content-Disposition');
-    let filename = 'download.mp3'; // Fallback filename
+    const contentDisposition = response.headers.get("Content-Disposition");
+    let filename = "download.mp3"; // Fallback filename
     console.log(contentDisposition);
     if (contentDisposition) {
       const filenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
@@ -225,18 +236,17 @@ export const getYoutubeAudio = async ({ youtubeLink }) => {
       }
     }
 
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-
   } catch (error) {
     console.error(error);
     // Handle error here
   }
-}
+};
 
 //Frontend Related
 
