@@ -3,12 +3,14 @@ import { useModels } from "../contexts/ModelContext";
 
 function SummarizePage() {
 
-  const {usableModels} = useModels()
+  const { usableModels } = useModels()
 
-  console.log(usableModels);
+
 
   return (
     <>
+      {usableModels.map((item) => 
+        <div key={item}>{item}</div>)}
       <Summarizer />
     </>
   );
