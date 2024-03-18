@@ -30,7 +30,7 @@ export const summarizeOptions = [
     id: 3,
     title: "Quick Table",
     description: `Explore the video content in a table format`,
-    prompt: `List out the key items in the video in a table format, the table should include the item name, description, the timestamp, and price if applicable`,
+    prompt: `List out the key items in the video in a table format, the table should include the item name, description, the timestamp, and price if it is available`,
   },
   {
     id: 3,
