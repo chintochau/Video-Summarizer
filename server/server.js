@@ -792,7 +792,7 @@ app.post("/api/stream-response-large-text", cors(), async (req, res) => {
           `,
           },
         ],
-        model: "gpt-3.5-turbo",
+        model: "gpt-3.5-turbo-0125",
         temperature: 0.4,
       });
       abstract = completion.choices[0].message.content;

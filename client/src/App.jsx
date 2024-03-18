@@ -8,6 +8,7 @@ import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import { AuthProvider, useAuth } from "./contexts/AuthContext.jsx";
 import UserProfilePage from "./pages/UserProfilePage.jsx";
+import { ModelProvider } from "./contexts/ModelContext.jsx";
 
 function App() {
   const [announcement, setAnnouncement] = useState({
@@ -24,7 +25,7 @@ function App() {
       .catch((error) => console.error("Error fetching announcement:", error));
   }, []);
 
-  const {currentUser} = useAuth()
+  const { currentUser } = useAuth()
 
   return (
     <>
@@ -35,17 +36,19 @@ function App() {
             {announcement.message}</div>
         </div>
         }
-          <Header />
-          <div className="w-full top-[73px] min-h-[calc(100vh-73px)]  ">
-            <Routes>
+        <Header />
+        <div className="w-full top-[73px] min-h-[calc(100vh-73px)]  ">
+            <ModelProvider>
+          <Routes>
               <Route path="/Summarizer" element={<SummarizePage />} />
-              <Route path="/" element={<HomePage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/profile" element={currentUser? <UserProfilePage />:<LoginPage/>} />
-            </Routes>
-          </div>
-          <Footer />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/profile" element={currentUser ? <UserProfilePage /> : <LoginPage />} />
+          </Routes>
+            </ModelProvider>
+        </div>
+        <Footer />
       </div>
     </>
   );

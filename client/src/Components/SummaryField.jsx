@@ -5,17 +5,7 @@ import OptionField from "./OptionField";
 import Markdown from 'markdown-to-jsx'
 
 const SummaryField = ({ parentTranscriptText, parentSrtText,videoRef }) => {
-  const [response, setResponse] = useState(`| Loading Summary...  | Item Name              | Description                                                                       | Timestamp | Price |
-  |---------------------|------------------------|-----------------------------------------------------------------------------------|-----------|-------|
-  | React Context API   | Explanation of how React Context API works and its benefits                      | 00:00:06  | N/A   |
-  | User Subscription   | Mention of user subscription status and encouragement to subscribe                | 00:02:01  | N/A   |
-  | Dashboard Component | Description and issues with the dashboard component structure                     | 00:02:25  | N/A   |
-  | Context Creation    | Creation of a context file and setting up the context for user data sharing       | 00:04:10  | N/A   |
-  | Provider Usage      | Implementation of the context provider and passing user data through context      | 00:06:51  | N/A   |
-  | Sidebar Component   | Updating the sidebar component to consume user data from context using a custom hook | 00:08:00  | N/A   |
-  | Custom Hook         | Creation of a custom hook to handle user context logic and ensure user data is always available | 00:11:36  | N/A   |
-  | Conclusion          | Summary of the importance of understanding React Context API and encouraging subscription | 00:14:52  | N/A   |
-  `);
+  const [response, setResponse] = useState("");
   const [language, setLanguage] = useState("auto");
   const [transcriptAvailable, setTranscriptAvailable] = useState(false);
   const [interval, setInterval] = useState(300);
