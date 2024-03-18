@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import GeneralButton, { OutlinedButton } from "./GeneralButton";
 import { askChatGPT, calculateCredit } from "./Utils";
 import OptionField from "./OptionField";
-import Markdown from 'markdown-to-jsx'
+import Markdown from "markdown-to-jsx";
 import { useModels } from "../contexts/ModelContext";
+import { defaultModels } from "./Prompts";
 
 const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
   const [response, setResponse] = useState("");
@@ -11,13 +12,14 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
   const [transcriptAvailable, setTranscriptAvailable] = useState(false);
   const [interval, setInterval] = useState(300);
   const [creditCount, setCreditCount] = useState(0);
+  const [setselectedModel, setsetselectedModel] = useState("claude3h")
 
   useEffect(() => {
     if (parentTranscriptText) {
       setCreditCount(calculateCredit(parentTranscriptText));
     }
 
-    return () => { };
+    return () => {};
   }, [parentTranscriptText]);
 
   const handleLanguageChange = (e) => {
@@ -76,9 +78,10 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
     let secondsTotal;
 
     if (time.split(":").length === 2) {
-      secondsTotal = (parseInt(hours) * 60) + parseFloat(minutes);
+      secondsTotal = parseInt(hours) * 60 + parseFloat(minutes);
     } else if (time.split(":").length === 3) {
-      secondsTotal = (parseInt(hours) * 3600) + (parseInt(minutes) * 60) + parseFloat(seconds);
+      secondsTotal =
+        parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseFloat(seconds);
     }
 
     if (videoRef && videoRef.current) {
@@ -94,25 +97,34 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
         if (href.startsWith("#timestamp")) {
           const timestamp = children[0];
           return (
-            <a className={"text-blue-500 cursor-pointer"}
-              onClick={() => handleTimestampClick(timestamp)}>
+            <a
+              className={"text-blue-500 cursor-pointer"}
+              onClick={() => handleTimestampClick(timestamp)}
+            >
               {children}
             </a>
           );
         }
-        return <a href={href} {...props}>{children}</a>;
-      }
-    }
+        return (
+          <a href={href} {...props}>
+            {children}
+          </a>
+        );
+      },
+    },
   };
 
   const transformArticleWithClickableTimestamps = (articleContent) => {
     // Updated regex to match both hh:mm:ss and mm:ss formats
     const timestampRegex = /((\d{2}:)?\d{2}:\d{2})/g;
 
-    return articleContent.replace(timestampRegex, (match) => `[${match}](#timestamp-${match})`);
+    return articleContent.replace(
+      timestampRegex,
+      (match) => `[${match}](#timestamp-${match})`
+    );
   };
 
-  const { usableModels } = useModels()
+  const { usableModels } = useModels();
 
   return (
     <div className="relative h-full flex flex-col">
@@ -143,7 +155,17 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
             onChange={handleLanguageChange}
             className="bg-gray-50 border border-indigo-300 text-indigo-600 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block hover:text-indigo-400 "
           >
-            {usableModels.map((item) => <option key={item.name} disabled={!item.available}>{item.name}</option>)}
+            {usableModels
+              ? usableModels.map((item) => (
+                  <option key={item.name} disabled={!item.available}>
+                    {item.name}
+                  </option>
+                ))
+              : defaultModels.map((item) => (
+                  <option key={item.name} disabled={!item.available}>
+                    {item.name}
+                  </option>
+                ))}
             {/* Add more languages as needed */}
           </select>
         </div>
@@ -181,4 +203,3 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
 };
 
 export default SummaryField;
-

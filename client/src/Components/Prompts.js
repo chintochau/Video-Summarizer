@@ -1,14 +1,29 @@
+export  const defaultModels = [
+  {
+    name: "Claude 3(preferred)",
+    id: "claude3h",
+    model: "claude-3-haiku-20240307",
+    available: true,
+  },
+  {
+    name: "GPT-3.5",
+    id: "gpt35",
+    model: "gpt-3.5-turbo-0125",
+    available: true,
+  },
+];
+
 export const summarizeOptions = [
   {
     id: 2,
     title: "Quick Summary",
     description: `General summary of the text`,
     prompt: `Your output should use the following template:
-  ### Summary
-  ### Analogy
-  ### Notes
+Summary
+Analogy
+Notes
   - [Emoji] Bulletpoint
-  ### Q&A
+Q&A
   - 
   
   You have been tasked with creating a concise summary of a YouTube video using its transcription to supply college student notes to use himself. You are to act like an expert in the subject the transcription is written about.
