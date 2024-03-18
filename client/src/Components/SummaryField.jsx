@@ -3,8 +3,9 @@ import GeneralButton, { OutlinedButton } from "./GeneralButton";
 import { askChatGPT, calculateCredit } from "./Utils";
 import OptionField from "./OptionField";
 import Markdown from 'markdown-to-jsx'
+import { useModels } from "../contexts/ModelContext";
 
-const SummaryField = ({ parentTranscriptText, parentSrtText,videoRef }) => {
+const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
   const [response, setResponse] = useState("");
   const [language, setLanguage] = useState("auto");
   const [transcriptAvailable, setTranscriptAvailable] = useState(false);
@@ -75,18 +76,18 @@ const SummaryField = ({ parentTranscriptText, parentSrtText,videoRef }) => {
     let secondsTotal;
 
     if (time.split(":").length === 2) {
-        secondsTotal = (parseInt(hours) * 60) + parseFloat(minutes);
+      secondsTotal = (parseInt(hours) * 60) + parseFloat(minutes);
     } else if (time.split(":").length === 3) {
-        secondsTotal = (parseInt(hours) * 3600) + (parseInt(minutes) * 60) + parseFloat(seconds);
+      secondsTotal = (parseInt(hours) * 3600) + (parseInt(minutes) * 60) + parseFloat(seconds);
     }
 
     if (videoRef && videoRef.current) {
-        videoRef.current.currentTime = secondsTotal;
-        if (videoRef.current.internalPlayer) {
-            videoRef.current.internalPlayer.seekTo(secondsTotal);
-        }
+      videoRef.current.currentTime = secondsTotal;
+      if (videoRef.current.internalPlayer) {
+        videoRef.current.internalPlayer.seekTo(secondsTotal);
+      }
     }
-};
+  };
   const linkOverride = {
     a: {
       component: ({ children, href, ...props }) => {
@@ -107,9 +108,11 @@ const SummaryField = ({ parentTranscriptText, parentSrtText,videoRef }) => {
   const transformArticleWithClickableTimestamps = (articleContent) => {
     // Updated regex to match both hh:mm:ss and mm:ss formats
     const timestampRegex = /((\d{2}:)?\d{2}:\d{2})/g;
-    
+
     return articleContent.replace(timestampRegex, (match) => `[${match}](#timestamp-${match})`);
   };
+
+  const { usableModels } = useModels()
 
   return (
     <div className="relative h-full flex flex-col">
@@ -134,7 +137,17 @@ const SummaryField = ({ parentTranscriptText, parentSrtText,videoRef }) => {
             <option value="zh-TW">繁體中文</option>
             {/* Add more languages as needed */}
           </select>
+          <select
+            id="language-select"
+            value={language}
+            onChange={handleLanguageChange}
+            className="bg-gray-50 border border-indigo-300 text-indigo-600 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block hover:text-indigo-400 "
+          >
+            {usableModels.map((item) => <option key={item.name} disabled={!item.available}>{item.name}</option>)}
+            {/* Add more languages as needed */}
+          </select>
         </div>
+
         <button
           onClick={() => {
             setResponse("");
