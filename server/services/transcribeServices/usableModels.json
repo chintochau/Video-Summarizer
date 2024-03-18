@@ -6,12 +6,12 @@
             "available": true
         },
         {
-            "name": "GPT-4",
+            "name": "GPT-4 (coming soon)",
             "model": "gpt-4-turbo-preview",
             "available": false
         },
         {
-            "name": "Claude 3",
+            "name": "Claude 3 (coming soon)",
             "model": "claude-3-haiku-20240307",
             "available": false
         }
