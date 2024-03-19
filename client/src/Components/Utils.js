@@ -26,15 +26,21 @@ data = {
 }
 */
 
-export const calculateCredit = ({ transcript, model }) => {
+/**
+ * Function to calculate credit based on transcript, model, and output count.
+ * @param {object} options - Object containing transcript, model, and outputCount
+ * @returns {number} - Calculated credit based on the specified model
+ */
+export const calculateCredit = ({ transcript, model, outputCount }) => {
   const encoding = get_encoding("cl100k_base");
   const tokens = encoding.encode(transcript);
 
-  console.log(model);
+  const output = outputCount || 1
+
   switch (model) {
     case "claude3h":
       return (
-        (((tokens.length * 0.00025 + 800 * 0.00125) * 1.5) / 1000) *
+        (((tokens.length * 0.00025 + output*800 * 0.00125) * 1.5) / 1000) *
         100
       ).toFixed(1);
     case "gpt4":
@@ -314,3 +320,33 @@ export const formatFileSize = (sizeInBytes) => {
 
   return `${fileSize.toFixed(2)} ${units[index]}`;
 };
+
+
+
+/**
+ * Converts a duration in seconds into a formatted time string in hours, minutes, and seconds.
+ *
+ * @param {number} seconds - The duration in seconds to convert to time format.
+ * @returns {string} - The formatted time string displaying hours, minutes, and seconds.
+ */
+export const formatDuration = (seconds) => {
+  let hours = Math.floor(seconds / 3600);
+  let minutes = Math.floor((seconds % 3600) / 60);
+  let remainingSeconds = seconds % 60;
+
+  let result = '';
+  
+  if (hours > 0) {
+      result += hours + ' hour' + (hours > 1 ? 's' : '') + ' ';
+  }
+  
+  if (minutes > 0) {
+      result += minutes + ' minute' + (minutes > 1 ? 's' : '') + ' ';
+  }
+  
+  if (remainingSeconds > 0) {
+      result += remainingSeconds + ' second' + (remainingSeconds > 1 ? 's' : '') + ' ';
+  }
+
+  return result.trim();
+}

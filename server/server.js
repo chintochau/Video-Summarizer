@@ -2,7 +2,6 @@ import express from "express";
 import bodyParser from "body-parser";
 import multer from "multer";
 import "dotenv/config";
-import OpenAI from "openai";
 import fs from "fs";
 import { setTimeout } from "timers";
 import path from "path";
@@ -18,10 +17,12 @@ import {
 } from "langchain/text_splitter";
 import { get_encoding } from "tiktoken";
 import { kmeans } from "ml-kmeans";
-import Anthropic from "@anthropic-ai/sdk";
 import tmp from "tmp";
 import { pipeline } from "stream";
 import util from "util";
+import {openai, anthropic, assembly} from './config/summaryConfig.js'
+import summaryRoutes from "./routes/summaryRoutes.js"
+
 
 const app = express();
 
@@ -29,17 +30,14 @@ const pipelineAsync = util.promisify(pipeline);
 
 const upload = multer({ dest: "uploads/" });
 const port = process.env.PORT || 3000;
-const openai = new OpenAI({
-  apiKey: process.env["OPENAI_API_KEY"],
-});
-const assembly = new AssemblyAI({
-  apiKey: process.env["ASSEMBLY_CPI_KEY"],
-});
-const anthropic = new Anthropic();
 
 // 中間件
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit:'10mb'}));
 app.use(cors());
+
+
+//Routes
+app.use('/api/',cors(),summaryRoutes)
 
 //PRIVATE calculate tokens
 const tikCalculateToken = (transcript, model) => {
@@ -67,19 +65,6 @@ async function transcribeWithWhisperApi(data) {
   const { filePath, language, response_format } = data;
   let transcription;
 
-  // 模擬一段延遲時間
-  await new Promise((resolve) => setTimeout(resolve, 2000)); // 假設延遲時間為2秒
-
-  // console.log("Whisper is not active, using dummy value");
-  // switch (response_format) {
-  //   case "jason":
-  //     transcription = jsonDemo;
-  //     break;
-  //   default:
-  //     transcription = srtDdemo;
-  // }
-
-  console.log("default set to srt");
   transcription = await openai.audio.transcriptions.create({
     file: fs.createReadStream(filePath),
     model: "whisper-1", // this is optional but helps the model
@@ -96,9 +81,6 @@ async function transcribeWithAssemblyAI(data) {
     audio: filePath,
     language_code: language,
   });
-
-  console.log("response in full: ");
-  console.log(transcript.text);
 
   const srt = await assembly.transcripts.subtitles(transcript.id, "srt");
 
@@ -354,6 +336,7 @@ app.post(
   }
 );
 
+
 //Transcribe Youtube with Free API
 app.post("/api/getYoutubeTranscript", cors(), async (req, res) => {
   const { youtubeLink } = req.body;
@@ -484,6 +467,7 @@ function secondsToMMSS(seconds) {
 }
 
 function groupSubtitlesByInterval(subtitles, intervalInSeconds) {
+  // subtitles is in SRT format
   // Groups subtitles text by every 'interval' seconds.
   const blocks = subtitles.trim().split("\n\n");
   const interval = intervalInSeconds * 1000; // Convert interval to milliseconds for all calculations
@@ -560,7 +544,6 @@ app.post("/api/stream-response-series", cors(), async (req, res) => {
   });
 
   const chunks = await splitter.createDocuments([formattedScript]);
-  console.log(chunks);
   // res.end()
   // return
   res.setHeader("Content-Type", "text/event-stream");

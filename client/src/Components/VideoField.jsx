@@ -1,8 +1,16 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react";
 
 import YouTube from "react-youtube";
+import { VideoContext } from "../contexts/VideoContext";
 
 const VideoField = ({ fileName, youtubeId, videoRef }) => {
+  const { setVideoDuration } = useContext(VideoContext);
+
+  useEffect(() => {
+    console.log("triggered");
+  }, []);
+
+
   const opts = {
     height: "auto",
     width: "auto",
@@ -18,18 +26,12 @@ const VideoField = ({ fileName, youtubeId, videoRef }) => {
         ref={videoRef}
         videoId={youtubeId}
         opts={opts}
+        onReady={(e) => {
+          setVideoDuration(e.target.getDuration());
+        }}
       />
     </div>
   );
 };
 
 export default VideoField;
-
-/* <iframe
-          ref={videoRef}
-          title="YouTube Video"
-          className="w-full aspect-video"
-          src={`https://www.youtube.com/embed/${youtubeId}`}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        ></iframe> */

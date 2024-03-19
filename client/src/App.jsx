@@ -25,28 +25,32 @@ function App() {
       .catch((error) => console.error("Error fetching announcement:", error));
   }, []);
 
-  const { currentUser } = useAuth()
+  const { currentUser } = useAuth();
 
   return (
     <>
       <div className="relative">
-        {announcement.visible && <div className=" bg-indigo-50 flex text-center">
-
-          <div className="mx-auto max-w-[1280px] w-[1280] text-gray-600" >
-            {announcement.message}</div>
-        </div>
-        }
+        {announcement.visible && (
+          <div className=" bg-indigo-50 flex text-center">
+            <div className="mx-auto max-w-[1280px] w-[1280] text-gray-600">
+              {announcement.message}
+            </div>
+          </div>
+        )}
         <Header />
         <div className="w-full top-[73px] min-h-[calc(100vh-73px)]  ">
-            <ModelProvider>
-          <Routes>
+          <ModelProvider>
+            <Routes>
               <Route path="/Summarizer" element={<SummarizePage />} />
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/profile" element={currentUser ? <UserProfilePage /> : <LoginPage />} />
-          </Routes>
-            </ModelProvider>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route
+                path="/profile"
+                element={currentUser ? <UserProfilePage /> : <LoginPage />}
+              />
+            </Routes>
+          </ModelProvider>
         </div>
         <Footer />
       </div>

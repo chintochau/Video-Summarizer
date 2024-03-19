@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useEffect } from "react";
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
-import DownloadIcon from '@mui/icons-material/Download';
+import DownloadIcon from "@mui/icons-material/Download";
 import {
   baseStyle,
   focusedStyle,
@@ -12,6 +12,7 @@ import VideoField from "./VideoField";
 import { formatFileSize, getYoutubeAudio } from "./Utils";
 import TranscriptField from "./TranscriptField";
 import SummaryField from "./SummaryField";
+import { useVideoContext } from "../contexts/VideoContext";
 
 export default function Summarizer() {
   const [file, setFile] = useState(null);
@@ -34,6 +35,7 @@ export default function Summarizer() {
 
   const videoRef = useRef(null);
   const uploadRef = useRef(null);
+  const { setVideoDuration } = useVideoContext();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -103,8 +105,14 @@ export default function Summarizer() {
     [isFocused, isDragAccept, isDragReject]
   );
 
+  const handleLoadedMetadata = () => {
+    // Access the video duration here
+
+    setVideoDuration(Math.ceil(uploadRef.current.duration));
+  };
+
   return (
-    <div >
+    <div>
       <div className="relative isolate px-6 lg:px-8 ">
         <div
           className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
@@ -140,7 +148,8 @@ export default function Summarizer() {
                     >
                       Generate Summary
                     </button>
-                    <button className=" text-indigo-600 hover:text-indigo-400 outline outline-2 rounded-md ml-1 px-3.5 py-2.5"
+                    <button
+                      className=" text-indigo-600 hover:text-indigo-400 outline outline-2 rounded-md ml-1 px-3.5 py-2.5"
                       onClick={() => getYoutubeAudio({ youtubeLink })}
                     >
                       <DownloadIcon style={{ width: "20px", height: "20px" }} />
@@ -200,11 +209,10 @@ export default function Summarizer() {
                         setParentSrtText={setParentSrtText}
                       />
                     </div>
-
                   </div>
                   <div className="w-full md:w-1/2 lg:w-2/5 h-1/2  md:h-full p-1">
                     <SummaryField
-                        videoRef={videoRef}
+                      videoRef={videoRef}
                       parentTranscriptText={parentTranscriptText}
                       parentSrtText={parentSrtText}
                     />
@@ -237,6 +245,7 @@ export default function Summarizer() {
                 ref={uploadRef}
                 controls
                 className="mx-auto my-2 w-full max-w-7xl "
+                onLoadedMetadata={handleLoadedMetadata}
               >
                 抱歉，您的瀏覽器不支援內嵌視頻。
               </video>
@@ -248,6 +257,7 @@ export default function Summarizer() {
                 ref={uploadRef}
                 className="mx-auto my-2 w-full max-w-7xl"
                 controls
+                onLoadedMetadata={handleLoadedMetadata}
               >
                 您的瀏覽器不支援 audio 元素。
               </audio>
@@ -266,9 +276,11 @@ export default function Summarizer() {
                   />
                 </div>
                 <div className="w-full lg:w-1/2 p-1">
-                  <SummaryField 
+                  <SummaryField
                     videoRef={uploadRef}
-                    parentTranscriptText={parentTranscriptText} />
+                    parentTranscriptText={parentTranscriptText}
+                    parentSrtText={parentSrtText}
+                  />
                 </div>
               </div>
             )}

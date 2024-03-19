@@ -11,6 +11,7 @@ import GeneralButton, { OutlinedButton } from "./GeneralButton";
 import DownloadIcon from "@mui/icons-material/Download";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 // Box
 const TranscriptBox = ({
@@ -53,7 +54,7 @@ const TranscriptField = ({
   setParentTranscriptText,
   uploadMode,
   file,
-  setParentSrtText
+  setParentSrtText,
 }) => {
   const [editableTranscript, setEditableTranscript] = useState([]);
   const [viewMode, setViewMode] = useState("transcript"); // 新增狀態變量
@@ -68,9 +69,24 @@ const TranscriptField = ({
     if (uploadMode) {
       setTranscriptAvailable(false);
       setFetchingTranscript(true);
-      setParentTranscriptText("")
+      setParentTranscriptText("");
     }
   };
+
+  // load SRT transcript
+  function loadSrtTranscript(srt) {
+    setParentSrtText(srt);
+    const parsedTranscript = parseSRT(srt);
+    setEditableTranscript(parsedTranscript.map((entry) => ({ ...entry }))); // 深拷貝以獨立編輯
+    setTranscriptAvailable(true);
+    setFetchingTranscript(false);
+    setGeneratingScriptWithAi(false);
+    setParentTranscriptText(
+      parsedTranscript
+        .map(({ start, text }) => start.split(",")[0] + " " + text)
+        .join("\n")
+    );
+  }
 
   // Get transcript from AI
   const uploadAndTranscriptFile = async () => {
@@ -83,22 +99,8 @@ const TranscriptField = ({
 
     try {
       const result = await transcribeWithAI({ file, selectedModel, language });
-
-      console.log(result);
       // parse SRT file to a formatted transcript
-      const parsedTranscript = parseSRT(result);
-      setParentSrtText(result)
-      console.log(result);
-
-      setEditableTranscript(parsedTranscript.map((entry) => ({ ...entry }))); // 深拷貝以獨立編輯
-      setTranscriptAvailable(true);
-      setFetchingTranscript(false);
-      setGeneratingScriptWithAi(false);
-      setParentTranscriptText(
-        parsedTranscript
-          .map(({ start, text }) => start.split(",")[0] + " " + text)
-          .join("\n")
-      );
+      loadSrtTranscript(result);
     } catch (error) {
       console.error(error);
     }
@@ -108,18 +110,7 @@ const TranscriptField = ({
   const loadYoutubeTranscript = async () => {
     try {
       const result = await getYoutubeTranscript({ youtubeLink: youtubeId });
-
-      const parsedTranscript = parseSRT(result.srt);
-      setParentSrtText(result.srt)
-
-      setEditableTranscript(parsedTranscript.map((entry) => ({ ...entry }))); // 深拷貝以獨立編輯
-      setTranscriptAvailable(true);
-      setFetchingTranscript(false);
-      setParentTranscriptText(
-        parsedTranscript
-          .map(({ start, text }) => start.split(",")[0] + " " + text)
-          .join("\n")
-      );
+      loadSrtTranscript(result.srt);
     } catch (error) {
       setFetchingTranscript(false);
       setTranscriptAvailable(false);
@@ -129,38 +120,35 @@ const TranscriptField = ({
 
   // generate transcript with AI
   const generateTranscriptWithAI = async () => {
-    setFetchingTranscript(true)
+    setFetchingTranscript(true);
     try {
-      const srtTranscript = await transcribeYoutubeVideo({ youtubeId })
-
-      console.log(srtTranscript);
-
+      const srtTranscript = await transcribeYoutubeVideo({ youtubeId });
       if (!srtTranscript) {
         setFetchingTranscript(false);
         setTranscriptAvailable(false);
         setParentTranscriptText("");
-
       }
 
-      const parsedTranscript = parseSRT(srtTranscript);
-      setParentSrtText(srtTranscript)
-
-      setEditableTranscript(parsedTranscript.map((entry) => ({ ...entry }))); // 深拷貝以獨立編輯
-      setTranscriptAvailable(true);
-      setFetchingTranscript(false);
-      setParentTranscriptText(
-        parsedTranscript
-          .map(({ start, text }) => start.split(",")[0] + " " + text)
-          .join("\n")
-      );
-
+      loadSrtTranscript(srtTranscript);
     } catch (error) {
       setFetchingTranscript(false);
       setTranscriptAvailable(false);
       setParentTranscriptText("");
-
     }
-  }
+  };
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  // get transcript with upload
+  const getTranscriptWithUpload = (file) => {
+    setSelectedFile(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const srt = e.target.result;
+      loadSrtTranscript(srt);
+    };
+
+    reader.readAsText(file);
+  };
 
   // 切換到轉錄模式
   const handleTranscriptMode = () => {
@@ -211,8 +199,6 @@ const TranscriptField = ({
       }
     };
   }, [youtubeId]);
-
-
 
   return (
     <div className="flex-col h-full">
@@ -276,10 +262,27 @@ const TranscriptField = ({
                         {/* Add more languages as needed */}
                       </select>
                     </div>
-                    <GeneralButton className="my-2" onClick={uploadAndTranscriptFile}>
+                    <GeneralButton
+                      className="my-2"
+                      onClick={uploadAndTranscriptFile}
+                    >
                       Generate
                     </GeneralButton>
-                    <div className=" w-72">a hour long video takes up to 5 mins to transcribe</div>
+                    <div className=" w-72">
+                      a hour long video takes up to 5 mins to transcribe
+                    </div>
+                    <div>OR</div>
+                    <div>
+                      <input
+                        type="file"
+                        onChange={(e) =>
+                          getTranscriptWithUpload(e.target.files[0])
+                        }
+                      />
+                      {selectedFile && (
+                        <p>Selected File: {selectedFile.name}</p>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
@@ -298,19 +301,21 @@ const TranscriptField = ({
                   <div className=" flex items-end">
                     <button
                       onClick={handleTranscriptMode}
-                      className={` px-2 py-1 rounded-t-md hover:text-indigo-400 ${viewMode === "transcript"
-                        ? " text-indigo-600 bg-white "
-                        : " text-gray-600"
-                        }`}
+                      className={` px-2 py-1 rounded-t-md hover:text-indigo-400 ${
+                        viewMode === "transcript"
+                          ? " text-indigo-600 bg-white "
+                          : " text-gray-600"
+                      }`}
                     >
                       Transcript
                     </button>
                     <button
                       onClick={handleTextMode}
-                      className={` px-2 py-1 rounded-t-md hover:text-indigo-400 ${viewMode !== "transcript"
-                        ? " text-indigo-600 bg-white "
-                        : " text-gray-600"
-                        }`}
+                      className={` px-2 py-1 rounded-t-md hover:text-indigo-400 ${
+                        viewMode !== "transcript"
+                          ? " text-indigo-600 bg-white "
+                          : " text-gray-600"
+                      }`}
                     >
                       Text
                     </button>
@@ -379,8 +384,10 @@ const TranscriptField = ({
                 <div>
                   Transcript Not Available
                   <div className=" mx-8">
-                    <button className="px-3.5 py-2.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-400 "
-                      onClick={generateTranscriptWithAI}>
+                    <button
+                      className="px-3.5 py-2.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-400 "
+                      onClick={generateTranscriptWithAI}
+                    >
                       Generate Transcript
                     </button>
                   </div>

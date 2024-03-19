@@ -5,14 +5,16 @@ import OptionField from "./OptionField";
 import Markdown from "markdown-to-jsx";
 import { useModels } from "../contexts/ModelContext";
 import { defaultModels } from "./Prompts";
+import SummaryService from "../services/SummaryService";
+import { languageList } from "../constants";
 
 const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
   const [response, setResponse] = useState("");
-  const [language, setLanguage] = useState("auto");
+  const [language, setLanguage] = useState("English");
   const [transcriptAvailable, setTranscriptAvailable] = useState(false);
-  const [interval, setInterval] = useState(300);
   const [creditCount, setCreditCount] = useState(0);
   const [selectedModel, setselectedModel] = useState("claude3h");
+  const [startSummary, setStartSummary] = useState(false);
 
   useEffect(() => {
     if (parentTranscriptText) {
@@ -25,7 +27,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
     }
 
     return () => {};
-  }, [parentTranscriptText,selectedModel]);
+  }, [parentTranscriptText, selectedModel]);
 
   const handleLanguageChange = (e) => {
     setLanguage(e.target.value);
@@ -34,17 +36,18 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
   const inputTranscript = (id) => {
     switch (id) {
       case 1:
-        return parentSrtText;
       case 6:
+      case 7:
         return parentSrtText;
       default:
         return parentTranscriptText;
     }
   };
 
-  const startSummary = (option) => {
-    setResponse("Loading Summary...\n\n");
-    askChatGPT(
+  const performSummarize = (option) => {
+    setStartSummary(true);
+    const { interval } = option;
+    SummaryService.summarizeWithAI(
       {
         option,
         transcript: inputTranscript(option.id),
@@ -65,6 +68,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
           return; // Stop further processing
         }
         // Append the received data to the response
+        setStartSummary(false);
         setResponse((prev) => prev + data);
       }
     );
@@ -134,6 +138,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
     );
   };
 
+  // get model list from github
   const { usableModels } = useModels();
 
   return (
@@ -154,10 +159,11 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
             onChange={handleLanguageChange}
             className="bg-gray-50 border border-indigo-300 text-indigo-600 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block hover:text-indigo-400 "
           >
-            <option value="auto">Auto</option>
-            <option value="en">English</option>
-            <option value="zh-TW">繁體中文</option>
-            {/* Add more languages as needed */}
+            {languageList.map((item) => (
+              <option key={item.code} value={item.name}>
+                {item.name}
+              </option>
+            ))}
           </select>
           <select
             id="model-select"
@@ -187,29 +193,38 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
         <button
           onClick={() => {
             setResponse("");
+            setStartSummary(false);
           }}
           className="mr-4 outline-1 outline outline-indigo-600 text-indigo-600 rounded-md px-1.5 hover:text-indigo-400"
         >
           Reset
         </button>
       </div>
-      {response === "" ? (
+
+      {response === "" && !startSummary ? (
         <div className="overflow-y-auto ">
           <OptionField
-            handleClick={startSummary}
+            handleClick={performSummarize}
             creditCount={creditCount}
             setInterval={setInterval}
-            interval={interval}
+            videoRef={videoRef}
           />
         </div>
       ) : (
         <div className="overflow-y-auto ">
-          <Markdown
-            className="prose h-full p-2 text-start leading-5"
-            options={{ overrides: linkOverride }}
-          >
-            {transformArticleWithClickableTimestamps(response)}
-          </Markdown>
+          {startSummary && response === "" ? (
+            <div className="text-lg my-10">
+              <div className="mx-auto animate-spin rounded-full h-10 w-10 border-r-2 border-b-2 border-indigo-600" />{" "}
+              Loading Summary...
+            </div>
+          ) : (
+            <Markdown
+              className="prose h-full p-2 text-start leading-5"
+              options={{ overrides: linkOverride }}
+            >
+              {transformArticleWithClickableTimestamps(response)}
+            </Markdown>
+          )}
         </div>
       )}
     </div>

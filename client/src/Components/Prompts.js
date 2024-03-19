@@ -1,4 +1,4 @@
-export  const defaultModels = [
+export const defaultModels = [
   {
     name: "Claude 3(preferred)",
     id: "claude3h",
@@ -106,5 +106,11 @@ export const summarizeOptions = [
     [rewritten paragraph]
     ******
     `,
+  },
+  {
+    id: 7,
+    title: "Meeting minutes",
+    description: "testing",
+    prompt: ``,
   },
 ];
