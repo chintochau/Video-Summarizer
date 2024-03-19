@@ -165,7 +165,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
               </option>
             ))}
           </select>
-          <select
+          {/* <select
             id="model-select"
             value={selectedModel}
             onChange={handleModelChange}
@@ -186,8 +186,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
                     {item.name}
                   </option>
                 ))}
-            {/* Add more languages as needed */}
-          </select>
+          </select> */}
         </div>
 
         <button
