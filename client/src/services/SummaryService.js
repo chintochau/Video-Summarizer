@@ -9,7 +9,7 @@ const summaryApiCall = (id) => {
     case 7:
       return "/api/get-summary-meetings";
     default:
-      return "/api/stream-response";
+      return "/api/get-summary";
   }
 };
 

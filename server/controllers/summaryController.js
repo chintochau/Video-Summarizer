@@ -7,7 +7,6 @@ import {
 } from "../services/summaryServices.js";
 
 export const handleSummaryRequest = async (req, res) => {
-  console.log(req.body);
   try {
     const summary = await generateSummary(req.body, res);
     res.status(200).end();

@@ -1,38 +1,40 @@
 import { openai, anthropic } from "../config/summaryConfig.js";
 
 export const generateSummary = async (
-  { prompt, transcript, language, model },
+  { option, transcript, language, selectedModel },
   res
 ) => {
-  const response = openai.beta.chat.completions.stream({
-    model: "gpt-3.5-turbo-0125",
+  const { prompt } = option;
+
+  const stream = await anthropic.messages.create({
+    max_tokens: 1024,
     messages: [
       {
-        role: "system",
-        content:
-          "read user input, answer in " +
-          language +
-          ". and give your result in a markdown",
-      },
-      {
         role: "user",
-        content: prompt + transcript,
+        content:
+          "give your response in a makrdown, dont use a code interpreter and use the language" +
+          language +
+          "\n" +
+          prompt +
+          transcript,
       },
     ],
+    model: "claude-3-haiku-20240307",
     stream: true,
-    temperature: 0.4,
   });
 
-  response.on("content", (delta, snapshot) => {
-    process.stdout.write(delta); // = console.log without a linebreak at the end
-    res.write(delta);
-  });
-
-  try {
-    await response.finalChatCompletion();
-  } catch (error) {
-    console.log(error.message);
-    res.write("exceed length");
+  for await (const messageStreamEvent of stream) {
+    if (
+      messageStreamEvent &&
+      messageStreamEvent.delta &&
+      messageStreamEvent.delta.text
+    ) {
+      res.write(messageStreamEvent.delta.text);
+    } else {
+      console.log(
+        "The 'text' property is undefined or does not exist in the delta object."
+      );
+    }
   }
 
   return "done";

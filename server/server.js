@@ -40,7 +40,7 @@ app.use(cors());
 
 
 //Routes
-app.use('/api',cors(),summaryRoutes)
+app.use('/api',cors(),summaryRoutes) // to get summary
 app.use('/users',cors(),userRoutes)
 
 //PRIVATE calculate tokens
