@@ -22,6 +22,8 @@ import { pipeline } from "stream";
 import util from "util";
 import {openai, anthropic, assembly} from './config/summaryConfig.js'
 import summaryRoutes from "./routes/summaryRoutes.js"
+import userRoutes from "./routes/userRoutes.js"
+import { connectDB } from "./config/db.js";
 
 
 const app = express();
@@ -30,6 +32,7 @@ const pipelineAsync = util.promisify(pipeline);
 
 const upload = multer({ dest: "uploads/" });
 const port = process.env.PORT || 3000;
+connectDB()
 
 // 中間件
 app.use(bodyParser.json({limit:'10mb'}));
@@ -37,7 +40,8 @@ app.use(cors());
 
 
 //Routes
-app.use('/api/',cors(),summaryRoutes)
+app.use('/api',cors(),summaryRoutes)
+app.use('/users',cors(),userRoutes)
 
 //PRIVATE calculate tokens
 const tikCalculateToken = (transcript, model) => {

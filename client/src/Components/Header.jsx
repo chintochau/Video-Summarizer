@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import GeneralButton, { OutlinedButton } from "./GeneralButton";
 import logo from "../assets/logo.png";
 import { useAuth } from "../contexts/AuthContext";
+import BoltIcon from "@mui/icons-material/Bolt";
 
 const Header = () => {
-
-  const { currentUser } = useAuth()
+  const { currentUser, credits } = useAuth();
 
   return (
     <div className=" bg-white w-full flex justify-center sticky top-0 z-50">
@@ -21,16 +21,25 @@ const Header = () => {
         </div>
 
         <div className="flex items-center">
-
           {/*user logged in or not*/}
-          {currentUser ?
-            <Link to="/profile" className="mr-1">
-              {currentUser.email}
-            </Link> :
-            <Link to={"/login"} className="mr-3 text-blue-600 hover:text-blue-400">
+          {currentUser ? (
+            <div className="flex mr-2">
+              <Link to="/profile" className="mr-1">
+                {currentUser.email}
+              </Link>
+              <div className=" text-indigo-600 flex rounded-lg outline-1 outline pr-2 hover:text-indigo-400 cursor-pointer">
+                <BoltIcon />
+                <div className=""> {credits}</div>
+              </div>
+            </div>
+          ) : (
+            <Link
+              to={"/login"}
+              className="mr-3 text-blue-600 hover:text-blue-400"
+            >
               Login
-            </Link>}
-
+            </Link>
+          )}
 
           <Link to="/summarizer">
             <GeneralButton>Summarize</GeneralButton>
