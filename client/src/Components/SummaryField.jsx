@@ -16,7 +16,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
   const [selectedModel, setselectedModel] = useState("claude3h");
   const [startSummary, setStartSummary] = useState(false);
 
-  const { userId } = useAuth()
+  const { userId,setCredits } = useAuth()
   const { video } = useVideoContext()
 
   useEffect(() => {
@@ -68,6 +68,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
         // Check if the data signals completion
         if (data && data.completed) {
           console.log("Summary process completed.");
+          setCredits((prev) => (prev - creditCount).toFixed(1))
           // Optionally, add any actions to be taken upon completion
           return; // Stop further processing
         }

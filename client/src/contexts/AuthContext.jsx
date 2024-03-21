@@ -31,7 +31,8 @@ export const AuthProvider = ({ children }) => {
     loading,
     userData,
     credits,
-    userId: userData._id
+    userId: userData._id,
+    setCredits
   };
 
   return (
