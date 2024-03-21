@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import GeneralButton, { OutlinedButton } from "./GeneralButton";
 import logo from "../assets/logo.png";
 import { useAuth } from "../contexts/AuthContext";
@@ -7,6 +7,7 @@ import BoltIcon from "@mui/icons-material/Bolt";
 
 const Header = () => {
   const { currentUser, credits } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div className=" bg-white w-full flex justify-center sticky top-0 z-50">
@@ -27,10 +28,14 @@ const Header = () => {
               <Link to="/profile" className="mr-1">
                 {currentUser.email}
               </Link>
-              <div className=" text-indigo-600 flex rounded-lg outline-1 outline pr-2 hover:text-indigo-400 cursor-pointer">
+              <Link
+                to="/pricing"
+                className=" text-indigo-600 flex rounded-lg outline-1 outline
+                pr-2 hover:text-indigo-400 cursor-pointer"
+              >
                 <BoltIcon />
                 <div className=""> {credits}</div>
-              </div>
+              </Link>
             </div>
           ) : (
             <Link
