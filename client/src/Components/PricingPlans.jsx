@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const pricingPlans = [
   {
@@ -36,11 +37,20 @@ const pricingPlans = [
   },
 ];
 
-const PricingPlans = () => {
+const PricingPlans = ({ home, happy }) => {
+
+  const navigate = useNavigate()
+
+  const onClick = () => {
+    if (home) {
+      navigate("/pricing")
+    }
+  }
+
   return (
     <div className="py-16 bg-gray-50 px-4">
       <div className="text-center mb-10">
-        <h2 className="text-3xl font-bold">Flexible Plans for Everyone</h2>
+        <h2 className="text-3xl font-bold">{home ? "Flexible Plans for Everyone":"Choost your plan"}</h2>
         <p className="mt-4">Choose the plan that best fits your needs.</p>
       </div>
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -53,13 +63,13 @@ const PricingPlans = () => {
                 <li key={index} className="mb-2">{feature}</li>
               ))}
             </ul>
-            <button className={`w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${plan.isRecommended ? 'bg-blue-600 hover:bg-blue-800' : ''} transition duration-300`}>
+            <button onClick={onClick} className={`w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${plan.isRecommended ? 'bg-blue-600 hover:bg-blue-800' : ''} transition duration-300`}>
               Choose Plan
             </button>
           </div>
         ))}
       </div>
-    </div>
+    </div >
   );
 };
 

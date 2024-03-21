@@ -1,11 +1,19 @@
 import React, { useState } from 'react'
 import { Link } from "react-router-dom";
 import AuthService from '../services/AuthService';
+import {useNavigate} from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext';
 
 const LoginPage = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate()
+    const {currentUser} = useAuth()
+
+    if(currentUser) {
+        navigate('/profile');
+    }
 
     const handleSignin = async () => {
 
@@ -14,7 +22,6 @@ const LoginPage = () => {
 
         try {
             await AuthService.login(email, password);
-            alert('User registered successfully');
             // Redirect to login or dashboard page
         } catch (error) {
             alert(error.message);

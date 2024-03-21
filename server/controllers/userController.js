@@ -4,7 +4,6 @@ import paymentController from "./paymentController.js";
 
 
 const getUserData = async (req, res) => {
-  console.log(req.params.email);
   const email = req.params.email;
   try {
     let user = await userService.getUserDataByEmail(email);

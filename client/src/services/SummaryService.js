@@ -38,8 +38,7 @@ const summaryApiCall = (id) => {
 
 export default class SummaryService {
   static summarizeWithAI = async (data, completionHandler) => {
-    const { option, language, transcript, interval, selectedModel } = data;
-    const { prompt } = option;
+    const { option, language, transcript, interval, selectedModel, userId, video } = data;
 
     const apiRequest = summaryApiCall(option.id);
 
@@ -48,11 +47,12 @@ export default class SummaryService {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          option: option,
-          transcript: transcript,
-          language: language,
-          interval: interval,
-          selectedModel: selectedModel,
+          option,
+          transcript,
+          language,
+          interval,
+          selectedModel,
+          userId, video
         }),
       });
 
@@ -72,4 +72,25 @@ export default class SummaryService {
       completionHandler(error, null);
     }
   };
+
+  
+  static getAllSummariesForUser = async (userId) => {
+    try {
+      const response = await fetch(apiUrl + `/api/user/${userId}/summaries`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch summaries");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching summaries:", error);
+      return null;
+    }
+  };
+
 }

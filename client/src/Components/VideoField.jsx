@@ -4,12 +4,7 @@ import YouTube from "react-youtube";
 import { VideoContext } from "../contexts/VideoContext";
 
 const VideoField = ({ fileName, youtubeId, videoRef }) => {
-  const { setVideoDuration } = useContext(VideoContext);
-
-  useEffect(() => {
-    console.log("triggered");
-  }, []);
-
+  const { setVideoDuration, setSourceTitle, setSourceType, setSourceId } = useContext(VideoContext);
 
   const opts = {
     height: "auto",
@@ -27,6 +22,9 @@ const VideoField = ({ fileName, youtubeId, videoRef }) => {
         videoId={youtubeId}
         opts={opts}
         onReady={(e) => {
+          setSourceType("youtube")
+          setSourceId(youtubeId)
+          setSourceTitle(e.target.videoTitle);
           setVideoDuration(e.target.getDuration());
         }}
       />

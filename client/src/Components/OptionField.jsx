@@ -115,7 +115,7 @@ const OptionCard = ({ option, handleClick, creditCount }) => {
               title,
               description,
               prompt: prompt,
-              interval,
+              interval, creditAmount: adjustableCreditCount
             })
           }
         >

@@ -1,12 +1,20 @@
 import mongoose from 'mongoose';
 
 const SummarySchema = new mongoose.Schema({
-    user: {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
     },
-    videoId: {
+    sourceType: {
+        type: String,
+        enum: ['youtube', 'user-upload', 'audio', 'srt-file'],
+        required: true,
+    },
+    sourceTitle: {
+        type: String,
+    },
+    sourceId: {
         type: String,
         required: true,
     },
@@ -25,4 +33,4 @@ const SummarySchema = new mongoose.Schema({
 
 const Summary = mongoose.model('Summary', SummarySchema);
 
-export default Summary;
+export default Summary

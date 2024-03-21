@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
       if (user) {
         const userData = await getUserDataByEmail({ email: user.email });
         setUserData(userData);
-        setCredits(userData.credits)
+        setCredits(parseFloat(userData.credits).toFixed(1))
       }
       setLoading(false);
     });
@@ -30,7 +30,8 @@ export const AuthProvider = ({ children }) => {
     currentUser,
     loading,
     userData,
-    credits
+    credits,
+    userId: userData._id
   };
 
   return (

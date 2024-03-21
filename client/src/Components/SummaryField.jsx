@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import GeneralButton, { OutlinedButton } from "./GeneralButton";
-import { askChatGPT, calculateCredit } from "./Utils";
+import { calculateCredit } from "./Utils";
 import OptionField from "./OptionField";
 import Markdown from "markdown-to-jsx";
 import { useModels } from "../contexts/ModelContext";
-import { defaultModels } from "./Prompts";
 import SummaryService from "../services/SummaryService";
 import { languageList } from "../constants";
+import { useAuth } from "../contexts/AuthContext"
+import { useVideoContext } from "../contexts/VideoContext";
 
 const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
   const [response, setResponse] = useState("");
@@ -15,6 +15,9 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
   const [creditCount, setCreditCount] = useState(0);
   const [selectedModel, setselectedModel] = useState("claude3h");
   const [startSummary, setStartSummary] = useState(false);
+
+  const { userId } = useAuth()
+  const { video } = useVideoContext()
 
   useEffect(() => {
     if (parentTranscriptText) {
@@ -26,7 +29,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
       );
     }
 
-    return () => {};
+    return () => { };
   }, [parentTranscriptText, selectedModel]);
 
   const handleLanguageChange = (e) => {
@@ -54,6 +57,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
         language,
         interval,
         selectedModel,
+        userId, video
       },
       (error, data) => {
         if (error) {
@@ -73,6 +77,8 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
       }
     );
   };
+
+
 
   useEffect(() => {
     if (parentTranscriptText && parentTranscriptText !== "") {

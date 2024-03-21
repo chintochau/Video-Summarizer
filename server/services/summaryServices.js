@@ -1,10 +1,10 @@
 import { openai, anthropic } from "../config/summaryConfig.js";
 
-export const generateSummary = async (
-  { option, transcript, language, selectedModel },
-  res
-) => {
+export const generateSummary = async (req, res) => {
+  const { option, transcript, language, selectedModel, userId } = req.body
   const { prompt } = option;
+
+  let fullResponseText = ""
 
   const stream = await anthropic.messages.create({
     max_tokens: 1024,
@@ -29,6 +29,7 @@ export const generateSummary = async (
       messageStreamEvent.delta &&
       messageStreamEvent.delta.text
     ) {
+      fullResponseText += messageStreamEvent.delta.text
       res.write(messageStreamEvent.delta.text);
     } else {
       console.log(
@@ -37,7 +38,7 @@ export const generateSummary = async (
     }
   }
 
-  return "done";
+  return fullResponseText;
 };
 
 export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
@@ -90,9 +91,8 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
 
   const summarizePromptsSeries = async () => {
     for (let i = 0; i < transcriptsArray.length; i++) {
-      const prompt = `you are given the ${i + 1} of ${
-        transcriptsArray.length
-      } part of a meeting conversation, summarize this part in detail, list out all the action items.
+      const prompt = `you are given the ${i + 1} of ${transcriptsArray.length
+        } part of a meeting conversation, summarize this part in detail, list out all the action items.
       list the reference timestamp at the end of your summary point, and end of each action items
       `;
       try {

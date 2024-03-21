@@ -18,7 +18,7 @@ const HomePage = () => {
       <FeaturesAndBenefits />
       <SocialProof />
       <PatternInterruption />
-      <PricingPlans />
+      <PricingPlans home/>
       <FAQs />
       <FinalCTA />
     </div>

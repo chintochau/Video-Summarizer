@@ -6,9 +6,10 @@ import { Route, Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
-import { AuthProvider, useAuth } from "./contexts/AuthContext.jsx";
+import {  useAuth } from "./contexts/AuthContext.jsx";
 import UserProfilePage from "./pages/UserProfilePage.jsx";
 import { ModelProvider } from "./contexts/ModelContext.jsx";
+import PricingPage from "./pages/PricingPage.jsx";
 
 function App() {
   const [announcement, setAnnouncement] = useState({
@@ -45,9 +46,10 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
               <Route
                 path="/profile"
-                element={currentUser ? <UserProfilePage /> : <LoginPage />}
+                element={<UserProfilePage />}
               />
             </Routes>
           </ModelProvider>
