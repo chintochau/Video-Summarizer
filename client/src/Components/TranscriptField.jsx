@@ -1,5 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
-import { saveAs } from "file-saver";
+import React, { useEffect, useState } from "react";
 import {
   getYoutubeTranscript,
   parseSRT,
@@ -7,11 +6,12 @@ import {
   transcribeWithAI,
   transcribeYoutubeVideo,
 } from "./Utils";
-import GeneralButton, { OutlinedButton } from "./GeneralButton";
+import GeneralButton from "./GeneralButton";
 import DownloadIcon from "@mui/icons-material/Download";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
+import { useVideoContext } from "../contexts/VideoContext";
+import { timeToSeconds } from "../utils/timeUtils";
 
 // Box
 const TranscriptBox = ({
@@ -19,22 +19,32 @@ const TranscriptBox = ({
   text,
   onClick,
   index,
-  handleTranscriptChange,
+  handleTranscriptChange, isCurrent
 }) => {
+
+
   const adjustHeight = (e) => {
     e.target.style.height = "auto"; // 先重置高度，允許它縮小
     e.target.style.height = e.target.scrollHeight + "px"; // 然後設置為正確的高度
   };
 
+
+
   return (
-    <div className="my-1 flex bg-white shadow-sm mx-2 rounded-sm">
+    <div className={`flex bg-white shadow-sm mx-2 rounded-sm ${isCurrent ? " bg-indigo-100" : ""} hover:bg-indigo-50 cursor-pointer`}
+      onClick={() => onClick(start)}
+    >
       <div
         className="cursor-pointer underline p-2 pt-0 text-nowrap text-blue-600 hover:text-blue-800"
         onClick={() => onClick(start)}
       >
         {start.split(",")[0] + " :"}
       </div>
-      <textarea
+      <div className={isCurrent ? " font-semibold" : ""}>
+        {text}
+      </div>
+
+      {/* <textarea
         className="w-full focus:outline-none p-1 pt-0 bg-none"
         style={{ overflowY: "hidden", resize: "none" }}
         value={text}
@@ -42,7 +52,7 @@ const TranscriptBox = ({
           handleTranscriptChange(index, e.target.value);
           adjustHeight(e);
         }}
-      ></textarea>
+      ></textarea> */}
     </div>
   );
 };
@@ -64,6 +74,8 @@ const TranscriptField = ({
   const [generatingScriptWithAi, setGeneratingScriptWithAi] = useState(false);
   const [selectedModel, setSelectedModel] = useState("assembly");
   const [language, setLanguage] = useState("en");
+
+  const { videoCredits, currentPlayTime } = useVideoContext()
 
   const resetTranscriptField = () => {
     if (uploadMode) {
@@ -200,6 +212,9 @@ const TranscriptField = ({
     };
   }, [youtubeId]);
 
+
+
+
   return (
     <div className="flex-col h-full">
       {videoValid || uploadMode ? (
@@ -301,21 +316,19 @@ const TranscriptField = ({
                   <div className=" flex items-end">
                     <button
                       onClick={handleTranscriptMode}
-                      className={` px-2 py-1 rounded-t-md hover:text-indigo-400 ${
-                        viewMode === "transcript"
-                          ? " text-indigo-600 bg-white "
-                          : " text-gray-600"
-                      }`}
+                      className={` px-2 py-1 rounded-t-md hover:text-indigo-400 ${viewMode === "transcript"
+                        ? " text-indigo-600 bg-white "
+                        : " text-gray-600"
+                        }`}
                     >
                       Transcript
                     </button>
                     <button
                       onClick={handleTextMode}
-                      className={` px-2 py-1 rounded-t-md hover:text-indigo-400 ${
-                        viewMode !== "transcript"
-                          ? " text-indigo-600 bg-white "
-                          : " text-gray-600"
-                      }`}
+                      className={` px-2 py-1 rounded-t-md hover:text-indigo-400 ${viewMode !== "transcript"
+                        ? " text-indigo-600 bg-white "
+                        : " text-gray-600"
+                        }`}
                     >
                       Text
                     </button>
@@ -356,16 +369,25 @@ const TranscriptField = ({
                 {/* Transcript Box */}
                 {viewMode === "transcript" ? (
                   <div className="overflow-auto">
-                    {editableTranscript.map(({ start, text }, index) => (
-                      <TranscriptBox
-                        key={index}
-                        start={start}
-                        text={text}
-                        index={index}
-                        onClick={handleTranscriptClick}
-                        handleTranscriptChange={handleTranscriptChange}
-                      />
-                    ))}
+                    {editableTranscript.map(({ start, end, text }, index) => {
+
+                      const { currentPlayTime } = useVideoContext()
+                      const startTime = timeToSeconds(start.split(",")[0])
+                      const endTime = timeToSeconds(end.split(",")[0])
+                      const isCurrent = currentPlayTime > startTime-0.1 && currentPlayTime < endTime+0.1
+
+                      return (
+                        <TranscriptBox
+                          key={index}
+                          start={start}
+                          text={text}
+                          index={index}
+                          isCurrent={isCurrent}
+                          onClick={handleTranscriptClick}
+                          handleTranscriptChange={handleTranscriptChange}
+                        />
+                      )
+                    })}
                   </div>
                 ) : (
                   <div className="h-full pl-2 overflow-hidden">
@@ -388,7 +410,7 @@ const TranscriptField = ({
                       className="px-3.5 py-2.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-400 "
                       onClick={generateTranscriptWithAI}
                     >
-                      Generate Transcript
+                      Generate Transcript (Credits: {videoCredits} )
                     </button>
                   </div>
                 </div>

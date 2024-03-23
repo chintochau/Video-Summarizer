@@ -1,13 +1,49 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import GeneralButton, { OutlinedButton } from "./GeneralButton";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import GeneralButton from "./GeneralButton";
 import logo from "../assets/logo.png";
 import { useAuth } from "../contexts/AuthContext";
 import BoltIcon from "@mui/icons-material/Bolt";
 
 const Header = () => {
   const { currentUser, credits } = useAuth();
-  const navigate = useNavigate();
+  const location = useLocation()
+  const pathname = location.pathname.substring(1)
+  // when user logged in
+  const LoggedInMenu = () => {
+
+    const menuItems = ["history", "profile"]
+
+    
+
+    return (
+      <div className="flex mr-2">
+        {menuItems.map((menuItem) => {
+          return (
+            <Link key={menuItem} to={`/${menuItem}`} className={`mr-1 capitalize hover:text-indigo-400 pr-4 ${pathname === menuItem ? " text-indigo-600 font-semibold" : ""}`}>
+              {menuItem}
+            </Link>)
+        })}
+        <Link to="/pricing" className="text-indigo-600 flex rounded-lg outline-1 outline hover:text-indigo-400 cursor-pointer pr-2 mr-2">
+          <BoltIcon />
+          <div className=""> {credits}</div>
+        </Link>
+      </div>)
+
+  }
+
+
+  const LoggedOutMenu = () => {
+    return (
+      <Link
+        to={"/login"}
+        className="mr-3 text-blue-600 hover:text-blue-400"
+      >
+        Login
+      </Link>
+    )
+  }
+
 
   return (
     <div className=" bg-white w-full flex justify-center sticky top-0 z-50">
@@ -23,35 +59,14 @@ const Header = () => {
 
         <div className="flex items-center">
           {/*user logged in or not*/}
-          {currentUser ? (
-            <div className="flex mr-2">
-              <Link to="/profile" className="mr-1">
-                {currentUser.email}
-              </Link>
-              <Link
-                to="/pricing"
-                className=" text-indigo-600 flex rounded-lg outline-1 outline
-                pr-2 hover:text-indigo-400 cursor-pointer"
-              >
-                <BoltIcon />
-                <div className=""> {credits}</div>
-              </Link>
-            </div>
-          ) : (
-            <Link
-              to={"/login"}
-              className="mr-3 text-blue-600 hover:text-blue-400"
-            >
-              Login
-            </Link>
-          )}
+          {currentUser ? (<LoggedInMenu />) : (<LoggedOutMenu />)}
 
           <Link to="/summarizer">
             <GeneralButton>Summarize</GeneralButton>
           </Link>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

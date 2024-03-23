@@ -1,41 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import AuthService from "../services/AuthService";
-import {
-  createUserAccountByEmail,
-  getUserDataByEmail,
-} from "../services/UserService";
 import { useNavigate } from "react-router-dom";
-import SummaryService from "../services/SummaryService";
 
 const UserProfilePage = () => {
   const { currentUser, userId } = useAuth();
   const navigate = useNavigate()
-  const [summaries, setSummaries] = useState([])
 
   if (!currentUser) {
     navigate('/login')
   }
-
-  const getUserInfo = () => {
-    if (currentUser && currentUser.email) {
-      getUserDataByEmail({ email: currentUser.email });
-    }
-  };
-
-  const createUserAccount = () => {
-    createUserAccountByEmail({ email: currentUser.email });
-  };
-
-
-  useEffect(() => {
-    async function fetchSummaries() {
-      const summaries = await SummaryService.getAllSummariesForUser(userId);
-      console.log(summaries);
-      setSummaries(summaries.data)
-    }
-    fetchSummaries();
-  }, [])
 
 
   return (
@@ -63,11 +37,6 @@ const UserProfilePage = () => {
               Logout
             </button>
 
-            <div className="text-lg"> Summary History
-              {summaries.map((summary) => (<div key={summary._id}>
-                <div>{summary.sourceTitle}</div></div>)
-              )}
-            </div>
           </div>
         </div>
       </div>

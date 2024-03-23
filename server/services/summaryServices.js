@@ -1,8 +1,9 @@
 import { openai, anthropic } from "../config/summaryConfig.js";
 
 export const generateSummary = async (req, res) => {
-  const { option, transcript, language, selectedModel, userId } = req.body
+  const { option, transcript, language, selectedModel, userId, video } = req.body
   const { prompt } = option;
+  const { sourceTitle } = video
 
   let fullResponseText = ""
 
@@ -14,9 +15,9 @@ export const generateSummary = async (req, res) => {
         content:
           "give your response in a makrdown, dont use a code interpreter and use the language" +
           language +
-          "\n" +
+          "\n" + `you are given a transcript of a video titles:${sourceTitle}` +
           prompt +
-          transcript,
+          "Video Transcript:" + transcript,
       },
     ],
     model: "claude-3-haiku-20240307",

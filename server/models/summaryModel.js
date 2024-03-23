@@ -1,21 +1,14 @@
 import mongoose from 'mongoose';
 
 const SummarySchema = new mongoose.Schema({
+    videoId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Video',
+        required: true,
+    },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true,
-    },
-    sourceType: {
-        type: String,
-        enum: ['youtube', 'user-upload', 'audio', 'srt-file'],
-        required: true,
-    },
-    sourceTitle: {
-        type: String,
-    },
-    sourceId: {
-        type: String,
         required: true,
     },
     originalTranscript: {
@@ -23,6 +16,9 @@ const SummarySchema = new mongoose.Schema({
     },
     summary: {
         type: String,
+    },
+    summaryType: {
+        type: String, // Detail, Simplified, List, etc.
     },
     createdAt: {
         type: Date,

@@ -8,6 +8,7 @@ import {
   PricingPlans,
   FAQs,
   FinalCTA,
+  Footer,
 } from "../Components";
 
 const HomePage = () => {
@@ -21,6 +22,7 @@ const HomePage = () => {
       <PricingPlans home/>
       <FAQs />
       <FinalCTA />
+      <Footer/>
     </div>
   );
 };

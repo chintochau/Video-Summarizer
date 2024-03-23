@@ -2,9 +2,10 @@ import React, { useRef, useEffect, useState, useContext } from "react";
 
 import YouTube from "react-youtube";
 import { VideoContext } from "../contexts/VideoContext";
+import { calculateVideoCredits } from "../utils/creditUtils";
 
 const VideoField = ({ fileName, youtubeId, videoRef }) => {
-  const { setVideoDuration, setSourceTitle, setSourceType, setSourceId } = useContext(VideoContext);
+  const { setVideoDuration, setSourceTitle, setSourceType, setSourceId, setVideoCredits, setCurrentPlayTime } = useContext(VideoContext);
 
   const opts = {
     height: "auto",
@@ -14,6 +15,20 @@ const VideoField = ({ fileName, youtubeId, videoRef }) => {
       autoplay: 0,
     },
   };
+
+
+  useEffect(() => {
+    const intervalId = setInterval(async () => {
+      setCurrentPlayTime(await videoRef.current.internalPlayer.getCurrentTime());
+    }, 800);
+  
+
+    return () => {
+      clearInterval(intervalId);
+    }
+  }, [])
+
+
   return (
     <div className="w-full">
       <YouTube
@@ -25,7 +40,8 @@ const VideoField = ({ fileName, youtubeId, videoRef }) => {
           setSourceType("youtube")
           setSourceId(youtubeId)
           setSourceTitle(e.target.videoTitle);
-          setVideoDuration(e.target.getDuration());
+          setVideoDuration(e.target.playerInfo.duration);
+          setVideoCredits(calculateVideoCredits(e.target.playerInfo.duration))
         }}
       />
     </div>

@@ -217,7 +217,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
           />
         </div>
       ) : (
-        <div className="overflow-y-auto ">
+        <div className="overflow-y-auto">
           {startSummary && response === "" ? (
             <div className="text-lg my-10">
               <div className="mx-auto animate-spin rounded-full h-10 w-10 border-r-2 border-b-2 border-indigo-600" />{" "}
@@ -225,7 +225,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
             </div>
           ) : (
             <Markdown
-              className="prose h-full p-2 text-start leading-5"
+              className="prose max-w-full h-full p-2 text-start leading-5"
               options={{ overrides: linkOverride }}
             >
               {transformArticleWithClickableTimestamps(response)}

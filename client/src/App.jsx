@@ -10,6 +10,7 @@ import {  useAuth } from "./contexts/AuthContext.jsx";
 import UserProfilePage from "./pages/UserProfilePage.jsx";
 import { ModelProvider } from "./contexts/ModelContext.jsx";
 import PricingPage from "./pages/PricingPage.jsx";
+import HistoryPage from "./pages/HistoryPage.jsx";
 
 function App() {
   const [announcement, setAnnouncement] = useState({
@@ -47,6 +48,7 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/history" element={<HistoryPage />} />
               <Route
                 path="/profile"
                 element={<UserProfilePage />}
@@ -54,7 +56,6 @@ function App() {
             </Routes>
           </ModelProvider>
         </div>
-        <Footer />
       </div>
     </>
   );

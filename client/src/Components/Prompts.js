@@ -68,7 +68,7 @@ export const summarizeOptions = [
   
   You are given a script from the video, it can be any type of video. You task is to write an summarize article based on the video content, and use the above template.
   
-  When writing the summary, you must refer to the content from the provided video transcript. for every 2 mins of the video length, you must provide 1 perspective.
+  When writing the summary, you must refer to the content from the provided video transcript. for every 2 mins of the video length, you must provide 1 perspective. for the content of the perspective,
   
   For part 1, state what the video is about and the background. Introduction must be clear, ignore all promotional contents
   
@@ -80,7 +80,7 @@ export const summarizeOptions = [
     id: 5,
     title: "Quick List",
     description: "Summarize the text in a list",
-    prompt: `Summarize the text, give a title of the script, a brief about the script, then, List out at least 13 keypoints for the video transcript in a list format, as much key point as possible, for each point, give a timestamp reference. drop all unrelated info, such as advertising
+    prompt: `Summarize the text, give a title of the script, a brief about the script, then, List out at least 15 keypoints for the video transcript in a list format, as much key point as possible, for each point, give a starting timestamp reference. drop all unrelated info/ promotional info, such as advertising
  
     use the template
     #### Title

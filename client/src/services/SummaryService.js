@@ -74,9 +74,28 @@ export default class SummaryService {
   };
 
   
-  static getAllSummariesForUser = async (userId) => {
+  static getAllSummariesForUser = async ({userId, page = 1}) => {
     try {
-      const response = await fetch(apiUrl + `/api/user/${userId}/summaries`, {
+      const response = await fetch(apiUrl + `/api/user/${userId}/summaries?page=${page}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch summaries");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching summaries:", error);
+      return null;
+    }
+  };
+
+  static getAllVideosForUser = async ({userId, page = 1}) => {
+    try {
+      const response = await fetch(apiUrl + `/api/user/${userId}/summaries?page=${page}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" }
       });
