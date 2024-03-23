@@ -11,6 +11,7 @@ const SummarySchema = new mongoose.Schema({
         ref: 'User',
         required: true,
     },
+    language: { type: String },
     originalTranscript: {
         type: String,
     },

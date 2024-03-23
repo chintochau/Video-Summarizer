@@ -21,7 +21,7 @@ export default function Summarizer() {
   const [hasYTResult, setHasUTResult] = useState(false);
   const [uploadMode, setUploadMode] = useState(false);
   const [youtubeLink, setYoutubeLink] = useState(
-    "https://www.youtube.com/watch?v=0CGTrSHADh4"
+    "https://www.youtube.com/watch?v=b8Bx2oNJWlI"
   );
   const [youtubeId, setYoutubeId] = useState("");
   const [parentTranscriptText, setParentTranscriptText] = useState("");

@@ -52,7 +52,8 @@ export default class SummaryService {
           language,
           interval,
           selectedModel,
-          userId, video
+          userId, 
+          video
         }),
       });
 

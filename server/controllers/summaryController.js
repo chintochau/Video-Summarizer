@@ -11,11 +11,11 @@ import { checkUserCredit, deductCredits } from "../utils/creditUtils.js";
 
 export const handleSummaryRequest = async (req, res) => {
   try {
-    const { option, video, userId } = req.body;
+    const { option, video, userId, language } = req.body;
     const { creditAmount } = option;
     const { sourceId, sourceTitle, sourceType, author, videoDuration } = video;
     let videoThumbnail
-
+    
     await checkUserCredit(userId, creditAmount);
 
     let existingVideo = await Video.findOne({ sourceId });
@@ -44,6 +44,7 @@ export const handleSummaryRequest = async (req, res) => {
       userId,
       sourceType,
       sourceTitle,
+      language,
       videoId: existingVideo._id, // missing now
       summaryType: "Detail", // Example summary type
       summary,
@@ -78,10 +79,6 @@ export const handleMeetingSummary = async (req, res) => {
     await checkUserCredit(userId, creditAmount)
     generateSummaryInSeries(textByInterval, req, res);
     const remainingCredits = await deductCredits(userId, creditAmount);
-
-    // Send the remaining credits as a separate SSE event
-    // res.write(`event: credits\n`);
-    // res.write(`data: ${remainingCredits}\n\n`);
 
     res.status(200).end();
   } catch (error) {
