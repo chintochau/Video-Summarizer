@@ -60,7 +60,7 @@ const HistoryPage = () => {
             <div className=' container mx-auto p-2'>
                 <ul role="list" className="divide-y divide-gray-100">
                     {videos.map((video, index) => (
-                        <VideoListItem key={video.id} video={video} index={index} />
+                        <VideoListItem key={index} video={video} index={index} />
                     ))}
                 </ul>
                 <div className='flex justify-between px-4 mt-2'>

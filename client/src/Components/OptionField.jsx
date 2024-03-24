@@ -12,6 +12,9 @@ const OptionCard = ({ option, handleClick, creditCount }) => {
   useEffect(() => {
     let factor;
     switch (id) {
+      case 1:
+        setAdjustableCreditCount((creditCount * 2).toFixed(1));
+        break;
       case 6:
         factor = Math.max(1, 8 / (interval / 60)); // = 3 ~ 5
         setAdjustableCreditCount((creditCount * factor).toFixed(1));
@@ -24,19 +27,6 @@ const OptionCard = ({ option, handleClick, creditCount }) => {
         setAdjustableCreditCount(creditCount);
     }
   }, [creditCount, interval]);
-
-  const showAdjustedCredit = () => {
-    switch (id) {
-      case 1:
-        return <span>{(creditCount * 2).toFixed(1)}</span>;
-      case 6:
-        return <span>{adjustableCreditCount}</span>;
-      case 7:
-        return <span>{adjustableCreditCount}</span>;
-      default:
-        return <span>{creditCount}</span>;
-    }
-  };
 
   const showModifiedDescription = () => {
     switch (id) {
@@ -115,19 +105,26 @@ const OptionCard = ({ option, handleClick, creditCount }) => {
               title,
               description,
               prompt: prompt,
-              interval, creditAmount: adjustableCreditCount
+              interval,
+              creditAmount: adjustableCreditCount,
             })
           }
         >
           Summarize
         </button>
-        <div className=" text-sm ">Credit: {showAdjustedCredit()}</div>
+        <div className=" text-sm ">Credit: {adjustableCreditCount}</div>
       </div>
     </div>
   );
 };
 
-const OptionField = ({ handleClick, creditCount, setInterval }) => {
+const OptionField = ({
+  handleClick,
+  creditCount,
+  setInterval,
+  updateSummaryOfIndex,
+  activeTab,
+}) => {
   return (
     <div className="flex flex-col mx-6 my-4">
       <div className="p-2 text-start ">Summary Options：</div>

@@ -38,7 +38,15 @@ const summaryApiCall = (id) => {
 
 export default class SummaryService {
   static summarizeWithAI = async (data, completionHandler) => {
-    const { option, language, transcript, interval, selectedModel, userId, video } = data;
+    const {
+      option,
+      language,
+      transcript,
+      interval,
+      selectedModel,
+      userId,
+      video,
+    } = data;
 
     const apiRequest = summaryApiCall(option.id);
 
@@ -52,8 +60,8 @@ export default class SummaryService {
           language,
           interval,
           selectedModel,
-          userId, 
-          video
+          userId,
+          video,
         }),
       });
 
@@ -74,13 +82,15 @@ export default class SummaryService {
     }
   };
 
-  
-  static getAllSummariesForUser = async ({userId, page = 1}) => {
+  static getAllSummariesForUser = async ({ userId, page = 1 }) => {
     try {
-      const response = await fetch(apiUrl + `/api/user/${userId}/summaries?page=${page}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" }
-      });
+      const response = await fetch(
+        apiUrl + `/api/user/${userId}/summaries?page=${page}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch summaries");
@@ -94,12 +104,31 @@ export default class SummaryService {
     }
   };
 
-  static getAllVideosForUser = async ({userId, page = 1}) => {
+  // Function to fetch summaries for a video
+  static fetchSummariesForVideo = async (userId, sourceId) => {
     try {
-      const response = await fetch(apiUrl + `/api/user/${userId}/summaries?page=${page}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" }
-      });
+      const response = await fetch(`/api/summaries/${userId}/${sourceId}`);
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch summaries");
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  static getAllVideosForUser = async ({ userId, page = 1 }) => {
+    try {
+      const response = await fetch(
+        apiUrl + `/api/user/${userId}/videos?page=${page}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch summaries");
@@ -112,5 +141,4 @@ export default class SummaryService {
       return null;
     }
   };
-
 }

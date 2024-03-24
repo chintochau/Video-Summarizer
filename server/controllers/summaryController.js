@@ -4,26 +4,24 @@ import {
   getTextWithinInterval,
   generateSummaryInSeries,
 } from "../services/summaryServices.js";
-import Summary from '../models/summaryModel.js'
+import Summary from "../models/summaryModel.js";
 import Video from "../models/videoModel.js";
 import { checkUserCredit, deductCredits } from "../utils/creditUtils.js";
-
 
 export const handleSummaryRequest = async (req, res) => {
   try {
     const { option, video, userId, language } = req.body;
-    const { creditAmount } = option;
+    const { creditAmount,title } = option;
     const { sourceId, sourceTitle, sourceType, author, videoDuration } = video;
-    let videoThumbnail
-    
+    let videoThumbnail;
+
     await checkUserCredit(userId, creditAmount);
 
     let existingVideo = await Video.findOne({ sourceId });
 
     if (!existingVideo) {
-
       if (sourceType === "youtube") {
-        videoThumbnail = `https://img.youtube.com/vi/${sourceId}/0.jpg`
+        videoThumbnail = `https://img.youtube.com/vi/${sourceId}/0.jpg`;
       }
 
       const newVideo = new Video({
@@ -46,7 +44,7 @@ export const handleSummaryRequest = async (req, res) => {
       sourceTitle,
       language,
       videoId: existingVideo._id, // missing now
-      summaryType: "Detail", // Example summary type
+      summaryType:title, // Example summary type
       summary,
     });
 
@@ -64,19 +62,21 @@ export const handleSummaryRequest = async (req, res) => {
 
     res.status(200).end();
   } catch (error) {
-    res.status(500).json({ message: "Failed to generate summary", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Failed to generate summary", error: error.message });
   }
 };
 
 export const handleMeetingSummary = async (req, res) => {
   const { option, transcript, interval, userId } = req.body;
-  const { creditAmount } = option
+  const { creditAmount } = option;
   const parsedSRT = parseSRT(transcript);
 
   const textByInterval = getTextWithinInterval(parsedSRT, interval);
 
   try {
-    await checkUserCredit(userId, creditAmount)
+    await checkUserCredit(userId, creditAmount);
     generateSummaryInSeries(textByInterval, req, res);
     const remainingCredits = await deductCredits(userId, creditAmount);
 
@@ -88,9 +88,7 @@ export const handleMeetingSummary = async (req, res) => {
   }
 };
 
-
-
-export const getAllSummariesForUser = async (req, res) => {
+export const getAllVideosForUser = async (req, res) => {
   try {
     const { userId } = req.params;
     const page = parseInt(req.query.page) || 1;
@@ -102,20 +100,50 @@ export const getAllSummariesForUser = async (req, res) => {
 
     // Find videos for the specified userId and sort them in descending order by the creation date
     const videos = await Video.find({ userId: userId })
-                               .sort({ lastUpdated: -1 })
-                               .skip(startIndex)
-                               .limit(limit);
+      .sort({ lastUpdated: -1 })
+      .skip(startIndex)
+      .limit(limit);
 
     const totalPages = Math.ceil(totalVideos / limit);
 
-    res.status(200).json({ 
-      success: true, 
-      data: videos, 
+    res.status(200).json({
+      success: true,
+      data: videos,
       total: totalVideos,
       currentPage: page,
-      totalPages: totalPages
+      totalPages: totalPages,
     });
   } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+export const getAllSummariesForVideo = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const sourceId = req.params.sourceId;
+
+    // Find the video based on userId and sourceId
+    const video = await Video.findOne({ userId, sourceId });
+
+    if (!video) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Video not found" });
+    }
+
+    // Find summaries for the video
+    const summaries = await Summary.find({ videoId: video._id });
+
+    if (summaries.length === 0) {
+      return res
+        .status(200)
+        .json({ success: false, message: "No summaries found for the video" });
+    }
+
+    res.status(200).json({ success: true, data: summaries });
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ success: false, error: error.message });
   }
 };

@@ -9,3 +9,4 @@ functions
 server/node_modules/.package-lock.json
 server/.env
 /node_modules
+*/twcomponents

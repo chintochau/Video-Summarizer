@@ -1,7 +1,7 @@
 import User from '../models/userModel.js';
 
 // Function to check if user has enough credits
-export const checkUserCredit = async (userId, creditAmount) => {
+export const checkUserCredit = async (userId, creditAmount=10) => {
     try {
         const user = await User.findById(userId);
 
@@ -20,7 +20,7 @@ export const checkUserCredit = async (userId, creditAmount) => {
 };
 
 // Function to deduct credits from user
-export const deductCredits = async (userId, creditAmount) => {
+export const deductCredits = async (userId, creditAmount=10) => {
     try {
         const user = await User.findById(userId);
 

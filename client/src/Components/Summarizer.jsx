@@ -21,7 +21,7 @@ export default function Summarizer() {
   const [hasYTResult, setHasUTResult] = useState(false);
   const [uploadMode, setUploadMode] = useState(false);
   const [youtubeLink, setYoutubeLink] = useState(
-    "https://www.youtube.com/watch?v=b8Bx2oNJWlI"
+    "https://www.youtube.com/watch?v=r5kukRMmZNI"
   );
   const [youtubeId, setYoutubeId] = useState("");
   const [parentTranscriptText, setParentTranscriptText] = useState("");
@@ -133,7 +133,7 @@ export default function Summarizer() {
             //Youtube Mode
             <div className="">
               {hasYTResult ? (
-                <div className="outline-red-400 mx-auto my-1 flex flex-wrap justify-between outline-dashed outline-2 p-1 rounded-md max-w-[1280px]">
+                <div className="mx-auto my-1 flex flex-wrap justify-between max-w-[1280px]">
                   <input
                     placeholder="Youtube"
                     className=" flex-1 mr-1 py-2.5 indent-2 rounded-md outline-1"
@@ -170,7 +170,7 @@ export default function Summarizer() {
                     Get YouTube transcript and use AI to summarize YouTube
                     videos in one click for free online.
                   </p>
-                  <div className="mx-auto my-2 max-w-3xl flex justify-between outline-dashed outline-2 outline-red-400 p-2 rounded-md ">
+                  <div className="mx-auto my-2 max-w-3xl flex justify-between ">
                     <input
                       placeholder="Youtube"
                       className=" flex-1 mr-1 py-2.5 indent-2 rounded-md outline-1"

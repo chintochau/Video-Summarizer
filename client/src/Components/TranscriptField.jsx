@@ -19,19 +19,19 @@ const TranscriptBox = ({
   text,
   onClick,
   index,
-  handleTranscriptChange, isCurrent
+  handleTranscriptChange,
+  isCurrent,
 }) => {
-
-
   const adjustHeight = (e) => {
     e.target.style.height = "auto"; // 先重置高度，允許它縮小
     e.target.style.height = e.target.scrollHeight + "px"; // 然後設置為正確的高度
   };
 
-
-
   return (
-    <div className={`flex bg-white shadow-sm mx-2 rounded-sm ${isCurrent ? " bg-indigo-100" : ""} hover:bg-indigo-50 cursor-pointer`}
+    <div
+      className={`flex shadow-sm mx-2 rounded-sm  ${
+        isCurrent ? " bg-indigo-100" : " bg-white"
+      } hover:bg-indigo-50 cursor-pointer`}
       onClick={() => onClick(start)}
     >
       <div
@@ -40,9 +40,7 @@ const TranscriptBox = ({
       >
         {start.split(",")[0] + " :"}
       </div>
-      <div className={isCurrent ? " font-semibold" : ""}>
-        {text}
-      </div>
+      <div className={"text-left" + (isCurrent ? " font-semibold" : "")}>{text}</div>
 
       {/* <textarea
         className="w-full focus:outline-none p-1 pt-0 bg-none"
@@ -75,7 +73,7 @@ const TranscriptField = ({
   const [selectedModel, setSelectedModel] = useState("assembly");
   const [language, setLanguage] = useState("en");
 
-  const { videoCredits, currentPlayTime } = useVideoContext()
+  const { videoCredits, currentPlayTime } = useVideoContext();
 
   const resetTranscriptField = () => {
     if (uploadMode) {
@@ -212,9 +210,6 @@ const TranscriptField = ({
     };
   }, [youtubeId]);
 
-
-
-
   return (
     <div className="flex-col h-full">
       {videoValid || uploadMode ? (
@@ -316,19 +311,21 @@ const TranscriptField = ({
                   <div className=" flex items-end">
                     <button
                       onClick={handleTranscriptMode}
-                      className={` px-2 py-1 rounded-t-md hover:text-indigo-400 ${viewMode === "transcript"
-                        ? " text-indigo-600 bg-white "
-                        : " text-gray-600"
-                        }`}
+                      className={` px-2 py-1 rounded-t-md hover:text-indigo-400 ${
+                        viewMode === "transcript"
+                          ? " text-indigo-600 bg-white "
+                          : " text-gray-600"
+                      }`}
                     >
                       Transcript
                     </button>
                     <button
                       onClick={handleTextMode}
-                      className={` px-2 py-1 rounded-t-md hover:text-indigo-400 ${viewMode !== "transcript"
-                        ? " text-indigo-600 bg-white "
-                        : " text-gray-600"
-                        }`}
+                      className={` px-2 py-1 rounded-t-md hover:text-indigo-400 ${
+                        viewMode !== "transcript"
+                          ? " text-indigo-600 bg-white "
+                          : " text-gray-600"
+                      }`}
                     >
                       Text
                     </button>
@@ -370,11 +367,11 @@ const TranscriptField = ({
                 {viewMode === "transcript" ? (
                   <div className="overflow-auto">
                     {editableTranscript.map(({ start, end, text }, index) => {
-
-                      const { currentPlayTime } = useVideoContext()
-                      const startTime = timeToSeconds(start.split(",")[0])
-                      const endTime = timeToSeconds(end.split(",")[0])
-                      const isCurrent = currentPlayTime > startTime-0.1 && currentPlayTime < endTime+0.1
+                      const startTime = timeToSeconds(start.split(",")[0]);
+                      const endTime = timeToSeconds(end.split(",")[0]);
+                      const isCurrent =
+                        currentPlayTime > startTime - 0.1 &&
+                        currentPlayTime < endTime + 0.1;
 
                       return (
                         <TranscriptBox
@@ -386,7 +383,7 @@ const TranscriptField = ({
                           onClick={handleTranscriptClick}
                           handleTranscriptChange={handleTranscriptChange}
                         />
-                      )
+                      );
                     })}
                   </div>
                 ) : (
