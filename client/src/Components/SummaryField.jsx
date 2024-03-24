@@ -31,7 +31,6 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
         );
         if (result.success) {
           setSummaries((prev) => [...result.data, ...prev]);
-          console.log(result); // Assuming data is an array of summaries
         } else {
           console.error(result.error);
         }
@@ -39,7 +38,6 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
         console.error(error);
       }
     };
-
     fetchSummaries();
   }, [userId, video.sourceId]);
 

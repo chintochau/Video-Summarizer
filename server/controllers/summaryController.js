@@ -122,6 +122,8 @@ export const getAllSummariesForVideo = async (req, res) => {
   try {
     const userId = req.params.userId;
     const sourceId = req.params.sourceId;
+    console.log("userId: " + userId);
+    console.log("sourceId: " + usersourceIdId);
 
     // Find the video based on userId and sourceId
     const video = await Video.findOne({ userId, sourceId });
@@ -137,7 +139,7 @@ export const getAllSummariesForVideo = async (req, res) => {
 
     if (summaries.length === 0) {
       return res
-        .status(200)
+        .status(404)
         .json({ success: false, message: "No summaries found for the video" });
     }
 
