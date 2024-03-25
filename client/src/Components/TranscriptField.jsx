@@ -12,6 +12,8 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { useVideoContext } from "../contexts/VideoContext";
 import { timeToSeconds } from "../utils/timeUtils";
+import { useAuth } from "../contexts/AuthContext";
+import { checkCredits } from "../utils/creditUtils";
 
 // Box
 const TranscriptBox = ({
@@ -40,7 +42,9 @@ const TranscriptBox = ({
       >
         {start.split(",")[0] + " :"}
       </div>
-      <div className={"text-left" + (isCurrent ? " font-semibold" : "")}>{text}</div>
+      <div className={"text-left" + (isCurrent ? " font-semibold" : "")}>
+        {text}
+      </div>
 
       {/* <textarea
         className="w-full focus:outline-none p-1 pt-0 bg-none"
@@ -74,6 +78,7 @@ const TranscriptField = ({
   const [language, setLanguage] = useState("en");
 
   const { videoCredits, currentPlayTime } = useVideoContext();
+  const { credits } = useAuth();
 
   const resetTranscriptField = () => {
     if (uploadMode) {
@@ -132,6 +137,7 @@ const TranscriptField = ({
   const generateTranscriptWithAI = async () => {
     setFetchingTranscript(true);
     try {
+      checkCredits(credits, videoCredits);
       const srtTranscript = await transcribeYoutubeVideo({ youtubeId });
       if (!srtTranscript) {
         setFetchingTranscript(false);

@@ -15,11 +15,14 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = AuthService.onAuthChange(async (user) => {
       setCurrentUser(user);
-      if (user) {
-        const userData = await getUserDataByEmail({ email: user.email });
-        setUserData(userData);
-        setCredits(parseFloat(userData.credits).toFixed(1))
-      }
+      setTimeout(async () => {
+        if (user) {
+          const userData = await getUserDataByEmail({ email: user.email });
+          setUserData(userData);
+          setCredits(parseFloat(userData.credits).toFixed(1))
+        }
+        
+      }, 1000);
       setLoading(false);
     });
 

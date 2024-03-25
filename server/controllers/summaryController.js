@@ -122,8 +122,6 @@ export const getAllSummariesForVideo = async (req, res) => {
   try {
     const userId = req.params.userId;
     const sourceId = req.params.sourceId;
-    console.log("userId: " + userId);
-    console.log("sourceId: " + sourceId);
 
     // Find the video based on userId and sourceId
     const video = await Video.findOne({ userId, sourceId });
