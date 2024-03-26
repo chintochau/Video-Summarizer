@@ -4,7 +4,7 @@ import AuthService from "../services/AuthService";
 import { useNavigate } from "react-router-dom";
 
 const UserProfilePage = () => {
-  const { currentUser, userId } = useAuth();
+  const { currentUser } = useAuth();
   const navigate = useNavigate()
 
   if (!currentUser) {

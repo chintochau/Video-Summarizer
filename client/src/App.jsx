@@ -1,12 +1,10 @@
 import Header from "./Components/Header.jsx";
 import HomePage from "./pages/HomePage.jsx";
-import Footer from "./Components/Footer.jsx";
 import SummarizePage from "./pages/SummarizePage.jsx";
 import { Route, Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
-import { useAuth } from "./contexts/AuthContext.jsx";
 import UserProfilePage from "./pages/UserProfilePage.jsx";
 import { ModelProvider } from "./contexts/ModelContext.jsx";
 import PricingPage from "./pages/PricingPage.jsx";
@@ -28,7 +26,6 @@ function App() {
       .catch((error) => console.error("Error fetching announcement:", error));
   }, []);
 
-  const { currentUser } = useAuth();
 
   return (
     <>

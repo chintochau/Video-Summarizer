@@ -1,8 +1,6 @@
 import Markdown from "markdown-to-jsx";
 import React, { useState } from "react";
 import OptionField from "../Components/OptionField";
-import { useAuth } from "../contexts/AuthContext";
-import { checkCredits } from "../utils/creditUtils";
 
 
 // Summary Tab
