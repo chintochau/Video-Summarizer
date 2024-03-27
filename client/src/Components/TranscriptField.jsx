@@ -124,7 +124,6 @@ const TranscriptField = ({
   function loadSrtTranscript(srt) {
     setParentSrtText(srt);
     const parsedTranscript = parseSRT(srt);
-    console.log(parsedTranscript);
     setEditableTranscript(parsedTranscript.map((entry) => ({ ...entry }))); // 深拷貝以獨立編輯
     setTranscriptAvailable(true);
     setFetchingTranscript(false);
@@ -141,16 +140,16 @@ const TranscriptField = ({
     if (!file) {
       alert("please select a file");
     }
-
-    setGeneratingScriptWithAi(true);
-    console.log(selectedModel);
-
     try {
+      checkCredits(credits, videoCredits);
+      setGeneratingScriptWithAi(true);
       const result = await transcribeWithAI({ file, selectedModel, language });
       // parse SRT file to a formatted transcript
       loadSrtTranscript(result);
+      
     } catch (error) {
       console.error(error);
+      setGeneratingScriptWithAi(false);
     }
   };
 
@@ -167,7 +166,7 @@ const TranscriptField = ({
   };
 
   // generate transcript with AI
-  const generateTranscriptWithAI = async () => {
+  const generateTranscriptWithAIForYoutube = async () => {
     setFetchingTranscript(true);
     try {
       checkCredits(credits, videoCredits);
@@ -362,12 +361,14 @@ const TranscriptField = ({
                           {/* Add more languages as needed */}
                         </select>
                       </div>
-                      <GeneralButton
-                        className="my-2"
+                      <button
+                        className="my-2 bg-indigo-600 hover:bg-indigo-400 px-3.5 py-2.5 rounded-md text-white disabled:bg-gray-400"
                         onClick={uploadAndTranscriptFile}
+                        disabled
                       >
-                        Generate
-                      </GeneralButton>
+                        Generate (Credits: {videoCredits})<br/>
+                        Currently Unavailable due to service upgrade
+                      </button>
                       <div className=" w-72">
                         a hour long video takes up to 5 mins to transcribe
                       </div>
@@ -504,11 +505,12 @@ const TranscriptField = ({
                     <div>
                       Transcript Not Available
                       <div className=" mx-8">
-                        <button
-                          className="px-3.5 py-2.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-400 "
-                          onClick={generateTranscriptWithAI}
+                        <button disabled={true}
+                          className="px-3.5 py-2.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-400 disabled:bg-gray-400"
+                          onClick={generateTranscriptWithAIForYoutube}
                         >
-                          Generate Transcript (Credits: {videoCredits} )
+                          Generate Transcript (Credits: {videoCredits} )<br/>
+                          Currently Unavailable due to service upgrade
                         </button>
                       </div>
                     </div>

@@ -2,6 +2,7 @@ import { FFmpeg } from "@ffmpeg/ffmpeg";
 const apiUrl = `${import.meta.env.VITE_API_BASE_URL}`;
 const ffmpeg = new FFmpeg({ log: true });
 import { get_encoding } from "tiktoken";
+import { v4 as uuidv4 } from 'uuid';
 
 async function extractAudio(videoBlob) {
   // Write the video file to FFmpeg's virtual file system
@@ -40,7 +41,7 @@ export const calculateCredit = ({ transcript, model, outputCount }) => {
   switch (model) {
     case "claude3h":
       return (
-        (((tokens.length * 0.00025 + output*800 * 0.00125) * 1.5) / 1000) *
+        (((tokens.length * 0.00025 + output * 800 * 0.00125) * 1.5) / 1000) *
         100
       ).toFixed(1);
     case "gpt4":
@@ -138,6 +139,8 @@ export const transcribeWithAI = async ({
     return null;
   }
 
+  console.log(file);
+
   console.log(selectedModel);
 
   const audioTypes = ["audio/mp3", "audio/mpeg", "audio/wav", "audio/m4a"];
@@ -149,7 +152,7 @@ export const transcribeWithAI = async ({
   formData.append("language", language);
 
   try {
-    const response = await fetch(apiUrl + "/api/transcribeAudio", {
+    const response = await fetch(apiUrl + "/api/transcribe", {
       method: "POST",
       body: formData,
     });
@@ -335,18 +338,22 @@ export const formatDuration = (seconds) => {
   let remainingSeconds = seconds % 60;
 
   let result = '';
-  
+
   if (hours > 0) {
-      result += hours + ' hour' + (hours > 1 ? 's' : '') + ' ';
+    result += hours + ' hour' + (hours > 1 ? 's' : '') + ' ';
   }
-  
+
   if (minutes > 0) {
-      result += minutes + ' minute' + (minutes > 1 ? 's' : '') + ' ';
+    result += minutes + ' minute' + (minutes > 1 ? 's' : '') + ' ';
   }
-  
+
   if (remainingSeconds > 0) {
-      result += remainingSeconds + ' second' + (remainingSeconds > 1 ? 's' : '') + ' ';
+    result += remainingSeconds + ' second' + (remainingSeconds > 1 ? 's' : '') + ' ';
   }
 
   return result.trim();
+}
+
+export const generateUUID = () => {
+  return uuidv4();
 }

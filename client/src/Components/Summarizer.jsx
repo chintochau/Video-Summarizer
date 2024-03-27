@@ -9,10 +9,11 @@ import {
   acceptStyle,
 } from "../pages/styles";
 import VideoField from "./VideoField";
-import { formatFileSize, getYoutubeAudio } from "./Utils";
+import { formatFileSize, generateUUID, getYoutubeAudio } from "./Utils";
 import TranscriptField from "./TranscriptField";
 import SummaryField from "./SummaryField";
 import { useVideoContext } from "../contexts/VideoContext";
+import { calculateVideoCredits } from "../utils/creditUtils";
 
 export default function Summarizer() {
   const [file, setFile] = useState(null);
@@ -35,7 +36,7 @@ export default function Summarizer() {
 
   const videoRef = useRef(null);
   const uploadRef = useRef(null);
-  const { setVideoDuration, setCurrentPlayTime } = useVideoContext();
+  const { setVideoDuration, setCurrentPlayTime, setSourceId,setSourceType, setSourceTitle,setVideoCredits } = useVideoContext();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -79,6 +80,11 @@ export default function Summarizer() {
       setFile(files[0]);
       setFileName(files[0].name);
       setFileSize(files[0].size);
+      
+      setSourceId(generateUUID())
+      setSourceType("user-upload")
+      setSourceTitle(files[0].name)
+
       setUploadMode(true);
       if (files[0].type.startsWith("video/")) {
         console.log(files[0]);
@@ -130,6 +136,7 @@ export default function Summarizer() {
     // Access the video duration here
 
     setVideoDuration(Math.ceil(uploadRef.current.duration));
+    setVideoCredits(calculateVideoCredits(uploadRef.current.duration))
   };
 
   return (

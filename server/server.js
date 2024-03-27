@@ -3,16 +3,12 @@ import bodyParser from "body-parser";
 import multer from "multer";
 import "dotenv/config";
 import fs from "fs";
-import { setTimeout } from "timers";
 import path from "path";
 import ytdl from "ytdl-core";
-import { jsonDemo, srtDdemo, youtubeDemoTranscript } from "./demovalue.js";
 import { YoutubeTranscript } from "youtube-transcript";
-import { AssemblyAI } from "assemblyai";
 import ffmpeg from "fluent-ffmpeg";
 import cors from "cors";
 import {
-  RecursiveCharacterTextSplitter,
   CharacterTextSplitter,
 } from "langchain/text_splitter";
 import { get_encoding } from "tiktoken";
@@ -24,6 +20,7 @@ import {openai, anthropic, assembly} from './config/summaryConfig.js'
 import summaryRoutes from "./routes/summaryRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
 import { connectDB } from "./config/db.js";
+import transcribeRoutes from './routes/transcribeRoutes.js'
 
 
 const app = express();
@@ -37,11 +34,13 @@ connectDB()
 // 中間件
 app.use(bodyParser.json({limit:'10mb'}));
 app.use(cors());
+app.use(upload.single("file"));
 
 
 //Routes
 app.use('/api',cors(),summaryRoutes) // to get summary
 app.use('/users',cors(),userRoutes)
+app.use('/api',cors(),transcribeRoutes)
 
 //PRIVATE calculate tokens
 const tikCalculateToken = (transcript, model) => {
@@ -268,7 +267,6 @@ async function processAudioFile(filePath) {
 
 app.post("/api/transcribeYoutubeVideo", cors(), async (req, res) => {
   const { youtubeLink } = req.body;
-  console.log(youtubeLink);
   try {
     const videoInfo = await ytdl.getInfo(youtubeLink);
 
