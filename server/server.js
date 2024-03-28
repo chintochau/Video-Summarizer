@@ -23,6 +23,19 @@ import { connectDB } from "./config/db.js";
 import transcribeRoutes from './routes/transcribeRoutes.js'
 
 
+
+//running python code for testing
+import pythonRunner from './utils/pythonRunner.js'
+const variableToPass = "Python";
+pythonRunner('--version', [variableToPass])
+    .then((output) => {
+        console.log(output);
+    })
+    .catch((error) => {
+        console.error(`Python script execution error: ${error}`);
+    });
+
+
 const app = express();
 
 const pipelineAsync = util.promisify(pipeline);
