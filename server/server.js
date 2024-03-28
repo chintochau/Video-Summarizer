@@ -36,10 +36,6 @@ pythonRunner('--version', [variableToPass])
   });
 
 
-checkPackage()
-// installPackage("vastai")
-// vastai("--help")
-
 const app = express();
 
 const pipelineAsync = util.promisify(pipeline);
