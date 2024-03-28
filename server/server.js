@@ -36,7 +36,7 @@ pythonRunner('--version', [variableToPass])
   });
 
 installPackage("vastai")
-vastai("--help")
+// vastai("--help")
 
 const app = express();
 
