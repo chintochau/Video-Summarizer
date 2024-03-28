@@ -16,7 +16,7 @@ import { kmeans } from "ml-kmeans";
 import tmp from "tmp";
 import { pipeline } from "stream";
 import util from "util";
-import {openai, anthropic, assembly} from './config/summaryConfig.js'
+import { openai, anthropic, assembly } from './config/summaryConfig.js'
 import summaryRoutes from "./routes/summaryRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
 import { connectDB } from "./config/db.js";
@@ -25,16 +25,17 @@ import transcribeRoutes from './routes/transcribeRoutes.js'
 
 
 //running python code for testing
-import pythonRunner from './utils/pythonRunner.js'
+import { pythonRunner, checkPackage, installPackage } from './utils/pythonRunner.js'
 const variableToPass = "Python";
 pythonRunner('--version', [variableToPass])
-    .then((output) => {
-        console.log(output);
-    })
-    .catch((error) => {
-        console.error(`Python script execution error: ${error}`);
-    });
+  .then((output) => {
+    console.log(output);
+  })
+  .catch((error) => {
+    console.error(`Python script execution error: ${error}`);
+  });
 
+checkPackage()
 
 const app = express();
 
@@ -45,15 +46,15 @@ const port = process.env.PORT || 3000;
 connectDB()
 
 // 中間件
-app.use(bodyParser.json({limit:'10mb'}));
+app.use(bodyParser.json({ limit: '10mb' }));
 app.use(cors());
 app.use(upload.single("file"));
 
 
 //Routes
-app.use('/api',cors(),summaryRoutes) // to get summary
-app.use('/users',cors(),userRoutes)
-app.use('/api',cors(),transcribeRoutes)
+app.use('/api', cors(), summaryRoutes) // to get summary
+app.use('/users', cors(), userRoutes)
+app.use('/api', cors(), transcribeRoutes)
 
 //PRIVATE calculate tokens
 const tikCalculateToken = (transcript, model) => {
@@ -659,7 +660,7 @@ app.post("/api/stream-response-large-text", cors(), async (req, res) => {
           encoding_format: "float",
         });
         embeddingArray.push(embedding.data[0].embedding);
-      } catch (error) {}
+      } catch (error) { }
     }
   };
 
@@ -679,7 +680,7 @@ app.post("/api/stream-response-large-text", cors(), async (req, res) => {
   // // Parse the data as JSON if it contains JSON formatted data
   // embeddingArray = JSON.parse(data);
 
-  console.log(parseInt(chunks.length/3)); 
+  console.log(parseInt(chunks.length / 3));
   let ans = kmeans(embeddingArray, parseInt(chunks.length / 3));
 
 
