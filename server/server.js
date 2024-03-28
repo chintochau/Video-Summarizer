@@ -35,8 +35,9 @@ pythonRunner('--version', [variableToPass])
     console.error(`Python script execution error: ${error}`);
   });
 
-installPackage("vastai")
-// vastai("--help")
+  checkPackage()
+// installPackage("vastai")
+vastai("--help")
 
 const app = express();
 
