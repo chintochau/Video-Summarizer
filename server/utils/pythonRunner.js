@@ -39,8 +39,9 @@ export const checkPackage = () => {
 
 }
 
-export const installPackage = () => {
-    const pythonProcess = spawn('pip', ['install','numpy']);
+export const installPackage = (pythonPackage) => {
+    if (!pythonPackage) { return }
+    const pythonProcess = spawn('pip', ['install', pythonPackage]);
 
     pythonProcess.stdout.on('data', (data) => {
         console.log(`Python script output:\n ${data}`);
@@ -56,5 +57,21 @@ export const installPackage = () => {
 
 }
 
+export const vastai = (command) => {
+    if (!command) { return }
+    const pythonProcess = spawn('vastai', ['--help']);
 
+    pythonProcess.stdout.on('data', (data) => {
+        console.log(`Python script output:\n ${data}`);
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+        console.error(`Error occurred in Python script: ${data}`);
+    });
+
+    pythonProcess.on('close', (code) => {
+        console.log(`Python script exited with code ${code}`);
+    });
+
+}
 

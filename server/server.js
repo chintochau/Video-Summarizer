@@ -25,7 +25,7 @@ import transcribeRoutes from './routes/transcribeRoutes.js'
 
 
 //running python code for testing
-import { pythonRunner, checkPackage, installPackage } from './utils/pythonRunner.js'
+import { pythonRunner, checkPackage, installPackage, vastai } from './utils/pythonRunner.js'
 const variableToPass = "Python";
 pythonRunner('--version', [variableToPass])
   .then((output) => {
@@ -35,7 +35,8 @@ pythonRunner('--version', [variableToPass])
     console.error(`Python script execution error: ${error}`);
   });
 
-checkPackage()
+installPackage("vastai")
+vastai("--help")
 
 const app = express();
 
