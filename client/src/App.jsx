@@ -9,6 +9,7 @@ import UserProfilePage from "./pages/UserProfilePage.jsx";
 import { ModelProvider } from "./contexts/ModelContext.jsx";
 import PricingPage from "./pages/PricingPage.jsx";
 import HistoryPage from "./pages/HistoryPage.jsx";
+import CheckoutPage from "./pages/CheckoutPage.jsx";
 import NotificationOverlay from "./Components/NotificationOverlay.jsx";
 
 function App() {
@@ -26,7 +27,6 @@ function App() {
       .catch((error) => console.error("Error fetching announcement:", error));
   }, []);
 
-
   return (
     <>
       <div className="relative">
@@ -41,6 +41,7 @@ function App() {
         <div className="w-full top-[73px] min-h-[calc(100vh-73px)]  ">
           <ModelProvider>
             <Routes>
+              <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/Summarizer" element={<SummarizePage />} />
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginPage />} />

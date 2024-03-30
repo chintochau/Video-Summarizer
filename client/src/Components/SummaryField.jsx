@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { calculateCredit } from "./Utils";
+import {calculateCredit} from '../utils/creditUtils.js'
 import SummaryService from "../services/SummaryService";
 import { languageList } from "../constants";
 import { useAuth } from "../contexts/AuthContext";
@@ -64,7 +64,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
       setCreditCount(
         calculateCredit({
           transcript: parentTranscriptText,
-          model: selectedModel,
+          model: selectedModel
         })
       );
     }

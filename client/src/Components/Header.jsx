@@ -47,17 +47,14 @@ const Header = () => {
 
   return (
     <div className=" bg-white w-full flex justify-center sticky top-0 z-20">
-      <div className="w-[1280px] flex justify-between items-center bg-white sm:px-8 px-4 py-2 border-b border-b-[#e6ebf4] ">
+      <div className="w-[1280px] flex justify-between items-center bg-white sm:px-8 px-4 border-b border-b-[#e6ebf4] ">
         <div className="flex align-middle content-center items-center">
           <Link to="/">
-            <img className=" w-8 h-8" src={logo} />
-          </Link>
-          <Link to="/" className=" text-blue-800 text-2xl">
-            FusionAI Video Notes
+            <img className="h-12" src={logo} />
           </Link>
         </div>
 
-        <div className="flex items-center">
+        <div className="flex items-center py-1">
           {/*user logged in or not*/}
           {currentUser ? (<LoggedInMenu />) : (<LoggedOutMenu />)}
 

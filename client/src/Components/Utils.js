@@ -27,37 +27,7 @@ data = {
 }
 */
 
-/**
- * Function to calculate credit based on transcript, model, and output count.
- * @param {object} options - Object containing transcript, model, and outputCount
- * @returns {number} - Calculated credit based on the specified model
- */
-export const calculateCredit = ({ transcript, model, outputCount }) => {
-  const encoding = get_encoding("cl100k_base");
-  const tokens = encoding.encode(transcript);
 
-  const output = outputCount || 1
-
-  switch (model) {
-    case "claude3h":
-      return (
-        (((tokens.length * 0.00025 + output * 800 * 0.00125) * 1.5) / 1000) *
-        100
-      ).toFixed(1);
-    case "gpt4":
-      return (
-        (((tokens.length * 0.01 + 1000 * 0.03) * 1.5) / 1000) *
-        100
-      ).toFixed(1);
-    default:
-      // GPT35 (input/1000*0.0005 + output/1000*0.0015)*1.5*100
-      // return tokens.length // comment out to to return token length
-      return (
-        (((tokens.length * 0.0005 + 800 * 0.0015) * 1.5) / 1000) *
-        100
-      ).toFixed(1);
-  }
-};
 
 const summaryApiCall = (id) => {
   switch (id) {

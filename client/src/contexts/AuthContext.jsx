@@ -10,19 +10,17 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState({});
-  const [credits, setCredits] = useState(0)
+  const [credits, setCredits] = useState(0);
 
   useEffect(() => {
     const unsubscribe = AuthService.onAuthChange(async (user) => {
       setCurrentUser(user);
-      setTimeout(async () => {
-        if (user) {
-          const userData = await getUserDataByEmail({ email: user.email });
-          setUserData(userData);
-          setCredits(parseFloat(userData.credits).toFixed(1))
-        }
-        
-      }, 1000);
+      if (user) {
+        const userData = await getUserDataByEmail({ email: user.email });
+        setUserData(userData);
+        setCredits(parseFloat(userData.credits).toFixed(1));
+      }
+
       setLoading(false);
     });
 
@@ -35,12 +33,8 @@ export const AuthProvider = ({ children }) => {
     userData,
     credits,
     userId: userData._id,
-    setCredits
+    setCredits,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
