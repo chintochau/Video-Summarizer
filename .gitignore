@@ -10,3 +10,5 @@ server/node_modules/.package-lock.json
 server/.env
 /node_modules
 */twcomponents
+client/.env.development
+client/.env.production

@@ -10,17 +10,17 @@ export const getPriceId = (item) => {
     case "tier-professional":
       mode = "subscription";
       if (amount === 1) {
-        priceId = "price_1P0Uo3JV7oBrUanV1mMJP43I";
+        priceId = process.env.PRO_1MONTH;
       } else {
-        priceId = "price_1P0UuGJV7oBrUanVGAQNHRjw";
+        priceId = process.env.PRO_12MONTHS;
       }
       break;
     case "credits":
       mode = "payment";
       if (amount === 200) {
-        priceId = "price_1P0V6TJV7oBrUanVlDiCN0EQ";
+        priceId = process.env.CREDITS_200;
       } else {
-        priceId = "price_1P0VNZJV7oBrUanVdDsxtrQN";
+        priceId = process.env.CREDITS_500;
       }
       break;
     default:

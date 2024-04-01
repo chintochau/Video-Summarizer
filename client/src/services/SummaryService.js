@@ -89,8 +89,6 @@ export default class SummaryService {
         apiUrl + `/api/summaries/${userId}/${sourceId}`
       );
 
-      console.log(response);
-
       if (!response.ok) {
         throw new Error("No summaries found");
       }
