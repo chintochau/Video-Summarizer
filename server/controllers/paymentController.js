@@ -18,8 +18,8 @@ export const processPayment = async (req, res) => {
       },
     ],
     mode,
-    success_url: "http://localhost:5173/pricing",
-    cancel_url: "http://localhost:5173/pricing",
+    success_url: process.env.SUCCESS_URL,
+    cancel_url: process.env.CANCEL_URL,
   });
 
   await createOrder({
