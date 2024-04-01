@@ -6,7 +6,7 @@ export const useCheckout = () => useContext(CheckoutContext);
 
 export const CheckoutProvider = ({ children }) => {
   const [selectedPlan, setSelectedPlan] = useState({});
-  const value = {};
+  const value = { selectedPlan, setSelectedPlan }; //{id:credits, amount:200, price:5} or {id:tier-professional, amount:12, price:129.99}
 
   return (
     <CheckoutContext.Provider value={value}>
@@ -18,7 +18,8 @@ export const CheckoutProvider = ({ children }) => {
 export const tiers = [
   {
     name: "Youtube lover",
-    id: "tier-youtube",
+    id: "credits",
+    itemName: "Fusion AI Credits",
     price: { monthly: "$0", annually: "$0" },
     priceOptions: [
       {
@@ -52,7 +53,8 @@ export const tiers = [
   {
     name: "Professional",
     id: "tier-professional",
-    price: { monthly: "$12.99", annually: "$129.99" },
+    itemName: "Fusion AI Professional Plan",
+    price: { monthly: 12.99, annually: 119.99 },
     description: "A plan for corporate professionals",
     features: [
       "Youtube Quick Summaries",
@@ -61,7 +63,7 @@ export const tiers = [
       "Upload Video/Audio Quick Summaries",
       "Upload Video/Audio Detail Summaries",
       "Upload Video/Audio Transcription",
-      `800 Credits limit/ month \n - up to 800 hours Quick summarization \n - up to 400 hours Detail summarization \n - up to 24 hours Video Transcription`,
+      `800 Credits / month \n - up to 800 hours Quick summarization \n - up to 400 hours Detail summarization \n - up to 24 hours Video Transcription`,
       "SRT Editor",
       "Summary History",
     ],
@@ -71,7 +73,8 @@ export const tiers = [
   {
     name: "Mastermind",
     id: "tier-mastermind",
-    price: { monthly: "$19.99", annually: "$199.99" },
+    itemName: "Fusion AI Mastermind Plan",
+    price: { monthly: 19.99, annually: 189.99 },
     description: "Save Videos in your mind",
     features: [
       "Youtube Quick Summaries",
@@ -80,7 +83,7 @@ export const tiers = [
       "Upload Video/Audio Quick Summaries",
       "Upload Video/Audio Detail Summaries",
       "Upload Video/Audio Transcription",
-      `800 Credits limit/ month \n - up to 800 hours Quick summarization \n - up to 400 hours Detail summarization \n - up to 24 hours Video Transcription`,
+      `800 Credits / month \n - up to 800 hours Quick summarization \n - up to 400 hours Detail summarization \n - up to 24 hours Video Transcription`,
       "SRT Editor",
       "Summary History",
       "RAG Database",
@@ -89,5 +92,3 @@ export const tiers = [
     available: false,
   },
 ];
-
-export const creditPrices = () => {};

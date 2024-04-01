@@ -13,14 +13,11 @@ const Header = () => {
   const LoggedInMenu = () => {
 
     const menuItems = ["history", "profile"]
-
-    
-
     return (
       <div className="flex mr-2">
         {menuItems.map((menuItem) => {
           return (
-            <Link key={menuItem} to={`/${menuItem}`} className={`mr-1 capitalize hover:text-indigo-400 pr-4 ${pathname === menuItem ? " text-indigo-600 font-semibold" : ""}`}>
+            <Link key={menuItem} to={`/${menuItem}`} className={`hidden md:block mr-1 capitalize hover:text-indigo-400 pr-4 ${pathname === menuItem ? " text-indigo-600 font-semibold" : ""}`}>
               {menuItem}
             </Link>)
         })}
@@ -50,7 +47,7 @@ const Header = () => {
       <div className="w-[1280px] flex justify-between items-center bg-white sm:px-8 px-4 border-b border-b-[#e6ebf4] ">
         <div className="flex align-middle content-center items-center">
           <Link to="/">
-            <img className="h-12" src={logo} />
+            <img className="h-12 aspect-auto" src={logo} />
           </Link>
         </div>
 

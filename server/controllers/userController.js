@@ -1,6 +1,4 @@
-import User from "../models/userModel.js";
 import userService from "../services/userService.js";
-import paymentController from "./paymentController.js";
 
 
 const getUserData = async (req, res) => {

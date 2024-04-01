@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import SummaryService from "../services/SummaryService";
 import { formatDuration } from '../Components/Utils';
+import { convertMongoDBDateToLocalTime } from '../utils/timeUtils';
 
 const HistoryPage = () => {
     const navigate = useNavigate()
@@ -28,10 +29,6 @@ const HistoryPage = () => {
         navigate('/login');
     }
 
-    const convertDateToLocalTime = (lastUpdated) => {
-        const date = new Date(lastUpdated);
-        return date.toLocaleString();
-    };
 
     const VideoListItem = ({ video, index }) => {
         const { _id, url, sourceTitle, sourceType, lastUpdated,videoDuration, videoThumbnail } = video
@@ -48,7 +45,7 @@ const HistoryPage = () => {
                 <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
                     <p className="text-sm leading-6 text-gray-900">{formatDuration(videoDuration)}</p>
                     <p className="mt-1 text-xs leading-5 text-gray-500">
-                        {convertDateToLocalTime(lastUpdated)}
+                        {convertMongoDBDateToLocalTime(lastUpdated)}
                     </p>
                 </div>
             </li>)

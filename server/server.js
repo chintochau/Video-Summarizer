@@ -8,52 +8,56 @@ import ytdl from "ytdl-core";
 import { YoutubeTranscript } from "youtube-transcript";
 import ffmpeg from "fluent-ffmpeg";
 import cors from "cors";
-import {
-  CharacterTextSplitter,
-} from "langchain/text_splitter";
+import { CharacterTextSplitter } from "langchain/text_splitter";
 import { get_encoding } from "tiktoken";
 import { kmeans } from "ml-kmeans";
 import tmp from "tmp";
 import { pipeline } from "stream";
 import util from "util";
-import { openai, anthropic, assembly } from './config/summaryConfig.js'
-import summaryRoutes from "./routes/summaryRoutes.js"
-import userRoutes from "./routes/userRoutes.js"
+import { openai, anthropic, assembly } from "./config/summaryConfig.js";
+import summaryRoutes from "./routes/summaryRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import { connectDB } from "./config/db.js";
-import transcribeRoutes from './routes/transcribeRoutes.js'
-
-
+import transcribeRoutes from "./routes/transcribeRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 //running python code for testing
-import { pythonRunner, checkPackage, installPackage, vastai } from './utils/pythonRunner.js'
+import {
+  pythonRunner,
+  checkPackage,
+  installPackage,
+  vastai,
+} from "./utils/pythonRunner.js";
 const variableToPass = "Python";
-pythonRunner('--version', [variableToPass])
+pythonRunner("--version", [variableToPass])
   .then((output) => {
     console.log(output);
   })
   .catch((error) => {
     console.error(`Python script execution error: ${error}`);
   });
-
+// end of python code
 
 const app = express();
-
 const pipelineAsync = util.promisify(pipeline);
 
 const upload = multer({ dest: "uploads/" });
 const port = process.env.PORT || 3000;
-connectDB()
+connectDB();
 
 // 中間件
-app.use(bodyParser.json({ limit: '10mb' }));
+// app.use(bodyParser.json({ limit: "10mb" }));
 app.use(cors());
 app.use(upload.single("file"));
-
+// app.use(
+//   bodyParser.raw({ inflate: true, limit: "100kb", type: "application/json" })
+// );
 
 //Routes
-app.use('/api', cors(), summaryRoutes) // to get summary
-app.use('/users', cors(), userRoutes)
-app.use('/api', cors(), transcribeRoutes)
+app.use("/api", cors(), summaryRoutes); // to get summary
+app.use("/users", cors(), userRoutes);
+app.use("/api", cors(), transcribeRoutes);
+app.use("/api", cors(), paymentRoutes);
 
 //PRIVATE calculate tokens
 const tikCalculateToken = (transcript, model) => {
@@ -204,7 +208,7 @@ const videoExtensions = [".mp4", ".mkv", ".webm", ".avi", ".mov"];
 // 設置路由處理轉寫請求
 app.post(
   "/api/transcribeAudio",
-  cors(),
+  cors(),bodyParser.json({ limit: "10mb" }),
   upload.single("file"),
   async (req, res) => {
     const { language, response_format, selectedModel } = req.body;
@@ -278,7 +282,7 @@ async function processAudioFile(filePath) {
   // Note: Be sure to handle file cleanup if this function also creates temporary files or resources.
 }
 
-app.post("/api/transcribeYoutubeVideo", cors(), async (req, res) => {
+app.post("/api/transcribeYoutubeVideo", cors(),bodyParser.json({ limit: "10mb" }), async (req, res) => {
   const { youtubeLink } = req.body;
   try {
     const videoInfo = await ytdl.getInfo(youtubeLink);
@@ -351,9 +355,8 @@ app.post(
   }
 );
 
-
 //Transcribe Youtube with Free API
-app.post("/api/getYoutubeTranscript", cors(), async (req, res) => {
+app.post("/api/getYoutubeTranscript", cors(),bodyParser.json({ limit: "10mb" }), async (req, res) => {
   const { youtubeLink } = req.body;
 
   try {
@@ -375,7 +378,7 @@ app.post("/api/getYoutubeTranscript", cors(), async (req, res) => {
   }
 });
 
-app.post("/api/stream-response", cors(), async (req, res) => {
+app.post("/api/stream-response", cors(),bodyParser.json({ limit: "10mb" }), async (req, res) => {
   const { option, transcript, language, selectedModel } = req.body;
   const { prompt, id } = option;
 
@@ -424,7 +427,7 @@ app.post("/api/stream-response", cors(), async (req, res) => {
         console.log(error.message);
         res.write("exceed length");
       }
-      break
+      break;
     default:
       // anthropic AI
       const stream = await anthropic.messages.create({
@@ -544,7 +547,7 @@ const formatGroupedSubtitle = (groupSubtitleByInterval) => {
   return outputString;
 };
 
-app.post("/api/stream-response-series", cors(), async (req, res) => {
+app.post("/api/stream-response-series",bodyParser.json({ limit: "10mb" }), cors(), async (req, res) => {
   // must input srt transcript, if not, will not produce desired result
   const { option, transcript, language, interval } = req.body;
   const { id, title, description, prompt } = option;
@@ -622,7 +625,7 @@ app.post("/api/stream-response-series", cors(), async (req, res) => {
   res.end();
 });
 
-app.post("/api/stream-response-large-text", cors(), async (req, res) => {
+app.post("/api/stream-response-large-text", cors(),bodyParser.json({ limit: "10mb" }), async (req, res) => {
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
@@ -659,7 +662,7 @@ app.post("/api/stream-response-large-text", cors(), async (req, res) => {
           encoding_format: "float",
         });
         embeddingArray.push(embedding.data[0].embedding);
-      } catch (error) { }
+      } catch (error) {}
     }
   };
 
@@ -681,7 +684,6 @@ app.post("/api/stream-response-large-text", cors(), async (req, res) => {
 
   console.log(parseInt(chunks.length / 3));
   let ans = kmeans(embeddingArray, parseInt(chunks.length / 3));
-
 
   let paragraphs = [];
   chunks.map((chunk) => {

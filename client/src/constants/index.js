@@ -7,8 +7,5 @@ export const languageList = [
     { code: 'fr', name: 'French' },
     { code: 'ar', name: 'Arabic' },
     { code: 'ru', name: 'Russian' },
-    { code: 'pt', name: 'Portuguese' },
-    { code: 'hi', name: 'Hindi' },
-    { code: 'bn', name: 'Bengali' },
-    { code: 'pa', name: 'Punjabi' }
+    { code: 'pt', name: 'Portuguese' }
 ];

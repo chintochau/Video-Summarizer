@@ -6,10 +6,11 @@ import {
   getAllSummariesForVideo,
 } from "../controllers/summaryController.js";
 const router = express.Router();
+import bodyParser from "body-parser";
 
-router.post("/get-summary", handleSummaryRequest);
-router.post("/get-summary-meetings", handleMeetingSummary);
-router.get("/user/:userId/videos", getAllVideosForUser);
-router.get("/summaries/:userId/:sourceId", getAllSummariesForVideo);
+router.post("/get-summary",bodyParser.json({ limit: "10mb" }), handleSummaryRequest);
+router.post("/get-summary-meetings",bodyParser.json({ limit: "10mb" }), handleMeetingSummary);
+router.get("/user/:userId/videos",bodyParser.json({ limit: "10mb" }), getAllVideosForUser);
+router.get("/summaries/:userId/:sourceId",bodyParser.json({ limit: "10mb" }), getAllSummariesForVideo);
 
 export default router;

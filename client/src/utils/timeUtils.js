@@ -13,3 +13,10 @@ export const timeToSeconds = (timestamp) => {
         return null;
     }
 }
+
+
+
+export const convertMongoDBDateToLocalTime = (lastUpdated) => {
+    const date = new Date(lastUpdated);
+    return date.toLocaleString();
+};
