@@ -28,7 +28,7 @@ import {
   installPackage,
   vastai,
 } from "./utils/pythonRunner.js";
-const variableToPass = "Python";
+const variableToPass = "";
 pythonRunner("--version", [variableToPass])
   .then((output) => {
     console.log(output);

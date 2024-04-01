@@ -12,3 +12,4 @@ server/.env
 */twcomponents
 client/.env.development
 client/.env.production
+server/venv
