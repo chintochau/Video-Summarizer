@@ -9,7 +9,7 @@ import {
   acceptStyle,
 } from "../pages/styles";
 import VideoField from "./VideoField";
-import { formatFileSize, generateUUID, getYoutubeAudio } from "./Utils";
+import { formatFileSize, generateUUID } from "./Utils";
 import TranscriptField from "./TranscriptField";
 import SummaryField from "./SummaryField";
 import { useVideoContext } from "../contexts/VideoContext";
@@ -88,13 +88,11 @@ export default function Summarizer() {
 
       setUploadMode(true);
       if (files[0].type.startsWith("video/")) {
-        console.log(files[0]);
         const src = URL.createObjectURL(files[0]);
         setVideoSrc(src);
         setAudioSrc(null);
       }
       if (files[0].type.startsWith("audio/")) {
-        console.log(files[0]);
         const src = URL.createObjectURL(files[0]);
         setAudioSrc(src);
         setVideoSrc(null);
