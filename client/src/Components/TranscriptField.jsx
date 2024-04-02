@@ -157,11 +157,15 @@ const TranscriptField = ({
   const loadYoutubeTranscript = async () => {
     try {
       const result = await YoutubeService.getYoutubeTranscript({  youtubeId });
+
       loadSrtTranscript(result);
+
     } catch (error) {
+      
       setFetchingTranscript(false);
       setTranscriptAvailable(false);
       setParentTranscriptText("");
+
     }
   };
 

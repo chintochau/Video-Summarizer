@@ -15,7 +15,7 @@ export const transcribeFile = async ({ file, filePath }) => {
   }
 
   try {
-    const response = await fetch("http://213.108.196.111:8935/transcribe", {
+    const response = await fetch("http://81.166.173.12:11841/transcribe", {
       method: "POST",
       body: formData,
       headers: formData.getHeaders(),

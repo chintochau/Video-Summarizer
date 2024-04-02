@@ -20,6 +20,7 @@ import { connectDB } from "./config/db.js";
 import transcribeRoutes from "./routes/transcribeRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import youtubeRoutes from "./routes/youtubeRoutes.js";
+import vastaiRoutes from "./routes/vastaiRoutes.js";
 
 //running python code for testing
 import {
@@ -60,6 +61,7 @@ app.use("/users", cors(), userRoutes);
 app.use("/api", cors(), transcribeRoutes);
 app.use("/api", cors(), paymentRoutes);
 app.use("/api", cors(), youtubeRoutes);
+app.use("/", cors(), vastaiRoutes);
 
 //PRIVATE transcribe Audio
 async function transcribeWithWhisperApi(data) {
