@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  getYoutubeTranscript,
   parseSRT,
   exportSRT,
   transcribeWithAI,
@@ -14,6 +13,7 @@ import { useVideoContext } from "../contexts/VideoContext";
 import { timeToSeconds } from "../utils/timeUtils";
 import { useAuth } from "../contexts/AuthContext";
 import { checkCredits } from "../utils/creditUtils";
+import YoutubeService from "../services/YoutubeService";
 
 // Box
 const TranscriptBox = ({
@@ -156,8 +156,8 @@ const TranscriptField = ({
   // Get transcript from YouTube
   const loadYoutubeTranscript = async () => {
     try {
-      const result = await getYoutubeTranscript({ youtubeLink: youtubeId });
-      loadSrtTranscript(result.srt);
+      const result = await YoutubeService.getYoutubeTranscript({  youtubeId });
+      loadSrtTranscript(result);
     } catch (error) {
       setFetchingTranscript(false);
       setTranscriptAvailable(false);
@@ -182,6 +182,7 @@ const TranscriptField = ({
       setFetchingTranscript(false);
       setTranscriptAvailable(false);
       setParentTranscriptText("");
+      console.error(error.message);
     }
   };
 
@@ -364,10 +365,8 @@ const TranscriptField = ({
                       <button
                         className="my-2 bg-indigo-600 hover:bg-indigo-400 px-3.5 py-2.5 rounded-md text-white disabled:bg-gray-400"
                         onClick={uploadAndTranscriptFile}
-                        disabled
                       >
-                        Generate (Credits: {videoCredits})<br/>
-                        Currently Unavailable due to service upgrade
+                        Generate (Credits: {videoCredits})
                       </button>
                       <div className=" w-72">
                         a hour long video takes up to 5 mins to transcribe
@@ -505,7 +504,7 @@ const TranscriptField = ({
                     <div>
                       Transcript Not Available
                       <div className=" mx-8">
-                        <button disabled={true}
+                        <button 
                           className="px-3.5 py-2.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-400 disabled:bg-gray-400"
                           onClick={generateTranscriptWithAIForYoutube}
                         >

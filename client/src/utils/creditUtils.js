@@ -7,7 +7,7 @@ export const calculateVideoCredits = (videoDuration) => {
 
 export const checkCredits = (userCredits, creditAmount) => {
   try {
-    if (userCredits < creditAmount) {
+    if (parseFloat(userCredits) < parseFloat(creditAmount)) {
       throw new Error("Insufficient credits");
     }
 

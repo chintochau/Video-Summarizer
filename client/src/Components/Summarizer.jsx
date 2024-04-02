@@ -14,6 +14,7 @@ import TranscriptField from "./TranscriptField";
 import SummaryField from "./SummaryField";
 import { useVideoContext } from "../contexts/VideoContext";
 import { calculateVideoCredits } from "../utils/creditUtils";
+import YoutubeService from "../services/YoutubeService";
 
 export default function Summarizer() {
   const [file, setFile] = useState(null);
@@ -164,7 +165,7 @@ export default function Summarizer() {
                   </button>
                   <button
                     className=" text-indigo-600 hover:text-indigo-400 outline outline-2 rounded-md ml-1 px-3.5 py-2.5"
-                    onClick={() => getYoutubeAudio({ youtubeLink })}
+                    onClick={() => YoutubeService.getYoutubeAudio({ youtubeLink })}
                   >
                     <DownloadIcon style={{ width: "20px", height: "20px" }} />
                     Audio

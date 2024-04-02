@@ -4,7 +4,7 @@ export const handleTranscribeRequest = async (req, res) => {
 
     try {
         const uploadedFile = req.file;
-        const transcriptionResult = await transcribeFile(uploadedFile);
+        const transcriptionResult = await transcribeFile({file:uploadedFile});
         res.json(transcriptionResult);
     } catch (error) {
         console.error("Error occurred during transcription:", error);
