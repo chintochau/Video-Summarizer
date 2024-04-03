@@ -10,6 +10,7 @@ import { ModelProvider } from "./contexts/ModelContext.jsx";
 import PricingPage from "./pages/PricingPage.jsx";
 import HistoryPage from "./pages/HistoryPage.jsx";
 import NotificationOverlay from "./Components/NotificationOverlay.jsx";
+import { VideoProvider } from "./contexts/VideoContext.jsx";
 
 function App() {
   const [announcement, setAnnouncement] = useState({
@@ -39,15 +40,17 @@ function App() {
         <Header />
         <div className="w-full top-[73px] min-h-[calc(100vh-73px)]  ">
           <ModelProvider>
-            <Routes>
-              <Route path="/Summarizer" element={<SummarizePage />} />
-              <Route path="/" element={<HomePage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/pricing" element={<PricingPage />} />
-              <Route path="/history" element={<HistoryPage />} />
-              <Route path="/profile" element={<UserProfilePage />} />
-            </Routes>
+            <VideoProvider>
+              <Routes>
+                <Route path="/Summarizer" element={<SummarizePage />} />
+                <Route path="/" element={<HomePage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/history" element={<HistoryPage />} />
+                <Route path="/profile" element={<UserProfilePage />} />
+              </Routes>
+            </VideoProvider>
             <NotificationOverlay />
           </ModelProvider>
         </div>

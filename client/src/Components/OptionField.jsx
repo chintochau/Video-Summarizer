@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { summarizeOptions } from "./Prompts";
-import { VideoContext } from "../contexts/VideoContext";
+import { useVideoContext } from "../contexts/VideoContext";
 import { formatDuration } from "./Utils";
 
 const OptionCard = ({ option, handleClick, creditCount }) => {
-  const { videoDuration } = useContext(VideoContext);
+  const { videoDuration } = useVideoContext();
   const { id, title, description, prompt } = option;
   const [adjustableCreditCount, setAdjustableCreditCount] = useState(0);
   const [interval, setInterval] = useState(600);

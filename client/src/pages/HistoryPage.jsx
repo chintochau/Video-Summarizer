@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext'
 import SummaryService from "../services/SummaryService";
 import { formatDuration } from '../Components/Utils';
 import { convertMongoDBDateToLocalTime } from '../utils/timeUtils';
+import { useVideoContext } from '../contexts/VideoContext';
 
 const HistoryPage = () => {
     const navigate = useNavigate()
@@ -12,7 +13,7 @@ const HistoryPage = () => {
     const [totalPage, setTotalPage] = useState(1)
     const [currentPage, setCurrentPage] = useState(1)
     const [totalItems, setTotalItems] = useState(0)
-
+    const { setYoutubeId } = useVideoContext()
 
     useEffect(() => {
         async function fetchVideos() {
@@ -31,9 +32,16 @@ const HistoryPage = () => {
 
 
     const VideoListItem = ({ video, index }) => {
-        const { _id, url, sourceTitle, sourceType, lastUpdated,videoDuration, videoThumbnail } = video
+        const { _id, url, sourceTitle, sourceType, sourceId, lastUpdated, videoDuration, videoThumbnail } = video
         return (
-            <li key={_id} className="flex justify-between gap-x-6 py-2.5 hover:outline outline-indigo-400 rounded-md px-4 cursor-pointer">
+            <li key={_id} className="flex justify-between gap-x-6 py-2.5 hover:outline outline-indigo-400 rounded-md px-4 cursor-pointer"
+                onClick={() => {
+                    if(sourceType === "youtube") {
+
+                        setYoutubeId(sourceId) 
+                        navigate("/summarizer")
+                    }
+                    }}>
                 <div className="flex min-w-0 gap-x-4">
                     <div className='self-center w-10 text-right p-2'>{index + 1}</div>
                     <img className=" h-36 flex-none  bg-gray-50" src={videoThumbnail} alt="" />

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 
-export const SummaryContext = createContext();
+const SummaryContext = createContext();
 
 export const useSummaryContext = () => useContext(SummaryContext);
 

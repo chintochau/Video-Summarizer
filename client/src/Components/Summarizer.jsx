@@ -20,12 +20,11 @@ export default function Summarizer() {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [fileSize, setFileSize] = useState("");
-  const [hasYTResult, setHasUTResult] = useState(false);
+  const [hasYTResult, setHasYTResult] = useState(false);
   const [uploadMode, setUploadMode] = useState(false);
   const [youtubeLink, setYoutubeLink] = useState(
     "https://www.youtube.com/watch?v=Jsk6fHuIwy4"
   );
-  const [youtubeId, setYoutubeId] = useState("");
   const [parentTranscriptText, setParentTranscriptText] = useState("");
   const [parentSrtText, setParentSrtText] = useState("");
   const [videoSrc, setVideoSrc] = useState(null);
@@ -37,7 +36,18 @@ export default function Summarizer() {
 
   const videoRef = useRef(null);
   const uploadRef = useRef(null);
-  const { setVideoDuration, setCurrentPlayTime, setSourceId,setSourceType, setSourceTitle,setVideoCredits } = useVideoContext();
+  const { setVideoDuration, setCurrentPlayTime, setSourceId,setSourceType, setSourceTitle,setVideoCredits,youtubeId,setYoutubeId } = useVideoContext();
+
+  console.log(youtubeId);
+
+  useEffect(() => {
+    if (youtubeId) {
+      setHasYTResult(true)
+    }
+  
+
+  }, [youtubeId])
+  
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -49,7 +59,7 @@ export default function Summarizer() {
     // Set YouTube link and ID states
     if (youtubeIdFromLink) {
       setYoutubeId(youtubeIdFromLink[1]);
-      setHasUTResult(true);
+      setHasYTResult(true);
     } else {
       setYoutubeId("");
     }

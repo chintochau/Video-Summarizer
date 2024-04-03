@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 
-export const VideoContext = createContext();
+const VideoContext = createContext();
 
 export const useVideoContext = () => useContext(VideoContext);
 
@@ -11,6 +11,7 @@ export const VideoProvider = ({ children }) => {
   const [sourceId, setSourceId] = useState("")
   const [videoCredits, setVideoCredits] = useState(0)
   const [currentPlayTime, setCurrentPlayTime] = useState(0)
+  const [youtubeId, setYoutubeId] = useState("")
 
   const value = {
     videoDuration, 
@@ -19,6 +20,8 @@ export const VideoProvider = ({ children }) => {
     setSourceType, 
     setSourceId, 
     setVideoCredits,
+    youtubeId,
+    setYoutubeId,
     video: {
       sourceTitle, sourceType, sourceId, videoDuration
     }, 

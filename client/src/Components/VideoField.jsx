@@ -1,11 +1,11 @@
 import React, { useRef, useEffect, useState, useContext } from "react";
 
 import YouTube from "react-youtube";
-import { VideoContext } from "../contexts/VideoContext";
+import { useVideoContext } from "../contexts/VideoContext";
 import { calculateVideoCredits } from "../utils/creditUtils";
 
 const VideoField = ({ fileName, youtubeId, videoRef }) => {
-  const { setVideoDuration, setSourceTitle, setSourceType, setSourceId, setVideoCredits, setCurrentPlayTime } = useContext(VideoContext);
+  const { setVideoDuration, setSourceTitle, setSourceType, setSourceId, setVideoCredits, setCurrentPlayTime } = useVideoContext();
 
   const opts = {
     height: "auto",
