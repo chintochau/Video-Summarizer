@@ -12,15 +12,22 @@ export const AuthProvider = ({ children }) => {
   const [userData, setUserData] = useState({});
   const [credits, setCredits] = useState(0);
 
+  const clearUserData = () => {
+    setUserData({})
+    setCredits(0)
+  }
+
   useEffect(() => {
     const unsubscribe = AuthService.onAuthChange(async (user) => {
+      console.log(user);
       setCurrentUser(user);
       if (user) {
         const userData = await getUserDataByEmail({ email: user.email });
         setUserData(userData);
         setCredits(parseFloat(userData.credits).toFixed(1));
+      } else {
+        clearUserData()
       }
-
       setLoading(false);
     });
 
