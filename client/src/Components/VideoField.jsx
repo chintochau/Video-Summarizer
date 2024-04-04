@@ -20,7 +20,7 @@ const VideoField = ({  youtubeId, videoRef }) => {
   useEffect(() => {
     const intervalId = setInterval(async () => {
       setCurrentPlayTime(await videoRef.current.internalPlayer.getCurrentTime());
-    }, 800);
+    }, 300);
   
 
     return () => {

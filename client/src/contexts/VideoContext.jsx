@@ -12,6 +12,7 @@ export const VideoProvider = ({ children }) => {
   const [videoCredits, setVideoCredits] = useState(0)
   const [currentPlayTime, setCurrentPlayTime] = useState(0)
   const [youtubeId, setYoutubeId] = useState("")
+  const [currentLine, setCurrentLine] = useState("")
 
   const value = {
     videoDuration, 
@@ -27,7 +28,7 @@ export const VideoProvider = ({ children }) => {
     }, 
     videoCredits,
     currentPlayTime,
-    setCurrentPlayTime
+    setCurrentPlayTime,currentLine, setCurrentLine
   };
 
   return (

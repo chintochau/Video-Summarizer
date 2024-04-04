@@ -15,6 +15,7 @@ import HistoryPage from '../../pages/HistoryPage'
 import Summarizer from '../Summarizer'
 import UserProfilePage from '../../pages/UserProfilePage'
 import YoutubeSummary from '../SummarizerPage/YoutubeSummary'
+import UploadSummary from '../SummarizerPage/UploadSummary'
 
 const navigation = [
     { name: 'Youtube', to: 'youtube', icon: PlayCircleIcon, current: true },
@@ -122,14 +123,10 @@ const Dashboard = () => {
 
                 {/* Static sidebar for desktop */}
                 <div className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block lg:p-4 lg:overflow-y-auto lg:bg-gray-900 lg:pb-4 w-56">
-                    <div className="flex h-16 shrink-0 items-center justify-center">
-                        <img
-                            className="h-8 w-auto"
-                            src={logo}
-                            alt="Your Company"
-                        />
+                    <div className="flex h-16 shrink-0 items-center justify-center text-white text-2xl text-left">
+                        Fusion AI
                     </div>
-                    <nav className="mt-8">
+                    <nav className="mt-4">
                         <ul role="list" className="flex flex-col items-center space-y-1 ">
                             {navigation.map((item) => (
                                 <Link key={item.name} to={item.to} className='w-full text-center'>
@@ -148,7 +145,7 @@ const Dashboard = () => {
                     </nav>
                 </div>
 
-                <div className="sticky top-0 z-40 flex items-center gap-x-6 bg-gray-900 px-4 py-4 shadow-sm sm:px-6 lg:hidden">
+                <div className={classNames(currentPathname === "youtube" ?"hidden":"","sticky top-0 z-40 flex items-center gap-x-6 bg-gray-900 px-4 py-4 shadow-sm sm:px-6 lg:hidden")}>
                     <button type="button" className="-m-2.5 p-2.5 text-gray-400 lg:hidden" onClick={() => setSidebarOpen(true)}>
                         <span className="sr-only">Open sidebar</span>
                         <Bars3Icon className="h-6 w-6" aria-hidden="true" />
@@ -168,7 +165,7 @@ const Dashboard = () => {
                     <Routes>
                         <Route path='' element={<Summarizer />} />
                         <Route path='youtube' element={<YoutubeSummary />} />
-                        <Route path='upload' element={<Summarizer />} />
+                        <Route path='upload' element={<UploadSummary />} />
                         <Route path='billing' element={<div>billing</div>} />
                         <Route path='history' element={<HistoryPage />} />
                         <Route path='profile' element={<UserProfilePage />} />

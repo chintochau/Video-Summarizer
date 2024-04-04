@@ -21,7 +21,7 @@ const YoutubeSummary = () => {
     const videoRef = useRef(null)
     const [youtubeLink, setYoutubeLink] = useState("")
     const { youtubeId, setYoutubeId } = useVideoContext()
-    const { setParentSrtText, setParentTranscriptText } = useTranscriptContext()
+    const { setParentSrtText, setParentTranscriptText,parentSrtText,parentTranscriptText } = useTranscriptContext()
 
     const submitYoutubeLink = (e) => {
         e.preventDefault();
@@ -60,7 +60,7 @@ const YoutubeSummary = () => {
             </div>
 
 
-            <div className="mx-auto flex w-full max-w-[1920px] items-start gap-x-8 px-2 py-4 sm:px-6 lg:p-1  flex-grow max-h-[calc(100vh-64px)]">
+            <div className="mx-auto flex w-full max-w-[1920px] items-start gap-x-1 px-2 py-1 sm:px-2 lg:p-1  flex-grow max-h-[calc(100vh-64px)]">
                 <div className="flex-1 shrink-0 lg:block w-full md:w-1/2 lg:w-3/5 flex flex-col p-1  h-full max-h-[calc(100vh-68px)] ">
                     <VideoField
                         videoRef={videoRef}
@@ -74,8 +74,11 @@ const YoutubeSummary = () => {
                     />
                 </div>
 
-                <div className="hidden sticky top-20 shrink-0 xl:block w-full md:w-1/2 lg:w-2/5 h-1/2  md:h-full p-1">
-                    <SummaryField />
+                <div className="hidden sticky top-20 shrink-0 md:block w-full md:w-1/2 lg:w-2/5 h-1/2  md:h-full p-1 ">
+                    <SummaryField 
+                        videoRef={videoRef}
+                        parentSrtText={parentSrtText}
+                        parentTranscriptText={parentTranscriptText}/>
                 </div>
 
             </div>

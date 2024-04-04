@@ -109,7 +109,7 @@ const TranscriptField = ({
   const [language, setLanguage] = useState("en");
   const [isEditMode, setIsEditMode] = useState(false)
 
-  const { videoCredits, currentPlayTime } = useVideoContext();
+  const { videoCredits, currentPlayTime,currentLine, setCurrentLine } = useVideoContext();
   const { credits } = useAuth();
 
   const resetTranscriptField = () => {
@@ -301,8 +301,8 @@ const TranscriptField = ({
   }, [youtubeId]);
 
   return (
-    <div className="flex-col xl:h-[calc(100vh-34.5vw)] 3xl:h-[calc(100vh-730px)]">
-      {currentPlayTime}
+    <div className="flex-col h-[calc(100vh-69vw)] md:h-[calc(100vh-38.5vw)] lg:h-[calc(100vh-34.5vw)] 3xl:h-[calc(100vh-730px)]">
+      <div className="text-center">{currentLine}</div>
       {videoValid || uploadMode ?
 
         // youtube Mode
@@ -470,9 +470,10 @@ const TranscriptField = ({
                         {editableTranscript.map(({ start, end, text }, index) => {
                           const startTime = timeToSeconds(start.split(",")[0]);
                           const endTime = timeToSeconds(end.split(",")[0]);
-                          const isCurrent =
-                            currentPlayTime > startTime - 0.1 &&
-                            currentPlayTime < endTime + 0.1;
+                          const isCurrent = currentPlayTime > startTime && currentPlayTime < endTime
+                            if(isCurrent) {
+                              setCurrentLine(text)
+                            }
                           return (
                             <TranscriptBox
                               key={index}

@@ -38,9 +38,8 @@ const HistoryPage = () => {
             <li key={_id} className="flex justify-between gap-x-6 py-2.5 hover:outline outline-indigo-400 rounded-md px-4 cursor-pointer"
                 onClick={() => {
                     if(sourceType === "youtube") {
-
                         setYoutubeId(sourceId) 
-                        navigate("/summarizer")
+                        navigate("/console/youtube")
                     }
                     }}>
                 <div className="flex min-w-0 gap-x-4">

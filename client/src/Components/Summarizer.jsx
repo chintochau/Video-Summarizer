@@ -246,6 +246,7 @@ export default function Summarizer() {
 
         {/*Dropzone*/}
         <div className="flex-col justify-center py-4">
+          
           <div className="max-w-[600px] mx-auto cursor-pointer">
             <div {...getRootProps({ style })}>
               <input {...getInputProps()} />

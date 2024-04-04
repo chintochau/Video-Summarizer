@@ -47,7 +47,7 @@ function App() {
               <TranscriptProvider>
 
                 <Routes>
-                  <Route path="/Summarizer" element={<SummarizePage />} />
+                  <Route path="/Summarizer" element={<div><Header/><SummarizePage /></div>} />
                   <Route path="/" element={<div>
                     <Header />
                     <HomePage />
@@ -55,7 +55,7 @@ function App() {
                   } />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/register" element={<RegisterPage />} />
-                  <Route path="/pricing" element={<PricingPage />} />
+                  <Route path="/pricing" element={<div><Header/><PricingPage /></div>} />
                   <Route path="/history" element={<HistoryPage />} />
                   <Route path="/profile" element={<UserProfilePage />} />
                   <Route path="/console/*" element={<Dashboard />} >
