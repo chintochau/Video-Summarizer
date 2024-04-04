@@ -301,7 +301,7 @@ const TranscriptField = ({
   }, [youtubeId]);
 
   return (
-    <div className="flex-col h-full">
+    <div className="flex-col xl:h-[calc(100vh-34.5vw)] 3xl:h-[calc(100vh-730px)]">
       {currentPlayTime}
       {videoValid || uploadMode ?
 

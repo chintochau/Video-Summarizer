@@ -38,8 +38,6 @@ export default function Summarizer() {
   const uploadRef = useRef(null);
   const { setVideoDuration, setCurrentPlayTime, setSourceId,setSourceType, setSourceTitle,setVideoCredits,youtubeId,setYoutubeId } = useVideoContext();
 
-  console.log(youtubeId);
-
   useEffect(() => {
     if (youtubeId) {
       setHasYTResult(true)
@@ -218,7 +216,6 @@ export default function Summarizer() {
                 <div className="w-full md:w-1/2 lg:w-3/5 flex flex-col h-full p-1">
                   <div className="w-full">
                     <VideoField
-                      fileName={fileName}
                       videoRef={videoRef}
                       youtubeId={youtubeId}
                     />

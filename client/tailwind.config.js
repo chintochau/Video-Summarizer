@@ -5,6 +5,7 @@ export default {
     extend: {
       screens: {
         xs: "480px",
+        "3xl":"2160px"
       },
       fontFamily: {
         inter: ["Inter var", "sans-serif"],

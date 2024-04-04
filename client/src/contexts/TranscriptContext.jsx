@@ -1,13 +1,14 @@
 import { createContext, useContext, useState } from "react";
 
-const SummaryContext = createContext();
+const TranscriptContext = createContext();
 
-export const useSummaryContext = () => useContext(SummaryContext);
+export const useTranscriptContext = () => useContext(TranscriptContext);
 
-export const SummaryProvider = ({ children }) => {
+export const TranscriptProvider = ({ children }) => {
   const [parentText, setParentText] = useState("");
   const [parentSrtText, setParentSrtText] = useState("");
   const [transcriptCredits, setTranscriptCredits] = useState(0);
+  const [parentTranscriptText, setParentTranscriptText] = useState("")
 
   const value = {
     parentText,
@@ -16,9 +17,11 @@ export const SummaryProvider = ({ children }) => {
     setParentText,
     transcriptCredits,
     setTranscriptCredits,
+    setParentTranscriptText,
+    parentTranscriptText
   };
 
   return (
-    <SummaryContext.Provider value={value}>{children}</SummaryContext.Provider>
+    <TranscriptContext.Provider value={value}>{children}</TranscriptContext.Provider>
   );
 };

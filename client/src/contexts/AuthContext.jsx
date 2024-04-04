@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const unsubscribe = AuthService.onAuthChange(async (user) => {
-      console.log(user);
       setCurrentUser(user);
       if (user) {
         const userData = await getUserDataByEmail({ email: user.email });

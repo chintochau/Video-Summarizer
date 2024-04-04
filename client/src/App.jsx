@@ -1,4 +1,4 @@
-import Header from "./Components/Header.jsx";
+import Header from "./Components/common/Header.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import SummarizePage from "./pages/SummarizePage.jsx";
 import { Route, Routes } from "react-router-dom";
@@ -11,6 +11,10 @@ import PricingPage from "./pages/PricingPage.jsx";
 import HistoryPage from "./pages/HistoryPage.jsx";
 import NotificationOverlay from "./Components/NotificationOverlay.jsx";
 import { VideoProvider } from "./contexts/VideoContext.jsx";
+import Dashboard from "./Components/dashboard/Dashboard.jsx";
+import Summarizer from "./Components/Summarizer.jsx";
+import { TranscriptProvider } from "./contexts/TranscriptContext.jsx";
+import YoutubeSummary from "./Components/SummarizerPage/YoutubeSummary.jsx";
 
 function App() {
   const [announcement, setAnnouncement] = useState({
@@ -30,26 +34,40 @@ function App() {
   return (
     <>
       <div className="relative">
-        {announcement.visible && (
+        {/* {announcement.visible && (
           <div className=" bg-indigo-50 flex text-center">
             <div className="mx-auto max-w-[1280px] w-[1280] text-gray-600">
               {announcement.message}
             </div>
           </div>
-        )}
-        <Header />
+        )} */}
         <div className="w-full top-[73px] min-h-[calc(100vh-73px)]  ">
           <ModelProvider>
             <VideoProvider>
-              <Routes>
-                <Route path="/Summarizer" element={<SummarizePage />} />
-                <Route path="/" element={<HomePage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/pricing" element={<PricingPage />} />
-                <Route path="/history" element={<HistoryPage />} />
-                <Route path="/profile" element={<UserProfilePage />} />
-              </Routes>
+              <TranscriptProvider>
+
+                <Routes>
+                  <Route path="/Summarizer" element={<SummarizePage />} />
+                  <Route path="/" element={<div>
+                    <Header />
+                    <HomePage />
+                  </div>
+                  } />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/pricing" element={<PricingPage />} />
+                  <Route path="/history" element={<HistoryPage />} />
+                  <Route path="/profile" element={<UserProfilePage />} />
+                  <Route path="/console/*" element={<Dashboard />} >
+                    <Route path='' />
+                    <Route path='youtube' element={<YoutubeSummary />}/>
+                    <Route path='upload' element={<Summarizer />} />
+                    <Route path='billing' element={<div>billing</div>}/>
+                    <Route path='history' element={<HistoryPage />}/>
+                    <Route path='profile' element={<UserProfilePage />}/>
+                  </Route>
+                </Routes>
+              </TranscriptProvider>
             </VideoProvider>
             <NotificationOverlay />
           </ModelProvider>

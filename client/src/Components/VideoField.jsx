@@ -4,7 +4,7 @@ import YouTube from "react-youtube";
 import { useVideoContext } from "../contexts/VideoContext";
 import { calculateVideoCredits } from "../utils/creditUtils";
 
-const VideoField = ({ fileName, youtubeId, videoRef }) => {
+const VideoField = ({  youtubeId, videoRef }) => {
   const { setVideoDuration, setSourceTitle, setSourceType, setSourceId, setVideoCredits, setCurrentPlayTime } = useVideoContext();
 
   const opts = {

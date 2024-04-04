@@ -1,7 +1,6 @@
 import HowItWorks from "./HowItWorks";
 import About from "./About";
 import Footer from "./Footer";
-import Header from "./Header";
 import Summarizer from "./Summarizer";
 import Logo from "./Logo";
 import HeroSection from "./HeroSection";
@@ -14,7 +13,6 @@ import FinalCTA from "./FinalCTA";
 export {
   About,
   Footer,
-  Header,
   Summarizer,
   Logo,
   HeroSection,
