@@ -15,16 +15,15 @@ const HistoryPage = () => {
     const [totalItems, setTotalItems] = useState(0)
     const { setYoutubeId } = useVideoContext()
 
-    async function fetchVideos(page) {
-        const videos = await SummaryService.getAllVideosForUser({ userId,page });
-        setVideos(videos.data)
-        setCurrentPage(videos.currentPage)
-        setTotalPage(videos.totalPages)
-        setTotalItems(videos.total)
-    }
-
     useEffect(() => {
-        fetchVideos(1);
+        async function fetchVideos() {
+            const videos = await SummaryService.getAllVideosForUser({ userId });
+            setVideos(videos.data)
+            setCurrentPage(videos.page)
+            setTotalPage(Math.max(Math.ceil((videos.count) / 10), 1))
+            setTotalItems(videos.count)
+        }
+        fetchVideos();
     }, [])
 
     if (!currentUser) {
@@ -70,9 +69,9 @@ const HistoryPage = () => {
                     ))}
                 </ul>
                 <div className='flex justify-between px-4 mt-2'>
-                    <button onClick={() => fetchVideos(Math.max(currentPage - 1,1))}>Previous</button>
+                    <div>Previous</div>
                     <div>{currentPage}/{totalPage}</div>
-                    <button onClick={() => fetchVideos(Math.min(currentPage + 1,totalPage))}>Next</button>
+                    <div>Next</div>
                 </div>
             </div>
 
