@@ -99,20 +99,12 @@ export const askChatGPT = async (data, completionHandler) => {
   }
 };
 
-export const transcribeWithAI = async ({
-  file,
-  language = "",
-  responseFormat,
-  selectedModel,
-}) => {
+export const transcribeWithAI = async (data) => {
   if (!file) {
     return null;
   }
 
-  console.log(file);
-
-  console.log(selectedModel);
-
+  const { file, language, selectedModel } = data;
   const audioTypes = ["audio/mp3", "audio/mpeg", "audio/wav", "audio/m4a"];
   const videoTypes = ["video/mp4", "video/quicktime"];
 

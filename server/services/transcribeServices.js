@@ -2,6 +2,7 @@
 import fetch from "node-fetch";
 import FormData from "form-data";
 import fs from "fs";
+import Video from "../models/videoModel.js";
 
 export const transcribeFile = async ({ file, filePath }) => {
   const formData = new FormData();
@@ -15,7 +16,7 @@ export const transcribeFile = async ({ file, filePath }) => {
   }
 
   try {
-    const response = await fetch("http://81.166.173.12:11841/transcribe", {
+    const response = await fetch("http://localhost:5000/transcribe", {
       method: "POST",
       body: formData,
       headers: formData.getHeaders(),

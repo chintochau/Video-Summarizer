@@ -14,81 +14,8 @@ import { timeToSeconds } from "../utils/timeUtils";
 import { useAuth } from "../contexts/AuthContext";
 import { checkCredits } from "../utils/creditUtils";
 import YoutubeService from "../services/YoutubeService";
+import TranscribeService from "../services/TranscribeService";
 
-// Box
-const TranscriptBox = ({
-  start,
-  end,
-  text,
-  onClick,
-  index,
-  handleTranscriptChange,
-  isCurrent,
-  isEditMode, mergeTranscriptToPrevious, deleteTranscriptBox, mergeTranscriptToNext
-}) => {
-  const adjustHeight = (e) => {
-    e.target.style.height = "auto"; // 先重置高度，允許它縮小
-    e.target.style.height = e.target.scrollHeight + "px"; // 然後設置為正確的高度
-  };
-
-
-  return (
-    <div
-      className={`flex shadow-sm mx-2 rounded-sm  ${isCurrent ? " bg-indigo-100" : " bg-white"
-        } hover:bg-indigo-50 cursor-pointer`}
-      onClick={() => onClick(start)}
-    >
-      <div className="p-1 pt-0">
-        <div
-          className="cursor-pointer underline text-nowrap text-blue-600 hover:text-blue-800"
-          onClick={() => onClick(start)}>
-          {start.split(",")[0] + " :"}
-        </div>
-        {isEditMode &&
-          <div className=" text-xs text-gray-400">{end.split(",")[0]}</div>}
-      </div>
-
-      {!isEditMode ?
-        <div className={"text-left" + (isCurrent ? " font-semibold" : "")}>
-          {text}
-        </div> :
-        <div className="flex w-full">
-          <textarea
-            className="w-full h-full focus:outline-none p-1 pt-0 bg-transparent"
-            style={{ overflowY: "hidden", resize: "none" }}
-            value={text}
-            onChange={(e) => {
-              handleTranscriptChange(index, e.target.value);
-              adjustHeight(e);
-            }}
-          />
-          <div className="w-10 text-center">
-            {/**merge up */}
-            {<button className={`text-gray-200  w-full ${index !== 0 && "hover:text-blue-500"}`} onClick={() => mergeTranscriptToPrevious(index)} disabled={index === 0}>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 18.75 7.5-7.5 7.5 7.5" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 7.5-7.5 7.5 7.5" />
-              </svg>
-            </button>}
-            {/*merge down */}
-            <button className=" text-gray-200 hover:text-blue-500 w-full" onClick={() => mergeTranscriptToNext(index)}>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 5.25 7.5 7.5 7.5-7.5m-15 6 7.5 7.5 7.5-7.5" />
-              </svg>
-
-            </button>
-          </div>
-          <button onClick={() => deleteTranscriptBox(index)} className=" text-gray-400 hover:text-red-500"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-          </svg>
-
-          </button>
-        </div>
-      }
-
-    </div>
-  );
-};
 
 // Field
 const TranscriptField = ({
@@ -109,8 +36,8 @@ const TranscriptField = ({
   const [language, setLanguage] = useState("en");
   const [isEditMode, setIsEditMode] = useState(false)
 
-  const { videoCredits, currentPlayTime,currentLine, setCurrentLine } = useVideoContext();
-  const { credits } = useAuth();
+  const { videoCredits, currentPlayTime, currentLine, setCurrentLine, video } = useVideoContext();
+  const { credits, userId } = useAuth();
 
   const resetTranscriptField = () => {
     if (uploadMode) {
@@ -143,10 +70,18 @@ const TranscriptField = ({
     try {
       checkCredits(credits, videoCredits);
       setGeneratingScriptWithAi(true);
-      const result = await transcribeWithAI({ file, selectedModel, language });
+      const result = await TranscribeService.transcribeUserUploadFile({
+        file,
+        language,
+        selectedModel,
+        videoCredits,
+        userId,
+        video,
+
+      });
       // parse SRT file to a formatted transcript
       loadSrtTranscript(result);
-      
+
     } catch (error) {
       console.error(error);
       setGeneratingScriptWithAi(false);
@@ -156,18 +91,37 @@ const TranscriptField = ({
   // Get transcript from YouTube
   const loadYoutubeTranscript = async () => {
     try {
-      const result = await YoutubeService.getYoutubeTranscript({  youtubeId });
+      const result = await YoutubeService.getYoutubeTranscript({ youtubeId });
 
       loadSrtTranscript(result);
 
     } catch (error) {
-      
+
       setFetchingTranscript(false);
       setTranscriptAvailable(false);
       setParentTranscriptText("");
 
     }
   };
+
+  // get transcript with upload from mongodb
+  const loadUploadVideoTranscript = async () => {
+    setFetchingTranscript(true);
+    try {
+      const srtTranscript = await TranscribeService.getVideoTranscript({ sourceId: video.sourceId });
+      if (!srtTranscript) {
+        setFetchingTranscript(false);
+        setTranscriptAvailable(false);
+        setParentTranscriptText("");
+      }
+      loadSrtTranscript(srtTranscript);
+    } catch (error) {
+      setFetchingTranscript(false);
+      setTranscriptAvailable(false);
+      setParentTranscriptText("");
+      console.error(error.message);
+    }
+  }
 
   // generate transcript with AI
   const generateTranscriptWithAIForYoutube = async () => {
@@ -291,7 +245,7 @@ const TranscriptField = ({
         setVideoValid(false);
         setParentTranscriptText("");
       }
-    }
+    } else { loadUploadVideoTranscript() }
     return () => {
       if (!uploadMode) {
         setEditableTranscript([]);
@@ -471,9 +425,9 @@ const TranscriptField = ({
                           const startTime = timeToSeconds(start.split(",")[0]);
                           const endTime = timeToSeconds(end.split(",")[0]);
                           const isCurrent = currentPlayTime > startTime && currentPlayTime < endTime
-                            if(isCurrent) {
-                              setCurrentLine(text)
-                            }
+                          if (isCurrent) {
+                            setCurrentLine(text)
+                          }
                           return (
                             <TranscriptBox
                               key={index}
@@ -509,11 +463,11 @@ const TranscriptField = ({
                     <div>
                       Transcript Not Available
                       <div className=" mx-8">
-                        <button 
+                        <button
                           className="px-3.5 py-2.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-400 disabled:bg-gray-400"
                           onClick={generateTranscriptWithAIForYoutube}
                         >
-                          Generate Transcript (Credits: {videoCredits} )<br/>
+                          Generate Transcript (Credits: {videoCredits} )<br />
                           Currently Unavailable due to service upgrade
                         </button>
                       </div>
@@ -527,6 +481,81 @@ const TranscriptField = ({
             Video is Not Valid
           </div>
         )}
+    </div>
+  );
+};
+
+// Box
+const TranscriptBox = ({
+  start,
+  end,
+  text,
+  onClick,
+  index,
+  handleTranscriptChange,
+  isCurrent,
+  isEditMode, mergeTranscriptToPrevious, deleteTranscriptBox, mergeTranscriptToNext
+}) => {
+  const adjustHeight = (e) => {
+    e.target.style.height = "auto"; // 先重置高度，允許它縮小
+    e.target.style.height = e.target.scrollHeight + "px"; // 然後設置為正確的高度
+  };
+
+
+  return (
+    <div
+      className={`flex shadow-sm mx-2 rounded-sm  ${isCurrent ? " bg-indigo-100" : " bg-white"
+        } hover:bg-indigo-50 cursor-pointer`}
+      onClick={() => onClick(start)}
+    >
+      <div className="p-1 pt-0">
+        <div
+          className="cursor-pointer underline text-nowrap text-blue-600 hover:text-blue-800"
+          onClick={() => onClick(start)}>
+          {start.split(",")[0] + " :"}
+        </div>
+        {isEditMode &&
+          <div className=" text-xs text-gray-400">{end.split(",")[0]}</div>}
+      </div>
+
+      {!isEditMode ?
+        <div className={"text-left" + (isCurrent ? " font-semibold" : "")}>
+          {text}
+        </div> :
+        <div className="flex w-full">
+          <textarea
+            className="w-full h-full focus:outline-none p-1 pt-0 bg-transparent"
+            style={{ overflowY: "hidden", resize: "none" }}
+            value={text}
+            onChange={(e) => {
+              handleTranscriptChange(index, e.target.value);
+              adjustHeight(e);
+            }}
+          />
+          <div className="w-10 text-center">
+            {/**merge up */}
+            {<button className={`text-gray-200  w-full ${index !== 0 && "hover:text-blue-500"}`} onClick={() => mergeTranscriptToPrevious(index)} disabled={index === 0}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 18.75 7.5-7.5 7.5 7.5" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 7.5-7.5 7.5 7.5" />
+              </svg>
+            </button>}
+            {/*merge down */}
+            <button className=" text-gray-200 hover:text-blue-500 w-full" onClick={() => mergeTranscriptToNext(index)}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 5.25 7.5 7.5 7.5-7.5m-15 6 7.5 7.5 7.5-7.5" />
+              </svg>
+
+            </button>
+          </div>
+          <button onClick={() => deleteTranscriptBox(index)} className=" text-gray-400 hover:text-red-500"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+
+          </button>
+        </div>
+      }
+
     </div>
   );
 };

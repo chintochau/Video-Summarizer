@@ -1,12 +1,12 @@
-import { YoutubeTranscript } from "youtube-transcript";
+import  YoutubeTranscriptService  from "../services/youtubeTranscriptServer.js";
+import {YoutubeTranscript} from 'youtube-transcript'
 import { YTconvertToSrt } from "../services/youtubeServices.js";
 import ytdl from "ytdl-core";
 
 export const getYoutubeTranscript = async (req, res) => {
   const { youtubeId } = req.params;
-
   try {
-    const transcript = await YoutubeTranscript.fetchTranscript(youtubeId);
+    const transcript = await YoutubeTranscriptService.YoutubeTranscript.fetchTranscript(youtubeId);
     res.json(YTconvertToSrt(transcript));
   } catch (error) {
     // 将错误消息发送回客户端

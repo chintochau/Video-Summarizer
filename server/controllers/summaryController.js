@@ -7,6 +7,7 @@ import {
 import Summary from "../models/summaryModel.js";
 import Video from "../models/videoModel.js";
 import { checkUserCredit, deductCredits } from "../utils/creditUtils.js";
+import { getOrCreateVideoBySourceId } from "../services/videoServices.js";
 
 export const handleSummaryRequest = async (req, res) => {
   try {
@@ -17,24 +18,7 @@ export const handleSummaryRequest = async (req, res) => {
 
     await checkUserCredit(userId, creditAmount);
 
-    let existingVideo = await Video.findOne({ sourceId });
-
-    if (!existingVideo) {
-      if (sourceType === "youtube") {
-        videoThumbnail = `https://img.youtube.com/vi/${sourceId}/0.jpg`;
-      }
-
-      const newVideo = new Video({
-        userId,
-        sourceId,
-        sourceTitle,
-        sourceType,
-        author,
-        videoThumbnail,
-        videoDuration,
-      });
-      existingVideo = await newVideo.save();
-    }
+    let existingVideo = await getOrCreateVideoBySourceId({ video, userId });
 
     const summary = await generateSummary(req, res);
 
@@ -88,18 +72,34 @@ export const handleMeetingSummary = async (req, res) => {
   }
 };
 
+/**
+ * Retrieves all videos for a specific user.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} - A promise that resolves when the operation is complete.
+ */
 export const getAllVideosForUser = async (req, res) => {
   try {
     const { userId } = req.params;
     const page = parseInt(req.query.page) || 1;
     const limit = 10;
     const startIndex = (page - 1) * limit;
+    let sourceType
+
+    switch (req.query.sourceType) {
+      case "all":
+        sourceType = { $exists: true };
+        break;
+      default:
+        sourceType = req.query.sourceType
+        break
+    }
 
     // Count total number of videos for the specified userId
     const totalVideos = await Video.countDocuments({ userId: userId });
 
     // Find videos for the specified userId and sort them in descending order by the creation date
-    const videos = await Video.find({ userId: userId })
+    const videos = await Video.find({ userId: userId, sourceType: sourceType})
       .sort({ lastUpdated: -1 })
       .skip(startIndex)
       .limit(limit);

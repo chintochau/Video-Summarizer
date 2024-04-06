@@ -10,7 +10,8 @@ import bodyParser from "body-parser";
 
 router.post("/get-summary",bodyParser.json({ limit: "10mb" }), handleSummaryRequest);
 router.post("/get-summary-meetings",bodyParser.json({ limit: "10mb" }), handleMeetingSummary);
-router.get("/user/:userId/videos",bodyParser.json({ limit: "10mb" }), getAllVideosForUser);
 router.get("/summaries/:userId/:sourceId",bodyParser.json({ limit: "10mb" }), getAllSummariesForVideo);
+
+router.get("/user/:userId/videos",bodyParser.json({ limit: "10mb" }), getAllVideosForUser);
 
 export default router;

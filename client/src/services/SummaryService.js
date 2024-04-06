@@ -47,6 +47,8 @@ export default class SummaryService {
       video,
     } = data;
 
+    console.log(data);
+
     const apiRequest = summaryApiCall(option.id);
 
     try {
@@ -91,10 +93,10 @@ export default class SummaryService {
     }
   };
 
-  static getAllVideosForUser = async ({ userId, page = 1 }) => {
+  static getAllVideosForUser = async ({ userId, page = 1, sourceType }) => {
     try {
       const response = await fetch(
-        apiUrl + `/api/user/${userId}/videos?page=${page}`,
+        apiUrl + `/api/user/${userId}/videos?page=${page}&sourceType=${sourceType}`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },

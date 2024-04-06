@@ -32,7 +32,7 @@ const VideoSchema = new mongoose.Schema({
     },
     lastUpdated: {
         type: Date,
-        default: null, // Initialize as null or a default date value
+        default: new Date(), // Initialize as null or a default date value
     },
     // Other video fields as needed
 });
