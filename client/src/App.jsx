@@ -59,7 +59,7 @@ function App() {
                   <Route path="/history" element={<HistoryPage />} />
                   <Route path="/profile" element={<UserProfilePage />} />
                   <Route path="/console/*" element={<Dashboard />} >
-                    <Route path='' />
+                    <Route path='' element={<YoutubeSummary />}/>
                     <Route path='youtube' element={<YoutubeSummary />}/>
                     <Route path='upload' element={<Summarizer />} />
                     <Route path='billing' element={<div>billing</div>}/>
