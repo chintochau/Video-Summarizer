@@ -23,7 +23,7 @@ const SocialProof = () => {
       </div>
       <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
         {testimonials.map((testimonial) => (
-          <div key={testimonial.id} className="bg-gray-100 p-6 rounded-lg shadow">
+          <div key={testimonial.id} className="bg-gray-50 p-6 rounded-lg shadow">
             <p className="text-lg italic">"{testimonial.quote}"</p>
             <p className="text-right mt-4 font-semibold">{testimonial.author}</p>
           </div>

@@ -161,7 +161,7 @@ const Dashboard = () => {
                     </Link>
                 </div>
 
-                <main className="lg:pl-56">
+                <main className="lg:pl-56 ">
                     <Routes>
                         <Route path='' element={<Summarizer />} />
                         <Route path='youtube' element={<YoutubeSummary />} />

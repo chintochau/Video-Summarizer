@@ -106,7 +106,7 @@ const UploadSummary = () => {
             isFocused ? " border-[#2196f3] bg-blue-200" : "",
             isDragAccept ? "border-[#00e676] bg-green-200" : "",
             isDragReject ? "border-[#ff1744] bg-red-200" : "",
-            " flex-col w-auto md:w-1/3 flex items-center transition-all duration-300 ease-in-out md:h-[calc(100vh-128px)] cursor-pointer mt-4 md:mx-4 md:mt-16 sticky top-0 h-14 md:top-16 border-2 m-1 rounded-lg bg-gray-100 px-4 shadow-lg")}>
+            " flex-col w-auto md:w-1/3 flex items-center transition-all duration-300 ease-in-out md:h-[calc(100vh-128px)] cursor-pointer mt-4 md:mx-4 md:mt-16 sticky top-0 h-14 md:top-16 border-2 m-1 rounded-lg bg-gray-50 px-4 shadow-lg")}>
             <input {...getInputProps()} />
             {file && file.name ? (
               <p className=" text-gray-950">
@@ -198,9 +198,8 @@ const UploadSummary = () => {
               </div>
             )}
           </Dropzone>
-          
-          <div className="mx-auto flex w-full max-w-[1920px] items-start gap-x-1 px-2 py-1 sm:px-2 lg:p-1  flex-grow max-h-[calc(100vh-64px)]">
-            <div className="w-1/2 h-full">
+          <div className="mx-auto flex w-full max-w-[1920px] items-start gap-x-1 px-2 py-1 sm:px-2 lg:p-1  flex-grow ">
+            <div className="flex-1 shrink-0 lg:block w-full md:w-1/2 lg:w-3/5 flex flex-col p-1  h-full ">
               <audio
                 src={audioSrc}
                 ref={uploadRef}
@@ -219,7 +218,7 @@ const UploadSummary = () => {
                 displayMode="audio"
               />
             </div>
-            <div className="hidden shrink-0 md:block w-full md:w-1/2 lg:w-1/2 h-1/2  md:h-full p-1 ">
+            <div className="hidden sticky top-20 shrink-0 md:block w-full md:w-1/2 lg:w-2/5 h-1/2  md:h-full p-1 ">
               <SummaryField
                 videoRef={uploadRef}
                 parentTranscriptText={parentTranscriptText}

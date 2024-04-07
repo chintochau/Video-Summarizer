@@ -36,9 +36,14 @@ const TranscriptField = ({
   const [selectedModel, setSelectedModel] = useState("assembly");
   const [language, setLanguage] = useState("en");
   const [isEditMode, setIsEditMode] = useState(false)
-
   const { videoCredits, currentPlayTime, currentLine, setCurrentLine, video } = useVideoContext();
   const { credits, userId } = useAuth();
+
+  useEffect(() => {
+    setCurrentLine("")
+  
+  }, [])
+  
 
   const resetTranscriptField = () => {
     if (uploadMode) {
@@ -159,16 +164,6 @@ const TranscriptField = ({
     reader.readAsText(file);
   };
 
-  // 切換到轉錄模式
-  const handleTranscriptMode = () => {
-    setViewMode("transcript");
-  };
-
-  // 切換到純文本模式
-  const handleTextMode = () => {
-    setViewMode("text");
-  };
-
   // 點擊轉錄時跳轉視頻
   const handleTranscriptClick = (time) => {
     const [hours, minutes, seconds] = time.split(":");
@@ -263,56 +258,36 @@ const TranscriptField = ({
   return (
     <div className={
       classNames(
-        displayMode === "audio" ? " h-[calc(100vh-69vw)] md:h-[calc(100vh-38.5vw)] lg:h-[calc(100vh-34.5vw)] 3xl:h-[calc(100vh-730px)]" : "",
+        displayMode === "audio" ? " h-[calc(100vh-160px)]" : "",
         displayMode === "video" ? " h-[calc(100vh-69vw)] md:h-[calc(100vh-38.5vw)] lg:h-[calc(100vh-34.5vw)] 3xl:h-[calc(100vh-730px)]" : "",
-        displayMode === "youtube" ? " h-[calc(100vh-69vw)] md:h-[calc(100vh-38.5vw)] lg:h-[calc(100vh-34.5vw)] 3xl:h-[calc(100vh-730px)]" : "",
-        displayMode === "transcript" ? " h-[calc(100vh-72px)] " : "",
-        "flex-col"
+        displayMode === "youtube" ? " h-[calc(100vh-49vw)] md:h-[calc(100vh-38.5vw)] lg:h-[calc(100vh-30vw)] 3xl:h-[calc(100vh-610px)]" : "",
+        displayMode === "transcript" ? " h-[calc(100vh-80px)] " : "",
+        "flex-col "
       )
     }>
-      <div className="text-center">{currentLine}</div>
-      {videoValid || uploadMode ?
+      <div className="text-center font-semibold border border-gray-50 mt-1 rounded-sm text-lg shadow-sm">{currentLine}</div>
 
-        // youtube Mode
+      {fetchingTranscript ? (
+        <div className="flex-col">
+          <div className="mx-auto animate-spin rounded-full h-10 w-10 border-r-2 border-b-2 border-indigo-600" />{" "}
+          <div>Fetching Transcript...</div>
+        </div>
+      ) :
         (
-          fetchingTranscript ? (
-            <div className="flex justify-center h-full items-center">
-              {uploadMode ? (
-                <div>
-                  {generatingScriptWithAi ? (
-                    <div className="flex-col">
-                      <div className="mx-auto animate-spin rounded-full h-10 w-10 border-r-2 border-b-2 border-indigo-600" />{" "}
-                      <div>Generating Transcript...</div>
-                      <GeneralButton
-                        onClick={() => setGeneratingScriptWithAi(false)}
-                      >
-                        STOP
-                      </GeneralButton>
-                    </div>
-                  ) : (
-                    <GenerateOptions
-                      loadSrtTranscript={loadSrtTranscript}
-                      uploadAndTranscriptFile={uploadAndTranscriptFile}
-                    />
-                  )}
-                </div>
-              ) : (
-                <div className="flex-col">
-                  <div className="mx-auto animate-spin rounded-full h-10 w-10 border-r-2 border-b-2 border-indigo-600" />{" "}
-                  <div>Fetching Transcript...</div>
-                </div>
-              )}
-            </div>
-          ) :
-            (
-              <div className="flex-col h-full pt-1 sticky top-0">
+          <div className="h-full">
+            {generatingScriptWithAi ? (
+              <div className="flex-col">
+                <div className="mx-auto animate-spin rounded-full h-10 w-10 border-r-2 border-b-2 border-indigo-600" />{" "}
+                <div>Generating Transcript...</div>
+                <button>Cancel</button>
+              </div>) : (<div className="flex-col h-full">
                 {transcriptAvailable ? (
                   <div className="h-full flex flex-col">
-                    <ControlBar handleTranscriptMode={handleTranscriptMode}
+                    <ControlBar 
                       exportSRT={exportSRT}
                       setIsEditMode={setIsEditMode}
                       isEditMode={isEditMode}
-                      handleTextMode={handleTextMode}
+                      setViewMode={setViewMode}
                       editableTranscript={editableTranscript}
                       viewMode={viewMode}
                       resetTranscriptField={resetTranscriptField}
@@ -320,16 +295,14 @@ const TranscriptField = ({
                     {/* 根據viewMode渲染不同的內容 */}
                     {/* Transcript Box */}
                     {viewMode === "transcript" ? (
-                      <div className="overflow-auto">
+                      <ul className="overflow-auto pb-8 bg-gray-50">
                         {editableTranscript.map(({ start, end, text }, index) => {
                           const startTime = timeToSeconds(start.split(",")[0]);
                           const endTime = timeToSeconds(end.split(",")[0]);
                           const isCurrent = currentPlayTime > startTime && currentPlayTime < endTime
 
-
                           if (isCurrent) {
                             setCurrentLine(text)
-                            console.log(isCurrent, currentPlayTime, startTime, endTime);
                           }
                           return (
                             <TranscriptBox
@@ -349,11 +322,11 @@ const TranscriptField = ({
                             />
                           );
                         })}
-                      </div>
+                      </ul>
                     ) : (
-                      <div className="h-full pl-2 overflow-hidden">
+                      <div className="h-full p-1 overflow-hidden pb-4 ">
                         <textarea
-                          className="w-full h-full px-2"
+                          className="w-full h-full px-2 border-none rounded-md resize-none bg-gray-50"
                           value={editableTranscript
                             .map(({ text }) => text)
                             .join("\n")}
@@ -367,13 +340,11 @@ const TranscriptField = ({
                   uploadAndTranscriptFile={uploadAndTranscriptFile}
                 />)
                 }
-              </div>
-            )
-        ) : (
-          <div className="flex justify-center h-full items-center">
-            Video is Not Valid
+              </div>)}
           </div>
+
         )}
+
     </div>
   );
 };
@@ -396,9 +367,9 @@ const TranscriptBox = ({
 
 
   return (
-    <div
-      className={`flex shadow-sm mx-2 rounded-sm  ${isCurrent ? " bg-indigo-100" : " bg-white"
-        } hover:bg-indigo-50 cursor-pointer`}
+    <li
+      className={`flex shadow-sm mx-2 rounded-md  ${isCurrent ? " bg-indigo-100" : " bg-gray-50"
+        } hover:outline outline-1 outline-indigo-300 cursor-pointer`}
       onClick={() => onClick(start)}
     >
       <div className="p-1 pt-0">
@@ -417,8 +388,7 @@ const TranscriptBox = ({
         </div> :
         <div className="flex w-full">
           <textarea
-            className="w-full h-full focus:outline-none p-1 pt-0 bg-transparent"
-            style={{ overflowY: "hidden", resize: "none" }}
+          className="block w-full resize-none border-0 border-b border-transparent p-0  text-gray-900  focus:border-indigo-600 focus:ring-0 sm:text-lg sm:leading-6 overflow-hidden"
             value={text}
             onChange={(e) => {
               handleTranscriptChange(index, e.target.value);
@@ -440,8 +410,7 @@ const TranscriptBox = ({
           </button>
         </div>
       }
-
-    </div>
+    </li>
   );
 };
 
