@@ -25,7 +25,14 @@ const HistoryPage = ({sourceType = "all"}) => {
     }
 
     useEffect(() => {
-        fetchVideos(1);
+        async function fetchVideos() {
+            const videos = await SummaryService.getAllVideosForUser({ userId });
+            setVideos(videos.data)
+            setCurrentPage(videos.page)
+            setTotalPage(Math.max(Math.ceil((videos.count) / 10), 1))
+            setTotalItems(videos.count)
+        }
+        fetchVideos();
     }, [])
 
     const classNames = (...classes) => {
