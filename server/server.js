@@ -30,6 +30,7 @@ import {
   vastai,
 } from "./utils/pythonRunner.js";
 import { transcribeFile } from "./services/transcribeServices.js";
+import { fineVideoIdBySourceId } from "./services/videoServices.js";
 const variableToPass = "";
 pythonRunner("--version", [variableToPass])
   .then((output) => {
@@ -208,11 +209,11 @@ app.post(
       const fileStream = fs.createWriteStream(tempFilePath);
       await pipelineAsync(audioStream, fileStream);
 
-      // Now the file is saved, you can process it
-      const result = await transcribeFile({ filePath: tempFilePath });
-      // const result = await transcribeWithWhisperApi({
-      //   filePath: tempFilePath,
-      // });
+      // // Now the file is saved, you can process it
+      // const result = await transcribeFile({ filePath: tempFilePath });
+      // // const result = await transcribeWithWhisperApi({
+      // //   filePath: tempFilePath,
+      // // });
 
       // Clean up: Delete the temporary file if no longer needed
       fs.unlink(tempFilePath, (err) => {
@@ -220,7 +221,8 @@ app.post(
         console.log("Temp file deleted");
       });
 
-      
+
+      const result = ""
 
       res.json(result);
     } catch (error) {

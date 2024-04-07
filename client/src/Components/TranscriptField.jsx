@@ -6,15 +6,15 @@ import {
   transcribeYoutubeVideo,
 } from "./Utils";
 import GeneralButton from "./GeneralButton";
-import DownloadIcon from "@mui/icons-material/Download";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { useVideoContext } from "../contexts/VideoContext";
 import { timeToSeconds } from "../utils/timeUtils";
 import { useAuth } from "../contexts/AuthContext";
 import { checkCredits } from "../utils/creditUtils";
 import YoutubeService from "../services/YoutubeService";
 import TranscribeService from "../services/TranscribeService";
+import ControlBar from "./transcriptFieldComponents/ControlBar";
+import { ChevronDoubleDownIcon, ChevronDoubleUpIcon, XCircleIcon } from '@heroicons/react/24/outline'
+import GenerateOptions from "./transcriptFieldComponents/GenerateOptions";
 
 
 // Field
@@ -25,6 +25,7 @@ const TranscriptField = ({
   uploadMode,
   file,
   setParentSrtText,
+  displayMode
 }) => {
   const [editableTranscript, setEditableTranscript] = useState([]);
   const [viewMode, setViewMode] = useState("transcript"); // 新增狀態變量
@@ -254,8 +255,21 @@ const TranscriptField = ({
     };
   }, [youtubeId]);
 
+
+  function classNames(...classes) {
+    return classes.filter(Boolean).join(" ");
+  }
+
   return (
-    <div className="flex-col h-[calc(100vh-69vw)] md:h-[calc(100vh-38.5vw)] lg:h-[calc(100vh-34.5vw)] 3xl:h-[calc(100vh-730px)]">
+    <div className={
+      classNames(
+        displayMode === "audio" ? " h-[calc(100vh-69vw)] md:h-[calc(100vh-38.5vw)] lg:h-[calc(100vh-34.5vw)] 3xl:h-[calc(100vh-730px)]" : "",
+        displayMode === "video" ? " h-[calc(100vh-69vw)] md:h-[calc(100vh-38.5vw)] lg:h-[calc(100vh-34.5vw)] 3xl:h-[calc(100vh-730px)]" : "",
+        displayMode === "youtube" ? " h-[calc(100vh-69vw)] md:h-[calc(100vh-38.5vw)] lg:h-[calc(100vh-34.5vw)] 3xl:h-[calc(100vh-730px)]" : "",
+        displayMode === "transcript" ? " h-[calc(100vh-72px)] " : "",
+        "flex-col"
+      )
+    }>
       <div className="text-center">{currentLine}</div>
       {videoValid || uploadMode ?
 
@@ -276,72 +290,10 @@ const TranscriptField = ({
                       </GeneralButton>
                     </div>
                   ) : (
-                    <div className="flex-col ">
-                      <div>Generate Transcript with AI</div>
-                      <div className="flex mx-auto  ">
-                        <label
-                          htmlFor="language-select"
-                          className=" text-indigo-600 mr-1"
-                        >
-                          Language:
-                        </label>
-                        <select
-                          value={language}
-                          onChange={(e) => setLanguage(e.target.value)}
-                          id="language-select"
-                          className="bg-gray-50 border border-indigo-300 text-indigo-600 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block hover:text-indigo-400 "
-                        >
-                          <option value="en">English</option>
-                          <option value="zh">中文</option>
-                          {/* Add more languages as needed */}
-                        </select>
-                      </div>
-                      <div className="flex">
-                        <label
-                          htmlFor="language-select"
-                          className=" text-indigo-600 mr-1"
-                        >
-                          Model:
-                        </label>
-                        <select
-                          value={selectedModel}
-                          onChange={(e) => {
-                            setSelectedModel(e.target.value);
-                          }}
-                          id="language-select"
-                          className="bg-gray-50 border border-indigo-300 text-indigo-600 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block hover:text-indigo-400 "
-                        >
-                          <option value="assembly">
-                            Assenbly AI (Free for now)
-                          </option>
-                          <option value="openai">
-                            Open AI (Better Performance)
-                          </option>
-                          {/* Add more languages as needed */}
-                        </select>
-                      </div>
-                      <button
-                        className="my-2 bg-indigo-600 hover:bg-indigo-400 px-3.5 py-2.5 rounded-md text-white disabled:bg-gray-400"
-                        onClick={uploadAndTranscriptFile}
-                      >
-                        Generate (Credits: {videoCredits})
-                      </button>
-                      <div className=" w-72">
-                        a hour long video takes up to 5 mins to transcribe
-                      </div>
-                      <div>OR</div>
-                      <div>
-                        <input
-                          type="file"
-                          onChange={(e) =>
-                            getTranscriptWithUpload(e.target.files[0])
-                          }
-                        />
-                        {selectedFile && (
-                          <p>Selected File: {selectedFile.name}</p>
-                        )}
-                      </div>
-                    </div>
+                    <GenerateOptions
+                      loadSrtTranscript={loadSrtTranscript}
+                      uploadAndTranscriptFile={uploadAndTranscriptFile}
+                    />
                   )}
                 </div>
               ) : (
@@ -351,72 +303,20 @@ const TranscriptField = ({
                 </div>
               )}
             </div>
-          )
-            :
-            // upload Mode
+          ) :
             (
               <div className="flex-col h-full pt-1 sticky top-0">
                 {transcriptAvailable ? (
                   <div className="h-full flex flex-col">
-                    <div className=" flex pl-2 justify-between">
-                      <div className=" flex items-end">
-                        <button
-                          onClick={handleTranscriptMode}
-                          className={` px-2 py-1 rounded-t-md hover:text-indigo-400 ${viewMode === "transcript"
-                            ? " text-indigo-600 bg-white "
-                            : " text-gray-600"
-                            }`}
-                        >
-                          Transcript
-                        </button>
-                        <button
-                          onClick={handleTextMode}
-                          className={` px-2 py-1 rounded-t-md hover:text-indigo-400 ${viewMode !== "transcript"
-                            ? " text-indigo-600 bg-white "
-                            : " text-gray-600"
-                            }`}
-                        >
-                          Text
-                        </button>
-                      </div>
-
-                      <div className="">
-                        <button
-                          onClick={() => exportSRT(editableTranscript)}
-                          className="px-2 py-1 rounded-t-md text-indigo-600 text-sm hover:text-indigo-400"
-                        >
-                          <DownloadIcon /> SRT
-                        </button>
-                        <button
-                          onClick={() =>
-                            navigator.clipboard.writeText(
-                              editableTranscript
-                                .map(({ text, start }) =>
-                                  viewMode === "transcript"
-                                    ? start.split(",")[0] + " " + text
-                                    : text
-                                )
-                                .join("\n")
-                            )
-                          }
-                          className="px-2 py-1 rounded-t-md text-indigo-600 text-sm hover:text-indigo-400"
-                        >
-                          <ContentCopyIcon />
-                        </button>
-
-                        <button
-                          onClick={() => setIsEditMode(!isEditMode)}
-                          className={`px-2 py-1 rounded-md text-indigo-600 text-sm hover:text-indigo-400 outline outline-1 outline-indigo-600 ${isEditMode ? " bg-indigo-500 text-white" : ""}`}>
-                          Edit
-                        </button>
-                        <button
-                          onClick={resetTranscriptField}
-                          className="px-2 py-1 rounded-t-md text-gray-500 text-sm hover:text-indigo-400"
-                        >
-                          <RestartAltIcon />
-                        </button>
-                      </div>
-                    </div>
+                    <ControlBar handleTranscriptMode={handleTranscriptMode}
+                      exportSRT={exportSRT}
+                      setIsEditMode={setIsEditMode}
+                      isEditMode={isEditMode}
+                      handleTextMode={handleTextMode}
+                      editableTranscript={editableTranscript}
+                      viewMode={viewMode}
+                      resetTranscriptField={resetTranscriptField}
+                    />
                     {/* 根據viewMode渲染不同的內容 */}
                     {/* Transcript Box */}
                     {viewMode === "transcript" ? (
@@ -425,8 +325,11 @@ const TranscriptField = ({
                           const startTime = timeToSeconds(start.split(",")[0]);
                           const endTime = timeToSeconds(end.split(",")[0]);
                           const isCurrent = currentPlayTime > startTime && currentPlayTime < endTime
+
+
                           if (isCurrent) {
                             setCurrentLine(text)
+                            console.log(isCurrent, currentPlayTime, startTime, endTime);
                           }
                           return (
                             <TranscriptBox
@@ -437,6 +340,7 @@ const TranscriptField = ({
                               index={index}
                               isCurrent={isCurrent}
                               isEditMode={isEditMode}
+                              setCurrentLine={setCurrentLine}
                               onClick={handleTranscriptClick}
                               handleTranscriptChange={handleTranscriptChange}
                               mergeTranscriptToPrevious={mergeTranscriptToPrevious}
@@ -458,22 +362,11 @@ const TranscriptField = ({
                       </div>
                     )}
                   </div>
-                ) : (
-                  <div className="flex justify-center h-full items-center">
-                    <div>
-                      Transcript Not Available
-                      <div className=" mx-8">
-                        <button
-                          className="px-3.5 py-2.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-400 disabled:bg-gray-400"
-                          onClick={generateTranscriptWithAIForYoutube}
-                        >
-                          Generate Transcript (Credits: {videoCredits} )<br />
-                          Currently Unavailable due to service upgrade
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                ) : (<GenerateOptions
+                  loadSrtTranscript={loadSrtTranscript}
+                  uploadAndTranscriptFile={uploadAndTranscriptFile}
+                />)
+                }
               </div>
             )
         ) : (
@@ -535,23 +428,15 @@ const TranscriptBox = ({
           <div className="w-10 text-center">
             {/**merge up */}
             {<button className={`text-gray-200  w-full ${index !== 0 && "hover:text-blue-500"}`} onClick={() => mergeTranscriptToPrevious(index)} disabled={index === 0}>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 18.75 7.5-7.5 7.5 7.5" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 7.5-7.5 7.5 7.5" />
-              </svg>
+              <ChevronDoubleUpIcon className="w-6 h-6" />
             </button>}
             {/*merge down */}
             <button className=" text-gray-200 hover:text-blue-500 w-full" onClick={() => mergeTranscriptToNext(index)}>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 5.25 7.5 7.5 7.5-7.5m-15 6 7.5 7.5 7.5-7.5" />
-              </svg>
-
+              <ChevronDoubleDownIcon className="w-6 h-6" />
             </button>
           </div>
-          <button onClick={() => deleteTranscriptBox(index)} className=" text-gray-400 hover:text-red-500"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-          </svg>
-
+          <button onClick={() => deleteTranscriptBox(index)} className=" text-gray-400 hover:text-red-500">
+            <XCircleIcon className="w-6 h-6" />
           </button>
         </div>
       }

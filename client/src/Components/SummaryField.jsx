@@ -23,6 +23,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
   const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
+    setSummaries([newSummary]);
     const fetchSummaries = async () => {
       try {
         const result = await SummaryService.fetchSummariesForVideo(

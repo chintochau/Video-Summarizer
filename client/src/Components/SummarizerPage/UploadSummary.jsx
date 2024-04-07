@@ -59,14 +59,14 @@ const UploadSummary = () => {
     }
   };
 
-    // useEffect to set display mode based on sourceId and sourceType
-    useEffect(() => {
-      if (sourceId && sourceType === "user-upload" && !file) {
-        setDisplayMode("transcript")
-      }
-    }, [sourceId, sourceType])
-  
-  
+  // useEffect to set display mode based on sourceId and sourceType
+  useEffect(() => {
+    if (sourceId && sourceType === "user-upload" && !file) {
+      setDisplayMode("transcript")
+    }
+  }, [sourceId, sourceType])
+
+
   const className = (...classes) => {
     return classes.filter(Boolean).join(' ')
   }
@@ -100,29 +100,29 @@ const UploadSummary = () => {
     <div>
       {/*Dropzone */}
       {!file && displayMode === "empty" &&
-          <div className="flex flex-col md:flex-row w-full h-screen">
+        <div className="flex flex-col md:flex-row w-full h-screen">
 
-            <div {...getRootProps()} className={className(
-              isFocused ? " border-[#2196f3] bg-blue-200" : "",
-              isDragAccept ? "border-[#00e676] bg-green-200" : "",
-              isDragReject ? "border-[#ff1744] bg-red-200" : "",
-              " flex-col w-auto md:w-1/3 flex items-center transition-all duration-300 ease-in-out md:h-[calc(100vh-128px)] cursor-pointer mt-4 md:mx-4 md:mt-16 sticky top-0 h-14 md:top-16 border-2 m-1 rounded-lg bg-gray-100 px-4 shadow-lg")}>
-              <input {...getInputProps()} />
-              {file && file.name ? (
-                <p className=" text-gray-950">
-                  Selected File: {file.name} - {formatFileSize(file.size)}
-                </p>
-              ) : (
-                <p className=" m-auto text-gray-600 text-xl">Upload Audio/ Video here</p>
-              )}
-            </div>
+          <div {...getRootProps()} className={className(
+            isFocused ? " border-[#2196f3] bg-blue-200" : "",
+            isDragAccept ? "border-[#00e676] bg-green-200" : "",
+            isDragReject ? "border-[#ff1744] bg-red-200" : "",
+            " flex-col w-auto md:w-1/3 flex items-center transition-all duration-300 ease-in-out md:h-[calc(100vh-128px)] cursor-pointer mt-4 md:mx-4 md:mt-16 sticky top-0 h-14 md:top-16 border-2 m-1 rounded-lg bg-gray-100 px-4 shadow-lg")}>
+            <input {...getInputProps()} />
+            {file && file.name ? (
+              <p className=" text-gray-950">
+                Selected File: {file.name} - {formatFileSize(file.size)}
+              </p>
+            ) : (
+              <p className=" m-auto text-gray-600 text-xl">Upload Audio/ Video here</p>
+            )}
+          </div>
 
 
-            <div className="flex-1 flex-col mx-4 ">
-              <div className="flex-1"><HistoryPage sourceType={"user-upload"} /></div>
-            </div>
+          <div className="flex-1 flex-col mx-4 ">
+            <div className="flex-1"><HistoryPage sourceType={"user-upload"} /></div>
+          </div>
 
-          </div>}
+        </div>}
 
       {displayMode === "video" &&
         <div className="flex flex-col h-screen">
@@ -162,6 +162,7 @@ const UploadSummary = () => {
                 file={file}
                 setParentTranscriptText={setParentTranscriptText}
                 setParentSrtText={setParentSrtText}
+                displayMode="video"
               />
             </div>
             <div className="hidden sticky top-20 shrink-0 md:block w-full md:w-1/2 lg:w-2/5 h-1/2  md:h-full p-1 ">
@@ -197,24 +198,34 @@ const UploadSummary = () => {
               </div>
             )}
           </Dropzone>
-
-          <div className="w-1/2 h-full">
-            <audio
-              src={audioSrc}
-              ref={uploadRef}
-              controls
-              className="w-full h-auto"
-              onLoadedMetadata={handleLoadedMetadata}
-            >
-              抱歉，您的瀏覽器不支援內嵌視頻。
-            </audio>
-            <TranscriptField
-              videoRef={uploadRef}
-              uploadMode={true}
-              file={file}
-              setParentTranscriptText={setParentTranscriptText}
-              setParentSrtText={setParentSrtText}
-            />
+          
+          <div className="mx-auto flex w-full max-w-[1920px] items-start gap-x-1 px-2 py-1 sm:px-2 lg:p-1  flex-grow max-h-[calc(100vh-64px)]">
+            <div className="w-1/2 h-full">
+              <audio
+                src={audioSrc}
+                ref={uploadRef}
+                controls
+                className="w-full"
+                onLoadedMetadata={handleLoadedMetadata}
+              >
+                抱歉，您的瀏覽器不支援內嵌視頻。
+              </audio>
+              <TranscriptField
+                videoRef={uploadRef}
+                uploadMode={true}
+                file={file}
+                setParentTranscriptText={setParentTranscriptText}
+                setParentSrtText={setParentSrtText}
+                displayMode="audio"
+              />
+            </div>
+            <div className="hidden shrink-0 md:block w-full md:w-1/2 lg:w-1/2 h-1/2  md:h-full p-1 ">
+              <SummaryField
+                videoRef={uploadRef}
+                parentTranscriptText={parentTranscriptText}
+                parentSrtText={parentSrtText}
+              />
+            </div>
           </div>
         </div>
       }
@@ -246,6 +257,7 @@ const UploadSummary = () => {
               file={file}
               setParentTranscriptText={setParentTranscriptText}
               setParentSrtText={setParentSrtText}
+              displayMode="transcript"
             />
           </div>
           <div className="hidden sticky top-20 shrink-0 md:block w-full md:w-1/2 lg:w-2/5 h-1/2  md:h-full p-1 ">

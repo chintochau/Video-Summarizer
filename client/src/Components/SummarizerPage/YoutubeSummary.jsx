@@ -73,6 +73,7 @@ const YoutubeSummary = () => {
                         videoRef={videoRef}
                         setParentTranscriptText={setParentTranscriptText}
                         setParentSrtText={setParentSrtText}
+                        displayMode="youtube"
                     />
                 </div>
 
@@ -92,5 +93,3 @@ const YoutubeSummary = () => {
 
 export default YoutubeSummary
 
-
-/**xl:h-[calc(100vh-32.5vw)] 3xl:h-[calc(100vh-700px)] */
