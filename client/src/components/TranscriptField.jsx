@@ -38,11 +38,12 @@ const TranscriptField = ({
   const [language, setLanguage] = useState("en");
   const [isEditMode, setIsEditMode] = useState(false)
   const { videoCredits, currentPlayTime, currentLine, setCurrentLine, video } = useVideoContext();
-  const { parentSrtText } = useTranscriptContext()
+  const { parentSrtText,selectedTranscribeOption } = useTranscriptContext()
   const { credits, userId } = useAuth();
 
   useEffect(() => {
     setCurrentLine("")
+
   }, [])
 
 
@@ -85,6 +86,7 @@ const TranscriptField = ({
         videoCredits,
         userId,
         video,
+        transcribeOption: selectedTranscribeOption
       });
       // parse SRT file to a formatted transcript
       loadSrtTranscript(result);
@@ -99,7 +101,8 @@ const TranscriptField = ({
     setFetchingTranscript(true);
     try {
       checkCredits(credits, videoCredits);
-      const srtTranscript = await transcribeYoutubeVideo({ youtubeId, userId, video });
+      const srtTranscript = await transcribeYoutubeVideo({ youtubeId, userId, video, 
+        transcribeOption: selectedTranscribeOption });
       if (!srtTranscript) {
         setFetchingTranscript(false);
         setTranscriptAvailable(false);
