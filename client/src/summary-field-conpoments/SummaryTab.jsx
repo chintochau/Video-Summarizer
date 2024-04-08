@@ -1,6 +1,6 @@
 import Markdown from "markdown-to-jsx";
 import React, { useState } from "react";
-import OptionField from "../Components/OptionField";
+import OptionField from "../components/OptionField";
 
 
 // Summary Tab

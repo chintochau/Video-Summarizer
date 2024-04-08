@@ -9,7 +9,7 @@ import {
   FAQs,
   FinalCTA,
   Footer,
-} from "../Components";
+} from "../components";
 
 const HomePage = () => {
   return (

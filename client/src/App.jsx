@@ -1,4 +1,4 @@
-import Header from "./Components/common/Header.jsx";
+import Header from "./components/common/Header.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import SummarizePage from "./pages/SummarizePage.jsx";
 import { Route, Routes } from "react-router-dom";
@@ -9,13 +9,13 @@ import UserProfilePage from "./pages/UserProfilePage.jsx";
 import { ModelProvider } from "./contexts/ModelContext.jsx";
 import PricingPage from "./pages/PricingPage.jsx";
 import HistoryPage from "./pages/HistoryPage.jsx";
-import NotificationOverlay from "./Components/NotificationOverlay.jsx";
+import NotificationOverlay from "./components/NotificationOverlay.jsx";
 import { VideoProvider } from "./contexts/VideoContext.jsx";
-import Dashboard from "./Components/dashboard/Dashboard.jsx";
-import Summarizer from "./Components/Summarizer.jsx";
+import Dashboard from "./components/dashboard/Dashboard.jsx";
+import Summarizer from "./components/Summarizer.jsx";
 import { TranscriptProvider } from "./contexts/TranscriptContext.jsx";
-import YoutubeSummary from "./Components/SummarizerPage/YoutubeSummary.jsx";
-import ConsoleHome from "./Components/SummarizerPage/ConsoleHome.jsx";
+import YoutubeSummary from "./components/SummarizerPage/YoutubeSummary.jsx";
+import ConsoleHome from "./components/SummarizerPage/ConsoleHome.jsx";
 
 function App() {
   const [announcement, setAnnouncement] = useState({
