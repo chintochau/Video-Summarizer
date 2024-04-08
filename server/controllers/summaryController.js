@@ -118,7 +118,7 @@ export const getAllVideosForUser = async (req, res) => {
   }
 };
 
-export const getAllSummariesForVideo = async (req, res) => {
+export const getTranscriptAndSummariesForVideo = async (req, res) => {
   try {
     const userId = req.params.userId;
     const sourceId = req.params.sourceId;
@@ -141,7 +141,7 @@ export const getAllSummariesForVideo = async (req, res) => {
         .json({ success: false, message: "No summaries found for the video" });
     }
 
-    res.status(200).json({ success: true, data: summaries });
+    res.status(200).json({ success: true, data: summaries, video: video});
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, error: error.message });

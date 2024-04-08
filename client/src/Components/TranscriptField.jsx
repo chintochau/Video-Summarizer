@@ -5,7 +5,6 @@ import {
   transcribeWithAI,
   transcribeYoutubeVideo,
 } from "./Utils";
-import GeneralButton from "./GeneralButton";
 import { useVideoContext } from "../contexts/VideoContext";
 import { timeToSeconds } from "../utils/timeUtils";
 import { useAuth } from "../contexts/AuthContext";
@@ -15,6 +14,8 @@ import TranscribeService from "../services/TranscribeService";
 import ControlBar from "./transcriptFieldComponents/ControlBar";
 import { ChevronDoubleDownIcon, ChevronDoubleUpIcon, XCircleIcon } from '@heroicons/react/24/outline'
 import GenerateOptions from "./transcriptFieldComponents/GenerateOptions";
+import { ScrollArea } from "./ui/scroll-area";
+import { useTranscriptContext } from "@/contexts/TranscriptContext";
 
 
 // Field
@@ -37,13 +38,13 @@ const TranscriptField = ({
   const [language, setLanguage] = useState("en");
   const [isEditMode, setIsEditMode] = useState(false)
   const { videoCredits, currentPlayTime, currentLine, setCurrentLine, video } = useVideoContext();
+  const { parentSrtText } = useTranscriptContext()
   const { credits, userId } = useAuth();
 
   useEffect(() => {
     setCurrentLine("")
-  
   }, [])
-  
+
 
   const resetTranscriptField = () => {
     if (uploadMode) {
@@ -68,7 +69,8 @@ const TranscriptField = ({
     );
   }
 
-  // Get transcript from AI
+
+  // transcript file
   const uploadAndTranscriptFile = async () => {
     if (!file) {
       alert("please select a file");
@@ -83,7 +85,6 @@ const TranscriptField = ({
         videoCredits,
         userId,
         video,
-
       });
       // parse SRT file to a formatted transcript
       loadSrtTranscript(result);
@@ -93,20 +94,40 @@ const TranscriptField = ({
       setGeneratingScriptWithAi(false);
     }
   };
+  // generate transcript with AI for youtube
+  const generateTranscriptWithAIForYoutube = async () => {
+    setFetchingTranscript(true);
+    try {
+      checkCredits(credits, videoCredits);
+      const srtTranscript = await transcribeYoutubeVideo({ youtubeId, userId, video });
+      if (!srtTranscript) {
+        setFetchingTranscript(false);
+        setTranscriptAvailable(false);
+        setParentTranscriptText("");
+      }
+      loadSrtTranscript(srtTranscript);
+    } catch (error) {
+      setFetchingTranscript(false);
+      setTranscriptAvailable(false);
+      setParentTranscriptText("");
+      console.error(error.message);
+    }
+  };
 
   // Get transcript from YouTube
   const loadYoutubeTranscript = async () => {
     try {
       const result = await YoutubeService.getYoutubeTranscript({ youtubeId });
-
       loadSrtTranscript(result);
-
     } catch (error) {
-
       setFetchingTranscript(false);
       setTranscriptAvailable(false);
       setParentTranscriptText("");
-
+      if (parentSrtText && parentSrtText !== "") {
+        console.log(parentSrtText);
+        loadSrtTranscript(parentSrtText)
+      }
+      console.error(error.message);
     }
   };
 
@@ -129,40 +150,27 @@ const TranscriptField = ({
     }
   }
 
-  // generate transcript with AI
-  const generateTranscriptWithAIForYoutube = async () => {
-    setFetchingTranscript(true);
-    try {
-      checkCredits(credits, videoCredits);
-      const srtTranscript = await transcribeYoutubeVideo({ youtubeId });
-      if (!srtTranscript) {
-        setFetchingTranscript(false);
-        setTranscriptAvailable(false);
+  useEffect(() => {
+    if (!uploadMode) {
+      if (videoRef.current.props.videoId !== "") {
+        setVideoValid(true);
+        loadYoutubeTranscript();
+      } else {
+        setVideoValid(false);
         setParentTranscriptText("");
       }
-
-      loadSrtTranscript(srtTranscript);
-    } catch (error) {
-      setFetchingTranscript(false);
-      setTranscriptAvailable(false);
-      setParentTranscriptText("");
-      console.error(error.message);
+    } else {
+      loadUploadVideoTranscript()
     }
-  };
-
-  const [selectedFile, setSelectedFile] = useState(null);
-  // get transcript with upload
-  const getTranscriptWithUpload = (file) => {
-    setSelectedFile(file);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const srt = e.target.result;
-      loadSrtTranscript(srt);
+    return () => {
+      if (!uploadMode) {
+        setEditableTranscript([]);
+        setFetchingTranscript(true);
+      }
     };
+  }, [youtubeId]);
 
 
-    reader.readAsText(file);
-  };
 
   // 點擊轉錄時跳轉視頻
   const handleTranscriptClick = (time) => {
@@ -230,27 +238,6 @@ const TranscriptField = ({
   };
 
 
-
-
-  useEffect(() => {
-    if (!uploadMode) {
-      if (videoRef.current.props.videoId !== "") {
-        setVideoValid(true);
-        loadYoutubeTranscript();
-      } else {
-        setVideoValid(false);
-        setParentTranscriptText("");
-      }
-    } else { loadUploadVideoTranscript() }
-    return () => {
-      if (!uploadMode) {
-        setEditableTranscript([]);
-        setFetchingTranscript(true);
-      }
-    };
-  }, [youtubeId]);
-
-
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
@@ -260,12 +247,11 @@ const TranscriptField = ({
       classNames(
         displayMode === "audio" ? " h-[calc(100vh-160px)]" : "",
         displayMode === "video" ? " h-[calc(100vh-69vw)] md:h-[calc(100vh-38.5vw)] lg:h-[calc(100vh-34.5vw)] 3xl:h-[calc(100vh-730px)]" : "",
-        displayMode === "youtube" ? " h-[calc(100vh-49vw)] md:h-[calc(100vh-38.5vw)] lg:h-[calc(100vh-30vw)] 3xl:h-[calc(100vh-610px)]" : "",
         displayMode === "transcript" ? " h-[calc(100vh-80px)] " : "",
-        "flex-col "
+        "flex-col h-full flex"
       )
     }>
-      <div className="text-center font-semibold border border-gray-50 mt-1 rounded-sm text-lg shadow-sm">{currentLine}</div>
+      <div className="text-center font-semibold border border-gray-50 mt-1 rounded-sm text-lg shadow-sm ">{currentLine}</div>
 
       {fetchingTranscript ? (
         <div className="flex-col">
@@ -274,7 +260,7 @@ const TranscriptField = ({
         </div>
       ) :
         (
-          <div className="h-full">
+          <div className="h-40 flex-1">
             {generatingScriptWithAi ? (
               <div className="flex-col">
                 <div className="mx-auto animate-spin rounded-full h-10 w-10 border-r-2 border-b-2 border-indigo-600" />{" "}
@@ -283,7 +269,7 @@ const TranscriptField = ({
               </div>) : (<div className="flex-col h-full">
                 {transcriptAvailable ? (
                   <div className="h-full flex flex-col">
-                    <ControlBar 
+                    <ControlBar
                       exportSRT={exportSRT}
                       setIsEditMode={setIsEditMode}
                       isEditMode={isEditMode}
@@ -294,8 +280,9 @@ const TranscriptField = ({
                     />
                     {/* 根據viewMode渲染不同的內容 */}
                     {/* Transcript Box */}
+
                     {viewMode === "transcript" ? (
-                      <ul className="overflow-auto pb-8 bg-gray-50">
+                      <ul className="overflow-auto pb-8 bg-gray-50 h-full">
                         {editableTranscript.map(({ start, end, text }, index) => {
                           const startTime = timeToSeconds(start.split(",")[0]);
                           const endTime = timeToSeconds(end.split(",")[0]);
@@ -304,6 +291,7 @@ const TranscriptField = ({
                           if (isCurrent) {
                             setCurrentLine(text)
                           }
+                          
                           return (
                             <TranscriptBox
                               key={index}
@@ -334,10 +322,13 @@ const TranscriptField = ({
                         ></textarea>
                       </div>
                     )}
+
                   </div>
                 ) : (<GenerateOptions
                   loadSrtTranscript={loadSrtTranscript}
                   uploadAndTranscriptFile={uploadAndTranscriptFile}
+                  displayMode={displayMode}
+                  generateTranscriptWithAIForYoutube={generateTranscriptWithAIForYoutube}
                 />)
                 }
               </div>)}
@@ -388,7 +379,7 @@ const TranscriptBox = ({
         </div> :
         <div className="flex w-full">
           <textarea
-          className="block w-full resize-none border-0 border-b border-transparent p-0  text-gray-900  focus:border-indigo-600 focus:ring-0 sm:text-lg sm:leading-6 overflow-hidden"
+            className="block w-full resize-none border-0 border-b border-transparent p-0  text-gray-900  focus:border-indigo-600 focus:ring-0 sm:text-lg sm:leading-6 overflow-hidden"
             value={text}
             onChange={(e) => {
               handleTranscriptChange(index, e.target.value);

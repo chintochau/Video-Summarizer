@@ -4,9 +4,10 @@ import YouTube from "react-youtube";
 import { useVideoContext } from "../contexts/VideoContext";
 import { calculateVideoCredits } from "../utils/creditUtils";
 
-const VideoField = ({  youtubeId, videoRef }) => {
+const VideoField = ({ youtubeId, videoRef }) => {
   const { setVideoDuration, setSourceTitle, setSourceType, setSourceId, setVideoCredits, setCurrentPlayTime } = useVideoContext();
 
+  const [playing, setPlaying] = useState(false)
   const opts = {
     height: "auto",
     width: "auto",
@@ -18,15 +19,19 @@ const VideoField = ({  youtubeId, videoRef }) => {
 
 
   useEffect(() => {
+    
     const intervalId = setInterval(async () => {
       setCurrentPlayTime(await videoRef.current.internalPlayer.getCurrentTime());
-    }, 300);
-  
+    }, 500);
+
+    if (!playing) {
+      clearInterval(intervalId)
+    }
 
     return () => {
       clearInterval(intervalId);
     }
-  }, [])
+  }, [playing])
 
 
   return (
@@ -43,6 +48,8 @@ const VideoField = ({  youtubeId, videoRef }) => {
           setVideoDuration(e.target.playerInfo.duration);
           setVideoCredits(calculateVideoCredits(e.target.playerInfo.duration))
         }}
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
       />
     </div>
   );

@@ -76,7 +76,7 @@ export default class SummaryService {
   };
 
   // Function to fetch summaries for a video
-  static fetchSummariesForVideo = async (userId, sourceId) => {
+  static getTranscriptAndSummaryForVideo = async (userId, sourceId) => {
     try {
       const response = await fetch(
         apiUrl + `/api/summaries/${userId}/${sourceId}`

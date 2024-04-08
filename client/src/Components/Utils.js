@@ -131,8 +131,7 @@ export const transcribeWithAI = async (data) => {
 };
 
 // Youtube related
-export const transcribeYoutubeVideo = async ({ youtubeId }) => {
-  const data = { youtubeLink: youtubeId };
+export const transcribeYoutubeVideo = async (data) => {
   try {
     const response = await fetch(apiUrl + "/api/transcribeYoutubeVideo", {
       method: "POST",

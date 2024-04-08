@@ -3,10 +3,8 @@ import { transcribeFile } from "../services/transcribeServices.js";
 import { getOrCreateVideoBySourceId } from "../services/videoServices.js";
 
 export const handleTranscribeRequest = async (req, res) => {
-
     const { userId } = req.body;
     const video = JSON.parse(req.body.video);
-
     try {
         const uploadedFile = req.file;
         const transcriptionResult = await transcribeFile({ file: uploadedFile });

@@ -15,6 +15,7 @@ import Dashboard from "./Components/dashboard/Dashboard.jsx";
 import Summarizer from "./Components/Summarizer.jsx";
 import { TranscriptProvider } from "./contexts/TranscriptContext.jsx";
 import YoutubeSummary from "./Components/SummarizerPage/YoutubeSummary.jsx";
+import ConsoleHome from "./Components/SummarizerPage/ConsoleHome.jsx";
 
 function App() {
   const [announcement, setAnnouncement] = useState({
@@ -59,7 +60,7 @@ function App() {
                   <Route path="/history" element={<HistoryPage />} />
                   <Route path="/profile" element={<UserProfilePage />} />
                   <Route path="/console/*" element={<Dashboard />} >
-                    <Route path='' />
+                    <Route path='' element={<ConsoleHome />}/>
                     <Route path='youtube' element={<YoutubeSummary />}/>
                     <Route path='upload' element={<Summarizer />} />
                     <Route path='billing' element={<div>billing</div>}/>

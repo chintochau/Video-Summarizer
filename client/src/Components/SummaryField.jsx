@@ -7,6 +7,7 @@ import { useVideoContext } from "../contexts/VideoContext";
 import HeadingsWithTabs from "../summary-field-conpoments/HeadingsWithTabs";
 import SummaryTab from "../summary-field-conpoments/SummaryTab";
 import { checkCredits } from "../utils/creditUtils";
+import { useTranscriptContext } from "@/contexts/TranscriptContext.jsx";
 
 const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
   const newSummary = { summary: "", summaryType: "New Summary" };
@@ -18,6 +19,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
   const [selectedModel, setselectedModel] = useState("claude3h");
   const [startSummary, setStartSummary] = useState(false);
   const { userId, setCredits, credits } = useAuth();
+  const {setParentSrtText} = useTranscriptContext()
   const { video } = useVideoContext();
 
   const [activeTab, setActiveTab] = useState(0);
@@ -26,12 +28,17 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
     setSummaries([newSummary]);
     const fetchSummaries = async () => {
       try {
-        const result = await SummaryService.fetchSummariesForVideo(
+        const result = await SummaryService.getTranscriptAndSummaryForVideo(
           userId,
           video.sourceId
         );
         if (result.success) {
           setSummaries((prev) => [...result.data, ...prev]);
+          
+          if(result.video && result.video.originalTranscript) {
+            setParentSrtText(result.video.originalTranscript);
+          }
+          
         } else {
           console.error(result.error);
         }

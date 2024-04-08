@@ -14,6 +14,13 @@ export const timeToSeconds = (timestamp) => {
     }
 }
 
+export const secondsToTimeInMinutesAndSeconds = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+
+    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds.toFixed(0).toString().padStart(2, "0")}`;
+}
+
 
 
 export const convertMongoDBDateToLocalTime = (lastUpdated) => {

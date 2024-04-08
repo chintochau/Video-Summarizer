@@ -9,6 +9,13 @@ import { useVideoContext } from '../../contexts/VideoContext'
 import { useTranscriptContext } from '../../contexts/TranscriptContext'
 import { getYoutubeIdFromLink } from '../../utils/youtubeUtils'
 import HistoryPage from '../../pages/HistoryPage'
+import {
+    ResizableHandle,
+    ResizablePanel,
+    ResizablePanelGroup,
+} from "../ui/resizable"
+
+
 const userNavigation = [
     { name: 'Your profile', href: '#' },
     { name: 'Sign out', href: '#' },
@@ -35,10 +42,10 @@ const YoutubeSummary = () => {
     }
 
     return (
-        <div className="flex flex-col h-screen overflow-hidden bg-gray-50">
+        <div className="flex flex-col h-full">
 
             {/* Navbar */}
-            <div className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-x-4 border-2 m-1 rounded-lg border-gray-200 bg-gray-50 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 ">
+            <div className="sticky top-0 z-40 flex h-8 md:h-14 shrink-0 items-center gap-x-4 border-2 m-1 rounded-lg border-gray-200 bg-gray-50 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 ">
                 <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6 ">
                     <form className="relative flex flex-1 " onSubmit={submitYoutubeLink} >
                         <label htmlFor="youtube-bar" className="sr-only">
@@ -62,13 +69,16 @@ const YoutubeSummary = () => {
             </div>
 
             {/* Main Content */}
-            {youtubeId && <div className="mx-auto flex w-full max-w-[1920px] items-start gap-x-1 px-2 py-1 sm:px-2 lg:p-1  flex-grow max-h-[calc(100vh-64px)]">
-                <div className="flex-1 shrink-0 lg:block w-full md:w-1/2  flex flex-col h-full max-h-[calc(100vh-68px)] ">
-                    <VideoField
-                        videoRef={videoRef}
-                        youtubeId={youtubeId}
-                    />
-                    <div className='h-full hidden md:block'>
+            {youtubeId && <ResizablePanelGroup direction="horizontal">
+
+                <ResizablePanel className="flex flex-col flex-1" >
+                    <div className=''>
+                        <VideoField
+                            videoRef={videoRef}
+                            youtubeId={youtubeId}
+                        />
+                    </div>
+                    <div className=' h-40 flex-1 hidden md:block overscroll-scroll'>
                         <TranscriptField
                             youtubeId={youtubeId}
                             videoRef={videoRef}
@@ -78,20 +88,23 @@ const YoutubeSummary = () => {
                         />
                     </div>
                     <div className='md:hidden h-[calc(100vh-30vh)]'>
+                        <SummaryField
+                            videoRef={videoRef}
+                            parentSrtText={parentSrtText}
+                            parentTranscriptText={parentTranscriptText} 
+                            setParentSrtText={setParentSrtText}
+                            />
+                    </div>
+                </ResizablePanel >
+                <ResizableHandle className="w-1 bg-indigo-100 hidden md:flex"/>
+                <ResizablePanel className="hidden sticky top-20 shrink-0 md:block w-full md:w-1/2  h-1/2  md:h-full p-1 bg-gray-50">
                     <SummaryField
                         videoRef={videoRef}
                         parentSrtText={parentSrtText}
                         parentTranscriptText={parentTranscriptText} />
-                        </div>
-                </div>
+                </ResizablePanel>
 
-                <div className="hidden sticky top-20 shrink-0 md:block w-full md:w-1/2  h-1/2  md:h-full p-1 bg-gray-50">
-                    <SummaryField
-                        videoRef={videoRef}
-                        parentSrtText={parentSrtText}
-                        parentTranscriptText={parentTranscriptText} />
-                </div>
-            </div>}
+            </ResizablePanelGroup>}
 
             {!youtubeId &&
                 <div className=' overflow-auto'><HistoryPage sourceType="youtube" /></div>

@@ -13,3 +13,4 @@ server/.env
 client/.env.development
 client/.env.production
 server/venv
+server/uploads/
