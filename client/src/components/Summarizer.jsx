@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useEffect } from "react";
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
-import DownloadIcon from "@mui/icons-material/Download";
+import {DocumentArrowDownIcon} from "@heroicons/react/24/outline"
 import {
   baseStyle,
   focusedStyle,
@@ -15,6 +15,7 @@ import SummaryField from "./SummaryField";
 import { useVideoContext } from "../contexts/VideoContext";
 import { calculateVideoCredits } from "../utils/creditUtils";
 import YoutubeService from "../services/YoutubeService";
+import { Button } from "./ui/button";
 
 export default function Summarizer() {
   const [file, setFile] = useState(null);
@@ -161,21 +162,24 @@ export default function Summarizer() {
                   value={youtubeLink}
                   onChange={handleInputChange}
                 />
-                <div>
-                  <button
-                    className="px-3.5 py-2.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600  "
+                <div className="flex items-center gap-x-1 mr-2">
+                  <Button
+                    className="h-full"
                     onClick={handleSubmit}
                     type="submit"
                   >
                     Generate Summary
-                  </button>
-                  <button
-                    className=" text-indigo-600 hover:text-indigo-400 outline outline-2 rounded-md ml-1 px-3.5 py-2.5"
+                  </Button>
+                  <Button
+                  variant="outline"
+                    className="h-full"
                     onClick={() => YoutubeService.getYoutubeAudio({ youtubeLink })}
                   >
-                    <DownloadIcon style={{ width: "20px", height: "20px" }} />
-                    Audio
-                  </button>
+                    <DocumentArrowDownIcon className="w-6 h-6"/>
+                    <div>
+                      Audio
+                      </div>
+                  </Button>
                 </div>
               </div>
             ) : (

@@ -1,27 +1,25 @@
 import React from 'react';
 // Assuming you have these icons in your project. If not, you can replace them with any icons of your choice.
-import UploadIcon from '@mui/icons-material/Upload';
-import AutorenewIcon from '@mui/icons-material/Autorenew';
-import NotesIcon from '@mui/icons-material/Notes';
+import {ArrowUpIcon, ArrowPathIcon,Bars3BottomLeftIcon} from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom';
 
 const HowItWorks = () => {
   const steps = [
     {
       id: 1,
-      icon: <UploadIcon className="h-12 w-12 mb-4 mx-auto text-blue-500"/>,
+      icon: <ArrowUpIcon className="h-6 w-6 text-blue-500" />,
       title: 'Upload Your Video',
       description: 'Simply upload the video you want to summarize.',
     },
     {
       id: 2,
-      icon: <AutorenewIcon className="h-12 w-12 mb-4 mx-auto text-green-500"/>,
+      icon: <ArrowPathIcon className="h-6 w-6 text-green-500" />,
       title: 'Processing',
       description: 'Our AI analyzes the video to extract key information.',
     },
     {
       id: 3,
-      icon: <NotesIcon className="h-12 w-12 mb-4 mx-auto text-yellow-500"/>,
+      icon: <Bars3BottomLeftIcon className="h-6 w-6 text-yellow-500" />,
       title: 'Get Your Notes',
       description: 'Receive concise, actionable notes from your video.',
     },

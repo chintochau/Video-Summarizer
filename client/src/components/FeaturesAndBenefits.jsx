@@ -1,26 +1,28 @@
 import React from 'react';
 // You might want to replace these with actual icons or images
-import SettingsIcon from '@mui/icons-material/Settings';
-import MicNoneIcon from '@mui/icons-material/MicNone';
-import LanguageIcon from '@mui/icons-material/Language';
-import TouchAppIcon from '@mui/icons-material/TouchApp';
+
+import MicrophoneIcon from '@heroicons/react/24/outline/MicrophoneIcon'
+import LanguageIcon from '@heroicons/react/24/outline/LanguageIcon'
+import DocumentTextIcon from '@heroicons/react/24/outline/DocumentTextIcon'
+
 
 const features = [
   {
     id: 1,
-    icon: <MicNoneIcon className="w-16 h-16 text-blue-500" />,
+    icon: <MicrophoneIcon class="h-6 w-6 text-blue-500" />,
     title: 'YouTube Link Processing',
     description: 'Input any YouTube link and let our AI extract meaningful content to summarize.',
   },
   {
     id: 2,
-    icon: <LanguageIcon className="w-16 h-16 text-green-500" />,
+    icon:<LanguageIcon className="h-6 w-6 text-green-500" />
+    ,
     title: 'Automatic Summarization',
     description: 'Our advanced algorithms provide concise summaries of lengthy videos.',
   },
   {
     id: 3,
-    icon: <TouchAppIcon className="w-16 h-16 text-yellow-500" />,
+    icon: <DocumentTextIcon className="h-6 w-6 text-yellow-500" />,
     title: 'Keyword Extraction',
     description: 'Instantly find key phrases and terms within any video content.',
   },

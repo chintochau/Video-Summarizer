@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import GeneralButton from "../GeneralButton";
 import logo from "../../assets/logo.png";
 import { useAuth } from "../../contexts/AuthContext";
-import BoltIcon from "@mui/icons-material/Bolt";
+import {BoltIcon} from "@heroicons/react/24/solid"
 import { Dialog } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
@@ -27,7 +26,7 @@ const Header = () => {
     return (
       <div className="flex">
         <Link to="/pricing" className="text-indigo-600 flex rounded-md outline-1 outline hover:text-indigo-400 cursor-pointer pr-2">
-          <BoltIcon />
+          <BoltIcon className="w-4 h-6"/>
           <div className=""> {credits}</div>
         </Link>
       </div>)
