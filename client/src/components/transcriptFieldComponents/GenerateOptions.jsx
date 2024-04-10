@@ -25,43 +25,9 @@ import { useAuth } from '@/contexts/AuthContext'
 import { secondsToTimeInMinutesAndSeconds } from '@/utils/timeUtils'
 import { CheckCircleIcon, CheckIcon } from '@heroicons/react/24/outline'
 import { transcribeOptions, useTranscriptContext } from '@/contexts/TranscriptContext'
+import TranscriptHistoryTable from './TranscriptHistoryTable'
 
-const HistoryTable = () => {
 
-    const { userId } = useAuth()
-
-    return (<Table>
-        <TableHeader>
-            <TableRow>
-                <TableHead>Transcript</TableHead>
-                <TableHead>Language</TableHead>
-                <TableHead>Model</TableHead>
-                <TableHead>Created At</TableHead>
-            </TableRow>
-        </TableHeader>
-        <TableBody>
-            <TableRow>
-                <TableCell>Transcript 1</TableCell>
-                <TableCell>English</TableCell>
-                <TableCell>Assembly</TableCell>
-                <TableCell>2021-09-01</TableCell>
-            </TableRow>
-            <TableRow>
-                <TableCell>Transcript 2</TableCell>
-                <TableCell>English</TableCell>
-                <TableCell>Assembly</TableCell>
-                <TableCell>2021-09-01</TableCell>
-            </TableRow>
-            <TableRow>
-                <TableCell>Transcript 3</TableCell>
-                <TableCell>English</TableCell>
-                <TableCell>Assembly</TableCell>
-                <TableCell>2021-09-01</TableCell>
-            </TableRow>
-        </TableBody>
-
-    </Table>)
-}
 
 const classNames = (...classes) => classes.filter(Boolean).join(' ')
 
@@ -168,7 +134,7 @@ const GenerateOptions = (params) => {
                     <CardDescription>Load a previous transcription from server</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <HistoryTable />
+                    <TranscriptHistoryTable />
                 </CardContent>
             </Card>
             <Card className="flex-col m-4 shadow-md">

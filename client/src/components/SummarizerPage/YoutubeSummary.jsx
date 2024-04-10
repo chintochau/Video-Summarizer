@@ -45,7 +45,7 @@ const YoutubeSummary = () => {
         <div className="flex flex-col h-full">
 
             {/* Navbar */}
-            <div className="sticky top-0 z-40 flex h-8 md:h-14 shrink-0 items-center gap-x-4 border-2 m-1 rounded-lg border-gray-200 bg-gray-50 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 ">
+            <div className="sticky top-0 z-40 flex h-8 md:h-12 shrink-0 items-center gap-x-4 border-2 m-1 rounded-lg border-gray-200 bg-gray-50 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 ">
                 <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6 ">
                     <form className="relative flex flex-1 " onSubmit={submitYoutubeLink} >
                         <label htmlFor="youtube-bar" className="sr-only">

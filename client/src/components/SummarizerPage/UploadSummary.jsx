@@ -10,6 +10,11 @@ import SummaryField from "../SummaryField";
 import SummaryService from "@/services/SummaryService";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSummaryContext } from "@/contexts/SummaryContext";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "../ui/resizable"
 
 const UploadSummary = () => {
   // state management
@@ -107,7 +112,8 @@ const UploadSummary = () => {
 
 
   return (
-    <div>
+    <div className="flex flex-col h-full">
+
       {/*Dropzone */}
       {!file && displayMode === "empty" &&
         <div className="flex flex-col md:flex-row w-full h-screen">
@@ -134,115 +140,15 @@ const UploadSummary = () => {
 
         </div>}
 
-      {displayMode === "video" &&
-        <div className="flex flex-col h-screen">
-          <Dropzone onDrop={handleFileChange}>
-            {({ getRootProps, getInputProps }) => (
-              <div {...getRootProps()} className={className(
-                isFocused ? " border-[#2196f3]" : "",
-                isDragAccept ? "border-[#00e676]" : "",
-                isDragReject ? "border-[#ff1744]" : "",
-                `sticky top-0 z-40 flex h-14 shrink-0 items-center gap-x-4 border-2 m-1 rounded-lg border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 cursor-pointer`)}>
-                <input {...getInputProps()} />
-                {file && file.name ? (
-                  <p className=" text-gray-950 m-auto">
-                    Selected File: {file.name} - {formatFileSize(file.size)}
-                  </p>
-                ) : (
-                  <p className=" m-auto">Upload Audio/ Video here</p>
-                )}
-              </div>
-            )}
-          </Dropzone>
 
-          <div className="mx-auto flex w-full max-w-[1920px] items-start gap-x-1 px-2 py-1 sm:px-2 lg:p-1  flex-grow max-h-[calc(100vh-64px)]">
-            <div className="flex-1 shrink-0 lg:block w-full md:w-1/2 lg:w-3/5 flex flex-col p-1  h-full max-h-[calc(100vh-68px)] ">
-              <video
-                src={videoSrc}
-                ref={uploadRef}
-                controls
-                className="w-full h-auto"
-                onLoadedMetadata={handleLoadedMetadata}
-              >
-                抱歉，您的瀏覽器不支援內嵌視頻。
-              </video>
-              <TranscriptField
-                videoRef={uploadRef}
-                uploadMode={true}
-                file={file}
-                displayMode="video"
-              />
-            </div>
-            <div className="hidden sticky top-20 shrink-0 md:block w-full md:w-1/2 lg:w-2/5 h-1/2  md:h-full p-1 ">
-              <SummaryField
-                videoRef={uploadRef}
-                parentTranscriptText={parentTranscriptText}
-                parentSrtText={parentSrtText}
-              />
-            </div>
-          </div>
-
-        </div>
-      }
-
-
-      {displayMode === "audio" &&
-        <div className="flex flex-col h-screen">
-          <Dropzone onDrop={handleFileChange}>
-            {({ getRootProps, getInputProps }) => (
-              <div {...getRootProps()} className={className(
-                isFocused ? " border-[#2196f3]" : "",
-                isDragAccept ? "border-[#00e676]" : "",
-                isDragReject ? "border-[#ff1744]" : "",
-                `sticky top-0 z-40 flex h-14 shrink-0 items-center gap-x-4 border-2 m-1 rounded-lg border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8  cursor-pointer`)}>
-                <input {...getInputProps()} />
-                {file && file.name ? (
-                  <p className=" text-gray-950 m-auto">
-                    Selected File: {file.name} - {formatFileSize(file.size)}
-                  </p>
-                ) : (
-                  <p className=" m-auto">Upload Audio/ Video here</p>
-                )}
-              </div>
-            )}
-          </Dropzone>
-          <div className="mx-auto flex w-full max-w-[1920px] items-start gap-x-1 px-2 py-1 sm:px-2 lg:p-1  flex-grow ">
-            <div className="flex-1 shrink-0 lg:block w-full md:w-1/2 lg:w-3/5 flex flex-col p-1  h-full ">
-              <audio
-                src={audioSrc}
-                ref={uploadRef}
-                controls
-                className="w-full"
-                onLoadedMetadata={handleLoadedMetadata}
-              >
-                抱歉，您的瀏覽器不支援內嵌視頻。
-              </audio>
-              <TranscriptField
-                videoRef={uploadRef}
-                uploadMode={true}
-                file={file}
-                displayMode="audio"
-              />
-            </div>
-            <div className="hidden sticky top-20 shrink-0 md:block w-full md:w-1/2 lg:w-2/5 h-1/2  md:h-full p-1 ">
-              <SummaryField
-                videoRef={uploadRef}
-                parentTranscriptText={parentTranscriptText}
-                parentSrtText={parentSrtText}
-              />
-            </div>
-          </div>
-        </div>
-      }
-
-      {displayMode === "transcript" && <div className="flex flex-col h-screen">
+      <div className="h-screen flex flex-col">
         <Dropzone onDrop={handleFileChange}>
           {({ getRootProps, getInputProps }) => (
             <div {...getRootProps()} className={className(
               isFocused ? " border-[#2196f3]" : "",
               isDragAccept ? "border-[#00e676]" : "",
               isDragReject ? "border-[#ff1744]" : "",
-              `z-40 flex h-14 shrink-0 items-center gap-x-4 border-2 m-1 rounded-lg border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8  cursor-pointer`)}>
+              `sticky top-0 md:relative z-40 flex h-14 shrink-0 items-center gap-x-4 border-2 m-1 rounded-lg border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 cursor-pointer`)}>
               <input {...getInputProps()} />
               {file && file.name ? (
                 <p className=" text-gray-950 m-auto">
@@ -254,24 +160,57 @@ const UploadSummary = () => {
             </div>
           )}
         </Dropzone>
-        <div className="mx-auto flex w-full max-w-[1920px] items-start gap-x-1 px-2 py-1 sm:px-2 lg:p-1  flex-grow max-h-[calc(100vh-64px)]">
-          <div className="flex-1 shrink-0 lg:block w-full md:w-1/2 lg:w-3/5 flex flex-col p-1  h-full max-h-[calc(100vh-68px)] ">
-            <TranscriptField
-              videoRef={uploadRef}
-              uploadMode={true}
-              file={file}
-              displayMode="transcript"
-            />
-          </div>
-          <div className="hidden sticky top-20 shrink-0 md:block w-full md:w-1/2 lg:w-2/5 h-1/2  md:h-full p-1 ">
-            <SummaryField
-              videoRef={uploadRef}
-              parentTranscriptText={parentTranscriptText}
-              parentSrtText={parentSrtText}
-            />
-          </div>
+        <div className="h-3/6 flex-1 ">
+
+          <ResizablePanelGroup direction="horizontal">
+            <ResizablePanel className="flex flex-col flex-1" >
+              {displayMode === "video" && <video
+                src={videoSrc}
+                ref={uploadRef}
+                controls
+                className="w-full h-auto"
+                onLoadedMetadata={handleLoadedMetadata}
+              >
+                抱歉，您的瀏覽器不支援內嵌視頻。
+              </video>}
+              {displayMode === "audio" && <audio
+                src={audioSrc}
+                ref={uploadRef}
+                controls
+                className="w-full"
+                onLoadedMetadata={handleLoadedMetadata}
+              >
+                抱歉，您的瀏覽器不支援內嵌視頻。
+              </audio>}
+
+              <div className=' h-40 flex-1 hidden md:block overscroll-scroll'>
+                <TranscriptField
+                  videoRef={uploadRef}
+                  uploadMode={true}
+                  file={file}
+                  displayMode="video"
+                />
+              </div>
+              <div className='md:hidden h-[calc(100vh-30vh)]'>
+                <SummaryField
+                  videoRef={uploadRef}
+                  parentTranscriptText={parentTranscriptText}
+                  parentSrtText={parentSrtText}
+                />
+              </div>
+            </ResizablePanel >
+            <ResizableHandle className="w-1 bg-indigo-100 hidden md:flex" />
+            <ResizablePanel className="hidden sticky top-20 shrink-0 md:block w-full md:w-1/2  h-1/2  md:h-full p-1 bg-gray-50">
+              <SummaryField
+                videoRef={uploadRef}
+                parentTranscriptText={parentTranscriptText}
+                parentSrtText={parentSrtText}
+              />
+            </ResizablePanel>
+
+          </ResizablePanelGroup>
         </div>
-      </div>}
+      </div>
 
     </div>
 

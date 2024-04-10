@@ -54,12 +54,13 @@ export const TranscriptProvider = ({ children }) => {
     setTranscriptAvailable,
     editableTranscript,
     setEditableTranscript,
-    setupTranscriptWithInputSRT,
-    resetTranscript,
     generatingTranscriptWithAI,
     setGeneratingTranscriptWithAI,
     selectedTranscriptionLanguage,
     setSelectedTranscriptionLanguage,
+    
+    setupTranscriptWithInputSRT,
+    resetTranscript,
   };
 
   return (

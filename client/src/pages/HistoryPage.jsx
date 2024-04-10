@@ -7,7 +7,6 @@ import { convertMongoDBDateToLocalTime } from '../utils/timeUtils';
 import { useVideoContext } from '../contexts/VideoContext';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { useTranscriptContext } from '@/contexts/TranscriptContext';
-import { useSummaryContext } from '@/contexts/SummaryContext';
 
 const HistoryPage = ({ sourceType = "all" }) => {
     const navigate = useNavigate()
@@ -18,6 +17,7 @@ const HistoryPage = ({ sourceType = "all" }) => {
     const [totalItems, setTotalItems] = useState(0)
     const { setYoutubeId, setSourceId, setSourceType, setSourceTitle } = useVideoContext()
     const { resetTranscript, setLoadingTranscript } = useTranscriptContext()
+
     async function fetchVideos(page) {
         const videos = await SummaryService.getAllVideosForUser({ userId, page, sourceType });
         setVideos(videos.data)

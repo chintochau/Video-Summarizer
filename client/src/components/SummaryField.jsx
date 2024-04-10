@@ -118,7 +118,6 @@ const SummaryField = ({ videoRef }) => {
 
   return (
     <div className="relative h-full flex flex-col">
-      {video.sourceId}
       <div className="flex justify-between">
         <div className="text-left flex">
           <label htmlFor="language-select" className=" text-indigo-600 mr-1">
@@ -137,12 +136,6 @@ const SummaryField = ({ videoRef }) => {
             ))}
           </select>
         </div>
-      </div>
-      <div className="h-40 overflow-auto">
-        parent transcript: {parentTranscriptText}
-      </div>
-      <div className="h-40 overflow-auto">
-        SRT: {parentSrtText}
       </div>
 
       <HeadingsWithTabs

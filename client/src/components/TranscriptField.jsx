@@ -14,6 +14,9 @@ import ControlBar from "./transcriptFieldComponents/ControlBar";
 import { ChevronDoubleDownIcon, ChevronDoubleUpIcon, XCircleIcon } from '@heroicons/react/24/outline'
 import GenerateOptions from "./transcriptFieldComponents/GenerateOptions";
 import { useTranscriptContext } from "@/contexts/TranscriptContext";
+import { ScrollArea } from "./ui/scroll-area";
+import { Textarea } from "./ui/textarea";
+import { Loader2 } from "lucide-react"
 
 
 // Field
@@ -140,20 +143,14 @@ const TranscriptField = (params) => {
   }
 
   return (
-    <div className={
-      classNames(
-        displayMode === "audio" ? " h-[calc(100vh-160px)]" : "",
-        displayMode === "video" ? " h-[calc(100vh-69vw)] md:h-[calc(100vh-38.5vw)] lg:h-[calc(100vh-34.5vw)] 3xl:h-[calc(100vh-730px)]" : "",
-        displayMode === "transcript" ? " h-[calc(100vh-80px)] " : "",
-        "flex-col h-full flex"
-      )
-    }>
+    <div className="flex-col h-full flex"
+    >
       <div className="text-center font-semibold border border-gray-50 mt-1 rounded-sm text-lg shadow-sm ">{currentLine}</div>
 
       {loadingTranscript ? (
-        <div className="flex-col">
-          <div className="mx-auto animate-spin rounded-full h-10 w-10 border-r-2 border-b-2 border-indigo-600" />{" "}
-          <div>Fetching Transcript...</div>
+        <div className="flex-col pt-12">
+          <Loader2 className="mx-auto size-16 opacity-20 animate-spin" />
+          <div className="text-center text-lg">Fetching Transcript...</div>
         </div>
       ) :
         (
@@ -178,7 +175,7 @@ const TranscriptField = (params) => {
                     {/* Transcript Box */}
 
                     {viewMode === "transcript" ? (
-                      <ul className="overflow-auto pb-8 bg-gray-50 h-full">
+                      <ScrollArea className="bg-gray-50 h-full">
                         {editableTranscript.map(({ start, end, text }, index) => {
                           const startTime = timeToSeconds(start.split(",")[0]);
                           const endTime = timeToSeconds(end.split(",")[0]);
@@ -204,14 +201,14 @@ const TranscriptField = (params) => {
                             />
                           );
                         })}
-                      </ul>
+                      </ScrollArea>
                     ) : (
-                      <div className="h-full p-1 overflow-hidden pb-4 ">
-                        <textarea
-                          className="w-full h-full px-2 border-none rounded-md resize-none bg-gray-50"
+                      <div className="h-full p-1">
+                        <Textarea
+                          className="w-full h-full px-2 border-none resize-none bg-gray-50"
                           value={parentTranscriptText}
                           readOnly
-                        ></textarea>
+                        ></Textarea>
                       </div>
                     )}
 
@@ -246,7 +243,7 @@ const TranscriptBox = ({
 
 
   return (
-    <li
+    <div
       className={`flex shadow-sm mx-2 rounded-md  ${isCurrent ? " bg-indigo-100" : " bg-gray-50"
         } hover:outline outline-1 outline-indigo-300 cursor-pointer`}
       onClick={() => onClick(start)}
@@ -289,7 +286,7 @@ const TranscriptBox = ({
           </button>
         </div>
       }
-    </li>
+    </div>
   );
 };
 
