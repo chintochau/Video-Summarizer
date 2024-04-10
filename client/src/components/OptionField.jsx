@@ -6,7 +6,6 @@ import { useTranscriptContext } from "@/contexts/TranscriptContext";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { Slider } from "./ui/slider";
-import { Loader2 } from "lucide-react"
 
 const OptionCard = ({ option, handleClick, creditCount }) => {
   const { videoDuration } = useVideoContext();
@@ -137,12 +136,12 @@ const OptionField = ({
   const { loadingTranscript } = useTranscriptContext();
 
 
-  if (loadingTranscript) {
-    return <div className="flex-col pt-12">
-      <Loader2 className="mx-auto size-16 opacity-20 animate-spin" />
-      <div className="text-center text-lg">Fetching Transcript...</div>
-    </div>
-  }
+  // if (loadingTranscript) {
+  //   return <div className="flex-col pt-12">
+  //     <Loader2 className="mx-auto size-16 opacity-20 animate-spin" />
+  //     <div className="text-center text-lg">Fetching Transcript...</div>
+  //   </div>
+  // }
 
   return (
     <div className="flex flex-col mx-6 my-4">

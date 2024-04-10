@@ -28,7 +28,6 @@ const TranscriptHistoryTable = () => {
         try {
             const videos = await SummaryService.getAllVideosForUser({ userId, page, sourceType: "user-upload" });
             setVideos(videos.data)
-            console.log(videos.data);
         } catch (error) {
             console.error(error)
         }

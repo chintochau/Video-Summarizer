@@ -22,12 +22,12 @@ export const TranscriptProvider = ({ children }) => {
     setParentSrtText(srt);
     setEditableTranscript(transcriptArray.map((entry) => ({ ...entry }))); // used for SRT editor
     setTranscriptAvailable(true);
-    setLoadingTranscript(false);
     setGeneratingTranscriptWithAI(false);
     setParentTranscriptText(transcriptArray
-        .map(({ start, text }) => start.split(",")[0] + " " + text)
-        .join("\n")
+      .map(({ start, text }) => start.split(",")[0] + " " + text)
+      .join("\n")
     );
+    setLoadingTranscript(false);
   }
 
   const resetTranscript = () => {

@@ -141,7 +141,7 @@ const UploadSummary = () => {
         </div>}
 
 
-      <div className="h-screen flex flex-col">
+      {displayMode !== "empty" && <div className="h-screen flex flex-col">
         <Dropzone onDrop={handleFileChange}>
           {({ getRootProps, getInputProps }) => (
             <div {...getRootProps()} className={className(
@@ -210,7 +210,7 @@ const UploadSummary = () => {
 
           </ResizablePanelGroup>
         </div>
-      </div>
+      </div>}
 
     </div>
 
