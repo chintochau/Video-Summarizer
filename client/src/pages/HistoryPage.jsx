@@ -6,16 +6,18 @@ import { formatDuration } from '../components/Utils';
 import { convertMongoDBDateToLocalTime } from '../utils/timeUtils';
 import { useVideoContext } from '../contexts/VideoContext';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { useTranscriptContext } from '@/contexts/TranscriptContext';
+import { useSummaryContext } from '@/contexts/SummaryContext';
 
 const HistoryPage = ({ sourceType = "all" }) => {
     const navigate = useNavigate()
-    const { currentUser, userId } = useAuth()
+    const { userId } = useAuth()
     const [videos, setVideos] = useState([])
     const [totalPage, setTotalPage] = useState(1)
     const [currentPage, setCurrentPage] = useState(1)
     const [totalItems, setTotalItems] = useState(0)
     const { setYoutubeId, setSourceId, setSourceType, setSourceTitle } = useVideoContext()
-
+    const { resetTranscript, setLoadingTranscript } = useTranscriptContext()
     async function fetchVideos(page) {
         const videos = await SummaryService.getAllVideosForUser({ userId, page, sourceType });
         setVideos(videos.data)
@@ -46,16 +48,19 @@ const HistoryPage = ({ sourceType = "all" }) => {
 
 
     const openVideoHistory = (video) => {
-
+        resetTranscript()
+        setLoadingTranscript(true)
         switch (video.sourceType) {
             case "user-upload":
                 setSourceId(video.sourceId);
+                setYoutubeId(null);
                 setSourceTitle(video.sourceTitle);
                 setSourceType("user-upload");
                 navigate("/console/upload");
                 break;
             case "youtube":
                 setYoutubeId(video.sourceId);
+                setSourceId(null);
                 setSourceTitle(video.sourceTitle);
                 setSourceType("youtube");
                 navigate("/console/youtube");

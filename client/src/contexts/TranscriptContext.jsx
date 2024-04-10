@@ -1,27 +1,65 @@
-import { createContext, useContext, useState } from "react";
+import { parseSRTToArray } from "@/components/Utils";
+import { createContext, useContext, useEffect, useState } from "react";
+
 
 const TranscriptContext = createContext();
 
 export const useTranscriptContext = () => useContext(TranscriptContext);
 
 export const TranscriptProvider = ({ children }) => {
-  const [parentText, setParentText] = useState("");
-  const [parentSrtText, setParentSrtText] = useState("");
+  const [parentSrtText, setParentSrtText] = useState(null);
+  const [parentTranscriptText, setParentTranscriptText] = useState(null)
   const [transcriptCredits, setTranscriptCredits] = useState(0);
-  const [parentTranscriptText, setParentTranscriptText] = useState("")
+  const [loadingTranscript, setLoadingTranscript] = useState(true)
+  const [transcriptAvailable, setTranscriptAvailable] = useState(false)
   const [selectedTranscribeOption, setSelectedTranscribeOption] = useState(null)
+  const [editableTranscript, setEditableTranscript] = useState([])
+  const [generatingTranscriptWithAI, setGeneratingTranscriptWithAI] = useState(false)
+  const [selectedTranscriptionLanguage, setSelectedTranscriptionLanguage] = useState("en")
+
+  const setupTranscriptWithInputSRT = (srt) => {
+    const transcriptArray = parseSRTToArray(srt);
+    setParentSrtText(srt);
+    setEditableTranscript(transcriptArray.map((entry) => ({ ...entry }))); // used for SRT editor
+    setTranscriptAvailable(true);
+    setLoadingTranscript(false);
+    setGeneratingTranscriptWithAI(false);
+    setParentTranscriptText(transcriptArray
+        .map(({ start, text }) => start.split(",")[0] + " " + text)
+        .join("\n")
+    );
+  }
+
+  const resetTranscript = () => {
+    setParentTranscriptText(null);
+    setGeneratingTranscriptWithAI(false);
+    setTranscriptCredits(0);
+    setTranscriptAvailable(false);
+    setParentSrtText(null);
+    setEditableTranscript([]);
+  }
 
   const value = {
-    parentText,
     setParentSrtText,
     parentSrtText,
-    setParentText,
     transcriptCredits,
     setTranscriptCredits,
     setParentTranscriptText,
     parentTranscriptText,
     selectedTranscribeOption,
-    setSelectedTranscribeOption
+    setSelectedTranscribeOption,
+    loadingTranscript,
+    setLoadingTranscript,
+    transcriptAvailable,
+    setTranscriptAvailable,
+    editableTranscript,
+    setEditableTranscript,
+    setupTranscriptWithInputSRT,
+    resetTranscript,
+    generatingTranscriptWithAI,
+    setGeneratingTranscriptWithAI,
+    selectedTranscriptionLanguage,
+    setSelectedTranscriptionLanguage,
   };
 
   return (

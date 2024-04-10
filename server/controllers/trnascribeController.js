@@ -1,5 +1,5 @@
 import Video from "../models/videoModel.js";
-import { getQueueStatus, transcribeFile, transcribeQueue } from "../services/transcribeServices.js";
+import { checkGPUSlots,  transcribeFile, transcribeQueue } from "../services/transcribeServices.js";
 import { getOrCreateVideoBySourceId } from "../services/videoServices.js";
 
 export const handleTranscribeRequest = async (req, res) => {
@@ -51,7 +51,6 @@ export const processVideo = async (req, res, next) => {
 
             // Start the transcription
             const transcription = await transcribeFile({ file: uploadedFile, gpu: availableGPU });
-            console.log(transcription);
             // await getOrCreateVideoBySourceId({ video, userId, originalTranscript: transcription });
             res.json(transcription);
 

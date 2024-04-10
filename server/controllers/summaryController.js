@@ -135,12 +135,6 @@ export const getTranscriptAndSummariesForVideo = async (req, res) => {
     // Find summaries for the video
     const summaries = await Summary.find({ videoId: video._id });
 
-    if (summaries.length === 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "No summaries found for the video" });
-    }
-
     res.status(200).json({ success: true, data: summaries, video: video});
   } catch (error) {
     console.error(error);

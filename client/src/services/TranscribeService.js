@@ -4,7 +4,7 @@ class TranscribeService {
     // Example method for transcribing audio
     static transcribeUserUploadFile = async (data) => {
 
-        const { file, language, selectedModel, userId, video, videoCredits,transcribeOption } = data;
+        const { file, language,  userId, video, videoCredits,transcribeOption } = data;
         if (!file) {
             return null;
         }
@@ -16,7 +16,6 @@ class TranscribeService {
 
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("selectedModel", selectedModel);
         formData.append("language", language);
         formData.append("userId", userId);
         formData.append("videoCredits", videoCredits);

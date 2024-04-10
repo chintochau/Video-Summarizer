@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {calculateCredit} from '../utils/creditUtils.js'
+import { calculateCredit } from '../utils/creditUtils.js'
 import SummaryService from "../services/SummaryService";
 import { languageList } from "../constants";
 import { useAuth } from "../contexts/AuthContext";
@@ -7,47 +7,24 @@ import { useVideoContext } from "../contexts/VideoContext";
 import HeadingsWithTabs from "../summary-field-conpoments/HeadingsWithTabs";
 import SummaryTab from "../summary-field-conpoments/SummaryTab";
 import { checkCredits } from "../utils/creditUtils";
+import { useSummaryContext } from "@/contexts/SummaryContext.jsx";
 import { useTranscriptContext } from "@/contexts/TranscriptContext.jsx";
 
-const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
-  const newSummary = { summary: "", summaryType: "New Summary" };
-  const [summaries, setSummaries] = useState([newSummary]);
+
+const SummaryField = ({ videoRef }) => {
+
+  // use context
+  const { summaries, setSummaries } = useSummaryContext()
+  const { userId, setCredits, credits } = useAuth();
+  const { video } = useVideoContext();
+  const { parentTranscriptText, parentSrtText } = useTranscriptContext()
+
+  // use state
   const [response, setResponse] = useState("");
   const [language, setLanguage] = useState("English");
-  const [transcriptAvailable, setTranscriptAvailable] = useState(false);
   const [creditCount, setCreditCount] = useState(0);
-  const [selectedModel, setselectedModel] = useState("claude3h");
   const [startSummary, setStartSummary] = useState(false);
-  const { userId, setCredits, credits } = useAuth();
-  const {setParentSrtText} = useTranscriptContext()
-  const { video } = useVideoContext();
-
   const [activeTab, setActiveTab] = useState(0);
-
-  useEffect(() => {
-    setSummaries([newSummary]);
-    const fetchSummaries = async () => {
-      try {
-        const result = await SummaryService.getTranscriptAndSummaryForVideo(
-          userId,
-          video.sourceId
-        );
-        if (result.success) {
-          setSummaries((prev) => [...result.data, ...prev]);
-          
-          if(result.video && result.video.originalTranscript) {
-            setParentSrtText(result.video.originalTranscript);
-          }
-          
-        } else {
-          console.error(result.error);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchSummaries();
-  }, [userId, video.sourceId]);
 
   const insertNewTab = (summaryText, title) => {
     setSummaries((prev) => [
@@ -72,16 +49,17 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
       setCreditCount(
         calculateCredit({
           transcript: parentTranscriptText,
-          model: selectedModel
+          model: "claude3h"
         })
       );
     }
-    return () => {};
-  }, [parentTranscriptText, selectedModel]);
+    return () => { };
+  }, [parentTranscriptText]);
 
   const handleLanguageChange = (e) => {
     setLanguage(e.target.value);
   };
+
   const inputTranscript = (id) => {
     switch (id) {
       case 1:
@@ -107,7 +85,7 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
           transcript: inputTranscript(option.id),
           language,
           interval,
-          selectedModel,
+          selectedModel: "claude3h",
           userId,
           video,
         },
@@ -138,79 +116,9 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
     }
   };
 
-  useEffect(() => {
-    if (parentTranscriptText && parentTranscriptText !== "") {
-      setTranscriptAvailable(true);
-    } else {
-      setTranscriptAvailable(false);
-    }
-  }, [parentTranscriptText]);
-
-  const handleModelChange = (e) => {
-    setselectedModel(e.target.value);
-  };
-
-  // 點擊轉錄時跳轉視頻
-  const handleTimestampClick = (time) => {
-    let [hours, minutes, seconds] = time.split(":");
-    let secondsTotal;
-
-    if (time.split(":").length === 2) {
-      secondsTotal = parseInt(hours) * 60 + parseFloat(minutes);
-    } else if (time.split(":").length === 3) {
-      secondsTotal =
-        parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseFloat(seconds);
-    }
-
-    if (videoRef && videoRef.current) {
-      videoRef.current.currentTime = secondsTotal;
-      if (videoRef.current.internalPlayer) {
-        videoRef.current.internalPlayer.seekTo(secondsTotal);
-      }
-    }
-  };
-
-  const linkOverride = {
-    a: {
-      component: ({ children, href, ...props }) => {
-        if (href.startsWith("#timestamp")) {
-          const timestamp = children[0];
-          return (
-            <a
-              className={"text-blue-500 cursor-pointer"}
-              onClick={() => handleTimestampClick(timestamp)}
-            >
-              {children}
-            </a>
-          );
-        }
-        return (
-          <a href={href} {...props}>
-            {children}
-          </a>
-        );
-      },
-    },
-  };
-
-  const transformArticleWithClickableTimestamps = (articleContent) => {
-    // Updated regex to match both hh:mm:ss and mm:ss formats
-    const timestampRegex = /((\d{2}:)?\d{2}:\d{2})/g;
-
-    return articleContent.replace(
-      timestampRegex,
-      (match) => `[${match}](#timestamp-${match})`
-    );
-  };
-
   return (
     <div className="relative h-full flex flex-col">
-      {transcriptAvailable ? null : (
-        <div className="absolute w-full h-full bg-gray-50 opacity-70 rounded-md flex justify-center items-center">
-          <div>Transcript Not Available</div>
-        </div>
-      )}
-
+      {video.sourceId}
       <div className="flex justify-between">
         <div className="text-left flex">
           <label htmlFor="language-select" className=" text-indigo-600 mr-1">
@@ -229,6 +137,12 @@ const SummaryField = ({ parentTranscriptText, parentSrtText, videoRef }) => {
             ))}
           </select>
         </div>
+      </div>
+      <div className="h-40 overflow-auto">
+        parent transcript: {parentTranscriptText}
+      </div>
+      <div className="h-40 overflow-auto">
+        SRT: {parentSrtText}
       </div>
 
       <HeadingsWithTabs

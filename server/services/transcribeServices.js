@@ -18,7 +18,7 @@ export const transcribeFile = async ({ file, filePath }) => {
   }
 
   try {
-    const response = await fetch("http://localhost:6000/transcribe", {
+    const response = await fetch("http://localhost:5000/transcribe", {
       method: "POST",
       body: formData,
       headers: formData.getHeaders(),
@@ -30,6 +30,7 @@ export const transcribeFile = async ({ file, filePath }) => {
     } else {
       throw new Error("Failed to transcribe");
     }
+    
   } catch (error) {
     console.error("Error occurred during transcription:", error);
     throw new Error("Error occurred during transcription");
@@ -46,6 +47,7 @@ const cleanupFiles = (filePath, originalFilePath) => {
   }
   if (filePath !== originalFilePath) {
     fs.unlinkSync(originalFilePath);
+    
   }
 };
 
@@ -70,7 +72,9 @@ const GPUs = [
 ];
 
 export const checkGPUSlots = async () => {
+  console.log("Checking GPU slots");
   for (const gpu of GPUs) {
+    console.log(`Checking slots for ${gpu.id}`);
     if (gpu.slots > 0) {
       return gpu;
     }

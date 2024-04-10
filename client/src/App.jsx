@@ -16,6 +16,7 @@ import Summarizer from "./components/Summarizer.jsx";
 import { TranscriptProvider } from "./contexts/TranscriptContext.jsx";
 import YoutubeSummary from "./components/SummarizerPage/YoutubeSummary.jsx";
 import ConsoleHome from "./components/SummarizerPage/ConsoleHome.jsx";
+import { SummaryProvider } from "./contexts/SummaryContext.jsx";
 
 function App() {
   const [announcement, setAnnouncement] = useState({
@@ -45,6 +46,7 @@ function App() {
         <div className="w-full top-[73px] min-h-[calc(100vh-73px)]  ">
           <ModelProvider>
             <VideoProvider>
+              <SummaryProvider>
               <TranscriptProvider>
 
                 <Routes>
@@ -69,6 +71,7 @@ function App() {
                   </Route>
                 </Routes>
               </TranscriptProvider>
+              </SummaryProvider>
             </VideoProvider>
             <NotificationOverlay />
           </ModelProvider>

@@ -220,7 +220,7 @@ app.post(
     } catch (error) {
       // 将错误消息发送回客户端
       console.error(error);
-      res.status(500).json("Transcript is disabled on this video");
+      res.status(500).send("Error processing video audio. GPU server may be busy.");
     }
   }
 );

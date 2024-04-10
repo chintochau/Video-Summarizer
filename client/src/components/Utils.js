@@ -142,15 +142,13 @@ export const transcribeYoutubeVideo = async (data) => {
     });
 
     if (!response.ok) {
-      const errorMessage = await response.text();
-      throw new Error(errorMessage);
+      throw new Error("Server Error - Server is down or not responding");
     }
 
     const result = await response.json();
     return result;
   } catch (error) {
-    console.error(error);
-    return error.message;
+    throw new Error("Server Error - Server is down or not responding");
   }
 };
 
@@ -178,7 +176,7 @@ export const transcribeYoutubeVideo = async (data) => {
  * //   { index: "2", start: "00:00:03,000", end: "00:00:04,000", text: "This is an example" }
  * // ]
  */
-export const parseSRT = (srt) => {
+export const parseSRTToArray = (srt) => {
   return srt
     .split("\n\n")
     .map((part) => {

@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
-import { ArrowDownTrayIcon, ArrowPathIcon, ClipboardDocumentIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
+import { ArrowDownTrayIcon, ArrowPathIcon, ClipboardDocumentIcon, PencilSquareIcon,TrashIcon } from '@heroicons/react/24/outline'
+import { useTranscriptContext } from '@/contexts/TranscriptContext'
 
 
 export const ControlBar = (params) => {
-    const { exportSRT, setIsEditMode, isEditMode, editableTranscript, viewMode, resetTranscriptField, setViewMode } = params
+    const { exportSRT, setIsEditMode, isEditMode, editableTranscript, viewMode, setViewMode } = params
+    const {resetTranscript} = useTranscriptContext()
     const [currentTab, setCurrentTab] = useState('Transcript');
     const classNames = (...classes) => {
         return classes.filter(Boolean).join(' ')
@@ -72,10 +74,10 @@ export const ControlBar = (params) => {
                             <PencilSquareIcon />
                         </button>
                         <button
-                            onClick={resetTranscriptField}
-                            className="w-8 p-1 text-gray-500 text-sm hover:text-indigo-400 "
+                            onClick={resetTranscript}
+                            className="w-8 p-1 text-gray-400 hover:text-red-500 transition-colors duration-200"
                         >
-                            <ArrowPathIcon />
+                            <TrashIcon />
                         </button>
                     </div>
                 </div>

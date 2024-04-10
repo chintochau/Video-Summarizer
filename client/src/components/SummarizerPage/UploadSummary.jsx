@@ -7,6 +7,9 @@ import { useVideoContext } from "../../contexts/VideoContext";
 import { calculateVideoCredits } from "../../utils/creditUtils";
 import TranscriptField from "../TranscriptField";
 import SummaryField from "../SummaryField";
+import SummaryService from "@/services/SummaryService";
+import { useAuth } from "@/contexts/AuthContext";
+import { useSummaryContext } from "@/contexts/SummaryContext";
 
 const UploadSummary = () => {
   // state management
@@ -16,16 +19,12 @@ const UploadSummary = () => {
   const [displayMode, setDisplayMode] = useState("empty")
 
   // use context
-  const {
-    setParentSrtText,
-    setParentTranscriptText,
-    parentSrtText,
-    parentTranscriptText,
-  } = useTranscriptContext();
+  const { setupTranscriptWithInputSRT, parentSrtText, parentTranscriptText, setLoadingTranscript } = useTranscriptContext();
   const { setSourceId, setSourceType, setSourceTitle, setVideoDuration, setVideoCredits, setCurrentPlayTime, video } = useVideoContext()
+  const { setSummaries } = useSummaryContext()
   const { sourceId, sourceType } = video
+  const { userId } = useAuth()
   //use Reference
-  const videoRef = useRef(null);
   const uploadRef = useRef(null);
 
   //Dropzone
@@ -63,6 +62,18 @@ const UploadSummary = () => {
   useEffect(() => {
     if (sourceId && sourceType === "user-upload" && !file) {
       setDisplayMode("transcript")
+      SummaryService.getTranscriptAndSummaryForVideo(userId, sourceId).then(result => {
+        if (result.success) {
+          setSummaries((prev) => [...result.summaries, ...prev]);
+          if (result && result.transcript) {
+            setupTranscriptWithInputSRT(result.transcript)
+          }
+        }
+        setLoadingTranscript(false)
+      }).catch(error => {
+        console.error(error)
+        setLoadingTranscript(false)
+      })
     }
   }, [sourceId, sourceType])
 
@@ -93,7 +104,6 @@ const UploadSummary = () => {
       };
     }
   }, [videoSrc, audioSrc]); // Dependencies array - re-run the effect when these sources change
-
 
 
   return (
@@ -160,8 +170,6 @@ const UploadSummary = () => {
                 videoRef={uploadRef}
                 uploadMode={true}
                 file={file}
-                setParentTranscriptText={setParentTranscriptText}
-                setParentSrtText={setParentSrtText}
                 displayMode="video"
               />
             </div>
@@ -213,8 +221,6 @@ const UploadSummary = () => {
                 videoRef={uploadRef}
                 uploadMode={true}
                 file={file}
-                setParentTranscriptText={setParentTranscriptText}
-                setParentSrtText={setParentSrtText}
                 displayMode="audio"
               />
             </div>
@@ -254,8 +260,6 @@ const UploadSummary = () => {
               videoRef={uploadRef}
               uploadMode={true}
               file={file}
-              setParentTranscriptText={setParentTranscriptText}
-              setParentSrtText={setParentSrtText}
               displayMode="transcript"
             />
           </div>

@@ -2,12 +2,14 @@ import React, { useContext, useEffect, useState } from "react";
 import { summarizeOptions } from "./Prompts";
 import { useVideoContext } from "../contexts/VideoContext";
 import { formatDuration } from "./Utils";
+import { useTranscriptContext } from "@/contexts/TranscriptContext";
 
 const OptionCard = ({ option, handleClick, creditCount }) => {
   const { videoDuration } = useVideoContext();
   const { id, title, description, prompt } = option;
   const [adjustableCreditCount, setAdjustableCreditCount] = useState(0);
   const [interval, setInterval] = useState(600);
+  const {parentSrtText} = useTranscriptContext();
 
   useEffect(() => {
     let factor;
@@ -98,6 +100,7 @@ const OptionCard = ({ option, handleClick, creditCount }) => {
       </div>
       <div className=" flex-col items-start text-center p-4">
         <button
+        disabled={!parentSrtText}
           className={`px-1.5 py-1 bg-white text-indigo-600 border border-indigo-600 rounded-md hover:bg-indigo-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 text-sm`}
           onClick={() =>
             handleClick({

@@ -66,7 +66,8 @@ const HistoryTable = () => {
 const classNames = (...classes) => classes.filter(Boolean).join(' ')
 
 const GenerateOptions = (params) => {
-    const { loadSrtTranscript, uploadAndTranscriptFile, displayMode, generateTranscriptWithAIForYoutube } = params
+    const { generateTranscript } = params
+    const {setupTranscriptWithInputSRT} = useTranscriptContext()
     const [selectedFile, setSelectedFile] = useState(null)
     const { videoCredits, videoDuration } = useVideoContext()
     const [selectedIndex, setSelectedIndex] = useState(null)
@@ -84,7 +85,7 @@ const GenerateOptions = (params) => {
         const reader = new FileReader();
         reader.onload = (e) => {
             const srt = e.target.result;
-            loadSrtTranscript(srt);
+            setupTranscriptWithInputSRT(srt);
         };
         reader.readAsText(file);
     };
@@ -131,14 +132,6 @@ const GenerateOptions = (params) => {
         </Table>)
     }
 
-    const handleGenerateTranscript = () => {
-        if (displayMode === 'youtube') {
-            generateTranscriptWithAIForYoutube()
-        } else if (displayMode === 'audio' || displayMode === 'video') {
-            uploadAndTranscriptFile()
-        }
-    }
-
     const CreditsCost = () => {
         if (selectedTranscribeOption) {
             return (
@@ -164,7 +157,7 @@ const GenerateOptions = (params) => {
                 <CardFooter>
                     <div className='flex flex-col gap-y-1'>
                         <Label htmlFor="model" className="pt-2"><CreditsCost /></Label>
-                        <Button className="mx-auto" onClick={handleGenerateTranscript} disabled={!selectedTranscribeOption}>Generate</Button>
+                        <Button className="mx-auto" onClick={generateTranscript} disabled={!selectedTranscribeOption}>Generate</Button>
                     </div>
                 </CardFooter>
             </Card>
