@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { calculateCredit } from '../utils/creditUtils.js'
+import { calculateCredit } from "../utils/creditUtils.js";
 import SummaryService from "../services/SummaryService";
 import { languageList } from "../constants";
 import { useAuth } from "../contexts/AuthContext";
@@ -9,15 +9,23 @@ import SummaryTab from "../summary-field-conpoments/SummaryTab";
 import { checkCredits } from "../utils/creditUtils";
 import { useSummaryContext } from "@/contexts/SummaryContext.jsx";
 import { useTranscriptContext } from "@/contexts/TranscriptContext.jsx";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {LanguageIcon, } from '@heroicons/react/24/outline'
+import { BoltIcon} from '@heroicons/react/24/solid'
+import { Button } from "./ui/button.jsx";
 
 const SummaryField = ({ videoRef }) => {
-
   // use context
-  const { summaries, setSummaries } = useSummaryContext()
+  const { summaries, setSummaries } = useSummaryContext();
   const { userId, setCredits, credits } = useAuth();
   const { video } = useVideoContext();
-  const { parentTranscriptText, parentSrtText } = useTranscriptContext()
+  const { parentTranscriptText, parentSrtText } = useTranscriptContext();
 
   // use state
   const [response, setResponse] = useState("");
@@ -49,15 +57,15 @@ const SummaryField = ({ videoRef }) => {
       setCreditCount(
         calculateCredit({
           transcript: parentTranscriptText,
-          model: "claude3h"
+          model: "claude3h",
         })
       );
     }
-    return () => { };
+    return () => {};
   }, [parentTranscriptText]);
 
-  const handleLanguageChange = (e) => {
-    setLanguage(e.target.value);
+  const handleLanguageChange = (value) => {
+    setLanguage(value);
   };
 
   const inputTranscript = (id) => {
@@ -118,26 +126,30 @@ const SummaryField = ({ videoRef }) => {
 
   return (
     <div className="relative h-full flex flex-col">
-      <div className="flex justify-between">
-        <div className="text-left flex">
-          <label htmlFor="language-select" className=" text-indigo-600 mr-1">
-            Language:
-          </label>
-          <select
-            id="language-select"
-            value={language}
-            onChange={handleLanguageChange}
-            className="p-1 bg-gray-50 border border-indigo-300 text-indigo-600 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block hover:text-indigo-400 "
-          >
-            {languageList.map((item) => (
-              <option key={item.code} value={item.name}>
-                {item.name}
-              </option>
-            ))}
-          </select>
-        </div>
+      <div className="flex justify-between px-3">
+       <div className=" flex items-center gap-x-2">
+          <LanguageIcon className="w-6 h-6 text-gray-600"/>
+          <Select onValueChange={handleLanguageChange} defaultValue="English">
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select Language"/>
+            </SelectTrigger>
+            <SelectContent>
+              {languageList.map((item) => (
+                <SelectItem key={item.code} value={item.name}>
+                  {item.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+       </div>
+       <div>
+          {credits && (
+          <Button className="h-8 text-sm text-indigo-600 flex items-center " variant="outline">
+              <BoltIcon className="w-4 h-6"/>:{credits}
+            </Button>
+          )}
+       </div>
       </div>
-
       <HeadingsWithTabs
         startSummary={startSummary}
         summaries={summaries}

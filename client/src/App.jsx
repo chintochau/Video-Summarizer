@@ -17,6 +17,7 @@ import { TranscriptProvider } from "./contexts/TranscriptContext.jsx";
 import YoutubeSummary from "./components/SummarizerPage/YoutubeSummary.jsx";
 import ConsoleHome from "./components/SummarizerPage/ConsoleHome.jsx";
 import { SummaryProvider } from "./contexts/SummaryContext.jsx";
+import GeneralSummary from "./components/SummarizerPage/GeneralSummary.jsx";
 
 function App() {
   const [announcement, setAnnouncement] = useState({
@@ -43,14 +44,14 @@ function App() {
             </div>
           </div>
         )} */}
-        <div className="w-full top-[73px] min-h-[calc(100vh-73px)]  ">
+        <div className="w-full">
           <ModelProvider>
             <VideoProvider>
               <SummaryProvider>
               <TranscriptProvider>
 
                 <Routes>
-                  <Route path="/Summarizer" element={<div><Header/><SummarizePage /></div>} />
+                  <Route path="/Summarizer" element={<div className="h-screen flex flex-col"><Header/><GeneralSummary /></div>} />
                   <Route path="/" element={<div>
                     <Header />
                     <HomePage />

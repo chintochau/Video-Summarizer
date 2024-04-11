@@ -99,12 +99,13 @@ const transformArticleWithClickableTimestamps = (articleContent) => {
             </div>
           ) : (
             <Markdown
-              className="prose max-w-full h-full p-2 text-start leading-5"
+              className="prose max-w-full h-full p-2 px-4 text-start leading-5"
               options={{ overrides: linkOverride }}
             >
               {transformArticleWithClickableTimestamps(showText())}
             </Markdown>
           )}
+          <div className="h-20" />
         </div>
       )}
     </ScrollArea>

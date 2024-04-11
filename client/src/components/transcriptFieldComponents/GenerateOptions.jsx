@@ -23,7 +23,7 @@ import {
 } from '../ui/table'
 import { useAuth } from '@/contexts/AuthContext'
 import { secondsToTimeInMinutesAndSeconds } from '@/utils/timeUtils'
-import { CheckCircleIcon, CheckIcon } from '@heroicons/react/24/outline'
+import { CheckIcon } from '@heroicons/react/24/outline'
 import { transcribeOptions, useTranscriptContext } from '@/contexts/TranscriptContext'
 import TranscriptHistoryTable from './TranscriptHistoryTable'
 
@@ -37,7 +37,7 @@ const GenerateOptions = (params) => {
     const [selectedFile, setSelectedFile] = useState(null)
     const { videoCredits, videoDuration } = useVideoContext()
     const [selectedIndex, setSelectedIndex] = useState(null)
-    const { credits } = useAuth()
+    const { credits, currentUser } = useAuth()
     const { selectedTranscribeOption,
         setSelectedTranscribeOption
     } = useTranscriptContext()
@@ -109,6 +109,21 @@ const GenerateOptions = (params) => {
         return null
     }
 
+
+    if (!currentUser) {
+        return <Card className="m-4 shadow-md">
+            <CardHeader>
+                <CardTitle>Generate Transcript with AI</CardTitle>
+                <CardDescription>Different options to generate transcript</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <div className='flex flex-col gap-y-2 bg-gray-100 rounded-md p-4 '>
+                    <p className='text-center'>Youtube Transcript is not available, <br/> Login to genertae transcript with AI</p>
+                    <Button className="mx-auto" onClick={() => { window.location.href = '/login' }}>Login</Button>
+                </div>
+            </CardContent>
+        </Card>
+    }
 
     return (
         <ScrollArea className="h-full">

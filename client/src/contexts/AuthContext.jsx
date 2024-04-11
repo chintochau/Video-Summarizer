@@ -10,11 +10,11 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState({});
-  const [credits, setCredits] = useState(0);
+  const [credits, setCredits] = useState(null);
 
   const clearUserData = () => {
     setUserData({})
-    setCredits(0)
+    setCredits(null)
   }
 
   useEffect(() => {

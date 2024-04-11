@@ -4,7 +4,14 @@ import { useVideoContext } from "../contexts/VideoContext";
 import { formatDuration } from "./Utils";
 import { useTranscriptContext } from "@/contexts/TranscriptContext";
 import { Button } from "./ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 import { Slider } from "./ui/slider";
 
 const OptionCard = ({ option, handleClick, creditCount }) => {
@@ -88,7 +95,7 @@ const OptionCard = ({ option, handleClick, creditCount }) => {
         );
 
       default:
-        return <Slider defaultValue={[33]} max={100} step={1} />
+        return <Slider defaultValue={[33]} max={100} step={1} />;
         break;
     }
   };
@@ -96,14 +103,12 @@ const OptionCard = ({ option, handleClick, creditCount }) => {
   return (
     <Card className="bg-white rounded shadow-md mb-4 text-left flex justify-between">
       <CardHeader className="p-4 w-full ">
-        <CardTitle >{title}</CardTitle>
-        <CardDescription >
-          {showModifiedDescription()}
-        </CardDescription>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{showModifiedDescription()}</CardDescription>
         {addSlider()}
-
       </CardHeader>
-      <CardContent className=" flex-col items-start text-center p-4">
+      <CardContent className=" flex-col items-start text-center p-4"></CardContent>
+      <CardFooter className="flex-col justify-center">
         <Button
           disabled={!parentSrtText}
           onClick={() =>
@@ -119,22 +124,16 @@ const OptionCard = ({ option, handleClick, creditCount }) => {
         >
           Summarize
         </Button>
-        <div className=" text-sm ">Credit: {parentSrtText ? adjustableCreditCount : "--"}</div>
-      </CardContent>
-      <CardFooter>
+        <div className=" text-sm ">
+          Credit: {parentSrtText ? adjustableCreditCount : "--"}
+        </div>
       </CardFooter>
     </Card>
   );
 };
 
-const OptionField = ({
-  handleClick,
-  creditCount,
-  setInterval,
-}) => {
-
+const OptionField = ({ handleClick, creditCount, setInterval }) => {
   const { loadingTranscript } = useTranscriptContext();
-
 
   // if (loadingTranscript) {
   //   return <div className="flex-col pt-12">
@@ -157,7 +156,6 @@ const OptionField = ({
           />
         );
       })}
-
     </div>
   );
 };

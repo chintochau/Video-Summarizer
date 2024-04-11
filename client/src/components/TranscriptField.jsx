@@ -201,6 +201,7 @@ const TranscriptField = (params) => {
                             />
                           );
                         })}
+                        <div className="h-12"></div>
                       </ScrollArea>
                     ) : (
                       <div className="h-full p-1">
