@@ -155,8 +155,8 @@ const OptionCard = (params) => {
           <div className=" text-sm flex items-center my-1">
             <BoltIcon
               className={cn(
-                "w-4 h-6 text-yellow-500",
-                currentUser && "text-indigo-500"
+                "w-4 h-6",
+                currentUser ? "text-indigo-500" :"text-yellow-400"
               )}
             />
             {parentSrtText ? adjustableCreditCount : "--"}
