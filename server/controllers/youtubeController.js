@@ -1,12 +1,15 @@
-import  YoutubeTranscriptService  from "../services/youtubeTranscriptServer.js";
-import {YoutubeTranscript} from 'youtube-transcript'
+import YoutubeTranscriptService from "../services/youtubeTranscriptServer.js";
+import { YoutubeTranscript } from "youtube-transcript";
 import { YTconvertToSrt } from "../services/youtubeServices.js";
 import ytdl from "ytdl-core";
 
 export const getYoutubeTranscript = async (req, res) => {
   const { youtubeId } = req.params;
   try {
-    const transcript = await YoutubeTranscriptService.YoutubeTranscript.fetchTranscript(youtubeId);
+    const transcript =
+      await YoutubeTranscriptService.YoutubeTranscript.fetchTranscript(
+        youtubeId
+      );
     res.json(YTconvertToSrt(transcript));
   } catch (error) {
     // 将错误消息发送回客户端
@@ -17,9 +20,8 @@ export const getYoutubeTranscript = async (req, res) => {
 
 export const getYoutubeAudio = async (req, res) => {
   const { youtubeLink } = req.body;
-  const videoInfo = await ytdl.getInfo(youtubeLink);
-
   try {
+    const videoInfo = await ytdl.getInfo(youtubeLink);
     // 檢查視頻是否有可用的音頻流
     const audioFormats = ytdl.filterFormats(videoInfo.formats, "audioonly");
     if (audioFormats.length === 0) {

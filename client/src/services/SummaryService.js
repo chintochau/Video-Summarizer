@@ -76,20 +76,22 @@ export default class SummaryService {
   };
 
   // Function to fetch summaries for a video
-  static fetchSummariesForVideo = async (userId, sourceId) => {
+  // 404 only when no video found
+  // response : { success: true, data: summaries, video: video}
+  // summaries is [] if no summaries found
+  static getTranscriptAndSummaryForVideo = async (userId, sourceId) => {
     try {
       const response = await fetch(
         apiUrl + `/api/summaries/${userId}/${sourceId}`
       );
-
       if (!response.ok) {
-        throw new Error("No summaries found");
+        throw new Error("No video found");
       }
-
-      return await response.json();
+      const result = await response.json();
+      const { video, data } = result;
+      return { transcript:video.originalTranscript, summaries: data, success: true };
     } catch (error) {
-      console.error(error);
-      return { success: false, error: error.message };
+      throw error;
     }
   };
 

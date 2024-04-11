@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import GeneralButton from "../GeneralButton";
 import logo from "../../assets/logo.png";
 import { useAuth } from "../../contexts/AuthContext";
-import BoltIcon from "@mui/icons-material/Bolt";
+import {BoltIcon} from "@heroicons/react/24/solid"
 import { Dialog } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
@@ -26,12 +25,11 @@ const Header = () => {
     const menuItems = ["history", "profile"]
     return (
       <div className="flex">
-        <Link to="/pricing" className="text-indigo-600 flex rounded-md outline-1 outline hover:text-indigo-400 cursor-pointer pr-2">
-          <BoltIcon />
+        <Link to="/pricing" className="text-indigo-600 flex rounded-md outline-1 outline hover:text-indigo-400 cursor-pointerpr-1">
+          <BoltIcon className="w-4 h-6"/>
           <div className=""> {credits}</div>
         </Link>
       </div>)
-
   }
 
   const LoggedOutMenu = () => {
@@ -43,8 +41,8 @@ const Header = () => {
   }
 
   return (
-    <header className="bg-white sticky top-0 z-10">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between gap-x-6 p-6 lg:px-8" aria-label="Global">
+    <header className=" bg-white sticky top-0 z-10 ">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between gap-x-2 md:gap-x-6 py-1 px-2 md:py-2 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
           <Link to="/" className="-m-1.5">
             <span className="sr-only">Fusion AI</span>
@@ -58,7 +56,7 @@ const Header = () => {
             </Link>
           ))}
         </div>
-        <div className="flex flex-1 items-center justify-end gap-x-6">
+        <div className="flex flex-1 items-center justify-end gap-x-2 md:gap-x-6">
           {currentUser ? <LoggedInMenu /> : <LoggedOutMenu />}
           <Link
             to="/summarizer"

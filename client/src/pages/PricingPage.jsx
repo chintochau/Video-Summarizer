@@ -1,5 +1,5 @@
 import React from 'react'
-import PricingPlans from '../Components/PricingPlans'
+import PricingPlans from '../components/PricingPlans'
 
 const PricingPage = () => {
   return (

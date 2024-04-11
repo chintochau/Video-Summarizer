@@ -3,6 +3,8 @@ import { useAuth } from "../contexts/AuthContext";
 import AuthService from "../services/AuthService";
 import { useNavigate } from "react-router-dom";
 import { convertMongoDBDateToLocalTime } from "../utils/timeUtils";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const UserProfilePage = () => {
   const { currentUser, userData } = useAuth();
@@ -46,12 +48,13 @@ const UserProfilePage = () => {
   return (
     <>
       {currentUser && (
-        <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-          <div className="sm:mx-auto sm:w-full sm:max-w-md">
-            <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+        <Card className=" my-8 mx-auto max-w-xl">
+          <CardHeader >
+            <CardTitle className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
               Your Profile
-            </h2>
-            <div className=" space-y-4">
+            </CardTitle>
+                </CardHeader>
+            <CardContent className=" space-y-4">
               <div>
                 <label
                   htmlFor="fullname"
@@ -62,17 +65,16 @@ const UserProfilePage = () => {
                 <div>{currentUser.email}</div>
               </div>
               <div>{renderTier()}</div>
-            </div>
-            <div>
-              <button
+            </CardContent>
+            <CardFooter>
+              <Button
                 onClick={() => AuthService.logout()}
                 className="mt-2 flex w-full justify-center rounded-md bg-gray-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Logout
-              </button>
-            </div>
-          </div>
-        </div>
+              </Button>
+            </CardFooter>
+        </Card>
       )}
     </>
   );

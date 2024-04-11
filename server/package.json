@@ -27,6 +27,7 @@
     "node-fetch": "^3.3.2",
     "node-html-parser": "^6.1.13",
     "openai": "^4.27.0",
+    "queue": "^7.0.0",
     "stripe": "^14.23.0",
     "tiktoken": "^1.0.13",
     "youtube-transcript": "^1.0.6",

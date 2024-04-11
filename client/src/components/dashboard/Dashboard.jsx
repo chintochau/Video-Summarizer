@@ -10,12 +10,11 @@ import {
     UserCircleIcon
 } from '@heroicons/react/24/outline'
 import { Link, Route, Routes, useLocation } from 'react-router-dom'
-import logo from "../../assets/logo.png"
 import HistoryPage from '../../pages/HistoryPage'
-import Summarizer from '../Summarizer'
 import UserProfilePage from '../../pages/UserProfilePage'
 import YoutubeSummary from '../SummarizerPage/YoutubeSummary'
 import UploadSummary from '../SummarizerPage/UploadSummary'
+import ConsoleHome from '../SummarizerPage/ConsoleHome'
 
 const navigation = [
     { name: 'Youtube', to: 'youtube', icon: PlayCircleIcon, current: true },
@@ -43,7 +42,7 @@ const Dashboard = () => {
     return (
 
         <>
-            <div className=''>
+            <div className='h-screen flex flex-col'>
                 <Transition.Root show={sidebarOpen} as={Fragment}>
                     <Dialog as="div" className="relative z-50 lg:hidden" onClose={setSidebarOpen}>
                         <Transition.Child
@@ -123,9 +122,9 @@ const Dashboard = () => {
 
                 {/* Static sidebar for desktop */}
                 <div className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block lg:p-4 lg:overflow-y-auto lg:bg-gray-900 lg:pb-4 w-56">
-                    <div className="flex h-16 shrink-0 items-center justify-center text-white text-2xl text-left">
+                    <Link to="/" className="flex h-16 shrink-0 items-center justify-center text-white text-2xl text-left">
                         Fusion AI
-                    </div>
+                    </Link>
                     <nav className="mt-4">
                         <ul role="list" className="flex flex-col items-center space-y-1 ">
                             {navigation.map((item) => (
@@ -161,9 +160,9 @@ const Dashboard = () => {
                     </Link>
                 </div>
 
-                <main className="lg:pl-56 ">
+                <main className="lg:pl-56 h-[80vh] flex-1">
                     <Routes>
-                        <Route path='' element={<YoutubeSummary />} />
+                        <Route path='' element={<ConsoleHome />} />
                         <Route path='youtube' element={<YoutubeSummary />} />
                         <Route path='upload' element={<UploadSummary />} />
                         <Route path='billing' element={<div>billing</div>} />

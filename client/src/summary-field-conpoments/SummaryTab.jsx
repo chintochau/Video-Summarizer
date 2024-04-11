@@ -1,6 +1,7 @@
 import Markdown from "markdown-to-jsx";
 import React, { useState } from "react";
-import OptionField from "../Components/OptionField";
+import OptionField from "../components/OptionField";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 
 // Summary Tab
@@ -80,7 +81,7 @@ const transformArticleWithClickableTimestamps = (articleContent) => {
 };
 
   return (
-    <div className="overflow-y-auto">
+    <ScrollArea className="overflow-y-auto">
       {summary === "" && response === "" && !startSummary ? (
         <div className="overflow-y-auto ">
           <OptionField
@@ -98,15 +99,16 @@ const transformArticleWithClickableTimestamps = (articleContent) => {
             </div>
           ) : (
             <Markdown
-              className="prose max-w-full h-full p-2 text-start leading-5"
+              className="prose max-w-full h-full p-2 px-4 text-start leading-5"
               options={{ overrides: linkOverride }}
             >
               {transformArticleWithClickableTimestamps(showText())}
             </Markdown>
           )}
+          <div className="h-20" />
         </div>
       )}
-    </div>
+    </ScrollArea>
   );
 };
 

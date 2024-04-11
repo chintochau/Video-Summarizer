@@ -8,7 +8,6 @@ import ytdl from "ytdl-core";
 import ffmpeg from "fluent-ffmpeg";
 import cors from "cors";
 import { CharacterTextSplitter } from "langchain/text_splitter";
-import { get_encoding } from "tiktoken";
 import { kmeans } from "ml-kmeans";
 import tmp from "tmp";
 import { pipeline } from "stream";
@@ -21,16 +20,11 @@ import transcribeRoutes from "./routes/transcribeRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import youtubeRoutes from "./routes/youtubeRoutes.js";
 import vastaiRoutes from "./routes/vastaiRoutes.js";
+import { transcribeFile } from "./services/transcribeServices.js";
 
 //running python code for testing
-import {
-  pythonRunner,
-  checkPackage,
-  installPackage,
-  vastai,
-} from "./utils/pythonRunner.js";
-import { transcribeFile } from "./services/transcribeServices.js";
-import { fineVideoIdBySourceId } from "./services/videoServices.js";
+import { pythonRunner, } from "./utils/pythonRunner.js";
+import { getOrCreateVideoAndUpdateTranscript } from "./services/videoServices.js";
 const variableToPass = "";
 pythonRunner("--version", [variableToPass])
   .then((output) => {
@@ -71,8 +65,7 @@ async function transcribeWithWhisperApi(data) {
 
   transcription = await openai.audio.transcriptions.create({
     file: fs.createReadStream(filePath),
-    model: "whisper-1", // this is optional but helps the model
-    language: language,
+    model: "whisper-1",
     response_format: "srt",
   });
 
@@ -191,9 +184,10 @@ app.post(
   cors(),
   bodyParser.json({ limit: "10mb" }),
   async (req, res) => {
-    const { youtubeLink } = req.body;
+    const { youtubeId, userId, video } = req.body;
+
     try {
-      const videoInfo = await ytdl.getInfo(youtubeLink);
+      const videoInfo = await ytdl.getInfo(youtubeId);
 
       // Check if the video has available audio streams
       const audioFormats = ytdl.filterFormats(videoInfo.formats, "audioonly");
@@ -205,30 +199,28 @@ app.post(
       const tempFilePath = tmp.tmpNameSync({ postfix: ".mp3" });
 
       // Download the audio and save it to the temp file
-      const audioStream = ytdl(youtubeLink, { filter: "audioonly" });
+      const audioStream = ytdl(youtubeId, { filter: "audioonly" });
       const fileStream = fs.createWriteStream(tempFilePath);
       await pipelineAsync(audioStream, fileStream);
 
       // // Now the file is saved, you can process it
-      // const result = await transcribeFile({ filePath: tempFilePath });
-      // // const result = await transcribeWithWhisperApi({
-      // //   filePath: tempFilePath,
-      // // });
+      const result = await transcribeFile({ filePath: tempFilePath });
+      // const result = await transcribeWithWhisperApi({
+      //   filePath: tempFilePath,
+      // });
 
+      await getOrCreateVideoAndUpdateTranscript({ video, userId, originalTranscript: result });
       // Clean up: Delete the temporary file if no longer needed
       fs.unlink(tempFilePath, (err) => {
         if (err) throw err;
         console.log("Temp file deleted");
       });
-
-
-      const result = ""
-
+      
       res.json(result);
     } catch (error) {
       // 将错误消息发送回客户端
       console.error(error);
-      res.status(500).json("Transcript is disabled on this video");
+      res.status(500).send("Error processing video audio. GPU server may be busy.");
     }
   }
 );
@@ -531,7 +523,7 @@ app.post(
             encoding_format: "float",
           });
           embeddingArray.push(embedding.data[0].embedding);
-        } catch (error) {}
+        } catch (error) { }
       }
     };
 

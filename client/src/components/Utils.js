@@ -131,8 +131,7 @@ export const transcribeWithAI = async (data) => {
 };
 
 // Youtube related
-export const transcribeYoutubeVideo = async ({ youtubeId }) => {
-  const data = { youtubeLink: youtubeId };
+export const transcribeYoutubeVideo = async (data) => {
   try {
     const response = await fetch(apiUrl + "/api/transcribeYoutubeVideo", {
       method: "POST",
@@ -143,15 +142,13 @@ export const transcribeYoutubeVideo = async ({ youtubeId }) => {
     });
 
     if (!response.ok) {
-      const errorMessage = await response.text();
-      throw new Error(errorMessage);
+      throw new Error("Server Error - Server is down or not responding");
     }
 
     const result = await response.json();
     return result;
   } catch (error) {
-    console.error(error);
-    return error.message;
+    throw new Error("Server Error - Server is down or not responding");
   }
 };
 
@@ -179,7 +176,7 @@ export const transcribeYoutubeVideo = async ({ youtubeId }) => {
  * //   { index: "2", start: "00:00:03,000", end: "00:00:04,000", text: "This is an example" }
  * // ]
  */
-export const parseSRT = (srt) => {
+export const parseSRTToArray = (srt) => {
   return srt
     .split("\n\n")
     .map((part) => {

@@ -2,15 +2,44 @@ import React, { useContext, useEffect, useState } from "react";
 import { summarizeOptions } from "./Prompts";
 import { useVideoContext } from "../contexts/VideoContext";
 import { formatDuration } from "./Utils";
+import { useTranscriptContext } from "@/contexts/TranscriptContext";
+import { Button } from "./ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import { Slider } from "./ui/slider";
+import { useAuth } from "@/contexts/AuthContext";
+import { BoltIcon, LockClosedIcon } from "@heroicons/react/24/solid";
+import { cn } from "@/utils/utils";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 
-const OptionCard = ({ option, handleClick, creditCount }) => {
+const OptionCard = (params) => {
+  const { option, handleClick, creditCount } = params;
+  const { premimum } = option;
   const { videoDuration } = useVideoContext();
   const { id, title, description, prompt } = option;
   const [adjustableCreditCount, setAdjustableCreditCount] = useState(0);
   const [interval, setInterval] = useState(600);
+  const { parentSrtText } = useTranscriptContext();
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     let factor;
+
+    if (!currentUser) {
+      setAdjustableCreditCount(1);
+      return;
+    }
+
     switch (id) {
       case 1:
         setAdjustableCreditCount((creditCount * 2).toFixed(1));
@@ -83,22 +112,23 @@ const OptionCard = ({ option, handleClick, creditCount }) => {
         );
 
       default:
-        break;
+        return <Slider defaultValue={[33]} max={100} step={1} />;
     }
   };
 
+  const memberOnly = !currentUser && premimum;
+
   return (
-    <div className="bg-white rounded shadow-md mb-4 text-left flex justify-between">
-      <div className="p-4 w-full ">
-        <div className="text-xl font-bold mb-2 ">{title}</div>
-        <div className="text-gray-600 text-sm text-wrap w-full">
-          {showModifiedDescription()}
-        </div>
+    <Card className="bg-white rounded shadow-md mb-4 text-left flex justify-between">
+      <CardHeader className="p-4 w-full ">
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{showModifiedDescription()}</CardDescription>
         {addSlider()}
-      </div>
-      <div className=" flex-col items-start text-center p-4">
-        <button
-          className={`px-1.5 py-1 bg-white text-indigo-600 border border-indigo-600 rounded-md hover:bg-indigo-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 text-sm`}
+      </CardHeader>
+      <CardContent className=" flex-col items-start text-center p-4"></CardContent>
+      <CardFooter className="flex-col justify-center py-2">
+        <Button
+          disabled={!parentSrtText || memberOnly}
           onClick={() =>
             handleClick({
               id,
@@ -111,20 +141,33 @@ const OptionCard = ({ option, handleClick, creditCount }) => {
           }
         >
           Summarize
-        </button>
-        <div className=" text-sm ">Credit: {adjustableCreditCount}</div>
-      </div>
-    </div>
+        </Button>
+        {memberOnly ? (
+          <HoverCard>
+            <HoverCardTrigger>
+              <LockClosedIcon className="w-4 h-6 text-gray-400" />{" "}
+            </HoverCardTrigger>
+            <HoverCardContent>
+              Login to access Detail Summary
+            </HoverCardContent>
+          </HoverCard>
+        ) : (
+          <div className=" text-sm flex items-center my-1">
+            <BoltIcon
+              className={cn(
+                "w-4 h-6 text-yellow-500",
+                currentUser && "text-indigo-500"
+              )}
+            />
+            {parentSrtText ? adjustableCreditCount : "--"}
+          </div>
+        )}
+      </CardFooter>
+    </Card>
   );
 };
 
-const OptionField = ({
-  handleClick,
-  creditCount,
-  setInterval,
-  updateSummaryOfIndex,
-  activeTab,
-}) => {
+const OptionField = ({ handleClick, creditCount, setInterval }) => {
   return (
     <div className="flex flex-col mx-6 my-4">
       <div className="p-2 text-start ">Summary Options：</div>
