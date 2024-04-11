@@ -93,6 +93,7 @@ export const summarizeOptions = [
     title: "Detail Summary: Auto",
     description: "Generate a detail summary by time section",
     prompt: `prompt controled by backend`,
+    premimum: true,
   },
   {
     id: 6,
@@ -106,11 +107,13 @@ export const summarizeOptions = [
     [rewritten paragraph]
     ******
     `,
+    premimum: true,
   },
   {
     id: 7,
     title: "Meeting minutes",
     description: "testing",
     prompt: ``,
+    premimum: true,
   },
 ];

@@ -16,16 +16,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {LanguageIcon, } from '@heroicons/react/24/outline'
-import { BoltIcon} from '@heroicons/react/24/solid'
+import { LanguageIcon } from "@heroicons/react/24/outline";
+import { BoltIcon } from "@heroicons/react/24/solid";
 import { Button } from "./ui/button.jsx";
+import { useQuota } from "@/contexts/QuotaContext.jsx";
 
 const SummaryField = ({ videoRef }) => {
   // use context
   const { summaries, setSummaries } = useSummaryContext();
-  const { userId, setCredits, credits } = useAuth();
+  const { userId, setCredits, credits, currentUser } = useAuth();
   const { video } = useVideoContext();
   const { parentTranscriptText, parentSrtText } = useTranscriptContext();
+  const { quota } = useQuota();
 
   // use state
   const [response, setResponse] = useState("");
@@ -127,11 +129,11 @@ const SummaryField = ({ videoRef }) => {
   return (
     <div className="relative h-full flex flex-col">
       <div className="flex justify-between px-3">
-       <div className=" flex items-center gap-x-2">
-          <LanguageIcon className="w-6 h-6 text-gray-600"/>
+        <div className=" flex items-center gap-x-2">
+          <LanguageIcon className="w-6 h-6 text-gray-600" />
           <Select onValueChange={handleLanguageChange} defaultValue="English">
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Language"/>
+              <SelectValue placeholder="Select Language" />
             </SelectTrigger>
             <SelectContent>
               {languageList.map((item) => (
@@ -141,14 +143,24 @@ const SummaryField = ({ videoRef }) => {
               ))}
             </SelectContent>
           </Select>
-       </div>
-       <div>
-          {credits && (
-          <Button className="h-8 text-sm text-indigo-600 flex items-center " variant="outline">
-              <BoltIcon className="w-4 h-6"/>:{credits}
+        </div>
+        <div>
+          {currentUser && userId ? (
+            <Button
+              className="h-8 text-sm text-indigo-600 flex items-center "
+              variant="outline"
+            >
+              <BoltIcon className="w-4 h-6" />:{credits}
+            </Button>
+          ) : (
+            <Button
+              className="h-8 text-sm flex items-center cursor-default hover:bg-white"
+              variant="outline"
+            >
+              <BoltIcon className="w-4 h-6 text-yellow-500" />: {quota}
             </Button>
           )}
-       </div>
+        </div>
       </div>
       <HeadingsWithTabs
         startSummary={startSummary}

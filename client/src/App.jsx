@@ -18,6 +18,7 @@ import YoutubeSummary from "./components/SummarizerPage/YoutubeSummary.jsx";
 import ConsoleHome from "./components/SummarizerPage/ConsoleHome.jsx";
 import { SummaryProvider } from "./contexts/SummaryContext.jsx";
 import GeneralSummary from "./components/SummarizerPage/GeneralSummary.jsx";
+import { QuotaProvider } from "./contexts/QuotaContext.jsx";
 
 function App() {
   const [announcement, setAnnouncement] = useState({
@@ -49,29 +50,31 @@ function App() {
             <VideoProvider>
               <SummaryProvider>
               <TranscriptProvider>
-
-                <Routes>
-                  <Route path="/Summarizer" element={<div className="h-screen flex flex-col"><Header/><GeneralSummary /></div>} />
-                  <Route path="/" element={<div>
-                    <Header />
-                    <HomePage />
-                  </div>
-                  } />
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/register" element={<RegisterPage />} />
-                  <Route path="/pricing" element={<div><Header/><PricingPage /></div>} />
-                  <Route path="/history" element={<HistoryPage />} />
-                  <Route path="/profile" element={<UserProfilePage />} />
-                  <Route path="/console/*" element={<Dashboard />} >
-                    <Route path='' element={<ConsoleHome />}/>
-                    <Route path='youtube' element={<YoutubeSummary />}/>
-                    <Route path='upload' element={<Summarizer />} />
-                    <Route path='billing' element={<div>billing</div>}/>
-                    <Route path='history' element={<HistoryPage />}/>
-                    <Route path='profile' element={<UserProfilePage />}/>
-                  </Route>
-                </Routes>
-              </TranscriptProvider>
+                <QuotaProvider>
+  
+                  <Routes>
+                    <Route path="/Summarizer" element={<div className="h-screen flex flex-col"><Header/><GeneralSummary /></div>} />
+                    <Route path="/" element={<div>
+                      <Header />
+                      <HomePage />
+                    </div>
+                    } />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/pricing" element={<div><Header/><PricingPage /></div>} />
+                    <Route path="/history" element={<HistoryPage />} />
+                    <Route path="/profile" element={<UserProfilePage />} />
+                    <Route path="/console/*" element={<Dashboard />} >
+                      <Route path='' element={<ConsoleHome />}/>
+                      <Route path='youtube' element={<YoutubeSummary />}/>
+                      <Route path='upload' element={<Summarizer />} />
+                      <Route path='billing' element={<div>billing</div>}/>
+                      <Route path='history' element={<HistoryPage />}/>
+                      <Route path='profile' element={<UserProfilePage />}/>
+                    </Route>
+                  </Routes>
+                  </QuotaProvider>
+                  </TranscriptProvider>
               </SummaryProvider>
             </VideoProvider>
             <NotificationOverlay />
