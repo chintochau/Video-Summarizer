@@ -53,12 +53,14 @@ const UploadSummary = () => {
         setVideoSrc(src);
         setAudioSrc(null);
         setDisplayMode("video")
+        setLoadingTranscript(false)
       }
       if (files[0].type.startsWith("audio/")) {
         const src = URL.createObjectURL(files[0]);
         setAudioSrc(src);
         setVideoSrc(null);
         setDisplayMode("audio")
+        setLoadingTranscript(false)
       }
     }
   };
