@@ -44,11 +44,11 @@ const YoutubeBar = () => {
             onChange={(e) => setYoutubeLink(e.target.value)}
             onFocus={(e) => e.target.select()}
           />
-          <Button className="h-full sm:h-5/6 bg-indigo-600" type="submit">
+          <Button type="submit" size="sm">
             <span>Submit</span>
           </Button>
           {youtubeId && (
-            <Button className="h-full sm:h-5/6 ml-1" variant="outline" type="button"
+            <Button variant="outline" type="button" size="sm" className="ml-1"
               onClick={() =>  YoutubeService.getYoutubeAudio({ youtubeLink })}
             >
                 <DocumentArrowDownIcon className="w-6 h-6 mr-1"/>

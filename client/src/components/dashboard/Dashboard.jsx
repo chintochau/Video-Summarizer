@@ -174,7 +174,7 @@ const Dashboard = () => {
                         <Route path='' element={<RootRedirect />} />
                         <Route path='youtube' element={<YoutubeSummary />} />
                         <Route path='upload' element={<UploadSummary />} />
-                        <Route path='billing' element={<div>billing</div>} />
+                        <Route path='billing' element={<div/>} />
                         <Route path='history' element={<HistoryPage />} />
                         <Route path='profile' element={<UserProfilePage />} />
                     </Routes>

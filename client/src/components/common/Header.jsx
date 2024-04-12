@@ -6,7 +6,7 @@ import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "../ui/button";
 import { HashLink } from "react-router-hash-link";
-import { Separator } from "../ui/separator";
+import { ArrowRightIcon } from '@heroicons/react/24/outline'
 
 const navigation = [
   { name: "Transcribe", to: "", href: "/#transcribe" },
@@ -21,13 +21,34 @@ const Header = () => {
   const pathname = location.pathname.substring(1);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const SignInButton = () => {
+  const SignedOutMenu = () => {
     return (
-      <Link to="/login" className=" text-sm font-semibold text-gray-900">
-        Sign in
-      </Link>
+      <div className=" flex items-center">
+        <Link to="/summarizer">
+          <Button size="sm">Summarize</Button>
+        </Link>
+
+        <div className="flex items-center">
+          <Link to="/login">
+            <Button variant="link">
+              Sign in
+              <ArrowRightIcon className="w-4 h-4" />
+            </Button >
+          </Link>
+        </div>
+      </div>
     );
   };
+
+  const SignedInMenu = () => {
+    return (
+      <div className=" flex items-center">
+        <Link to="/console/youtube">
+          <Button size="sm">Console</Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <header className=" bg-white sticky top-0 z-10 border-b">
@@ -54,10 +75,8 @@ const Header = () => {
           ))}
         </div>
         <div className="flex flex-1 items-center justify-end gap-x-2 md:gap-x-6">
-          {!currentUser && <SignInButton />}
-          <Link to="/summarizer">
-            <Button size="sm">Summarize</Button>
-          </Link>
+          {currentUser ? <SignedInMenu /> : <SignedOutMenu />}
+
         </div>
         <div className="flex lg:hidden">
           <button

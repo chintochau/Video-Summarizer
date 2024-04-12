@@ -46,14 +46,15 @@ function App() {
           </div>
         )} */}
         <div className="w-full">
-            <ModelProvider>
-              <VideoProvider>
-                <SummaryProvider>
+          <ModelProvider>
+            <VideoProvider>
+              <SummaryProvider>
                 <TranscriptProvider>
                   <QuotaProvider>
-    
                     <Routes>
-                      <Route path="/Summarizer" element={<div className="h-screen flex flex-col"><Header/><GeneralSummary /></div>} />
+                      <Route path="/Summarizer" element={<div className="h-screen flex flex-col">
+                        <Header />
+                        <GeneralSummary /></div>} />
                       <Route path="/" element={<div>
                         <Header />
                         <HomePage />
@@ -61,24 +62,24 @@ function App() {
                       } />
                       <Route path="/login" element={<LoginPage />} />
                       <Route path="/register" element={<RegisterPage />} />
-                      <Route path="/pricing" element={<div><Header/><PricingPage /></div>} />
+                      <Route path="/pricing" element={<div><Header /><PricingPage /></div>} />
                       <Route path="/history" element={<HistoryPage />} />
                       <Route path="/profile" element={<UserProfilePage />} />
                       <Route path="/console/*" element={<Dashboard />} >
-                        <Route path='' element={<YoutubeSummary />}/>
-                        <Route path='youtube' element={<YoutubeSummary />}/>
-                        <Route path='upload' element={<Summarizer />} />
-                        <Route path='billing' element={<div>billing</div>}/>
-                        <Route path='history' element={<HistoryPage />}/>
-                        <Route path='profile' element={<UserProfilePage />}/>
+                        <Route path='' element={<div />} />
+                        <Route path='youtube' element={<YoutubeSummary />} />
+                        <Route path='upload' element={<div />} />
+                        <Route path='billing' element={<div />} />
+                        <Route path='history' element={<HistoryPage />} />
+                        <Route path='profile' element={<UserProfilePage />} />
                       </Route>
                     </Routes>
-                    </QuotaProvider>
-                    </TranscriptProvider>
-                </SummaryProvider>
-              </VideoProvider>
-              <NotificationOverlay />
-            </ModelProvider>
+                  </QuotaProvider>
+                </TranscriptProvider>
+              </SummaryProvider>
+            </VideoProvider>
+            <NotificationOverlay />
+          </ModelProvider>
         </div>
       </div>
     </>
