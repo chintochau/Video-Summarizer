@@ -20,7 +20,7 @@ class AuthService {
     }
   }
 
-  // Log in a user
+  // Sign in a user
   static async login(email, password) {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);

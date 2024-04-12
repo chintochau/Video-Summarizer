@@ -32,7 +32,7 @@ const HomePage = () => {
       <div id="pricing">
         <PricingPlans home />
       </div>
-      <div id="faqs">
+      <div id="faq">
         <FAQs />
       </div>
       <div id="final-cta">
