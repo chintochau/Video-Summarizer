@@ -119,7 +119,7 @@ const OptionCard = (params) => {
   const memberOnly = !currentUser && premimum;
 
   return (
-    <Card className="bg-white rounded shadow-md mb-4 text-left flex justify-between">
+    <Card className="rounded shadow-md mb-4 text-left flex justify-between">
       <CardHeader className="p-4 w-full ">
         <CardTitle>{title}</CardTitle>
         <CardDescription>{showModifiedDescription()}</CardDescription>

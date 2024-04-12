@@ -9,7 +9,7 @@ export const QuotaProvider = ({ children }) => {
   const [quota, setQuota] = useState(QuotaService.getQuota());
 
   const value = {
-    quota,
+    quota,setQuota
   };
 
   return (

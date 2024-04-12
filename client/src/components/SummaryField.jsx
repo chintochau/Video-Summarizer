@@ -20,6 +20,7 @@ import { LanguageIcon } from "@heroicons/react/24/outline";
 import { BoltIcon } from "@heroicons/react/24/solid";
 import { Button } from "./ui/button.jsx";
 import { useQuota } from "@/contexts/QuotaContext.jsx";
+import QuotaService from "@/services/QuotaService.js";
 
 const SummaryField = ({ videoRef }) => {
   // use context
@@ -27,7 +28,7 @@ const SummaryField = ({ videoRef }) => {
   const { userId, setCredits, credits, currentUser } = useAuth();
   const { video } = useVideoContext();
   const { parentTranscriptText, parentSrtText } = useTranscriptContext();
-  const { quota } = useQuota();
+  const { quota,setQuota } = useQuota();
 
   // use state
   const [response, setResponse] = useState("");
@@ -86,48 +87,92 @@ const SummaryField = ({ videoRef }) => {
     const { interval, creditAmount, title } = option;
 
     let finalOutput = "";
-    try {
-      checkCredits(credits, creditAmount);
-      updateSummaryOfIndex(activeTab, "sourceType", title);
-      await SummaryService.summarizeWithAI(
-        {
-          option,
-          transcript: inputTranscript(option.id),
-          language,
-          interval,
-          selectedModel: "claude3h",
-          userId,
-          video,
-        },
-        (error, data) => {
-          if (error) {
-            // Handle error
-            console.error("An error occurred:", error);
-            return;
+
+    if (!currentUser) {
+      // use quota if user is not logged in
+      try {
+        QuotaService.checkQuota()
+        QuotaService.decrementQuota(); // save to loca storage
+        setQuota((prev) => prev - 1); // update context
+        updateSummaryOfIndex(activeTab, "sourceType", title);
+        await SummaryService.summarizeWithAIUsingQuota(
+          {
+            option,
+            transcript: parentTranscriptText,
+            video,
+            language,
+          },
+          (error, data) => {
+            if (error) {
+              // Handle error
+              console.error("An error occurred:", error);
+              return;
+            }
+            // Check if the data signals completion
+            if (data && data.completed) {
+              console.log("Summary process completed.");
+              setResponse("");
+              insertNewTab(finalOutput, title);
+              setActiveTab(0);
+              return; // Stop further processing
+            }
+            // Append the received data to the response
+            setStartSummary(false);
+            setResponse((prev) => prev + data);
+            finalOutput += data;
           }
-          // Check if the data signals completion
-          if (data && data.completed) {
-            console.log("Summary process completed.");
-            setResponse("");
-            insertNewTab(finalOutput, title);
-            setCredits((prev) => (prev - creditCount).toFixed(1));
-            setActiveTab(0);
-            return; // Stop further processing
+        );
+        return;
+      } catch (error) {
+        console.error(error);
+        setStartSummary(false);
+        return;
+      }
+    } else {
+      // use credits if user is logged in
+      try {
+        checkCredits(credits, creditAmount);
+        updateSummaryOfIndex(activeTab, "sourceType", title);
+        await SummaryService.summarizeWithAI(
+          {
+            option,
+            transcript: inputTranscript(option.id),
+            language,
+            interval,
+            selectedModel: "claude3h",
+            userId,
+            video,
+          },
+          (error, data) => {
+            if (error) {
+              // Handle error
+              console.error("An error occurred:", error);
+              return;
+            }
+            // Check if the data signals completion
+            if (data && data.completed) {
+              console.log("Summary process completed.");
+              setResponse("");
+              insertNewTab(finalOutput, title);
+              setCredits((prev) => (prev - creditCount).toFixed(1));
+              setActiveTab(0);
+              return; // Stop further processing
+            }
+            // Append the received data to the response
+            setStartSummary(false);
+            setResponse((prev) => prev + data);
+            finalOutput += data;
           }
-          // Append the received data to the response
-          setStartSummary(false);
-          setResponse((prev) => prev + data);
-          finalOutput += data;
-        }
-      );
-    } catch (error) {
-      console.error(error.message);
-      setStartSummary(false);
+        );
+      } catch (error) {
+        console.error(error.message);
+        setStartSummary(false);
+      }
     }
   };
 
   return (
-    <div className="relative h-full flex flex-col">
+    <div className="relative h-full flex flex-col dark:bg-zinc-800">
       <div className="flex justify-between px-3">
         <div className=" flex items-center gap-x-2">
           <LanguageIcon className="w-6 h-6 text-gray-600" />

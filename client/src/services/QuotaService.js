@@ -19,6 +19,12 @@ class QuotaService {
         this.setQuota(quota);
       }
     }
+
+    static incrementQuota() {
+      let quota = this.getQuota();
+      quota++;
+      this.setQuota(quota);
+    }
   
     static resetQuota() {
       this.setQuota(5); // Reset to 5 free quotas
@@ -29,17 +35,9 @@ class QuotaService {
       if (quota > 0) {
         return true;
       }
-      return false;
+      throw new Error("Insufficient quota");
     }
 
-
-    static summarizeWithQuota(option) {
-      if (this.checkQuota()) {
-        this.decrementQuota();
-        return this.summarize(option);
-      }
-      return Promise.reject('No quota available');
-    }
   }
   
   export default QuotaService;

@@ -14,7 +14,16 @@ import HistoryPage from '../../pages/HistoryPage'
 import UserProfilePage from '../../pages/UserProfilePage'
 import YoutubeSummary from '../SummarizerPage/YoutubeSummary'
 import UploadSummary from '../SummarizerPage/UploadSummary'
-import ConsoleHome from '../SummarizerPage/ConsoleHome'
+import { useNavigate } from 'react-router-dom';
+
+function RootRedirect() {
+  let navigate = useNavigate();
+  useEffect(() => {
+    navigate('youtube');
+  }, [navigate]);
+
+  return null;
+}
 
 const navigation = [
     { name: 'Youtube', to: 'youtube', icon: PlayCircleIcon, current: true },
@@ -162,7 +171,7 @@ const Dashboard = () => {
 
                 <main className="lg:pl-56 h-[80vh] flex-1">
                     <Routes>
-                        <Route path='' element={<ConsoleHome />} />
+                        <Route path='' element={<RootRedirect />} />
                         <Route path='youtube' element={<YoutubeSummary />} />
                         <Route path='upload' element={<UploadSummary />} />
                         <Route path='billing' element={<div>billing</div>} />

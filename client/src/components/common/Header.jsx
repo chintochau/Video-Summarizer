@@ -5,13 +5,14 @@ import { useAuth } from "../../contexts/AuthContext";
 import {BoltIcon} from "@heroicons/react/24/solid"
 import { Dialog } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Button } from "../ui/button";
+import { HashLink } from "react-router-hash-link";
 
 const navigation = [
-  { name: 'Product', to: '' },
-  { name: 'Features', to: '' },
-  { name: 'Marketplace', to: '' },
-  { name: 'Pricing', to: '/pricing' },
-  { name: 'Console', to: '/console' },
+  { name: 'Transcribe', to: '' ,href: '/#transcribe'},
+  { name: 'Summarize', to: '' , href: '/#summarize'},
+  { name: 'Pricing', to: '' , href: '/#pricing'},
+  { name: 'F&Q', to: '' , href: '/#faq'},
 ]
 
 
@@ -51,19 +52,19 @@ const Header = () => {
         </div>
         <div className="hidden lg:flex lg:gap-x-12">
           {navigation.map((item) => (
-            <Link key={item.name} to={item.to} className="text-sm font-semibold leading-6 text-gray-900">
+            <HashLink smooth key={item.name} to={item.href} className="text-sm font-semibold leading-6 text-gray-900">
               {item.name}
-            </Link>
+            </HashLink>
           ))}
         </div>
         <div className="flex flex-1 items-center justify-end gap-x-2 md:gap-x-6">
           {currentUser ? <LoggedInMenu /> : <LoggedOutMenu />}
-          <Link
-            to="/summarizer"
-            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            Summarize
-          </Link>
+            <Link
+              to="/summarizer">
+          <Button size="sm">
+              Summarize
+          </Button>
+            </Link>
         </div>
         <div className="flex lg:hidden">
           <button

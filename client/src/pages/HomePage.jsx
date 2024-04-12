@@ -14,15 +14,33 @@ import {
 const HomePage = () => {
   return (
     <div className="mx-auto">
-      <HeroSection />
-      <HowItWorks />
-      <FeaturesAndBenefits />
-      <SocialProof />
-      <PatternInterruption />
-      <PricingPlans home/>
-      <FAQs />
-      <FinalCTA />
-      <Footer/>
+      <div id="hero-section">
+        <HeroSection />
+      </div>
+      <div id="how-it-works">
+        <HowItWorks />
+      </div>
+      <div id="features">
+        <FeaturesAndBenefits />
+      </div>
+      <div id="social-proof">
+        <SocialProof />
+      </div>
+      <div id="pattern-interruption">
+        <PatternInterruption />
+      </div>
+      <div id="pricing">
+        <PricingPlans home />
+      </div>
+      <div id="faqs">
+        <FAQs />
+      </div>
+      <div id="final-cta">
+        <FinalCTA />
+      </div>
+      <div id="footer">
+        <Footer />
+      </div>
     </div>
   );
 };

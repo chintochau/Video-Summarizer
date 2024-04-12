@@ -118,7 +118,7 @@ const GenerateOptions = (params) => {
             </CardHeader>
             <CardContent>
                 <div className='flex flex-col gap-y-2 bg-gray-100 rounded-md p-4 '>
-                    <p className='text-center'>Youtube Transcript is not available, <br/> Login to genertae transcript with AI</p>
+                    <p className='text-center'>Youtube Transcript is not available for this Video, <br/> Login to genertae transcript with AI</p>
                     <Button className="mx-auto" onClick={() => { window.location.href = '/login' }}>Login</Button>
                 </div>
             </CardContent>
