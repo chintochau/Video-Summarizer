@@ -39,25 +39,36 @@ export const getInstanceListWithAvailability = async () => {
         })
         instancesListWithAvailability = instances
     } else {
-        // update instance info, keep the tasks
-        // if the instance is not in the list, add it
+        // update all instance info, keep the tasks
+        // if the instance is not in the list, add it,add tasks = 0
         // if the instance is in the list, update it
         // if the instance is not in the new list, remove it
-        instancesListWithAvailability.forEach((instance, index) => {
-            const new_instance = instances.find((new_instance) => new_instance.id === instance.id);
-            if (new_instance) {
-                instancesListWithAvailability[index] = new_instance;
-            } else {
-                instancesListWithAvailability.splice(index, 1);
+        
+        // update all instance info, keep the tasks
+        instancesListWithAvailability.forEach((instance) => {
+            const newInfo = instances.find((newInstance) => newInstance.id === instance.id);
+            if (newInfo) {
+                instance.actual_status = newInfo.actual_status;
+                instance.intended_status = newInfo.intended_status;
+                instance.rentable = newInfo.rentable;
+                instance.gpu_util = newInfo.gpu_util;
+                instance.full_ip = newInfo.full_ip;
+                instance.status = newInfo.status
             }
         });
-        instances.forEach((new_instance) => {
-            const instance = instancesListWithAvailability.find((instance) => instance.id === new_instance.id);
+        // if the instance is not in the list, add it,add tasks = 0
+        instances.forEach((newInstance) => {
+            const instance = instancesListWithAvailability.find((instance) => instance.id === newInstance.id);
             if (!instance) {
-                new_instance.tasks = 0
-                instancesListWithAvailability.push(new_instance);
+                newInstance.tasks = 0;
+                instancesListWithAvailability.push(newInstance);
             }
         });
+        // if the instance is not in the new list, remove it
+        instancesListWithAvailability = instancesListWithAvailability.filter((instance) => {
+            return instances.find((newInstance) => newInstance.id === instance.id);
+        });
+
     }
     return instancesListWithAvailability;
 }
