@@ -30,6 +30,7 @@
     "queue": "^7.0.0",
     "stripe": "^14.23.0",
     "tiktoken": "^1.0.13",
+    "uuid": "^9.0.1",
     "youtube-transcript": "^1.0.6",
     "ytdl-core": "^4.11.5"
   }

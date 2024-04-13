@@ -30,7 +30,7 @@ export const transcribeFile = async ({ file, filePath }) => {
     } else {
       throw new Error("Failed to transcribe");
     }
-    
+
   } catch (error) {
     console.error("Error occurred during transcription:", error);
     throw new Error("Error occurred during transcription");
@@ -41,15 +41,54 @@ export const transcribeFile = async ({ file, filePath }) => {
   }
 };
 
+export const transcribeLink = async ({ link,transcriptionId }) => {
+  const formData = new FormData();
+  formData.append("link", link);
+  formData.append("transcriptionId", transcriptionId);
+
+  try {
+    const response = await fetch("http://localhost:5000/transcribe_with_link", {
+      method: "POST",
+      body: formData,
+      headers: formData.getHeaders(),
+    });
+
+    if (response.ok) {
+      console.log("Transcription started");
+      
+      const text = await response.text();
+      console.log("Transcription completed", text);
+      return text;
+    } else {
+      throw new Error("Failed to transcribe");
+    }
+  } catch (error) {
+    console.error("Error occurred during transcription:", error);
+    throw new Error("Error occurred during transcription");
+  }
+};
+
+export const checkTranscriptionProgress = async (transcriptionId) => {
+  const response = await fetch(`http://localhost:5000/check_transcription_progress?transcriptionId=${transcriptionId}`);
+  if (response.ok) {
+    const data = response.text();
+    return data;
+  } else {
+    throw new Error("Failed to check transcription progress");
+  }
+};
+
+
+
 const cleanupFiles = (filePath, originalFilePath) => {
   if (filePath) {
     fs.unlinkSync(filePath);
   }
   if (filePath !== originalFilePath) {
     fs.unlinkSync(originalFilePath);
-    
   }
 };
+
 
 export const getQueueStatus = () => {
   // Get the length of the queue

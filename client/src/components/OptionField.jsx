@@ -60,24 +60,19 @@ const OptionCard = (params) => {
   const showModifiedDescription = () => {
     switch (id) {
       case 6:
-        return (
-          <div className=" whitespace-pre-wrap">
-            {`Video length: ${formatDuration(
+        return (`Video length: ${formatDuration(
               videoDuration
             )}\nBreakdown the video into ${Math.ceil(
               videoDuration / interval
-            )} Parts\nof ${formatDuration(interval)} each `}
-          </div>
+            )} Parts\nof ${formatDuration(interval)} each `
         );
       case 7:
         return (
-          <div className=" whitespace-pre-wrap">
-            {`Video length: ${formatDuration(
+            `Video length: ${formatDuration(
               videoDuration
             )}\nBreakdown the video into ${Math.ceil(
               videoDuration / interval
-            )} Parts\nof ${formatDuration(interval)} each `}
-          </div>
+            )} Parts\nof ${formatDuration(interval)} each `
         );
       default:
         return description;
@@ -122,7 +117,7 @@ const OptionCard = (params) => {
     <Card className="rounded shadow-md mb-4 text-left flex justify-between">
       <CardHeader className="p-4 w-full ">
         <CardTitle>{title}</CardTitle>
-        <CardDescription>{showModifiedDescription()}</CardDescription>
+        <CardDescription className=" whitespace-pre-wrap">{showModifiedDescription()}</CardDescription>
         {addSlider()}
       </CardHeader>
       <CardContent className=" flex-col items-start text-center p-4"></CardContent>

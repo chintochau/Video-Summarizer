@@ -130,6 +130,11 @@ const SummaryField = ({ videoRef }) => {
       }
     } else {
       // use credits if user is logged in
+      if (userId === null) { // check if user is logged in
+        console.error("User not logged in");
+        return;
+      }
+      
       try {
         checkCredits(credits, creditAmount);
         updateSummaryOfIndex(activeTab, "sourceType", title);
