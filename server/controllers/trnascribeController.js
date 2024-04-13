@@ -49,7 +49,7 @@ export const processVideo = async (req, res) => {
         transcribeQueue.push(async (cb) => {
             // Wait for a GPU slot to become available
             const availableGPU = await checkGPUSlots();
-            availableGPU.slots--;
+            availableGPU.tasks++;
             // Set up SSE headers
             res.setHeader("Content-Type", "text/event-stream");
             res.setHeader("Cache-Control", "no-cache");
@@ -89,7 +89,7 @@ export const processVideo = async (req, res) => {
                 res.end();
             });
 
-            availableGPU.slots++;
+            availableGPU.tasks--;
             cb();
         });
     } catch (error) {

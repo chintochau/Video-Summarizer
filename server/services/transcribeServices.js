@@ -3,6 +3,7 @@ import fetch from "node-fetch";
 import FormData from "form-data";
 import fs from "fs";
 import Queue from "queue";
+import { instancesListWithAvailability } from "./vastaiServices.js";
 
 export const transcribeQueue = new Queue({ autostart: true, concurrency: 2 });
 
@@ -41,7 +42,9 @@ export const transcribeFile = async ({ file, filePath }) => {
   }
 };
 
-export const transcribeLink = async ({ link,transcriptionId,publicId,resourceType }) => {
+const tempServer = "http://79.116.40.166:29534"
+
+export const transcribeLink = async ({ link,transcriptionId,publicId,resourceType,gpuServerIP=tempServer }) => {
   const formData = new FormData();
   formData.append("link", link);
   formData.append("transcriptionId", transcriptionId);
@@ -49,7 +52,7 @@ export const transcribeLink = async ({ link,transcriptionId,publicId,resourceTyp
   formData.append("resourceType", resourceType);
 
   try {
-    const response = await fetch("http://localhost:5000/transcribe_with_link", {
+    const response = await fetch( gpuServerIP +"/transcribe_with_link", {
       method: "POST",
       body: formData,
       headers: formData.getHeaders(),
@@ -67,8 +70,8 @@ export const transcribeLink = async ({ link,transcriptionId,publicId,resourceTyp
   }
 };
 
-export const checkTranscriptionProgress = async (transcriptionId) => {
-  const response = await fetch(`http://localhost:5000/check_transcription_progress?transcriptionId=${transcriptionId}`);
+export const checkTranscriptionProgress = async (transcriptionId, gpuServerIP = tempServer) => {
+  const response = await fetch(gpuServerIP + `/check_transcription_progress?transcriptionId=${transcriptionId}`);
   if (response.ok) {
     const data = response.text();
     return data;
@@ -104,16 +107,11 @@ export const getQueueStatus = () => {
   console.log(`Is Queue Stopped: ${isQueueStopped}`);
 };
 
-const GPUs = [
-  { id: "GPU1", IP: "192.168.1.1", slots: 3 },
-  { id: "GPU2", IP: "192.168.1.2", slots: 3 },
-];
-
 export const checkGPUSlots = async () => {
-  console.log("Checking GPU slots");
-  for (const gpu of GPUs) {
+  for (const gpu of instancesListWithAvailability) {
     console.log(`Checking slots for ${gpu.id}`);
-    if (gpu.slots > 0) {
+    console.log(gpu);
+    if (gpu.tasks < 3) {
       return gpu;
     }
   }

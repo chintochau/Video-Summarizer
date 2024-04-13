@@ -1,6 +1,19 @@
 import { vastaiHeader } from "../config/vastaiConfig.js";
 
-export var instancesList = [];
+/**
+ * @typedef {Object} Instance
+ * @property {string} id
+ * @property {string} machine_id
+ * @property {number} gpu_util
+ * @property {boolean} rentable
+ * @property {string} actual_status
+ * @property {string} intended_status
+ * @property {string} full_ip
+ * @property {string} status
+ * @property {number} tasks
+ */
+export let instancesListWithAvailability = [];
+
 
 const getStatus = (actual, intended) => {
     if (actual === "exited" && intended === "running") {
@@ -16,7 +29,41 @@ const getStatus = (actual, intended) => {
     }
 };
 
+
+export const getInstanceListWithAvailability = async () => {
+    const instances = await createInstancesList();
+
+    if (instancesListWithAvailability.length === 0) {
+        instances.forEach(instance => {
+            instance.tasks = 0
+        })
+        instancesListWithAvailability = instances
+    } else {
+        // update instance info, keep the tasks
+        // if the instance is not in the list, add it
+        // if the instance is in the list, update it
+        // if the instance is not in the new list, remove it
+        instancesListWithAvailability.forEach((instance, index) => {
+            const new_instance = instances.find((new_instance) => new_instance.id === instance.id);
+            if (new_instance) {
+                instancesListWithAvailability[index] = new_instance;
+            } else {
+                instancesListWithAvailability.splice(index, 1);
+            }
+        });
+        instances.forEach((new_instance) => {
+            const instance = instancesListWithAvailability.find((instance) => instance.id === new_instance.id);
+            if (!instance) {
+                new_instance.tasks = 0
+                instancesListWithAvailability.push(new_instance);
+            }
+        });
+    }
+    return instancesListWithAvailability;
+}
+
 export const createInstancesList = async () => {
+    var instancesList = [];
     var requestOptions = {
         method: "GET",
         headers: vastaiHeader,
@@ -24,6 +71,10 @@ export const createInstancesList = async () => {
     };
     const data = await fetch("https://console.vast.ai/api/v0/instances", requestOptions)
     const response = await data.json();
+    // check if the response is empty
+    if (!response.instances) {
+        return instancesList;
+    }
     const instances = response.instances.map((instance) => {
         const {
             id,
@@ -66,14 +117,14 @@ export const startInstance = async ({ id }) => {
         redirect: 'follow'
     };
     return fetch(`https://console.vast.ai/api/v0/instances/${id}/`, requestOptions)
-    .then(response => response.text())
-    .then(result => {
-      return result;
-    })
-    .catch(error => {
-      console.log('error', error);
-      throw new Error('Failed to start instance');
-    });
+        .then(response => response.text())
+        .then(result => {
+            return result;
+        })
+        .catch(error => {
+            console.log('error', error);
+            throw new Error('Failed to start instance');
+        });
 }
 
 export const stopInstance = async ({ id }) => {
@@ -84,7 +135,7 @@ export const stopInstance = async ({ id }) => {
         body: raw,
         redirect: 'follow'
     };
-    
+
     try {
         const response = await fetch(`https://console.vast.ai/api/v0/instances/${id}/`, requestOptions);
         const result_1 = await response.text();

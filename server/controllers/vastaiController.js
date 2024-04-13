@@ -1,9 +1,8 @@
-import { vastaiHeader } from "../config/vastaiConfig.js";
-import { createInstancesList, startInstance, stopInstance } from "../services/vastaiServices.js";
-
+import { createInstancesList, getInstanceListWithAvailability, startInstance, stopInstance } from "../services/vastaiServices.js";
 
 export const listGPUInstances = async (req, res) => {
-  res.json(await createInstancesList())
+  const instances = await getInstanceListWithAvailability();
+  res.json(instances)
 };
 
 
