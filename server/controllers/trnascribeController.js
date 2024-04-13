@@ -37,7 +37,7 @@ export const fetchVideoTranscription = async (req, res) => {
 
 // processVideo function using queue
 export const processVideo = async (req, res) => {
-    const { userId, link } = req.body;
+    const { userId, link,publicId, resourceType } = req.body;
     const video = JSON.parse(req.body.video);
     const transcribeOption = JSON.parse(req.body.transcribeOption);
 
@@ -71,9 +71,9 @@ export const processVideo = async (req, res) => {
             }, 7000);
 
             // Start the transcription
-            transcript = await transcribeLink({ link, transcriptionId })
+            transcript = await transcribeLink({ link, transcriptionId,publicId, resourceType })
+            await getOrCreateVideoBySourceId({ video, userId, originalTranscript: transcript });
 
-            // await getOrCreateVideoBySourceId({ video, userId, originalTranscript: transcription });
             writeData({ transcript });
 
             res.end();

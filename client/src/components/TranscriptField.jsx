@@ -71,16 +71,18 @@ const TranscriptField = (params) => {
     try {
       // console.log("using fake link");
       const uploadResult = await UploadService.uploadVideo(file, onUploadProgress)
-      const fileLink = uploadResult.secure_url
-      // fileLink: "https://res.cloudinary.com/dsq31cpcf/video/upload/v1712958735/media/jcvjggwervk6lhv0kdof.mp4",
-      generateTranscript({fileLink})
-
+      const data = {
+        fileLink:uploadResult.secure_url,
+        publicId:uploadResult.public_id,
+        resourceType:uploadResult.resource_type
+      }
+      generateTranscript(data)
     } catch (error) {
       console.error(error)
     }
   }
   // transcribe video, youtube video, file upload or link
-  const generateTranscript = async ({ fileLink }) => {
+  const generateTranscript = async ({ fileLink,publicId,resourceType }) => {
     let result
 
     if (displayMode !== "youtube" && !file && !fileLink) {
@@ -109,6 +111,8 @@ const TranscriptField = (params) => {
           } else {
             result = await TranscribeService.transcribeUserUploadFileWithLink({ // user api/processVideo
               link: fileLink,
+              publicId,
+              resourceType,
               language: selectedTranscriptionLanguage,
               videoCredits,
               userId,

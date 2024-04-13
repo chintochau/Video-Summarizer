@@ -41,10 +41,12 @@ export const transcribeFile = async ({ file, filePath }) => {
   }
 };
 
-export const transcribeLink = async ({ link,transcriptionId }) => {
+export const transcribeLink = async ({ link,transcriptionId,publicId,resourceType }) => {
   const formData = new FormData();
   formData.append("link", link);
   formData.append("transcriptionId", transcriptionId);
+  formData.append("publicId", publicId);
+  formData.append("resourceType", resourceType);
 
   try {
     const response = await fetch("http://localhost:5000/transcribe_with_link", {
@@ -54,10 +56,7 @@ export const transcribeLink = async ({ link,transcriptionId }) => {
     });
 
     if (response.ok) {
-      console.log("Transcription started");
-      
       const text = await response.text();
-      console.log("Transcription completed", text);
       return text;
     } else {
       throw new Error("Failed to transcribe");

@@ -44,7 +44,7 @@ class TranscribeService {
     };
 
     static transcribeUserUploadFileWithLink = async (data, onProgress) => {
-        const { link, language, userId, video, videoCredits, transcribeOption } = data;
+        const { link, language, userId, video, videoCredits, transcribeOption,publicId,resourceType } = data;
         if (!link) {
             return null;
         }
@@ -55,6 +55,9 @@ class TranscribeService {
         formData.append("videoCredits", videoCredits);
         formData.append("video", JSON.stringify(video));
         formData.append("transcribeOption", JSON.stringify(transcribeOption));
+        formData.append("publicId", publicId);
+        formData.append("resourceType", resourceType);
+
         try {
             const response = await fetch(apiUrl + "/api/processVideo", {
                 method: "POST",
