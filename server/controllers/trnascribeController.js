@@ -40,16 +40,16 @@ export const processVideo = async (req, res) => {
     const { userId, link, publicId, resourceType } = req.body;
     const video = JSON.parse(req.body.video);
     const transcribeOption = JSON.parse(req.body.transcribeOption);
-
+    const {sourceTitle} = video;
     const writeData = (data) => {
         res.write(`data: ${JSON.stringify(data)}\n\n`);
     }
 
     try {
-        console.log("Processing video", video.sourceTitle);
+        console.log("Processing video", sourceTitle);
         transcribeQueue.push(async (cb) => {
             // Wait for a GPU slot to become available
-            const availableGPU = await checkGPUSlots();
+            const availableGPU = await checkGPUSlots({sourceTitle});
             // Set up SSE headers
             res.setHeader("Content-Type", "text/event-stream");
             res.setHeader("Cache-Control", "no-cache");
@@ -74,28 +74,26 @@ export const processVideo = async (req, res) => {
             }, 7000);
 
             // Start the transcription
+            console.log("start transcribeLinkg: ",sourceTitle);
             transcript = await transcribeLink({ link, transcriptionId, publicId, resourceType, gpuServerIP: availableGPU.full_ip })
             await getOrCreateVideoBySourceId({ video, userId, originalTranscript: transcript });
-
             writeData({ transcript });
 
             res.end();
             res.on("close", () => {
                 clearInterval(interval);
-                console.log("Transcription closed");
                 res.end();
             });
 
             res.on("finish", () => {
                 clearInterval(interval);
-                console.log("Transcription finished");
                 res.end();
             });
 
             availableGPU.tasks--;
             cb();
         });
-        console.log("Pushed to queue, task:", publicId);
+        console.log("Pushed to queue, task:", sourceTitle);
         console.log("Queue length:", transcribeQueue.length);
     } catch (error) {
         console.error("Error occurred during transcription:", error);

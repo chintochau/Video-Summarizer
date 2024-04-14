@@ -32,6 +32,10 @@ const getStatus = (actual, intended) => {
 export const getInstanceListWithAvailability = async () => {
     const instances = await createInstancesList();
 
+    if (instances.length === 0) {
+        return instancesListWithAvailability;
+    }
+    
     if (instancesListWithAvailability.length === 0) {
         // initial load, add all instances, add tasks = 0
         instances.forEach(instance => {
@@ -94,7 +98,7 @@ export const createInstancesList = async () => {
             intended_status,
         } = instance;
 
-        let ports = instance.ports;
+        let ports
         let full_ip;
 
         if (instance.ports) {

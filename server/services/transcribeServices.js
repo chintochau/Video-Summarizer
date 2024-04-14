@@ -3,9 +3,9 @@ import fetch from "node-fetch";
 import FormData from "form-data";
 import fs from "fs";
 import Queue from "queue";
-import {   getInstanceIPandStatus, getInstanceListWithAvailability, startInstance, stopInstance } from "./vastaiServices.js";
+import { getInstanceIPandStatus, getInstanceListWithAvailability, startInstance, stopInstance } from "./vastaiServices.js";
 
-export const transcribeQueue = new Queue({ autostart: true, concurrency: 9 });
+export const transcribeQueue = new Queue({ autostart: true, concurrency: 12 });
 
 export const transcribeFile = async ({ file, filePath }) => {
   const formData = new FormData();
@@ -101,54 +101,57 @@ export const getQueueStatus = () => {
   const isQueueStarted = transcribeQueue.running;
   // Check if the queue is stopped
   const isQueueStopped = transcribeQueue.stopped;
-  
+
   return { queueLength, pendingTasks, isQueueStarted, isQueueStopped };
 };
 
-export const checkGPUSlots = async () => {
+const maxGPUTasks = 3;
+
+export const checkGPUSlots = async ({ sourceTitle }, retryCount = 0) => {
+  console.log(`${sourceTitle}: Checking GPUs`);
   const currentInstances = await getInstanceListWithAvailability();
 
   for (const gpu of currentInstances) {
-    console.log(`Checking slots for ID: ${gpu.id}, Status: ${gpu.status}, Tasks: ${gpu.tasks}, Full IP: ${gpu.full_ip}`);
+    console.log(`${sourceTitle}: Checking slots for ID: ${gpu.id}, Status: ${gpu.status}, Tasks: ${gpu.tasks}, Full IP: ${gpu.full_ip}`);
 
     // check if the instance is running and has less than 3 tasks, reserve the slot and return the instance
-    if (gpu.status === "running" && gpu.tasks < 3 && gpu.full_ip) {
+    if (gpu.status === "running" && gpu.tasks < maxGPUTasks && gpu.full_ip) {
       // return the instance
-      console.log(`Instance ${gpu.id} is running, has less than 3 tasks, ipavailable, reserved the slot`);
+      console.log(`${sourceTitle}: Instance ${gpu.id} is running, has less than 3 tasks, ipavailable, reserved the slot`);
       gpu.tasks++;
       return gpu;
     }
 
     // check if the instance is starting, assume full_ip is not available yet, reserve the slot, wait for 15 seconds, and check the full ip, if available, return the instance, else try two more times, else try the next instance
-    if (gpu.status === "starting" && gpu.tasks < 3) {
-      console.log(`Instance ${gpu.id} is starting, waiting for 15 seconds`)
+    if (gpu.status === "starting" && gpu.tasks < maxGPUTasks) {
+      console.log(`${sourceTitle}: Instance ${gpu.id} is starting, waiting for 15 seconds`)
       gpu.tasks++;
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < maxGPUTasks; i++) {
         // wait for 15 seconds
         await new Promise((resolve) => setTimeout(resolve, 15000));
         // check the status of the instance
         const { status, full_ip } = await getInstanceIPandStatus({ id: gpu.id });
         if (status === "running" && full_ip) {
           gpu.full_ip = full_ip;
-          console.log(`Instance ${gpu.id} finished starting, is running, has IP address ${full_ip}`);
+          console.log(`${sourceTitle}: Instance ${gpu.id} finished starting, is running, has IP address ${full_ip}`);
           return gpu;
         }
       }
       // if the instance is not running after 45 seconds, release the slot and try the next instance
-      console.log(`Instance ${gpu.id} failed to start after 45 seconds, now release slot, and try next instance`);
+      console.log(` ${sourceTitle}: Instance ${gpu.id} failed to start after 45 seconds, now release slot, and try next instance`);
       gpu.tasks--;
     }
 
 
     if (gpu.status === "inactive" && gpu.rentable) {
-      console.log(`Starting instance ${gpu.id}`);
+      console.log(`${sourceTitle}: Starting instance ${gpu.id}`);
       // start the instance
       const response = await startInstance({ id: gpu.id });
       if (response.success) {
         // instance started successfully
-        console.log(`Instance ${gpu.id} started successfully`);
+        console.log(`${sourceTitle}: Instance ${gpu.id} started successfully`);
         // reserve the slot, and wait for the instance to finish startup
-        if (gpu.tasks > 3) {
+        if (gpu.tasks > maxGPUTasks) {
           // if the instance has more than 3 tasks, skip the instance and try the next one
           break
         }
@@ -162,23 +165,32 @@ export const checkGPUSlots = async () => {
           // if the instance is running, return the instance
           if (status === "running" && full_ip) {
             gpu.full_ip = full_ip;
-            console.log(`Instance ${gpu.id} finished starting, is running`);
+            console.log(`${sourceTitle}: Instance ${gpu.id} finished starting, is running`);
             return gpu;
           }
         }
         // if the instance is not running after 90 seconds, release the slot and stop the instance
-        console.log(`Instance ${gpu.id} failed to start, now release slot and stop instance`);
+        console.log(`${sourceTitle}: Instance ${gpu.id} failed to start, now release slot and stop instance`);
         gpu.tasks--;
         stopInstance({ id: gpu.id });
       } else {
         // instance failed to start, stop the instance and try the next one
-        console.log(`Failed to start instance ${gpu.id}, may be occupied by another user, now stop instance to prevent unwanted scheduling`);
+        console.log(`${sourceTitle}: Failed to start instance ${gpu.id}, may be occupied by another user, now stop instance to prevent unwanted scheduling`);
         stopInstance({ id: gpu.id });
       }
     }
   }
   // If no GPUs are available, wait for a while and check again
-  console.log("No GPUs available, waiting for 30 seconds");
-  await new Promise((resolve) => setTimeout(resolve, 30000));
-  return await checkGPUSlots();
+  console.log(`${sourceTitle}: No GPUs available, waiting for 30 seconds"`);
+  await new Promise((resolve) => setTimeout(resolve, 60000));
+  console.log(`${sourceTitle}: Checking GPUs again"`);
+
+  // Limit the number of retries to prevent infinite recursion
+  if (retryCount < 3) {
+    return await checkGPUSlots({ sourceTitle }, retryCount + 1);
+  } else {
+    console.log(`${sourceTitle}: No GPUs available after multiple checks, stopping"`);
+    return null;
+  }
+
 }
