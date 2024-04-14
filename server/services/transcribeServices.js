@@ -71,7 +71,6 @@ export const transcribeLink = async ({ link, transcriptionId, publicId, resource
 };
 
 export const checkTranscriptionProgress = async (transcriptionId, gpuServerIP) => {
-  console.log("Checking transcription progress for task on server", transcriptionId, gpuServerIP);
   const response = await fetch(gpuServerIP + `/check_transcription_progress?transcriptionId=${transcriptionId}`);
   if (response.ok) {
     const data = response.text();
@@ -122,30 +121,39 @@ export const checkGPUSlots = async () => {
 
   // is no running gpu available, start an inactive GPU, which is rentable
   // using await startInstance({ id});
+
+  // check if the instance is running, if not, stop the instance and try the next one
   for (const gpu of currentInstances) {
     if (gpu.status === "inactive" && gpu.rentable) {
       console.log(`Starting instance ${gpu.id}`);
-
-      // try to start instance, if it fails, stop that instance and try the next one
-      console.log("Starting instance", gpu.id);
+      // start the instance
       const response = await startInstance({ id: gpu.id });
       if (response.success) {
+        // instance started successfully
         console.log(`Instance ${gpu.id} started successfully`);
-        // reserve the slot, and wait for the instance to start
+        // reserve the slot, and wait for the instance to finish startup
         gpu.tasks++;
 
+        // wait for the instance to start
         for (let i = 0; i < 8; i++) {
+          // wait for 10 seconds
           await new Promise((resolve) => setTimeout(resolve, 10000));
+          // check the status of the instance
           const status = await checkInstanceStatus({ id: gpu.id });
+          // if the instance is running, return the instance
           if (status === "running") {
             console.log(`Instance ${gpu.id} is running`);
             if (gpu.full_ip) {
+              // if the instance has an IP address, return the instance
+              gpu.tasks--;
               return gpu;
             } else {
+              // if the instance does not have an IP address, get the IP address
               getInstanceIP({ id: gpu.id })
                 .then((ip) => {
                   gpu.full_ip = ip;
                   console.log(`Instance ${gpu.id} has IP address ${ip}`);
+                  gpu.tasks--;
                   return gpu;
                 })
                 .catch((error) => {
@@ -156,6 +164,7 @@ export const checkGPUSlots = async () => {
           }
         }
         console.log(`Instance ${gpu.id} failed to start`);
+        gpu.tasks--;
       } else {
         console.log(`Failed to start instance ${gpu.id}`);
         stopInstance({ id: gpu.id });
