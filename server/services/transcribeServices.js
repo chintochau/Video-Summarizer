@@ -180,5 +180,5 @@ export const checkGPUSlots = async () => {
   // If no GPUs are available, wait for a while and check again
   console.log("No GPUs available, waiting for 30 seconds");
   await new Promise((resolve) => setTimeout(resolve, 30000));
-  return checkGPUSlots();
+  return await checkGPUSlots();
 }

@@ -46,6 +46,7 @@ export const processVideo = async (req, res) => {
     }
 
     try {
+        console.log("Processing video", video.sourceTitle);
         transcribeQueue.push(async (cb) => {
             // Wait for a GPU slot to become available
             const availableGPU = await checkGPUSlots();
@@ -94,6 +95,8 @@ export const processVideo = async (req, res) => {
             availableGPU.tasks--;
             cb();
         });
+        console.log("Pushed to queue, task:", publicId);
+        console.log("Queue length:", transcribeQueue.length);
     } catch (error) {
         console.error("Error occurred during transcription:", error);
         console.log("Error occurred during transcription", video.sourceTitle);
