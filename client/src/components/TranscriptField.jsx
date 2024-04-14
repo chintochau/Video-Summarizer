@@ -42,13 +42,18 @@ const TranscriptField = (params) => {
   const { credits, userId } = useAuth();
   const [transcribeProgress, setTranscribeProgress] = useState(0)
   const [uploadProgress, setUploadProgress] = useState(0)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     setCurrentLine("")
   }, [])
 
   const onTranscribeProgress = (progress) => {
-    setTranscribeProgress(progress)
+    if (progress === -100) {
+      setErrorMessage("Transcription failed, pleaser retry.")
+    } else {
+      setTranscribeProgress(progress)
+    }
   };
   const onUploadProgress = (progress) => {
     setUploadProgress(progress)
@@ -68,13 +73,15 @@ const TranscriptField = (params) => {
   // upload to cloudinary, send link to transcribe
   const uploadToCloudAndTranscribe = async () => {
     resetProgress()
+    setGeneratingTranscriptWithAI(true);
     try {
       // console.log("using fake link");
+
       const uploadResult = await UploadService.uploadVideo(file, onUploadProgress)
       const data = {
-        fileLink:uploadResult.secure_url,
-        publicId:uploadResult.public_id,
-        resourceType:uploadResult.resource_type
+        fileLink: uploadResult.secure_url,
+        publicId: uploadResult.public_id,
+        resourceType: uploadResult.resource_type
       }
       generateTranscript(data)
     } catch (error) {
@@ -82,7 +89,7 @@ const TranscriptField = (params) => {
     }
   }
   // transcribe video, youtube video, file upload or link
-  const generateTranscript = async ({ fileLink,publicId,resourceType }) => {
+  const generateTranscript = async ({ fileLink, publicId, resourceType }) => {
     let result
 
     if (displayMode !== "youtube" && !file && !fileLink) {
@@ -128,7 +135,6 @@ const TranscriptField = (params) => {
       console.error(error);
     }
   }
-
 
 
   // 點擊轉錄時跳轉視頻
@@ -190,15 +196,10 @@ const TranscriptField = (params) => {
   };
 
   // delete transcript box
-
   const deleteTranscriptBox = (index) => {
     const updatedTranscript = editableTranscript.filter((entry, i) => i !== index);
     setEditableTranscript(updatedTranscript);
   };
-
-  function classNames(...classes) {
-    return classes.filter(Boolean).join(" ");
-  }
 
   return (
     <div className="flex-col h-full flex"
@@ -225,14 +226,19 @@ const TranscriptField = (params) => {
                   {uploadProgress > 0 && <div>
                     <Label>Uploading to Cloud...</Label>
                     <Progress value={uploadProgress} /></div>}
+                  {uploadProgress === 100 &&
+                    <div>
+                      <Label>Connecting to server...</Label>
+                    </div>}
                   {transcribeProgress > 0 && <div>
                     <Label>Transcribing...</Label>
                     <Progress value={transcribeProgress} /></div>
                   }
+                  {errorMessage && <div className="text-red-500">{errorMessage}</div>}
                 </CardContent>
                 <CardFooter>
                   <Button onClick={abortTranscription}>Cancel</Button>
-                  </CardFooter>
+                </CardFooter>
               </Card>) : (<div className="flex-col h-full">
                 {transcriptAvailable ? (
                   <div className="h-full flex flex-col">

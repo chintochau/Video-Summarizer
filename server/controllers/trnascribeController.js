@@ -71,6 +71,7 @@ export const processVideo = async (req, res) => {
                     }
                 } catch (error) {
                     console.error("Error occurred during transcription:", error);
+                    writeData({ progress: -100 });
                     clearInterval(interval);
                 }
             }, 7000);

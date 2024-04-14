@@ -82,7 +82,6 @@ export const checkTranscriptionProgress = async (transcriptionId, gpuServerIP) =
 };
 
 
-
 const cleanupFiles = (filePath, originalFilePath) => {
   if (filePath) {
     fs.unlinkSync(filePath);
@@ -110,11 +109,9 @@ export const getQueueStatus = () => {
 
 export const checkGPUSlots = async () => {
   const currentInstances = await getInstanceListWithAvailability();
-  console.log("currentInstances, ", currentInstances);
   for (const gpu of currentInstances) {
-    console.log(`Checking slots for ${gpu.id}`);
-    if (gpu.status === "running"
-      && gpu.tasks < 3 && gpu.full_ip) {
+    console.log(`Checking slots for ID: ${gpu.id}, Status: ${gpu.status}, Tasks: ${gpu.tasks}, Full IP: ${gpu.full_ip}`);
+    if (gpu.status === "running" && gpu.tasks < 3 && gpu.full_ip) {
       return gpu;
     }
   }
@@ -143,26 +140,31 @@ export const checkGPUSlots = async () => {
           // if the instance is running, return the instance
           if (status === "running") {
             console.log(`Instance ${gpu.id} is running`);
+
             if (gpu.full_ip) {
               // if the instance has an IP address, return the instance
               gpu.tasks--;
               return gpu;
+
             } else {
               // if the instance does not have an IP address, get the IP address
               getInstanceIP({ id: gpu.id })
                 .then((ip) => {
                   gpu.full_ip = ip;
                   console.log(`Instance ${gpu.id} has IP address ${ip}`);
+
                   gpu.tasks--;
                   return gpu;
                 })
                 .catch((error) => {
-                  console.error("Error occurred during transcription:", error);
+                  console.error("Error occurred during instance start:", error);
+                  gpu.tasks--;
                   stopInstance({ id: gpu.id });
                 });
             }
           }
         }
+
         console.log(`Instance ${gpu.id} failed to start`);
         gpu.tasks--;
       } else {
@@ -171,7 +173,6 @@ export const checkGPUSlots = async () => {
       }
     }
   }
-
 
   // If no GPUs are available, wait for a while and check again
   console.log("No GPUs available, waiting for 30 seconds");
