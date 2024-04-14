@@ -4,7 +4,6 @@ import { vastaiHeader } from "../config/vastaiConfig.js";
  * @typedef {Object} Instance
  * @property {string} id
  * @property {string} machine_id
- * @property {number} gpu_util
  * @property {boolean} rentable
  * @property {string} actual_status
  * @property {string} intended_status
@@ -34,6 +33,7 @@ export const getInstanceListWithAvailability = async () => {
     const instances = await createInstancesList();
 
     if (instancesListWithAvailability.length === 0) {
+        // initial load, add all instances, add tasks = 0
         instances.forEach(instance => {
             instance.tasks = 0
         })
@@ -43,7 +43,7 @@ export const getInstanceListWithAvailability = async () => {
         // if the instance is not in the list, add it,add tasks = 0
         // if the instance is in the list, update it
         // if the instance is not in the new list, remove it
-        
+
         // update all instance info, keep the tasks
         instancesListWithAvailability.forEach((instance) => {
             const newInfo = instances.find((newInstance) => newInstance.id === instance.id);
@@ -51,7 +51,6 @@ export const getInstanceListWithAvailability = async () => {
                 instance.actual_status = newInfo.actual_status;
                 instance.intended_status = newInfo.intended_status;
                 instance.rentable = newInfo.rentable;
-                instance.gpu_util = newInfo.gpu_util;
                 instance.full_ip = newInfo.full_ip;
                 instance.status = newInfo.status
             }
@@ -90,7 +89,6 @@ export const createInstancesList = async () => {
         const {
             id,
             machine_id,
-            gpu_util,
             rentable,
             actual_status,
             intended_status,
@@ -107,7 +105,6 @@ export const createInstancesList = async () => {
         return {
             id,
             machine_id,
-            gpu_util,
             rentable,
             actual_status,
             intended_status,
@@ -143,12 +140,18 @@ export const getInstanceIP = async ({ id }) => {
     const response = await data.json();
     const instance = response.instances;
     // check the instance staus with ID from response.instances
-    const ports = instance.ports["5000/tcp"][0].HostPort;
-    const full_ip = "http://" + instance.public_ipaddr + ":" + ports;
+    let ports = instance.ports;
+    let full_ip;
+
+    if (instance.ports) {
+        ports = instance.ports["5000/tcp"][0].HostPort;
+        full_ip = "http://" + instance.public_ipaddr + ":" + ports;
+    }
+    
     return full_ip;
 }
 
-export const checkGPUInstanceAvailability = async ({id}) => {
+export const checkGPUInstanceAvailability = async ({ id }) => {
     var requestOptions = {
         method: "GET",
         headers: vastaiHeader,

@@ -49,17 +49,13 @@ export const processVideo = async (req, res) => {
         transcribeQueue.push(async (cb) => {
             // Wait for a GPU slot to become available
             const availableGPU = await checkGPUSlots();
-            availableGPU.tasks++;
             // Set up SSE headers
             res.setHeader("Content-Type", "text/event-stream");
             res.setHeader("Cache-Control", "no-cache");
             res.setHeader("Connection", "keep-alive");
-
             let progress = 0;
             let transcript = "";
-
             const transcriptionId = uuidv4();
-
             const interval = setInterval(async () => {
                 try {
                     progress = await checkTranscriptionProgress(transcriptionId, availableGPU.full_ip)
