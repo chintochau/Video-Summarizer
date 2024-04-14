@@ -37,7 +37,7 @@ export const fetchVideoTranscription = async (req, res) => {
 
 // processVideo function using queue
 export const processVideo = async (req, res) => {
-    const { userId, link,publicId, resourceType } = req.body;
+    const { userId, link, publicId, resourceType } = req.body;
     const video = JSON.parse(req.body.video);
     const transcribeOption = JSON.parse(req.body.transcribeOption);
 
@@ -61,17 +61,22 @@ export const processVideo = async (req, res) => {
             const transcriptionId = uuidv4();
 
             const interval = setInterval(async () => {
-                progress = await checkTranscriptionProgress(transcriptionId)
-                // Check the progress of the transcription
-                if (progress === 100) {
+                try {
+                    progress = await checkTranscriptionProgress(transcriptionId, availableGPU.full_ip)
+                    // Check the progress of the transcription
+                    if (progress === 100) {
+                        clearInterval(interval);
+                    } else {
+                        writeData({ progress });
+                    }
+                } catch (error) {
+                    console.error("Error occurred during transcription:", error);
                     clearInterval(interval);
-                } else {
-                    writeData({ progress });
                 }
             }, 7000);
 
             // Start the transcription
-            transcript = await transcribeLink({ link, transcriptionId,publicId, resourceType })
+            transcript = await transcribeLink({ link, transcriptionId, publicId, resourceType, gpuServerIP: availableGPU.full_ip })
             await getOrCreateVideoBySourceId({ video, userId, originalTranscript: transcript });
 
             writeData({ transcript });
@@ -94,6 +99,7 @@ export const processVideo = async (req, res) => {
         });
     } catch (error) {
         console.error("Error occurred during transcription:", error);
+        console.log("Error occurred during transcription", video.sourceTitle);
         writeData({ errorMessage: "Error occurred during transcription" });
         res.end(); // Add this line to end the response when an error occurs
     }

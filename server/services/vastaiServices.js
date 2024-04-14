@@ -12,7 +12,7 @@ import { vastaiHeader } from "../config/vastaiConfig.js";
  * @property {string} status
  * @property {number} tasks
  */
-export let instancesListWithAvailability = [];
+let instancesListWithAvailability = [];
 
 
 const getStatus = (actual, intended) => {
@@ -119,6 +119,46 @@ export const createInstancesList = async () => {
     return instances;
 };
 
+export const checkInstanceStatus = async ({ id }) => {
+    var requestOptions = {
+        method: "GET",
+        headers: vastaiHeader,
+        redirect: "follow",
+    };
+    const data = await fetch(`https://console.vast.ai/api/v0/instances/${id}`, requestOptions)
+    const response = await data.json();
+    const instance = response.instances;
+    // check the instance staus with ID from response.instances
+    const status = getStatus(instance.actual_status, instance.intended_status);
+    return status;
+}
+
+export const getInstanceIP = async ({ id }) => {
+    var requestOptions = {
+        method: "GET",
+        headers: vastaiHeader,
+        redirect: "follow",
+    };
+    const data = await fetch(`https://console.vast.ai/api/v0/instances/${id}`, requestOptions)
+    const response = await data.json();
+    const instance = response.instances;
+    // check the instance staus with ID from response.instances
+    const ports = instance.ports["5000/tcp"][0].HostPort;
+    const full_ip = "http://" + instance.public_ipaddr + ":" + ports;
+    return full_ip;
+}
+
+export const checkGPUInstanceAvailability = async ({id}) => {
+    var requestOptions = {
+        method: "GET",
+        headers: vastaiHeader,
+        redirect: "follow",
+    };
+    const data = await fetch(`https://console.vast.ai/api/v0/instances/${id}`, requestOptions)
+    const response = await data.json();
+    return response;
+}
+
 export const startInstance = async ({ id }) => {
     var raw = JSON.stringify({ "state": "running" });
     var requestOptions = {
@@ -128,7 +168,7 @@ export const startInstance = async ({ id }) => {
         redirect: 'follow'
     };
     return fetch(`https://console.vast.ai/api/v0/instances/${id}/`, requestOptions)
-        .then(response => response.text())
+        .then(response => response.json())
         .then(result => {
             return result;
         })
@@ -149,7 +189,7 @@ export const stopInstance = async ({ id }) => {
 
     try {
         const response = await fetch(`https://console.vast.ai/api/v0/instances/${id}/`, requestOptions);
-        const result_1 = await response.text();
+        const result_1 = await response.json();
         return result_1;
     } catch (error) {
         console.log('error', error);

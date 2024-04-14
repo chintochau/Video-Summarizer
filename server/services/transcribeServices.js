@@ -3,9 +3,9 @@ import fetch from "node-fetch";
 import FormData from "form-data";
 import fs from "fs";
 import Queue from "queue";
-import { instancesListWithAvailability } from "./vastaiServices.js";
+import { checkInstanceStatus, getInstanceIP, getInstanceListWithAvailability, startInstance, stopInstance } from "./vastaiServices.js";
 
-export const transcribeQueue = new Queue({ autostart: true, concurrency: 2 });
+export const transcribeQueue = new Queue({ autostart: true, concurrency: 9 });
 
 export const transcribeFile = async ({ file, filePath }) => {
   const formData = new FormData();
@@ -42,9 +42,9 @@ export const transcribeFile = async ({ file, filePath }) => {
   }
 };
 
-const tempServer = "http://79.116.40.166:29534"
 
-export const transcribeLink = async ({ link,transcriptionId,publicId,resourceType,gpuServerIP=tempServer }) => {
+export const transcribeLink = async ({ link, transcriptionId, publicId, resourceType, gpuServerIP }) => {
+  console.log("Transcribing link", link, transcriptionId, publicId, resourceType, gpuServerIP);
   const formData = new FormData();
   formData.append("link", link);
   formData.append("transcriptionId", transcriptionId);
@@ -52,7 +52,7 @@ export const transcribeLink = async ({ link,transcriptionId,publicId,resourceTyp
   formData.append("resourceType", resourceType);
 
   try {
-    const response = await fetch( gpuServerIP +"/transcribe_with_link", {
+    const response = await fetch(gpuServerIP + "/transcribe_with_link", {
       method: "POST",
       body: formData,
       headers: formData.getHeaders(),
@@ -70,12 +70,14 @@ export const transcribeLink = async ({ link,transcriptionId,publicId,resourceTyp
   }
 };
 
-export const checkTranscriptionProgress = async (transcriptionId, gpuServerIP = tempServer) => {
+export const checkTranscriptionProgress = async (transcriptionId, gpuServerIP) => {
+  console.log("Checking transcription progress for task on server", transcriptionId, gpuServerIP);
   const response = await fetch(gpuServerIP + `/check_transcription_progress?transcriptionId=${transcriptionId}`);
   if (response.ok) {
     const data = response.text();
     return data;
   } else {
+    console.error("Failed to check transcription progress");
     throw new Error("Failed to check transcription progress");
   }
 };
@@ -108,14 +110,62 @@ export const getQueueStatus = () => {
 };
 
 export const checkGPUSlots = async () => {
-  for (const gpu of instancesListWithAvailability) {
+  const currentInstances = await getInstanceListWithAvailability();
+  console.log("currentInstances, ", currentInstances);
+  for (const gpu of currentInstances) {
     console.log(`Checking slots for ${gpu.id}`);
-    console.log(gpu);
-    if (gpu.tasks < 3) {
+    if (gpu.status === "running"
+      && gpu.tasks < 3 && gpu.full_ip) {
       return gpu;
     }
   }
+
+  // is no running gpu available, start an inactive GPU, which is rentable
+  // using await startInstance({ id});
+  for (const gpu of currentInstances) {
+    if (gpu.status === "inactive" && gpu.rentable) {
+      console.log(`Starting instance ${gpu.id}`);
+
+      // try to start instance, if it fails, stop that instance and try the next one
+      console.log("Starting instance", gpu.id);
+      const response = await startInstance({ id: gpu.id });
+      if (response.success) {
+        console.log(`Instance ${gpu.id} started successfully`);
+        // reserve the slot, and wait for the instance to start
+        gpu.tasks++;
+
+        for (let i = 0; i < 8; i++) {
+          await new Promise((resolve) => setTimeout(resolve, 10000));
+          const status = await checkInstanceStatus({ id: gpu.id });
+          if (status === "running") {
+            console.log(`Instance ${gpu.id} is running`);
+            if (gpu.full_ip) {
+              return gpu;
+            } else {
+              getInstanceIP({ id: gpu.id })
+                .then((ip) => {
+                  gpu.full_ip = ip;
+                  console.log(`Instance ${gpu.id} has IP address ${ip}`);
+                  return gpu;
+                })
+                .catch((error) => {
+                  console.error("Error occurred during transcription:", error);
+                  stopInstance({ id: gpu.id });
+                });
+            }
+          }
+        }
+        console.log(`Instance ${gpu.id} failed to start`);
+      } else {
+        console.log(`Failed to start instance ${gpu.id}`);
+        stopInstance({ id: gpu.id });
+      }
+    }
+  }
+
+
   // If no GPUs are available, wait for a while and check again
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  console.log("No GPUs available, waiting for 30 seconds");
+  await new Promise((resolve) => setTimeout(resolve, 30000));
   return checkGPUSlots();
 };
