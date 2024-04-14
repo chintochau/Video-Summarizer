@@ -116,21 +116,8 @@ export const createInstancesList = async () => {
     return instances;
 };
 
-export const checkInstanceStatus = async ({ id }) => {
-    var requestOptions = {
-        method: "GET",
-        headers: vastaiHeader,
-        redirect: "follow",
-    };
-    const data = await fetch(`https://console.vast.ai/api/v0/instances/${id}`, requestOptions)
-    const response = await data.json();
-    const instance = response.instances;
-    // check the instance staus with ID from response.instances
-    const status = getStatus(instance.actual_status, instance.intended_status);
-    return status;
-}
 
-export const getInstanceIP = async ({ id }) => {
+export const getInstanceIPandStatus = async ({ id }) => {
     var requestOptions = {
         method: "GET",
         headers: vastaiHeader,
@@ -140,16 +127,17 @@ export const getInstanceIP = async ({ id }) => {
     const response = await data.json();
     const instance = response.instances;
     // check the instance staus with ID from response.instances
-    let ports = instance.ports;
+    let ports
     let full_ip;
 
     if (instance.ports) {
         ports = instance.ports["5000/tcp"][0].HostPort;
         full_ip = "http://" + instance.public_ipaddr + ":" + ports;
     }
-    
-    return full_ip;
+    const status = getStatus(instance.actual_status, instance.intended_status);
+    return { full_ip, status };
 }
+
 
 export const checkGPUInstanceAvailability = async ({ id }) => {
     var requestOptions = {

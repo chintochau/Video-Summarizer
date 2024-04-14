@@ -1,8 +1,11 @@
-import { checkInstanceStatus, createInstancesList, getInstanceListWithAvailability, startInstance, stopInstance } from "../services/vastaiServices.js";
+import { getQueueStatus } from "../services/transcribeServices.js";
+import {  createInstancesList, getInstanceListWithAvailability, startInstance, stopInstance } from "../services/vastaiServices.js";
 
 export const listGPUInstances = async (req, res) => {
   const instances = await getInstanceListWithAvailability();
-  res.json(instances)
+  const queueStatus = getQueueStatus();
+
+  res.json({instances, queueStatus});
 };
 
 
@@ -32,14 +35,3 @@ export const stopFirstInstance = async (req, res) => {
     });
 }
 
-
-export const checkInstanceStatusWithId = async (req, res) => {
-  const { id } = req.body;
-  try {
-      const response = await checkInstanceStatus({ id });
-      res.json(response);
-  } catch (error) {
-      console.error("Error occurred during transcription:", error);
-      res.status(500).send("Error occurred during transcription");
-  }
-}

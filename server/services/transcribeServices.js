@@ -3,7 +3,7 @@ import fetch from "node-fetch";
 import FormData from "form-data";
 import fs from "fs";
 import Queue from "queue";
-import { checkInstanceStatus, getInstanceIP, getInstanceListWithAvailability, startInstance, stopInstance } from "./vastaiServices.js";
+import {   getInstanceIPandStatus, getInstanceListWithAvailability, startInstance, stopInstance } from "./vastaiServices.js";
 
 export const transcribeQueue = new Queue({ autostart: true, concurrency: 9 });
 
@@ -101,10 +101,8 @@ export const getQueueStatus = () => {
   const isQueueStarted = transcribeQueue.running;
   // Check if the queue is stopped
   const isQueueStopped = transcribeQueue.stopped;
-  console.log(`Queue Length: ${queueLength}`);
-  console.log(`Pending Tasks: ${pendingTasks}`);
-  console.log(`Is Queue Started: ${isQueueStarted}`);
-  console.log(`Is Queue Stopped: ${isQueueStopped}`);
+  
+  return { queueLength, pendingTasks, isQueueStarted, isQueueStopped };
 };
 
 export const checkGPUSlots = async () => {
@@ -116,7 +114,7 @@ export const checkGPUSlots = async () => {
     // check if the instance is running and has less than 3 tasks, reserve the slot and return the instance
     if (gpu.status === "running" && gpu.tasks < 3 && gpu.full_ip) {
       // return the instance
-      console.log(`Instance ${gpu.id} is running, has less than 3 tasks, reserved the slot`);
+      console.log(`Instance ${gpu.id} is running, has less than 3 tasks, ipavailable, reserved the slot`);
       gpu.tasks++;
       return gpu;
     }
@@ -129,28 +127,11 @@ export const checkGPUSlots = async () => {
         // wait for 15 seconds
         await new Promise((resolve) => setTimeout(resolve, 15000));
         // check the status of the instance
-        const status = await checkInstanceStatus({ id: gpu.id });
-        // if the instance is running, return the instance
-        if (status === "running") {
-          if (gpu.full_ip) {
-            // if the instance does not have an IP address, try getting ip for 3 times
-            for (let i = 0; i < 3; i++) {
-              console.log(`Instance ${gpu.id} started, but does not have IP address, try to get IP address ${i + 1}/3`);
-              getInstanceIP({ id: gpu.id })
-                .then((ip) => {
-                  // if the instance has an IP address, return the instance
-                  if (ip) {
-                    gpu.full_ip = ip;
-                    return gpu;
-                  }
-                })
-                .catch((error) => {
-                  // if the instance does not have an IP address, skip the instance and try the next one
-                  console.error("Queue for starting instance, not able to get instance ip", error);
-                });
-              await new Promise((resolve) => setTimeout(resolve, 10000));
-            }
-          }
+        const { status, full_ip } = await getInstanceIPandStatus({ id: gpu.id });
+        if (status === "running" && full_ip) {
+          gpu.full_ip = full_ip;
+          console.log(`Instance ${gpu.id} finished starting, is running, has IP address ${full_ip}`);
+          return gpu;
         }
       }
       // if the instance is not running after 45 seconds, release the slot and try the next instance
@@ -167,40 +148,24 @@ export const checkGPUSlots = async () => {
         // instance started successfully
         console.log(`Instance ${gpu.id} started successfully`);
         // reserve the slot, and wait for the instance to finish startup
+        if (gpu.tasks > 3) {
+          // if the instance has more than 3 tasks, skip the instance and try the next one
+          break
+        }
         gpu.tasks++;
         // wait for the instance to start
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 8; i++) {
           // wait for 10 seconds
-          await new Promise((resolve) => setTimeout(resolve, 11000));
+          await new Promise((resolve) => setTimeout(resolve, 9000));
           // check the status of the instance
-          const status = await checkInstanceStatus({ id: gpu.id });
+          const { status, full_ip } = await getInstanceIPandStatus({ id: gpu.id });
           // if the instance is running, return the instance
-          if (status === "running") {
+          if (status === "running" && full_ip) {
+            gpu.full_ip = full_ip;
             console.log(`Instance ${gpu.id} finished starting, is running`);
-            if (gpu.full_ip) {
-              // if the instance has an IP address, return the instance
-              return gpu;
-            } else {
-              // if the instance does not have an IP address, try getting ip for 3 times
-              for (let i = 0; i < 3; i++) {
-                console.log(`Instance ${gpu.id} started, but does not have IP address, try to get IP address ${i + 1}/3`);
-                getInstanceIP({ id: gpu.id })
-                  .then((ip) => {
-                    if (ip) {
-                    gpu.full_ip = ip;
-                    console.log(`Instance ${gpu.id} has IP address ${ip}`);
-                    return gpu;
-                    }
-                  })
-                  .catch((error) => {
-                    console.error("Try to start instance, not able to get instance ip", error);
-                  });
-                await new Promise((resolve) => setTimeout(resolve, 10000));
-              }
-            }
+            return gpu;
           }
         }
-
         // if the instance is not running after 90 seconds, release the slot and stop the instance
         console.log(`Instance ${gpu.id} failed to start, now release slot and stop instance`);
         gpu.tasks--;
