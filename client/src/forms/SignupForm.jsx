@@ -98,14 +98,16 @@ export const SignupForm = () => {
         {error && (
           <FormDescription className="text-red-500">{error}</FormDescription>
         )}
-        {loading ? (
-          <Button type="submit" disabled>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Loading...
-          </Button>
-        ) : (
-          <Button type="submit">Register</Button>
-        )}
+        <div className="text-center ">
+          {loading ? (
+            <Button type="submit" disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Loading...
+            </Button>
+          ) : (
+            <Button type="submit">Register</Button>
+          )}
+        </div>
       </form>
     </Form>
   );

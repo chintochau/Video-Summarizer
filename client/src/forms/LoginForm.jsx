@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import AuthService from "@/services/AuthService";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const schema = z.object({
   email: z.string().min(3).max(20),
@@ -75,20 +76,22 @@ export const LoginForm = () => {
         />
         {error && <FormMessage type="error">{error}</FormMessage>}
 
-        {loading ? (
-          <Button type="submit" disabled>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Loading...
-          </Button>
-        ) : (
-          <Button type="submit">Sign in to account</Button>
-        )}
-        <FormDescription>
-          Don't have an account?{" "}
-          <a href="/register" className="text-indigo-600">
-            Register here
-          </a>
-        </FormDescription>
+        <div className="text-center gap-y-4 flex flex-col ">
+          {loading ? (
+            <Button type="submit" disabled className="mx-auto">
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Loading...
+            </Button>
+          ) : (
+            <Button type="submit" className="mx-auto">Sign in to account</Button>
+          )}
+          <FormDescription>
+            Don't have an account?{" "}
+            <Link to="/register" className="text-indigo-600">
+              Register here
+            </Link>
+          </FormDescription>
+        </div>
       </form>
     </Form>
   );

@@ -1,20 +1,19 @@
-import HowItWorks from "./HowItWorks";
-import About from "./About";
-import Footer from "./Footer";
+import HowItWorks from "./home/HowItWorks";
+import About from "./home/About";
+import Footer from "./common/Footer";
 import Summarizer from "./Summarizer";
-import Logo from "./Logo";
-import HeroSection from "./HeroSection";
-import FeaturesAndBenefits from "./FeaturesAndBenefits";
-import SocialProof from "./SocialProof";
-import PatternInterruption from "./PatternInterruption";
-import PricingPlans from "./PricingPlans";
-import FAQs from "./FAQ";
-import FinalCTA from "./FinalCTA";
+import HeroSection from "./home/HeroSection";
+import FeaturesAndBenefits from "./home/FeaturesAndBenefits";
+import SocialProof from "./home/SocialProof";
+import PatternInterruption from "./home/PatternInterruption";
+import PricingPlans from "./home/PricingPlans";
+import FAQs from "./home/FAQ";
+import FinalCTA from "./home/FinalCTA";
+import YTVideoField from "./summarizerComponents/YTVideoField";
 export {
   About,
   Footer,
   Summarizer,
-  Logo,
   HeroSection,
   HowItWorks,
   FeaturesAndBenefits,
@@ -23,4 +22,5 @@ export {
   PricingPlans,
   FAQs,
   FinalCTA,
+  YTVideoField,
 };

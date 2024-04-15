@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, useState, useContext } from "react";
 
 import YouTube from "react-youtube";
-import { useVideoContext } from "../contexts/VideoContext";
-import { calculateVideoCredits } from "../utils/creditUtils";
+import { useVideoContext } from "../../contexts/VideoContext";
+import { calculateVideoCredits } from "../../utils/creditUtils";
 import { useSummaryContext, defaultNewSummary } from "@/contexts/SummaryContext";
 import { useAuth } from "@/contexts/AuthContext";
 import SummaryService from "@/services/SummaryService";

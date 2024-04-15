@@ -9,7 +9,6 @@ import UserProfilePage from "./pages/UserProfilePage.jsx";
 import { ModelProvider } from "./contexts/ModelContext.jsx";
 import PricingPage from "./pages/PricingPage.jsx";
 import HistoryPage from "./pages/HistoryPage.jsx";
-import NotificationOverlay from "./components/NotificationOverlay.jsx";
 import { VideoProvider } from "./contexts/VideoContext.jsx";
 import Dashboard from "./components/dashboard/Dashboard.jsx";
 import Summarizer from "./components/Summarizer.jsx";
@@ -78,7 +77,6 @@ function App() {
                 </TranscriptProvider>
               </SummaryProvider>
             </VideoProvider>
-            <NotificationOverlay />
           </ModelProvider>
         </div>
       </div>
