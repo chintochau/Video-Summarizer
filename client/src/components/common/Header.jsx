@@ -9,8 +9,7 @@ import { HashLink } from "react-router-hash-link";
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
 
 const navigation = [
-  { name: "Transcribe", to: "", href: "/#transcribe" },
-  { name: "Summarize", to: "", href: "/#summarize" },
+  { name: "Features", to: "", href: "/#features" },
   { name: "Pricing", to: "", href: "/#pricing" },
   { name: "F&Q", to: "", href: "/#faq" },
 ];

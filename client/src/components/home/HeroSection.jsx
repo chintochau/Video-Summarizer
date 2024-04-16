@@ -22,7 +22,7 @@ const HeroSection = () => {
         Simplified
       </h1>
       <p className="mx-auto mt-6 max-w-2xl text-lg  text-slate-700 font-normal font-roboto">
-      Effortlessly extract and summarize key points from any video, saving you hours of note-taking. Perfect for students, professionals, and content creators.
+      Extract and summarize key points from any video, saving you hours of note-taking. Perfect for students, professionals, and content creators.
       </p>
 
       <div className="mt-10 flex justify-center gap-x-6">

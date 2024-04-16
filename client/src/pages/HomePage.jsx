@@ -17,7 +17,7 @@ const HomePage = () => {
       <div id="hero-section">
         <HeroSection />
       </div>
-      <div id="how-it-works">
+      <div id="features">
         <HowItWorks />
       </div>
       <div id="features">

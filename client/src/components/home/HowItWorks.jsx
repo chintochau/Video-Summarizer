@@ -1,40 +1,37 @@
 import React from 'react';
-// Assuming you have these icons in your project. If not, you can replace them with any icons of your choice.
-import { ArrowUpIcon, ArrowPathIcon, Bars3BottomLeftIcon } from '@heroicons/react/24/outline'
-import { Link } from 'react-router-dom';
 import { Container } from '../common/Container';
 import { useEffect, useState } from 'react'
 import { cn } from '@/utils/utils';
 import backgroundImage from '@/assets/background-features.jpg'
-import screenshotExpenses from '@/assets/expenses.png'
-import screenshotPayroll from '@/assets/payroll.png'
-import screenshotReporting from '@/assets/reporting.png'
+import screenshotHistory from '@/assets/history-demo.png'
 import screenshotVatReturns from '@/assets/vat-returns.png'
+import screenshotYoutube from '@/assets/youtube-demo.png'
+import screenshotUpload from '@/assets/upload-demo.png'
 
 
 const features = [
   {
-    title: 'Payroll',
+    title: 'Youtube integration',
     description:
-      "Keep track of everyone's salaries and whether or not they've been paid. Direct deposit not supported.",
-    image: screenshotExpenses,
+      "Get Transcript and Summary of Youtube videos in minutes",
+    image: screenshotYoutube,
   },
   {
-    title: 'Claim expenses',
+    title: 'Upload your Video',
     description:
-      "All of your receipts organized into one place, as long as you don't mind typing in the data by hand.",
-    image: screenshotPayroll,
+      "Upload Video / Audio / Subtitle files to start, and get the summary in minutes.",
+    image: screenshotUpload,
   },
   {
-    title: 'VAT handling',
+    title: 'Video Notebook',
     description:
-      "We only sell our software to companies who don't deal with VAT at all, so technically we do all the VAT stuff they need.",
-    image: screenshotReporting,
+      "Never fotget what you have watched, get the summary of the video you have watched.",
+    image: screenshotHistory,
   },
   {
-    title: 'Reporting',
+    title: 'Variety Summary Options',
     description:
-      'Easily export your data into an Excel spreadsheet where you can do whatever the hell you want with it.',
+      '',
     image: screenshotVatReturns,
   },
 ]
@@ -74,18 +71,19 @@ const HowItWorks = () => {
       <Container className="relative">
         <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
           <h2 className="text-3xl tracking-tight text-white sm:text-4xl md:text-5xl font-medium">
-            Everything you need to run your books.
+          Empower Your Learning with AI Summarization. 
           </h2>
           <p className="mt-6 text-lg tracking-tight text-blue-100">
-            Well everything you need if you aren’t that picky about minor
-            details like tax compliance.
+          Unleash the Potential of Knowledge in Minutes.
+
           </p>
         </div>
 
         <div
           className="mt-16 gap-y-2 pt-10 sm:gap-y-6 md:mt-20 lg:pt-0 flex "
         >
-          <div className='flex lg:flex-col w-full lg:w-1/2 justify-center lg:py-24'>
+
+          <div className='flex lg:flex-col w-full lg:w-1/3 justify-center lg:py-24 '>
             {
               features.map((feature, featureIndex) => (
                 <div key={featureIndex} className={cn(
@@ -96,14 +94,14 @@ const HowItWorks = () => {
                 )}
                   onClick={() => setSelectedIndex(featureIndex)}>
                   <h3 className={cn(
-                    ' text-lg ui-not-focus-visible:outline-none',
+                    ' text-lg ui-not-focus-visible:outline-none font-medium',
                     selectedIndex === featureIndex
                       ? 'text-blue-600 lg:text-white'
                       : 'text-blue-100 hover:text-white lg:text-white',
                   )}>{feature.title}</h3>
                   <p
                     className={cn(
-                      'mt-2 hidden text-sm lg:block',
+                      'mt-2 hidden text-sm lg:block font-thin',
                       selectedIndex === featureIndex
                         ? 'text-white'
                         : 'text-blue-100 group-hover:text-white',
@@ -116,8 +114,8 @@ const HowItWorks = () => {
             }
           </div>
 
-          <div className='hidden lg:block'>
-            <img src={features[selectedIndex].image} alt="" className='absolute w-[1080px] h-auto rounded-xl' />
+          <div className='hidden lg:block '>
+            <img src={features[selectedIndex].image} alt="" className='absolute h-full rounded-xl' />
           </div>
 
         </div>

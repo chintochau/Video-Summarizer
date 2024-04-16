@@ -15,7 +15,7 @@ export const defaultModels = [
 
 export const summarizeOptions = [
   {
-    id: 2,
+    id: "quick-summary",
     title: "Quick Summary",
     description: `General summary of the text`,
     prompt: `Your output should use the following template:
@@ -42,13 +42,13 @@ export const summarizeOptions = [
   Please ensure that the summary, bullet points, and explanations fit within the 330-word limit, while still offering a comprehensive and clear understanding of the video's content. Use the text above: {{Title}} {{Transcript}}.`,
   },
   {
-    id: 3,
+    id: "quick-table",
     title: "Quick Table",
     description: `Explore the video content in a table format`,
     prompt: `List out the key items in the video in a table format, the table should include the item name, description, the timestamp, and price if it is available`,
   },
   {
-    id: 3,
+    id: "quick-essay",
     title: "Quick Essay",
     description: `Explore a topic from multiple perspectives and reach a conclusion.`,
     prompt: `Your output should use the following template:
@@ -77,7 +77,7 @@ export const summarizeOptions = [
   For conclusion part, briefly summary the video`,
   },
   {
-    id: 5,
+    id: "quick-list",
     title: "Quick List",
     description: "Summarize the text in a list",
     prompt: `Summarize the text, give a title of the script, a brief about the script, then, List out at least 15 keypoints for the video transcript in a list format, as much key point as possible, for each point, give a starting timestamp reference. drop all unrelated info/ promotional info, such as advertising
@@ -89,14 +89,14 @@ export const summarizeOptions = [
   `,
   },
   {
-    id: 1,
+    id: "detail-summary",
     title: "Detail Summary: Auto",
     description: "Generate a detail summary by time section",
     prompt: `prompt controled by backend`,
     premimum: true,
   },
   {
-    id: 6,
+    id: "detail-summary-length",
     title: "Detail Summary: by Length",
     description: `Explain the ideas in detail.`,
     prompt: `below is a part of a large script, rewrite the key ideas of the text in short paragraphs, bold the keywords, and give a related title for this part. write your paragraph as in a precise manor, and summarize. the format should be return as below.
@@ -110,7 +110,7 @@ export const summarizeOptions = [
     premimum: true,
   },
   {
-    id: 7,
+    id: "meeting-minutes",
     title: "Meeting minutes",
     description: "testing",
     prompt: ``,
