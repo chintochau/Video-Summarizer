@@ -11,6 +11,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState({});
   const [credits, setCredits] = useState(null);
+  const [userId, setuserId] = useState(null)
 
   const clearUserData = () => {
     setUserData({})
@@ -24,6 +25,7 @@ export const AuthProvider = ({ children }) => {
         const userData = await getUserDataByEmail({ email: user.email });
         setUserData(userData);
         setCredits(parseFloat(userData.credits).toFixed(1));
+        setuserId(userData._id)
       } else {
         clearUserData()
       }
@@ -38,7 +40,7 @@ export const AuthProvider = ({ children }) => {
     loading,
     userData,
     credits,
-    userId: userData._id,
+    userId,
     setCredits,
   };
 

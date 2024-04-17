@@ -1,9 +1,11 @@
-import { vastaiHeader } from "../config/vastaiConfig.js";
-import { createInstancesList, startInstance, stopInstance } from "../services/vastaiServices.js";
-
+import { getQueueStatus } from "../services/transcribeServices.js";
+import {  createInstancesList, getInstanceListWithAvailability, startInstance, stopInstance } from "../services/vastaiServices.js";
 
 export const listGPUInstances = async (req, res) => {
-  res.json(await createInstancesList())
+  const instances = await getInstanceListWithAvailability();
+  const queueStatus = getQueueStatus();
+
+  res.json({instances, queueStatus});
 };
 
 
@@ -32,3 +34,4 @@ export const stopFirstInstance = async (req, res) => {
       res.status(500).send('An error occurred');
     });
 }
+

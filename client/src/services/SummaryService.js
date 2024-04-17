@@ -75,6 +75,30 @@ export default class SummaryService {
     }
   };
 
+  static summarizeWithAIUsingQuota = async (data,completionHandler) => {
+    try {
+      const response = await fetch(apiUrl + "/api/summarize-with-quota", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const reader = response.body
+        .pipeThrough(new TextDecoderStream())
+        .getReader();
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+          // Signal completion - Sending a specific value to indicate completion
+          completionHandler(null, { completed: true });
+          break;
+        }
+        completionHandler(null, value);
+      }
+    } catch (error) {
+      completionHandler(error, null);
+    }
+  }
+
   // Function to fetch summaries for a video
   // 404 only when no video found
   // response : { success: true, data: summaries, video: video}

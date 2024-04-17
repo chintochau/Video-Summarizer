@@ -8,7 +8,7 @@ import {
   rejectStyle,
   acceptStyle,
 } from "../pages/styles";
-import VideoField from "./YTVideoField";
+import VideoField from "./summarizerComponents/YTVideoField";
 import { formatFileSize, generateUUID } from "./Utils";
 import TranscriptField from "./TranscriptField";
 import SummaryField from "./SummaryField";

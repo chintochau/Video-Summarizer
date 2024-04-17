@@ -9,7 +9,7 @@ import DocumentTextIcon from '@heroicons/react/24/outline/DocumentTextIcon'
 const features = [
   {
     id: 1,
-    icon: <MicrophoneIcon class="h-6 w-6 text-blue-500" />,
+    icon: <MicrophoneIcon className="h-6 w-6 text-blue-500" />,
     title: 'YouTube Link Processing',
     description: 'Input any YouTube link and let our AI extract meaningful content to summarize.',
   },

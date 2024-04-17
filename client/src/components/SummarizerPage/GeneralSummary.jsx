@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -7,12 +7,23 @@ import {
 import YoutubeBar from "../summarizerComponents/YoutubeBar";
 import SummaryField from "../SummaryField";
 import TranscriptField from "../TranscriptField";
-import VideoField from "../YTVideoField";
+import VideoField from "../summarizerComponents/YTVideoField";
 import { useVideoContext } from "@/contexts/VideoContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from 'react-router-dom';
+import {Loader2} from 'lucide-react'
 
 const GeneralSummary = () => {
   const videoRef = useRef(null);
   const { youtubeId } = useVideoContext();
+  const { currentUser} = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (currentUser) {
+      navigate("/console");
+    }
+  }, [currentUser]);
 
   if (!youtubeId) {
     return (

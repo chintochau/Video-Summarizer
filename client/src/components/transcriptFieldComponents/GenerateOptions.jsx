@@ -8,7 +8,6 @@ import {
     CardHeader,
     CardTitle,
 } from "../ui/card"
-import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { ScrollArea } from '../ui/scroll-area'
 import { Button } from '../ui/button'
@@ -26,28 +25,31 @@ import { secondsToTimeInMinutesAndSeconds } from '@/utils/timeUtils'
 import { CheckIcon } from '@heroicons/react/24/outline'
 import { transcribeOptions, useTranscriptContext } from '@/contexts/TranscriptContext'
 import TranscriptHistoryTable from './TranscriptHistoryTable'
+import { Progress } from "@/components/ui/progress"
+import { Label } from "@/components/ui/label"
+
+
 
 
 
 const classNames = (...classes) => classes.filter(Boolean).join(' ')
 
 const GenerateOptions = (params) => {
-    const { generateTranscript } = params
-    const {setupTranscriptWithInputSRT} = useTranscriptContext()
-    const [selectedFile, setSelectedFile] = useState(null)
+    const { generateTranscript,uploadToCloudAndTranscribe } = params
+    const { setupTranscriptWithInputSRT } = useTranscriptContext()
     const { videoCredits, videoDuration } = useVideoContext()
     const [selectedIndex, setSelectedIndex] = useState(null)
-    const { credits, currentUser } = useAuth()
+    const { currentUser } = useAuth()
     const { selectedTranscribeOption,
         setSelectedTranscribeOption
     } = useTranscriptContext()
+    const [file, setFile] = useState(null)
 
     useEffect(() => {
-      setSelectedTranscribeOption(null)
+        setSelectedTranscribeOption(null)
     }, [])
-    
+
     const getTranscriptWithUpload = (file) => {
-        setSelectedFile(file);
         const reader = new FileReader();
         reader.onload = (e) => {
             const srt = e.target.result;
@@ -73,26 +75,27 @@ const GenerateOptions = (params) => {
                     <TableHead></TableHead>
                 </TableRow>
             </TableHeader>
-            <TableBody className=" cursor-pointer">
-                {transcribeOptions.map((option, index) => (<TableRow key={option.value} className={
-                    classNames(
-                        index === selectedIndex ? ' bg-zinc-200 hover:bg-zinc-100' : '',
-                        ""
-                    )
-                } onClick={
-                    () => {
-                        setSelectedIndex(index)
-                        setSelectedTranscribeOption(option)
-                    }
-                }>
-                    <TableCell>{option.label}</TableCell>
-                    <TableCell>{calculateTime(option.timeFactor)}</TableCell>
-                    <TableCell>{(videoCredits * option.creditFactor).toFixed(2)}</TableCell>
-                    <TableCell><CheckIcon className={
+            <TableBody className="cursor-pointer">
+                {transcribeOptions.map((option, index) => (
+                    <TableRow key={option.value} className={
                         classNames(
-                            index === selectedIndex ? '' : 'hidden',
-                            ' text-indigo-900 size-4')} /></TableCell>
-                </TableRow>))}
+                            index === selectedIndex ? ' bg-zinc-200 hover:bg-zinc-100' : '',
+                            ""
+                        )
+                    } onClick={
+                        () => {
+                            setSelectedIndex(index)
+                            setSelectedTranscribeOption(option)
+                        }
+                    }>
+                        <TableCell>{option.label}</TableCell>
+                        <TableCell>{calculateTime(option.timeFactor)}</TableCell>
+                        <TableCell>{(videoCredits * option.creditFactor).toFixed(2)}</TableCell>
+                        <TableCell><CheckIcon className={
+                            classNames(
+                                index === selectedIndex ? '' : 'hidden',
+                                ' text-indigo-900 size-4')} /></TableCell>
+                    </TableRow>))}
             </TableBody>
 
         </Table>)
@@ -118,7 +121,7 @@ const GenerateOptions = (params) => {
             </CardHeader>
             <CardContent>
                 <div className='flex flex-col gap-y-2 bg-gray-100 rounded-md p-4 '>
-                    <p className='text-center'>Youtube Transcript is not available, <br/> Login to genertae transcript with AI</p>
+                    <p className='text-center'>Youtube Transcript is not available for this Video, <br /> Login to genertae transcript with AI</p>
                     <Button className="mx-auto" onClick={() => { window.location.href = '/login' }}>Login</Button>
                 </div>
             </CardContent>
@@ -139,6 +142,10 @@ const GenerateOptions = (params) => {
                     <div className='flex flex-col gap-y-1'>
                         <Label htmlFor="model" className="pt-2"><CreditsCost /></Label>
                         <Button className="mx-auto" onClick={generateTranscript} disabled={!selectedTranscribeOption}>Generate</Button>
+                    </div>
+                    <div className='flex flex-col gap-y-1 ml-1'>
+                        <Label htmlFor="model" className="pt-2"><CreditsCost /></Label>
+                        <Button className="mx-auto" onClick={uploadToCloudAndTranscribe} disabled={!selectedTranscribeOption}>Upload to Cloud and transcribe</Button>
                     </div>
                 </CardFooter>
             </Card>

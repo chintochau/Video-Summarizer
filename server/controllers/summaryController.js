@@ -141,3 +141,11 @@ export const getTranscriptAndSummariesForVideo = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+export const handleSummaryRequestWithQuota = async (req, res) => {
+  try {
+    const summary = await generateSummary(req, res);
+    res.status(200).end();
+  } catch (error) {
+    res.status(500).json({ message: "Failed to generate summary", error: error.message });
+  }
+}

@@ -10,11 +10,13 @@ const HeadingsWithTabs = ({
   summaries,
   startSummary,
 }) => {
+
   const changeTab = (index) => {
     if (!startSummary) {
       setActiveTab(index);
     }
   };
+
   return (
     <div className="w-full">
       <div className="sm:hidden">
@@ -26,7 +28,6 @@ const HeadingsWithTabs = ({
           id="tabs"
           name="tabs"
           className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-          defaultValue={summaries[activeTab].name}
           onChange={(e) => changeTab(e.target.value)}
         >
           {summaries.map((summary, index) => (

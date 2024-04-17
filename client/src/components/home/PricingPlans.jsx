@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { tiers, useCheckout } from "../contexts/CheckoutContext";
+import { tiers, useCheckout } from "../../contexts/CheckoutContext";
 import { RadioGroup } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/20/solid";
-import CheckoutService from "../services/CheckoutService";
-import { useAuth } from "../contexts/AuthContext";
+import CheckoutService from "../../services/CheckoutService";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const frequencies = [
   { value: "monthly", label: "Monthly", priceSuffix: "/month", amount: 1 },
@@ -19,7 +20,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const PricingPlans = ({ home, happy }) => {
+const PricingPlans = () => {
   const [frequency, setFrequency] = useState(frequencies[0]);
 
   const RenderComponent = ({ tier }) => {
@@ -84,8 +85,13 @@ const CreditsTier = ({ tier }) => {
   const [creditsToBuy, setCreditsToBuy] = useState(tiers[0].priceOptions[0]);
   const { setSelectedPlan } = useCheckout();
   const {userId} = useAuth()
+  const navigate = useNavigate();
 
   const selectPlan = async () => {
+    if (!userId) {
+      navigate("/login");
+      return;
+    }
     const plan = {
       id: "credits",
       amount: creditsToBuy.value,
@@ -98,7 +104,7 @@ const CreditsTier = ({ tier }) => {
     const paymentUrl = await CheckoutService.processPayment(plan);
     window.location.href = paymentUrl;
   };
-
+  
   return (
     <div
       key={tier.id}
@@ -187,8 +193,14 @@ const CreditsTier = ({ tier }) => {
 const PricingTier = ({ tier, frequency }) => {
   const { setSelectedPlan } = useCheckout();
   const { userId } = useAuth();
+  const navigate = useNavigate();
 
-  const selectPlan = async ({ id, price, itemName, detail }) => {
+  const selectPlan = async ({ id, price, itemName }) => {
+    if (!userId) {
+      navigate("/login");
+      return;
+    }
+
     const plan = {
       id,
       amount: frequency.amount,
@@ -248,8 +260,7 @@ const PricingTier = ({ tier, frequency }) => {
           selectPlan({
             id: tier.id,
             price: tier.price[frequency.value],
-            itemName: `${tier.itemName} (${frequency.label})`,
-            detail: tier.features,
+            itemName: `${tier.itemName} (${frequency.label})`
           })
         }
       >

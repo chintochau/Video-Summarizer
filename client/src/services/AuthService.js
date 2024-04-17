@@ -6,7 +6,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
   sendPasswordResetEmail,
-  onAuthStateChanged
+  onAuthStateChanged,
+  GoogleAuthProvider,getAuth, signInWithPopup,
 } from "firebase/auth";
 
 class AuthService {
@@ -20,7 +21,7 @@ class AuthService {
     }
   }
 
-  // Log in a user
+  // Sign in a user
   static async login(email, password) {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -59,6 +60,16 @@ class AuthService {
         onAuthStateChangedCallback(null);
       }
     });
+  }
+
+  static async signInWithGoogle() {
+    const provider = new GoogleAuthProvider();
+    try {
+      const userCredential = await signInWithPopup(auth, provider);
+      return userCredential.user;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 }
 

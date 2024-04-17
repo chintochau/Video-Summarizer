@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import VideoField from '../YTVideoField'
+import VideoField from '../summarizerComponents/YTVideoField'
 import SummaryField from '../SummaryField'
 import TranscriptField from '../TranscriptField'
 import { useVideoContext } from '../../contexts/VideoContext'

@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, useState, useContext } from "react";
 
 import YouTube from "react-youtube";
-import { useVideoContext } from "../contexts/VideoContext";
-import { calculateVideoCredits } from "../utils/creditUtils";
+import { useVideoContext } from "../../contexts/VideoContext";
+import { calculateVideoCredits } from "../../utils/creditUtils";
 import { useSummaryContext, defaultNewSummary } from "@/contexts/SummaryContext";
 import { useAuth } from "@/contexts/AuthContext";
 import SummaryService from "@/services/SummaryService";
@@ -13,7 +13,7 @@ const VideoField = ({ youtubeId, videoRef }) => {
   const { setVideoDuration, setSourceTitle, setSourceType, setSourceId, setVideoCredits, setCurrentPlayTime,video } = useVideoContext();
   const {setSummaries} = useSummaryContext()
   const { resetTranscript,setLoadingTranscript,setupTranscriptWithInputSRT} = useTranscriptContext()
-  const {userId} = useAuth()
+  const {userId,currentUser} = useAuth()
   const [playing, setPlaying] = useState(false)
   const opts = {
     height: "auto",
@@ -41,6 +41,9 @@ const VideoField = ({ youtubeId, videoRef }) => {
 
   useEffect(() => {
     // fetch transcript and summaries for the video when the video source id changes
+
+
+
     const fetchTranscriptAndSummaries = async () => {
       setLoadingTranscript(true)
       try {
@@ -51,6 +54,10 @@ const VideoField = ({ youtubeId, videoRef }) => {
       }
 
       try {
+        if (!currentUser) {
+          setLoadingTranscript(false)
+          return
+        }
         const result = await SummaryService.getTranscriptAndSummaryForVideo(
           userId,
           youtubeId

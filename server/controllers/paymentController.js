@@ -8,27 +8,32 @@ import {
 import { stripe } from "../config/paymentConfig.js";
 
 export const processPayment = async (req, res) => {
-  const { priceId, mode } = getPriceId(req.body);
+  try {
+    const { priceId, mode } = getPriceId(req.body);
 
-  const session = await stripe.checkout.sessions.create({
-    line_items: [
-      {
-        price: priceId,
-        quantity: 1,
-      },
-    ],
-    mode,
-    success_url: process.env.SUCCESS_URL,
-    cancel_url: process.env.CANCEL_URL,
-  });
+    const session = await stripe.checkout.sessions.create({
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      mode,
+      success_url: process.env.SUCCESS_URL,
+      cancel_url: process.env.CANCEL_URL,
+    });
 
-  await createOrder({
-    sessionId: session.id,
-    transactionType: mode,
-    item: req.body,
-  });
+    await createOrder({
+      sessionId: session.id,
+      transactionType: mode,
+      item: req.body,
+    });
 
-  res.json({ url: session.url });
+    res.json({ url: session.url });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while processing the payment" });
+  }
 };
 
 // This is your Stripe CLI webhook secret for testing your endpoint locally.

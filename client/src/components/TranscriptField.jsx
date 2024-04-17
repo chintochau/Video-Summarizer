@@ -17,6 +17,11 @@ import { useTranscriptContext } from "@/contexts/TranscriptContext";
 import { ScrollArea } from "./ui/scroll-area";
 import { Textarea } from "./ui/textarea";
 import { Loader2 } from "lucide-react"
+import { Progress } from "./ui/progress";
+import { Label } from "./ui/label";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./ui/card";
+import UploadService from "@/services/UploadService";
 
 
 // Field
@@ -35,14 +40,59 @@ const TranscriptField = (params) => {
     setEditableTranscript
   } = useTranscriptContext()
   const { credits, userId } = useAuth();
+  const [transcribeProgress, setTranscribeProgress] = useState(0)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     setCurrentLine("")
   }, [])
 
-  const generateTranscript = async () => {
+  const onTranscribeProgress = (progress) => {
+    if (progress === -100) {
+      setErrorMessage("Transcription failed, pleaser retry.")
+    } else {
+      setTranscribeProgress(progress)
+    }
+  };
+  const onUploadProgress = (progress) => {
+    setUploadProgress(progress)
+  };
+
+  const resetProgress = () => {
+    setTranscribeProgress(0)
+    setUploadProgress(0)
+  }
+
+  const abortTranscription = () => {
+    setGeneratingTranscriptWithAI(false)
+    resetProgress()
+    TranscribeService.abortTranscription()
+  }
+
+  // upload to cloudinary, send link to transcribe
+  const uploadToCloudAndTranscribe = async () => {
+    resetProgress()
+    setGeneratingTranscriptWithAI(true);
+    try {
+      // console.log("using fake link");
+
+      const uploadResult = await UploadService.uploadVideo(file, onUploadProgress)
+      const data = {
+        fileLink: uploadResult.secure_url,
+        publicId: uploadResult.public_id,
+        resourceType: uploadResult.resource_type
+      }
+      generateTranscript(data)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  // transcribe video, youtube video, file upload or link
+  const generateTranscript = async ({ fileLink, publicId, resourceType }) => {
     let result
-    if (displayMode !== "youtube" && !file) {
+
+    if (displayMode !== "youtube" && !file && !fileLink) {
       alert("please select a file");
     }
     try {
@@ -56,22 +106,36 @@ const TranscriptField = (params) => {
           });
           break;
         default: // file
-          result = await TranscribeService.transcribeUserUploadFile({
-            file,
-            language: selectedTranscriptionLanguage,
-            videoCredits,
-            userId,
-            video,
-            transcribeOption: selectedTranscribeOption
-          });
+          if (!fileLink) {
+            result = await TranscribeService.transcribeUserUploadFile({
+              file,
+              language: selectedTranscriptionLanguage,
+              videoCredits,
+              userId,
+              video,
+              transcribeOption: selectedTranscribeOption
+            });
+          } else {
+            result = await TranscribeService.transcribeUserUploadFileWithLink({ // user api/processVideo
+              link: fileLink,
+              publicId,
+              resourceType,
+              language: selectedTranscriptionLanguage,
+              videoCredits,
+              userId,
+              video,
+              transcribeOption: selectedTranscribeOption
+            }, onTranscribeProgress);
+          }
           break;
       }
       setupTranscriptWithInputSRT(result);
     } catch (error) {
       resetTranscript();
-      alert(error.message);
+      console.error(error);
     }
   }
+
 
   // 點擊轉錄時跳轉視頻
   const handleTranscriptClick = (time) => {
@@ -132,15 +196,10 @@ const TranscriptField = (params) => {
   };
 
   // delete transcript box
-
   const deleteTranscriptBox = (index) => {
     const updatedTranscript = editableTranscript.filter((entry, i) => i !== index);
     setEditableTranscript(updatedTranscript);
   };
-
-  function classNames(...classes) {
-    return classes.filter(Boolean).join(" ");
-  }
 
   return (
     <div className="flex-col h-full flex"
@@ -156,11 +215,31 @@ const TranscriptField = (params) => {
         (
           <div className="h-40 flex-1">
             {generatingTranscriptWithAI ? (
-              <div className="flex-col">
-                <div className="mx-auto animate-spin rounded-full h-10 w-10 border-r-2 border-b-2 border-indigo-600" />{" "}
-                <div>Generating Transcript...</div>
-                <button>Cancel</button>
-              </div>) : (<div className="flex-col h-full">
+              <Card className="m-4">
+                <CardHeader>
+                  <CardTitle>
+                    Generating Transcript
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Loader2 className="mx-auto size-16 opacity-20 animate-spin" />
+                  {uploadProgress > 0 && <div>
+                    <Label>Uploading to Cloud...</Label>
+                    <Progress value={uploadProgress} /></div>}
+                  {uploadProgress === 100 &&
+                    <div>
+                      <Label>Connecting to server...</Label>
+                    </div>}
+                  {transcribeProgress > 0 && <div>
+                    <Label>Transcribing...</Label>
+                    <Progress value={transcribeProgress} /></div>
+                  }
+                  {errorMessage && <div className="text-red-500">{errorMessage}</div>}
+                </CardContent>
+                <CardFooter>
+                  <Button onClick={abortTranscription}>Cancel</Button>
+                </CardFooter>
+              </Card>) : (<div className="flex-col h-full">
                 {transcriptAvailable ? (
                   <div className="h-full flex flex-col">
                     <ControlBar
@@ -217,6 +296,7 @@ const TranscriptField = (params) => {
                 ) : (<GenerateOptions
                   loadSrtTranscript={setupTranscriptWithInputSRT}
                   generateTranscript={generateTranscript}
+                  uploadToCloudAndTranscribe={uploadToCloudAndTranscribe}
                 />)
                 }
               </div>)}
