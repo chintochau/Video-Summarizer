@@ -7,6 +7,7 @@ import screenshotHistory from '@/assets/history-demo.png'
 import screenshotVatReturns from '@/assets/vat-returns.png'
 import screenshotYoutube from '@/assets/youtube-demo.png'
 import screenshotUpload from '@/assets/upload-demo.png'
+import screenshotSummaryOption from '@/assets/summary-options.png'
 
 
 const features = [
@@ -31,8 +32,8 @@ const features = [
   {
     title: 'Variety Summary Options',
     description:
-      '',
-    image: screenshotVatReturns,
+      "Choose from a variety of summary options to get the summary you need.",
+    image: screenshotSummaryOption,
   },
 ]
 
@@ -71,10 +72,10 @@ const HowItWorks = () => {
       <Container className="relative">
         <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
           <h2 className="text-3xl tracking-tight text-white sm:text-4xl md:text-5xl font-medium">
-          Empower Your Learning with AI Summarization. 
+            Empower Your Learning with AI Summarization.
           </h2>
           <p className="mt-6 text-lg tracking-tight text-blue-100">
-          Unleash the Potential of Knowledge in Minutes.
+            Unleash the Potential of Knowledge in Minutes.
 
           </p>
         </div>

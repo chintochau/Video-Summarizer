@@ -1,6 +1,6 @@
 import Markdown from "markdown-to-jsx";
 import React, { useState } from "react";
-import OptionField from "../components/OptionField";
+import OptionField from "../OptionField";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 
@@ -15,6 +15,9 @@ const SummaryTab = (data) => {
     performSummarize,
     creditCount = { creditCount },
   } = data;
+  if (!summaryObject) {
+    return null;
+  }
   const { summary } = summaryObject;
 
   const showText = () => {

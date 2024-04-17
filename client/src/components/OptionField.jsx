@@ -22,17 +22,18 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Textarea } from "./ui/textarea";
-import { Label } from "./ui/label";
+import { Info } from 'lucide-react';
 
 const OptionCard = (params) => {
-  const { option, handleClick, creditCount } = params;
+  const { option, handleClick, creditCount, variant } = params;
   const { premimum } = option;
   const { videoDuration } = useVideoContext();
-  const { id, title, description, prompt } = option;
+  const { id, title, description, prompt,icon } = option;
   const [adjustableCreditCount, setAdjustableCreditCount] = useState(0);
   const [interval, setInterval] = useState(600);
   const { parentSrtText } = useTranscriptContext();
   const { currentUser } = useAuth();
+
 
   useEffect(() => {
     let factor;
@@ -88,6 +89,21 @@ const OptionCard = (params) => {
   const memberOnly = !currentUser && premimum;
   const buttonDisalbed = !parentSrtText || memberOnly;
 
+  if (variant === "custom") {
+    return (<div className="flex flex-col items-end">
+      <Textarea
+        placeholder={`Write your prompt here, for Example: \n 
+${summarizeOptions.quickSummaryOptions[3].prompt}`}
+        onChange={(e) => {
+          console.log(e.target.value);
+        }}
+        className="h-40 placeholder:text-slate-400"
+      />
+      <Button className="w-auto mt-2">Summarize</Button>
+    </div>)
+  }
+
+
   return (
     <Card
       className={cn(
@@ -141,24 +157,35 @@ const OptionCard = (params) => {
 };
 
 const OptionField = ({ handleClick, creditCount, setInterval }) => {
+  const { quickSummaryOptions, detailSummaryOptions } = summarizeOptions;
   return (
-    <div className="flex flex-col gap-y-4 mx-4 pb-8">
-      <h3 className="pt-6 text-start font-display font-semibold text-2xl">
-        Summary Options：
-      </h3>
-      <div className="flex flex-col items-end">
-        <Label className="w-full">Custom prompt:</Label>
-        <Textarea
-          placeholder={`Write your own prompt here...
-Example: Summarize the video content in a table format`}
-          onChange={(e) => {
-            console.log(e.target.value);
-          }}
-        />
-        <Button className="w-auto mr-6 mt-2">Summarize</Button>
+    <div className="flex flex-col gap-y-4 mx-4 pb-8 pt-4">
+      <CardTitle className="text-indigo-600/80">Custom prompt:</CardTitle>
+      <OptionCard variant="custom" option={{ premimum: false }} />
+      <div className="flex items-center">
+        <CardTitle className="text-indigo-600/80">Quick Summary</CardTitle>
+        <HoverCard><HoverCardTrigger><Info className="w-5 h-5 ml-2 text-indigo-500 hover:text-indigo-400" /></HoverCardTrigger>
+          <HoverCardContent className=" w-3/4 font-medium">
+              Quick Summary work best for video length between <span className=" font-semibold">8 to 15 minutes</span>  long.
+           </HoverCardContent>
+        </HoverCard>
       </div>
       <div className="xl:grid xl:grid-cols-2 flex flex-col gap-y-4 xl:gap-4">
-        {summarizeOptions.map((option, index) => {
+        {quickSummaryOptions.map((option, index) => {
+          return (
+            <OptionCard
+              option={option}
+              key={index}
+              handleClick={handleClick}
+              creditCount={creditCount}
+              setInterval={setInterval}
+            />
+          );
+        })}
+      </div>
+      <CardTitle className="text-indigo-600/80">Detail Summary</CardTitle>
+      <div className="xl:grid xl:grid-cols-2 flex flex-col gap-y-4 xl:gap-4">
+        {detailSummaryOptions.map((option, index) => {
           return (
             <OptionCard
               option={option}

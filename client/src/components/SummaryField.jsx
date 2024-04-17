@@ -4,8 +4,8 @@ import SummaryService from "../services/SummaryService";
 import { languageList } from "../constants";
 import { useAuth } from "../contexts/AuthContext";
 import { useVideoContext } from "../contexts/VideoContext";
-import HeadingsWithTabs from "../summary-field-conpoments/HeadingsWithTabs";
-import SummaryTab from "../summary-field-conpoments/SummaryTab";
+import HeadingsWithTabs from "./summary-field-conpoments/HeadingsWithTabs.jsx";
+import SummaryTab from "./summary-field-conpoments/SummaryTab.jsx";
 import { checkCredits } from "../utils/creditUtils";
 import { useSummaryContext } from "@/contexts/SummaryContext.jsx";
 import { useTranscriptContext } from "@/contexts/TranscriptContext.jsx";
@@ -56,6 +56,7 @@ const SummaryField = ({ videoRef }) => {
   };
 
   useEffect(() => {
+    // Calculate the credit count, and set active tab to 0 when the parent transcript text changes
     if (parentTranscriptText) {
       setCreditCount(
         calculateCredit({
@@ -63,6 +64,7 @@ const SummaryField = ({ videoRef }) => {
           model: "claude3h",
         })
       );
+      setActiveTab(0);
     }
     return () => {};
   }, [parentTranscriptText]);
