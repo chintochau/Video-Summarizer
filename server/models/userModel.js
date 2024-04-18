@@ -11,7 +11,7 @@ const UserSchema = new mongoose.Schema({
     enum: ["free", "tier-professional", "tier-mastermind"],
     default: "free",
   },
-  credits: { type: Number, default: 5 },
+  credits: { type: Number, default: 10 },
   subscriptionId: { type: String }, // Add the subscription ID field
   expirationDate: { type: Date }, // Add the expiration date field
 });
