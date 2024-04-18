@@ -51,7 +51,7 @@ const Dashboard = () => {
         return (
             <button type="button" className="-m-2.5 p-2.5 text-gray-400 lg:hidden" onClick={() => setSidebarOpen(true)}>
             <span className="sr-only">Open sidebar</span>
-            <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+            <Bars3Icon className="h-6 w-6 mx-2" aria-hidden="true" />
         </button>
         )
     }
@@ -104,21 +104,17 @@ const Dashboard = () => {
                                     </Transition.Child>
 
                                     <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-2 ring-1 ring-white/10">
-                                        <div className="flex h-16 shrink-0 items-center">
-                                            <img
-                                                className="h-8 w-auto"
-                                                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                                                alt="Your Company"
-                                            />
+                                        <div className="flex h-16 shrink-0 items-center text-white text-3xl">
+                                            Fusion AI
                                         </div>
                                         <nav className="flex flex-1 flex-col">
                                             <ul role="list" className="-mx-2 flex-1 space-y-1">
                                                 {navigation.map((item) => (
                                                     <li key={item.name}>
-                                                        <a
+                                                        <Link
                                                             to={item.to}
                                                             className={classNames(
-                                                                item.current
+                                                                currentPathname === item.to 
                                                                     ? 'bg-gray-800 text-white'
                                                                     : 'text-gray-400 hover:text-white hover:bg-gray-800',
                                                                 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
@@ -126,7 +122,7 @@ const Dashboard = () => {
                                                         >
                                                             <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
                                                             {item.name}
-                                                        </a>
+                                                        </Link>
                                                     </li>
                                                 ))}
                                             </ul>
