@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { cn } from '@/utils/utils';
 import backgroundImage from '@/assets/background-features.jpg'
 import screenshotHistory from '@/assets/history-demo.png'
-import screenshotVatReturns from '@/assets/vat-returns.png'
 import screenshotYoutube from '@/assets/youtube-demo.png'
 import screenshotUpload from '@/assets/upload-demo.png'
 import screenshotSummaryOption from '@/assets/summary-options.png'
@@ -116,7 +115,7 @@ const HowItWorks = () => {
           </div>
 
           <div className='hidden lg:block '>
-            <img src={features[selectedIndex].image} alt="" className='absolute h-full rounded-xl' />
+            <img src={features[selectedIndex].image} alt="" className='absolute h-full rounded-xl' loading='lazy'/>
           </div>
 
         </div>
