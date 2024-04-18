@@ -184,6 +184,7 @@ const OptionField = ({ handleClick, creditCount, setInterval }) => {
         })}
       </div>
       <CardTitle className="text-indigo-600/80">Detail Summary</CardTitle>
+      <div className=" bg-red-600/20 p-2 text-red-600 text-sm rounded-md">Detail summary is not working now, will be fixed soon</div>
       <div className="xl:grid xl:grid-cols-2 flex flex-col gap-y-4 xl:gap-4">
         {detailSummaryOptions.map((option, index) => {
           return (

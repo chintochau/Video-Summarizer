@@ -2,11 +2,15 @@ import Video from "../models/videoModel.js";
 import {
   checkGPUSlots,
   checkTranscriptionProgress,
+  stopIdleInstances,
   transcribeFile,
   transcribeLink,
   transcribeQueue,
 } from "../services/transcribeServices.js";
-import { getOrCreateVideoAndUpdateTranscript, getOrCreateVideoBySourceId } from "../services/videoServices.js";
+import {
+  getOrCreateVideoAndUpdateTranscript,
+  getOrCreateVideoBySourceId,
+} from "../services/videoServices.js";
 import { v4 as uuidv4 } from "uuid";
 import ytdl from "ytdl-core";
 import tmp from "tmp";
@@ -120,6 +124,11 @@ export const processVideo = async (req, res) => {
       });
 
       availableGPU.tasks--;
+      // stop GPU instance after 10 seconds when no tasks are running
+      setTimeout(() => {
+        stopIdleInstances();
+      }, 10000);
+
       cb();
     });
     console.log("Pushed to queue, task:", sourceTitle);
@@ -136,7 +145,7 @@ const pipelineAsync = util.promisify(pipeline);
 
 export const handleYoutubeTranscribeRequest = async (req, res) => {
   const { youtubeId, userId, video } = req.body;
-  const {sourceTitle} = video;
+  const { sourceTitle } = video;
 
   try {
     console.log("Processing youtube video", youtubeId);
@@ -178,6 +187,11 @@ export const handleYoutubeTranscribeRequest = async (req, res) => {
         if (err) throw err;
       });
       res.json(result);
+      // stop GPU instance after 10 seconds when no tasks are running
+      setTimeout(() => {
+        stopIdleInstances();
+      }, 10000);
+
       cb();
     });
   } catch (error) {

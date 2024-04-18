@@ -194,3 +194,15 @@ export const checkGPUSlots = async ({ sourceTitle }, retryCount = 0) => {
   }
 
 }
+
+
+export const stopIdleInstances = async () => {
+  const currentInstances = await getInstanceListWithAvailability();
+
+  for (const gpu of currentInstances) {
+    if (gpu.status === "running" && gpu.tasks === 0) {
+      console.log(`Stopping idle instance ${gpu.id}`);
+      stopInstance({ id: gpu.id });
+    }
+  }
+}
