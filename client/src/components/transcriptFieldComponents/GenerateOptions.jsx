@@ -25,7 +25,6 @@ import { secondsToTimeInMinutesAndSeconds } from '@/utils/timeUtils'
 import { CheckIcon } from '@heroicons/react/24/outline'
 import { transcribeOptions, useTranscriptContext } from '@/contexts/TranscriptContext'
 import TranscriptHistoryTable from './TranscriptHistoryTable'
-import { Progress } from "@/components/ui/progress"
 import { Label } from "@/components/ui/label"
 
 
@@ -43,7 +42,6 @@ const GenerateOptions = (params) => {
     const { selectedTranscribeOption,
         setSelectedTranscribeOption
     } = useTranscriptContext()
-    const [file, setFile] = useState(null)
 
     useEffect(() => {
         setSelectedTranscribeOption(null)
@@ -122,7 +120,7 @@ const GenerateOptions = (params) => {
             <CardContent>
                 <div className='flex flex-col gap-y-2 bg-gray-100 rounded-md p-4 '>
                     <p className='text-center'>Youtube Transcript is not available for this Video, <br /> Login to genertae transcript with AI</p>
-                    <Button className="mx-auto" onClick={() => { window.location.href = '/login' }}>Login</Button>
+                    <Button className="mx-auto" onClick={() => { window.location.href = '/login' }} variant="outline">Sign in</Button>
                 </div>
             </CardContent>
         </Card>

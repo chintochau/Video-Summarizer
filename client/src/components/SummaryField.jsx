@@ -180,7 +180,7 @@ const SummaryField = ({ videoRef }) => {
 
   return (
     <div className="relative h-full flex flex-col dark:bg-zinc-800">
-      <div className="flex justify-between px-3">
+      <div className="flex justify-between px-3 pt-1">
         <div className=" flex items-center gap-x-2">
           <LanguageIcon className="w-6 h-6 text-gray-600" />
           <Select onValueChange={handleLanguageChange} defaultValue="English">
@@ -214,12 +214,14 @@ const SummaryField = ({ videoRef }) => {
           )}
         </div>
       </div>
+      
       <HeadingsWithTabs
         startSummary={startSummary}
         summaries={summaries}
         setActiveTab={setActiveTab}
         activeTab={activeTab}
       />
+
       <SummaryTab
         videoRef={videoRef}
         activeTab={activeTab}

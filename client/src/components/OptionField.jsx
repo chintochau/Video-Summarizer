@@ -160,8 +160,8 @@ const OptionField = ({ handleClick, creditCount, setInterval }) => {
   const { quickSummaryOptions, detailSummaryOptions } = summarizeOptions;
   return (
     <div className="flex flex-col gap-y-4 mx-4 pb-8 pt-4">
-      <CardTitle className="text-indigo-600/80">Custom prompt:</CardTitle>
-      <OptionCard variant="custom" option={{ premimum: false }} />
+      {/* <CardTitle className="text-indigo-600/80">Custom prompt:</CardTitle>
+      <OptionCard variant="custom" option={{ premimum: false }} /> */}
       <div className="flex items-center">
         <CardTitle className="text-indigo-600/80">Quick Summary</CardTitle>
         <HoverCard><HoverCardTrigger><Info className="w-5 h-5 ml-2 text-indigo-500 hover:text-indigo-400" /></HoverCardTrigger>

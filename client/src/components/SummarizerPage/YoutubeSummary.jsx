@@ -11,14 +11,14 @@ import {
 } from "../ui/resizable"
 import YoutubeBar from '../summarizerComponents/YoutubeBar'
 
-const YoutubeSummary = () => {
+const YoutubeSummary = ({Bar3Button}) => {
     const videoRef = useRef(null)
     const { youtubeId } = useVideoContext()
 
     return (
         <div className="flex flex-col h-full ">
             {/* YoutubeBar */}
-            <YoutubeBar />
+            <YoutubeBar Bar3Button={Bar3Button}/>
             {/* Main Content */}
             {youtubeId && <ResizablePanelGroup direction="horizontal">
                 <ResizablePanel className="flex flex-col flex-1" >

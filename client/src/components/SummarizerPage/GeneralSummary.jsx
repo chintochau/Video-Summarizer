@@ -12,6 +12,8 @@ import { useVideoContext } from "@/contexts/VideoContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from 'react-router-dom';
 import {Loader2} from 'lucide-react'
+import { Separator } from "../ui/separator";
+import { Button } from "../ui/button";
 
 const GeneralSummary = () => {
   const videoRef = useRef(null);
@@ -27,12 +29,17 @@ const GeneralSummary = () => {
 
   if (!youtubeId) {
     return (
-      <div className=" h-2/4 flex flex-col justify-center mx-auto max-w-3xl w-full">
+      <div className=" h-3/4 flex flex-col justify-center mx-auto max-w-3xl w-full">
         <div className="flex flex-col items-center justify-center">
           <h1 className="text-3xl font-bold">Summarize Youtube Video</h1>
           <p className="text-lg text-gray-500">Input yourtube link to get started</p>
         </div>
         <div className=""><YoutubeBar /></div>
+        <div className="text-center">
+          <Separator className="my-4"/>
+          <div className="font-semibold text-lg my-4"> Or Sign in to upload video</div>
+          <Button variant="outline" onClick={() => navigate("/login")}>Sign in</Button>
+        </div>
       </div>
     );
   }

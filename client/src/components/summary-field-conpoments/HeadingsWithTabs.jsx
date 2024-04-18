@@ -1,4 +1,6 @@
 import React from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { DocumentTextIcon  } from "@heroicons/react/24/outline";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -19,23 +21,27 @@ const HeadingsWithTabs = ({
 
   return (
     <div className="w-full">
-      <div className="sm:hidden">
+      <div className="sm:hidden flex items-center gap-x-2 px-3 border-gray-200 border-b pb-1">
         <label htmlFor="tabs" className="sr-only">
           Select a tab
         </label>
         {/* Use an "onChange" listener to redirect the user to the selected tab URL. */}
-        <select
-          id="tabs"
-          name="tabs"
-          className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-          onChange={(e) => changeTab(e.target.value)}
+        <DocumentTextIcon className="w-6 h-6 text-indigo-600"/>
+        <Select
+          onValueChange={(e) => setActiveTab(e) }
+          defaultValue={0}
         >
+          <SelectTrigger>
+            <SelectValue/>
+          </SelectTrigger>
+          <SelectContent>
           {summaries.map((summary, index) => (
-            <option key={index} value={index}>
+            <SelectItem key={index} value={index}>
               {summary.summaryType}
-            </option>
+            </SelectItem>
           ))}
-        </select>
+          </SelectContent>
+        </Select>
       </div>
       <div className="hidden sm:block">
         <div className="border-b border-gray-200">
