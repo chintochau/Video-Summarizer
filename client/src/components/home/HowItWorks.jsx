@@ -80,10 +80,10 @@ const HowItWorks = () => {
         </div>
 
         <div
-          className="mt-16 gap-y-2 pt-10 sm:gap-y-6 md:mt-20 lg:pt-0 flex "
+          className="mt-16 gap-y-2 pt-10 sm:gap-y-6 md:mt-20 lg:pt-0 flex flex-col lg:flex-row"
         >
 
-          <div className='flex lg:flex-col w-full lg:w-1/3 justify-center lg:py-24 '>
+          <div className='flex flex-wrap lg:flex-col w-full lg:w-1/3 justify-center lg:py-24 '>
             {
               features.map((feature, featureIndex) => (
                 <div key={featureIndex} className={cn(
@@ -114,8 +114,8 @@ const HowItWorks = () => {
             }
           </div>
 
-          <div className='hidden lg:block '>
-            <img src={features[selectedIndex].image} alt="" className='absolute h-full rounded-xl' loading='lazy'/>
+          <div className='lg:block '>
+            <img src={features[selectedIndex].image} alt="" className='lg:absolute h-full rounded-xl' loading='lazy'/>
           </div>
 
         </div>
