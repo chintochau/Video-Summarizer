@@ -131,7 +131,7 @@ const UploadSummary = ({ Bar3Button }) => {
       {/*Dropzone */}
       {!file && displayMode === "empty" && (
         <div className="flex flex-col lg:flex-row">
-          <div className=" w-full flex lg:w-1/3 lg:sticky lg:top-0 bg-gray-950 lg:bg-gray-50">
+          <div className=" w-full flex lg:w-1/3 lg:sticky lg:top-0 bg-gray-950 lg:bg-white">
             {Bar3Button && <Bar3Button />}
             <div
               {...getRootProps()}
@@ -148,8 +148,8 @@ const UploadSummary = ({ Bar3Button }) => {
                   Selected File: {file.name} - {formatFileSize(file.size)}
                 </p>
               ) : (
-                <p className=" m-auto text-gray-600 text-sm p-1 flex items-center">
-                  Upload Audio/ Video here
+                <p className=" m-auto text-gray-600 text-sm p-1 flex items-center text-center">
+                  Upload Audio/ Video here <br/>(100 MB limitation for now)
                 </p>
               )}
             </div>
@@ -182,7 +182,8 @@ const UploadSummary = ({ Bar3Button }) => {
                       Selected File: {file.name} - {formatFileSize(file.size)}
                     </p>
                   ) : (
-                    <p className=" m-auto">Upload Audio/ Video here</p>
+                    // 100 mb maximum file size for free plan
+                    <p className=" m-auto">Upload Audio/ Video here (100 MB limitation for now)</p>
                   )}
                 </div>
               )}
