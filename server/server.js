@@ -180,7 +180,7 @@ async function processAudioFile(filePath) {
 }
 
 app.post(
-  "/api/transcribeYoutubeVideo",
+  "/api/transcribeYoutubeVideoNOTINUSE",
   cors(),
   bodyParser.json({ limit: "10mb" }),
   async (req, res) => {

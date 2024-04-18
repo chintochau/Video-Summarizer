@@ -70,7 +70,7 @@ export const TranscriptProvider = ({ children }) => {
 
 
 export const transcribeOptions = [
-  { value: 'faster-whisper', label: 'Queue', information: 'Take longer timer', creditFactor: 0.3, timeFactor: { lower: 0.13, upper: 0.36 } },
-  { value: 'assembly', label: 'Dedicated', information: 'Free for now', creditFactor: 0.6, timeFactor: { lower: 0.07, upper: 0.1 } },
-  { value: 'openai', label: 'Express', information: 'Better Performance', creditFactor: 1, timeFactor: { lower: 0.033, upper: 0.06 } },
+  { value: 'faster-whisper', label: 'Queue', information: 'Take longer timer', creditFactor: 0.3, timeFactor: { lower: 0.13, upper: 0.36 }, available:true},
+  { value: 'assembly', label: 'Dedicated', information: 'Free for now', creditFactor: 0.6, timeFactor: { lower: 0.07, upper: 0.1 } , available:false},
+  { value: 'openai', label: 'Express', information: 'Better Performance', creditFactor: 1, timeFactor: { lower: 0.033, upper: 0.06 } , available:false},
 ]
