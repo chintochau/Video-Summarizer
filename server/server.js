@@ -20,6 +20,7 @@ import transcribeRoutes from "./routes/transcribeRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import youtubeRoutes from "./routes/youtubeRoutes.js";
 import vastaiRoutes from "./routes/vastaiRoutes.js";
+import embeddingsRoutes from "./routes/embeddingsRoutes.js";
 import { transcribeFile } from "./services/transcribeServices.js";
 
 //running python code for testing
@@ -56,6 +57,7 @@ app.use("/users", cors(), userRoutes);
 app.use("/api", cors(), transcribeRoutes);
 app.use("/api", cors(), paymentRoutes);
 app.use("/api", cors(), youtubeRoutes);
+app.use("/api", cors(), embeddingsRoutes);
 app.use("/", cors(), vastaiRoutes);
 
 //PRIVATE transcribe Audio

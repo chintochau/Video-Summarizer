@@ -7,7 +7,8 @@ import {
     ClockIcon,
     CloudArrowUpIcon,
     PlayCircleIcon,
-    UserCircleIcon
+    UserCircleIcon,
+    BookOpenIcon
 } from '@heroicons/react/24/outline'
 import { Link, Route, Routes, useLocation } from 'react-router-dom'
 import HistoryPage from '../../pages/HistoryPage'
@@ -15,6 +16,8 @@ import UserProfilePage from '../../pages/UserProfilePage'
 import YoutubeSummary from '../SummarizerPage/YoutubeSummary'
 import UploadSummary from '../SummarizerPage/UploadSummary'
 import { useNavigate } from 'react-router-dom';
+import RAGPage from '@/pages/RAGPage'
+
 
 function RootRedirect() {
     let navigate = useNavigate();
@@ -28,6 +31,7 @@ function RootRedirect() {
 const navigation = [
     { name: 'Youtube', to: 'youtube', icon: PlayCircleIcon, current: true },
     { name: 'Upload', to: 'upload', icon: CloudArrowUpIcon, current: false },
+    { name: 'Search', to: 'rag', icon: BookOpenIcon, current: false },
     { name: 'History', to: 'history', icon: ClockIcon, current: false },
     { name: 'Billing', to: 'billing', icon: CreditCardIcon, current: false },
     { name: 'Profile', to: 'profile', icon: UserCircleIcon, current: false },
@@ -182,6 +186,7 @@ const Dashboard = () => {
                         <Route path='billing' element={<div />} />
                         <Route path='history' element={<HistoryPage />} />
                         <Route path='profile' element={<UserProfilePage />} />
+                        <Route path='rag' element={<RAGPage />} />
                     </Routes>
                 </main>
 
