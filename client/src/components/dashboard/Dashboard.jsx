@@ -123,6 +123,7 @@ const Dashboard = () => {
                                                                     : 'text-gray-400 hover:text-white hover:bg-gray-800',
                                                                 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
                                                             )}
+                                                            onClick={()=>setSidebarOpen(false)}
                                                         >
                                                             <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
                                                             {item.name}
@@ -139,7 +140,7 @@ const Dashboard = () => {
                 </Transition.Root>
 
                 {/* Static sidebar for desktop */}
-                <div className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block lg:p-4 lg:overflow-y-auto lg:bg-gray-900 lg:pb-4 w-56">
+                <div className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block lg:p-4 lg:overflow-y-auto lg:bg-gray-900 lg:pb-4 w-44">
                     <Link to="/" className="flex h-16 shrink-0 items-center justify-center text-white text-2xl text-left">
                         Fusion AI
                     </Link>
@@ -167,22 +168,14 @@ const Dashboard = () => {
                         <span className="sr-only">Open sidebar</span>
                         <Bars3Icon className="h-6 w-6" aria-hidden="true" />
                     </button>
-                    <div className="flex-1 text-sm font-semibold leading-6 text-white">Dashboard</div>
-                    <Link to="">
-                        <span className="sr-only">Your profile</span>
-                        <img
-                            className="h-8 w-8 rounded-full bg-gray-800"
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                            alt=""
-                        />
-                    </Link>
+                    <div className="flex-1 text-sm font-semibold leading-6 text-white capitalize">{currentPathname}</div>
                 </div>
 
-                <main className="lg:pl-56 h-[80vh] flex-1">
+                <main className="lg:pl-44 h-[80vh] flex-1">
                     <Routes>
                         <Route path='' element={<RootRedirect />} />
                         <Route path='youtube' element={<YoutubeSummary Bar3Button={Bar3Button} />} />
-                        <Route path='upload' element={<UploadSummary />} />
+                        <Route path='upload' element={<UploadSummary Bar3Button={Bar3Button}/>} />
                         <Route path='billing' element={<div />} />
                         <Route path='history' element={<HistoryPage />} />
                         <Route path='profile' element={<UserProfilePage />} />

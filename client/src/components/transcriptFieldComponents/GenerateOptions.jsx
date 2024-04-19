@@ -34,7 +34,7 @@ import { Label } from "@/components/ui/label"
 const classNames = (...classes) => classes.filter(Boolean).join(' ')
 
 const GenerateOptions = (params) => {
-    const { generateTranscript,uploadToCloudAndTranscribe } = params
+    const { uploadToCloudAndTranscribe } = params
     const { setupTranscriptWithInputSRT } = useTranscriptContext()
     const { videoCredits, videoDuration } = useVideoContext()
     const [selectedIndex, setSelectedIndex] = useState(null)
@@ -62,8 +62,7 @@ const GenerateOptions = (params) => {
         return `${lower} - ${upper}`
     }
 
-
-    const TransbeOptionTable = () => {
+     const TransbeOptionTable = () => {
         return (<Table>
             <TableHeader>
                 <TableRow>
@@ -78,10 +77,11 @@ const GenerateOptions = (params) => {
                     <TableRow key={option.value} className={
                         classNames(
                             index === selectedIndex ? ' bg-zinc-200 hover:bg-zinc-100' : '',
-                            ""
+                            option.available ? '' : 'opacity-50 cursor-not-allowed',
                         )
                     } onClick={
                         () => {
+                            if (!option.available) return
                             setSelectedIndex(index)
                             setSelectedTranscribeOption(option)
                         }
@@ -93,7 +93,8 @@ const GenerateOptions = (params) => {
                             classNames(
                                 index === selectedIndex ? '' : 'hidden',
                                 ' text-indigo-900 size-4')} /></TableCell>
-                    </TableRow>))}
+                    </TableRow>))
+                    }
             </TableBody>
 
         </Table>)
@@ -139,11 +140,7 @@ const GenerateOptions = (params) => {
                 <CardFooter>
                     <div className='flex flex-col gap-y-1'>
                         <Label htmlFor="model" className="pt-2"><CreditsCost /></Label>
-                        <Button className="mx-auto" onClick={generateTranscript} disabled={!selectedTranscribeOption}>Generate</Button>
-                    </div>
-                    <div className='flex flex-col gap-y-1 ml-1'>
-                        <Label htmlFor="model" className="pt-2"><CreditsCost /></Label>
-                        <Button className="mx-auto" onClick={uploadToCloudAndTranscribe} disabled={!selectedTranscribeOption}>Upload to Cloud and transcribe</Button>
+                        <Button className="mx-auto" onClick={uploadToCloudAndTranscribe} disabled={!selectedTranscribeOption}>Generate</Button>
                     </div>
                 </CardFooter>
             </Card>
