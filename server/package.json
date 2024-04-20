@@ -12,6 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.18.0",
+    "@langchain/community": "^0.0.50",
+    "@langchain/mongodb": "^0.0.1",
     "assemblyai": "^4.3.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",

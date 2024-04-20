@@ -22,7 +22,7 @@ export const ControlBar = (params) => {
     viewMode,
     setViewMode,
   } = params;
-  const { resetTranscript, parentTranscriptText } = useTranscriptContext();
+  const { resetTranscript, parentSrtText } = useTranscriptContext();
   const { video } = useVideoContext();
   const {userId} = useAuth();
   const [currentTab, setCurrentTab] = useState("Transcript");
@@ -31,7 +31,7 @@ export const ControlBar = (params) => {
   };
 
   const handleBookmarkVideo = () => {
-    EmbeddingsService.saveEmbeddings({ video, transcriptText: parentTranscriptText,userId });
+    EmbeddingsService.saveEmbeddings({ video, parentSrtText,userId });
   };
 
   const tabs = [

@@ -4,12 +4,10 @@ import multer from "multer";
 import "dotenv/config";
 import fs from "fs";
 import path from "path";
-import ytdl from "ytdl-core";
 import ffmpeg from "fluent-ffmpeg";
 import cors from "cors";
 import { CharacterTextSplitter } from "langchain/text_splitter";
 import { kmeans } from "ml-kmeans";
-import tmp from "tmp";
 import { pipeline } from "stream";
 import util from "util";
 import { openai, anthropic, assembly } from "./config/summaryConfig.js";
@@ -21,11 +19,9 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import youtubeRoutes from "./routes/youtubeRoutes.js";
 import vastaiRoutes from "./routes/vastaiRoutes.js";
 import embeddingsRoutes from "./routes/embeddingsRoutes.js";
-import { transcribeFile } from "./services/transcribeServices.js";
-
 //running python code for testing
 import { pythonRunner, } from "./utils/pythonRunner.js";
-import { getOrCreateVideoAndUpdateTranscript } from "./services/videoServices.js";
+import { formatGroupedSubtitle, groupSubtitlesByInterval } from "./utils/transcripUtils.js";
 const variableToPass = "";
 pythonRunner("--version", [variableToPass])
   .then((output) => {
@@ -174,58 +170,6 @@ app.post(
   }
 );
 
-// Example processAudioFile function
-async function processAudioFile(filePath) {
-  // Process the file here
-  console.log(`Processing file: ${filePath}`);
-  // Note: Be sure to handle file cleanup if this function also creates temporary files or resources.
-}
-
-app.post(
-  "/api/transcribeYoutubeVideoNOTINUSE",
-  cors(),
-  bodyParser.json({ limit: "10mb" }),
-  async (req, res) => {
-    const { youtubeId, userId, video } = req.body;
-
-    try {
-      const videoInfo = await ytdl.getInfo(youtubeId);
-
-      // Check if the video has available audio streams
-      const audioFormats = ytdl.filterFormats(videoInfo.formats, "audioonly");
-      if (audioFormats.length === 0) {
-        return res.status(400).send("Unable to obtain video audio.");
-      }
-
-      // Generate a temporary file path
-      const tempFilePath = tmp.tmpNameSync({ postfix: ".mp3" });
-
-      // Download the audio and save it to the temp file
-      const audioStream = ytdl(youtubeId, { filter: "audioonly" });
-      const fileStream = fs.createWriteStream(tempFilePath);
-      await pipelineAsync(audioStream, fileStream);
-
-      // // Now the file is saved, you can process it
-      const result = await transcribeFile({ filePath: tempFilePath });
-      // const result = await transcribeWithWhisperApi({
-      //   filePath: tempFilePath,
-      // });
-
-      await getOrCreateVideoAndUpdateTranscript({ video, userId, originalTranscript: result });
-      // Clean up: Delete the temporary file if no longer needed
-      fs.unlink(tempFilePath, (err) => {
-        if (err) throw err;
-        console.log("Temp file deleted");
-      });
-      
-      res.json(result);
-    } catch (error) {
-      // 将错误消息发送回客户端
-      console.error(error);
-      res.status(500).send("Error processing video audio. GPU server may be busy.");
-    }
-  }
-);
 
 app.post(
   "/api/stream-response",
@@ -337,69 +281,6 @@ function secondsToMMSS(seconds) {
   const ss = seconds % 60;
   return `${mm.toString().padStart(2, "0")}:${ss.toString().padStart(2, "0")}`;
 }
-
-function groupSubtitlesByInterval(subtitles, intervalInSeconds) {
-  // subtitles is in SRT format
-  // Groups subtitles text by every 'interval' seconds.
-  const blocks = subtitles.trim().split("\n\n");
-  const interval = intervalInSeconds * 1000; // Convert interval to milliseconds for all calculations
-  let currentIntervalStart = 0;
-  const intervalTexts = {};
-  let currentText = [];
-
-  blocks.forEach((block) => {
-    const lines = block.split("\n");
-    if (lines.length < 3) return; // Safety check
-
-    const [startTimestamp] = lines[1].split(" --> ");
-    const startMilliseconds = parseTimestamp(startTimestamp);
-
-    if (startMilliseconds >= currentIntervalStart + interval) {
-      // Adjusted to include the last second of each interval by subtracting 1 from next interval start time
-      const currentIntervalEnd = currentIntervalStart + interval - 1000;
-
-      // Save the current interval text and reset for the next interval
-      const intervalKey = `${secondsToMMSS(
-        currentIntervalStart / 1000
-      )}-${secondsToMMSS(currentIntervalEnd / 1000)}`;
-      intervalTexts[intervalKey] = currentText.join(" ");
-      currentText = [];
-
-      // Update the interval start time to the next interval that includes the current subtitle start time
-      while (startMilliseconds >= currentIntervalStart + interval) {
-        currentIntervalStart += interval;
-      }
-    }
-
-    // Add current subtitle text to the current interval's text
-    currentText.push(lines.slice(2).join(" "));
-  });
-
-  // Add the last interval's text if there is any
-  if (currentText.length > 0) {
-    const currentIntervalEnd = currentIntervalStart + interval - 1000; // Including the last second of the final interval
-    const intervalKey = `${secondsToMMSS(
-      currentIntervalStart / 1000
-    )}-${secondsToMMSS(currentIntervalEnd / 1000)}`;
-    intervalTexts[intervalKey] = currentText.join(" ");
-  }
-
-  return intervalTexts;
-}
-
-const formatGroupedSubtitle = (groupSubtitleByInterval) => {
-  let outputString = "";
-  for (let x in groupSubtitleByInterval) {
-    outputString =
-      outputString +
-      "----------" +
-      x +
-      " " +
-      groupSubtitleByInterval[x] +
-      "\n\n";
-  }
-  return outputString;
-};
 
 app.post(
   "/api/stream-response-series",
