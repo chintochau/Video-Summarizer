@@ -19,6 +19,7 @@ import { SummaryProvider } from "./contexts/SummaryContext.jsx";
 import GeneralSummary from "./components/SummarizerPage/GeneralSummary.jsx";
 import { QuotaProvider } from "./contexts/QuotaContext.jsx";
 import RAGPage from "./pages/RAGPage.jsx";
+import AuthCheckPage from "./pages/AuthCheckPage.jsx";
 
 function App() {
   const [announcement, setAnnouncement] = useState({
@@ -60,6 +61,7 @@ function App() {
                         <HomePage />
                       </div>
                       } />
+                      <Route path="/auth" element={<AuthCheckPage/>}></Route>
                       <Route path="/login" element={<LoginPage />} />
                       <Route path="/register" element={<RegisterPage />} />
                       <Route path="/pricing" element={<div><Header /><PricingPage /></div>} />

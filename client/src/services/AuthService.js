@@ -1,5 +1,4 @@
 // src/services/AuthService.js
-
 import { auth } from '../config/firebase-config';
 import {
   createUserWithEmailAndPassword,
@@ -11,6 +10,18 @@ import {
 } from "firebase/auth";
 
 class AuthService {
+  static async checkAuth() {
+    const auth = getAuth();
+    return new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        unsubscribe();
+        resolve(user);
+      }, (error) => {
+        unsubscribe();
+        reject(error);
+      });
+    });
+  }
   // Register a new user
   static async register(email, password) {
     try {
