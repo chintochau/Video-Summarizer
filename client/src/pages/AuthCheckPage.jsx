@@ -1,4 +1,3 @@
-import { useAuth } from "@/contexts/AuthContext";
 import AuthService from "@/services/AuthService";
 import React, { useEffect } from "react";
 
@@ -26,7 +25,7 @@ const AuthCheckPage = () => {
     checkAuth();
   }, []);
 
-  return <div>Checking Autentication...</div>;
+  return <div>Checking Autentication For Chrome Extension...</div>;
 };
 
 export default AuthCheckPage;
