@@ -15,7 +15,7 @@ const AuthCheckPage = () => {
   const checkAuth = async () => {
     const user = await AuthService.checkAuth();
     if (user) {
-      sendResponse({ success: true, email: user.email});
+      sendResponse({ success: true, user});
     } else {
       const user = await AuthService.signInWithGoogle();
       sendResponse({ success: true, user });
