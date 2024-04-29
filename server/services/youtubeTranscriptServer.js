@@ -52,7 +52,9 @@ class YoutubeTranscript {
                 const convertToMs = (text) =>
                     parseFloat(text.split("=")[1].replace(/"/g, "")) * 1000;
                 transcriptions.push({
-                    text: chunk.text,
+                    text: chunk.text.replace(/&#(\d+);/g, function (match, dec) {
+                        return String.fromCharCode(dec);
+                      }),
                     offset: convertToMs(offset),
                     duration: convertToMs(duration),
                 });
