@@ -1,172 +1,285 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import SummaryService from "../services/SummaryService";
-import { formatDuration } from '../components/Utils';
-import { convertMongoDBDateToLocalTime } from '../utils/timeUtils';
-import { useVideoContext } from '../contexts/VideoContext';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
-import { useTranscriptContext } from '@/contexts/TranscriptContext';
+import { formatDuration } from "../components/Utils";
+import { convertMongoDBDateToLocalTime } from "../utils/timeUtils";
+import { useVideoContext } from "../contexts/VideoContext";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { useTranscriptContext } from "@/contexts/TranscriptContext";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { cn } from "@/utils/utils";
 
 const HistoryPage = ({ sourceType = "all" }) => {
-    const navigate = useNavigate()
-    const { userId } = useAuth()
-    const [videos, setVideos] = useState([])
-    const [totalPage, setTotalPage] = useState(1)
-    const [currentPage, setCurrentPage] = useState(1)
-    const [totalItems, setTotalItems] = useState(0)
-    const { setYoutubeId, setSourceId, setSourceType, setSourceTitle } = useVideoContext()
-    const { resetTranscript, setLoadingTranscript } = useTranscriptContext()
+  const navigate = useNavigate();
+  const { userId, currentUser } = useAuth();
+  const [videos, setVideos] = useState([]);
+  const [totalPage, setTotalPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const { setYoutubeId, setSourceId, setSourceType, setSourceTitle } =
+    useVideoContext();
+  const { resetTranscript, setLoadingTranscript } = useTranscriptContext();
 
-    async function fetchVideos(page) {
-        const videos = await SummaryService.getAllVideosForUser({ userId, page, sourceType });
-        setVideos(videos.data)
-        setCurrentPage(videos.currentPage)
-        setTotalPage(videos.totalPages)
-        setTotalItems(videos.total)
+  async function fetchVideos(page) {
+    const videos = await SummaryService.getAllVideosForUser({
+      userId,
+      page,
+      sourceType,
+    });
+    setVideos(videos.data);
+    setCurrentPage(videos.currentPage);
+    setTotalPage(videos.totalPages);
+    setTotalItems(videos.total);
+  }
+
+  useEffect(() => {
+    if (userId) {
+      fetchVideos(1);
     }
+  }, [userId]);
 
-    useEffect(() => {
-        if (userId) {
-            fetchVideos(1)
-        }
-    }, [userId])
+  const classNames = (...classes) => {
+    return classes.filter(Boolean).join(" ");
+  };
 
-    const classNames = (...classes) => {
-        return classes.filter(Boolean).join(' ')
+  const nextPage = () => {
+    const pageToFetch = Math.min(currentPage + 1, totalPage);
+    fetchVideos(pageToFetch);
+  };
+
+  const previousPage = () => {
+    const pageToFetch = Math.max(currentPage - 1, 1);
+    fetchVideos(pageToFetch);
+  };
+
+  const openVideoHistory = (video) => {
+    resetTranscript();
+    setLoadingTranscript(true);
+    switch (video.sourceType) {
+      case "user-upload":
+        setSourceId(video.sourceId);
+        setYoutubeId(null);
+        setSourceTitle(video.sourceTitle);
+        setSourceType("user-upload");
+        navigate("/console/upload");
+        break;
+      case "youtube":
+        setYoutubeId(video.sourceId);
+        setSourceId(null);
+        setSourceTitle(video.sourceTitle);
+        setSourceType("youtube");
+        navigate("/console/youtube");
+        break;
+      default:
+        break;
     }
+  };
 
-    const nextPage = () => {
-        const pageToFetch = Math.min(currentPage + 1, totalPage)
-        fetchVideos(pageToFetch)
-    }
-
-    const previousPage = () => {
-        const pageToFetch = Math.max(currentPage - 1, 1)
-        fetchVideos(pageToFetch)
-    }
-
-
-    const openVideoHistory = (video) => {
-        resetTranscript()
-        setLoadingTranscript(true)
-        switch (video.sourceType) {
-            case "user-upload":
-                setSourceId(video.sourceId);
-                setYoutubeId(null);
-                setSourceTitle(video.sourceTitle);
-                setSourceType("user-upload");
-                navigate("/console/upload");
-                break;
-            case "youtube":
-                setYoutubeId(video.sourceId);
-                setSourceId(null);
-                setSourceTitle(video.sourceTitle);
-                setSourceType("youtube");
-                navigate("/console/youtube");
-                break;
-            default:
-                break;
-        }
-    };
+  const PagnationComponent = ({className}) => {
     return (
-        <div className="px-4 sm:px-6 lg:px-8">
-            <div className="sm:flex sm:items-center">
-                <div className="sm:flex-auto">
-                    <h1 className="text-base font-semibold leading-6 text-gray-900 pt-8">History</h1>
-                    <p className="mt-2 text-sm text-gray-700">
-                        {totalItems} Items found
-                    </p>
-                    <p className="mt-2 text-sm text-gray-700">
-                        {"Page" + currentPage}/{totalPage}
-                    </p>
-                </div>
-            </div>
-            <div className="mt-8 flow-root">
-                <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
-                    <div className="inline-block min-w-full py-2 align-middle">
-                        <table className="min-w-full border-separate border-spacing-0 px-4">
-                            <thead>
-                                <tr>
-                                    <th className='w-8 top-0 sticky cursor-pointer border-b border-gray-300 bg-white bg-opacity-75 hover:text-indigo-400' onClick={previousPage}><ChevronLeftIcon /> </th>
-                                    <th
-                                        scope="col"
-                                        className="sticky top-0 z-10 border-b border-gray-300 bg-white bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-3 lg:pl-4"
-                                    >
-                                        Video
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        className="sticky top-0 z-10 border-b border-gray-300 bg-white bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8"
-                                    >
-                                        Title
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        className="sticky top-0 z-10 hidden border-b border-gray-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter xl:table-cell"
-                                    >
-                                        Time
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        className="sticky top-0 z-10 hidden border-b border-gray-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter xl:table-cell"
-                                    >
-                                        Last Updated
-                                    </th>
+      <Pagination className={cn(
+        "flex justify-center",
+        className
+      )}>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              onClick={previousPage}
+              className="cursor-pointer"
+            />
+          </PaginationItem>
+          {
+            // render first, last, current page and ellipsis
+            // if total pages is less than 5
+            totalPage <= 5 ? (
+              Array.from({ length: totalPage }, (_, i) => i + 1).map((page) => (
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    onClick={() => fetchVideos(page)}
+                    className={classNames(
+                      page === currentPage ? "bg-blue-500 text-white" : "",
+                      "px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
+                    )}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              ))
+            ) : (
+              // if total pages is more than 5
+              // render first, last, current page, previous and next page
+              // with ellipsis in between
+              // render first only when current page is more than 3
+              // render last only when current page is less than totalPage - 2
+              // render ellipsis only when current page is more than 2
+              // and less than totalPage - 1
+              <>
+                <PaginationItem>
+                  <PaginationLink
+                    onClick={() => fetchVideos(1)}
+                    className={classNames(
+                      1 === currentPage ? "bg-blue-500 text-white" : "",
+                      "px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
+                    )}
+                  >
+                    1
+                  </PaginationLink>
+                </PaginationItem>
+                {currentPage > 3 && <PaginationEllipsis />}
+                {currentPage > 2 && (
+                  <PaginationItem>
+                    <PaginationLink
+                      onClick={() => fetchVideos(currentPage - 1)}
+                      className={classNames(
+                        "px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
+                      )}
+                    >
+                      {currentPage - 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                )}
+                {currentPage > 1 && currentPage < totalPage && (
+                  <PaginationItem>
+                    <PaginationLink
+                      onClick={() => fetchVideos(currentPage)}
+                      className={classNames(
+                        "px-3 py-2 rounded-md text-sm font-medium cursor-pointer bg-blue-500 text-white"
+                      )}
+                    >
+                      {currentPage}
+                    </PaginationLink>
+                  </PaginationItem>
+                )}
+                {currentPage < totalPage - 1 && (
+                  <PaginationItem>
+                    <PaginationLink
+                      onClick={() => fetchVideos(currentPage + 1)}
+                      className={classNames(
+                        "px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
+                      )}
+                    >
+                      {currentPage + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                )}
+                {currentPage < totalPage - 2 && <PaginationEllipsis />}
+                <PaginationItem>
+                  <PaginationLink
+                    onClick={() => fetchVideos(totalPage)}
+                    className={classNames(
+                      totalPage === currentPage ? "bg-blue-500 text-white" : "",
+                      "px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
+                    )}
+                  >
+                    {totalPage}
+                  </PaginationLink>
+                </PaginationItem>
+              </>
+            )
+          }
+          <PaginationItem>
+            <PaginationNext onClick={nextPage} className="cursor-pointer" />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    );
+  };
 
-                                    <th className='w-8  top-0 sticky cursor-pointer border-b border-gray-300 bg-white bg-opacity-75 hover:text-indigo-400' onClick={nextPage}><ChevronRightIcon /> </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {videos.map((video, videoIndex) => (
-                                    <tr key={video._id} className='hover:bg-indigo-100 cursor-pointer' onClick={() => openVideoHistory(video)}>
-                                        <td></td>
-                                        <td
-                                            className={classNames(
-                                                videoIndex !== videos.length - 1 ? 'border-b border-gray-200' : '',
-                                                'py-4 pl-4 pr-3  text-gray-900 sm:pl-2 lg:pl-4 flex-shrink-0 w-60'
-                                            )}
-                                        >
-                                            <img className=" h-36 w-full bg-gray-50" src={video.videoThumbnail} alt="" />
-                                        </td>
-                                        <td
-                                            className={classNames(
-                                                videoIndex !== videos.length - 1 ? 'border-b border-gray-200' : '',
-                                                'py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3 lg:pl-4'
-                                            )}
-                                        >
-                                            <p>{video.sourceTitle}</p>
-                                            <p className=' text-gray-400 font-normal'>{video.sourceType}</p>
-                                            <p className=' text-gray-400 font-normal xl:hidden'>{formatDuration(video.videoDuration)}</p>
-                                            <p className=' text-gray-400 font-normal xl:hidden'> {convertMongoDBDateToLocalTime(video.lastUpdated)}</p>
-                                        </td>
-                                        <td
-                                            className={classNames(
-                                                videoIndex !== videos.length - 1 ? 'border-b border-gray-200' : '',
-                                                'hidden px-3 py-4 text-sm text-gray-500 xl:table-cell'
-                                            )}
-                                        >
-                                            {<p className='hidden md:block'>{formatDuration(video.videoDuration)}</p>}
-                                        </td>
-                                        <td
-                                            className={classNames(
-                                                videoIndex !== videos.length - 1 ? 'border-b border-gray-200' : '',
-                                                'px-3 py-4 text-sm text-gray-500 hidden xl:table-cell'
-                                            )}
-                                        >
+  return (
+    <div className="h-full">
+      <PagnationComponent className="my-2"/>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-1/4">Video</TableHead>
+            <TableHead>Title</TableHead>
+            <TableHead
+              className={classNames(
+                "px-3 py-4 text-sm text-gray-500 hidden xl:table-cell"
+              )}
+            >
+              Time
+            </TableHead>
+            <TableHead
+              className={classNames(
+                "px-3 py-4 text-sm text-gray-500 hidden xl:table-cell"
+              )}
+            >
+              Last Updated
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {videos.map((video, videoIndex) => (
+            <TableRow
+              key={video._id}
+              className="cursor-pointer"
+              onClick={() => openVideoHistory(video)}
+            >
+              <TableCell>
+                <AspectRatio ratio={4 / 3}>
+                  <img
+                    className="h-full w-auto bg-gray-50"
+                    src={video.videoThumbnail}
+                    alt=""
+                  />
+                </AspectRatio>
+              </TableCell>
+              <TableCell>
+                <p>{video.sourceTitle}</p>
+                <p className=" text-gray-400 font-normal">{video.sourceType}</p>
+                <p className=" text-gray-400 font-normal xl:hidden">
+                  {formatDuration(video.videoDuration)}
+                </p>
+                <p className=" text-gray-400 font-normal xl:hidden">
+                  {" "}
+                  {convertMongoDBDateToLocalTime(video.lastUpdated)}
+                </p>
+              </TableCell>
+              <TableCell
+                className={classNames(
+                  "hidden px-3 py-4 text-sm text-gray-500 xl:table-cell"
+                )}
+              >
+                <p className="text-sm text-gray-400">
+                  {formatDuration(video.videoDuration)}
+                </p>
+              </TableCell>
+              <TableCell
+                className={classNames(
+                  "px-3 py-4 text-sm text-gray-500 hidden xl:table-cell"
+                )}
+              >
+                <p className="text-sm text-gray-400">
+                  {convertMongoDBDateToLocalTime(video.lastUpdated)}
+                </p>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      <PagnationComponent className="py-2"/>
+    </div>
+  );
+};
 
-                                            <p>{convertMongoDBDateToLocalTime(video.lastUpdated)}</p>
-                                        </td>
-                                        <td></td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
-}
-
-export default HistoryPage
+export default HistoryPage;

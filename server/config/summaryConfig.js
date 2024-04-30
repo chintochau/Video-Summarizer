@@ -14,3 +14,10 @@ export const anthropic = new Anthropic();
 export const assembly = new AssemblyAI({
   apiKey: process.env["ASSEMBLY_CPI_KEY"],
 });
+
+export const deepInfraHeaders = 
+{
+  // sse
+  "Content-Type": "application/json",
+  authorization: `Bearer ${process.env["DEEPINFRA_API_KEY"]}`,
+};

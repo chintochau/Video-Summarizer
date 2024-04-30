@@ -54,7 +54,7 @@ class YoutubeTranscript {
                 transcriptions.push({
                     text: chunk.text.replace(/&#(\d+);/g, function (match, dec) {
                         return String.fromCharCode(dec);
-                      }),
+                      }).replace(/&quot;/g, '"'),
                     offset: convertToMs(offset),
                     duration: convertToMs(duration),
                 });

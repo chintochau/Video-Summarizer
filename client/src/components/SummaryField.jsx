@@ -16,11 +16,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LanguageIcon } from "@heroicons/react/24/outline";
+import { LanguageIcon, AcademicCapIcon } from "@heroicons/react/24/outline";
 import { BoltIcon } from "@heroicons/react/24/solid";
 import { Button } from "./ui/button.jsx";
 import { useQuota } from "@/contexts/QuotaContext.jsx";
 import QuotaService from "@/services/QuotaService.js";
+import { defaultModels } from "./Prompts.js";
 
 const SummaryField = ({ videoRef }) => {
   // use context
@@ -28,7 +29,7 @@ const SummaryField = ({ videoRef }) => {
   const { userId, setCredits, credits, currentUser } = useAuth();
   const { video } = useVideoContext();
   const { parentTranscriptText, parentSrtText } = useTranscriptContext();
-  const { quota,setQuota } = useQuota();
+  const { quota, setQuota } = useQuota();
 
   // use state
   const [response, setResponse] = useState("");
@@ -36,6 +37,7 @@ const SummaryField = ({ videoRef }) => {
   const [creditCount, setCreditCount] = useState(0);
   const [startSummary, setStartSummary] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+  const [languageModel, setLanguageModel] = useState("claude3h");
 
   const insertNewTab = (summaryText, title) => {
     setSummaries((prev) => [
@@ -61,7 +63,7 @@ const SummaryField = ({ videoRef }) => {
       setCreditCount(
         calculateCredit({
           transcript: parentTranscriptText,
-          model: "claude3h",
+          model: languageModel,
         })
       );
       setActiveTab(0);
@@ -93,7 +95,7 @@ const SummaryField = ({ videoRef }) => {
     if (!currentUser) {
       // use quota if user is not logged in
       try {
-        QuotaService.checkQuota()
+        QuotaService.checkQuota();
         QuotaService.decrementQuota(); // save to loca storage
         setQuota((prev) => prev - 1); // update context
         updateSummaryOfIndex(activeTab, "sourceType", title);
@@ -132,11 +134,12 @@ const SummaryField = ({ videoRef }) => {
       }
     } else {
       // use credits if user is logged in
-      if (userId === null) { // check if user is logged in
+      if (userId === null) {
+        // check if user is logged in
         console.error("User not logged in");
         return;
       }
-      
+
       try {
         checkCredits(credits, creditAmount);
         updateSummaryOfIndex(activeTab, "sourceType", title);
@@ -146,7 +149,7 @@ const SummaryField = ({ videoRef }) => {
             transcript: inputTranscript(option.id),
             language,
             interval,
-            selectedModel: "claude3h",
+            selectedModel: languageModel,
             userId,
             video,
           },
@@ -181,22 +184,42 @@ const SummaryField = ({ videoRef }) => {
   return (
     <div className="relative h-full flex flex-col dark:bg-zinc-800">
       <div className="flex justify-between px-3 pt-1">
-        <div className=" flex items-center gap-x-2">
-          <LanguageIcon className="w-6 h-6 text-gray-600" />
-          <Select onValueChange={handleLanguageChange} defaultValue="English">
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Language" />
-            </SelectTrigger>
-            <SelectContent>
-              {languageList.map((item) => (
-                <SelectItem key={item.code} value={item.name}>
-                  {item.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+
+        <div className=" flex flex-1 items-center gap-x-1 flex-wrap">
+          <LanguageIcon className="h-6 w-6 text-indigo-600 " />
+          <div className="w-28">
+            <Select onValueChange={handleLanguageChange} defaultValue="English">
+              <SelectTrigger className=" h-7">
+                <SelectValue placeholder="Select Language" />
+              </SelectTrigger>
+              <SelectContent>
+                {languageList.map((item) => (
+                  <SelectItem key={item.code} value={item.name}>
+                    {item.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <AcademicCapIcon className="h-6 w-6 text-indigo-600 " />
+          <div>
+            <Select onValueChange={setLanguageModel} defaultValue="claude3h">
+              <SelectTrigger className="h-7">
+                <SelectValue placeholder="Select Language" />
+              </SelectTrigger>
+              <SelectContent>
+                {defaultModels.map((item) => (
+                  <SelectItem key={item.code} value={item.id}>
+                    {item.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-        <div>
+
+        <div className="">
           {currentUser && userId ? (
             <Button
               className="h-8 text-sm text-indigo-600 flex items-center "
@@ -214,7 +237,7 @@ const SummaryField = ({ videoRef }) => {
           )}
         </div>
       </div>
-      
+
       <HeadingsWithTabs
         startSummary={startSummary}
         summaries={summaries}

@@ -1,15 +1,21 @@
 
 export const defaultModels = [
   {
-    name: "Claude 3(preferred)",
+    name: "Claude3",
     id: "claude3h",
     model: "claude-3-haiku-20240307",
     available: true,
   },
   {
-    name: "GPT-3.5",
+    name: "ChatGPT",
     id: "gpt35",
     model: "gpt-3.5-turbo-0125",
+    available: true,
+  },
+  {
+    name: "Llama3",
+    id: "llama3",
+    model: "llama-3-20240307",
     available: true,
   },
 ];

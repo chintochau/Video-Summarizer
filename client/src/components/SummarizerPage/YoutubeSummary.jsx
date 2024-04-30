@@ -16,7 +16,7 @@ const YoutubeSummary = ({Bar3Button}) => {
     const { youtubeId } = useVideoContext()
 
     return (
-        <div className="flex flex-col h-full ">
+        <div className="flex flex-col h-full">
             {/* YoutubeBar */}
             <YoutubeBar Bar3Button={Bar3Button}/>
             {/* Main Content */}
@@ -47,8 +47,7 @@ const YoutubeSummary = ({Bar3Button}) => {
                         videoRef={videoRef} />
                 </ResizablePanel>
             </ResizablePanelGroup>}
-            {!youtubeId &&
-                <div className=' overflow-auto'><HistoryPage sourceType="youtube" /></div>
+            {!youtubeId &&<HistoryPage sourceType="youtube" />
             }
         </div>
     )

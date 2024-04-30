@@ -1,44 +1,49 @@
-import { openai, anthropic } from "../config/summaryConfig.js";
+import {
+  openai,
+  anthropic,
+  deepInfraHeaders,
+} from "../config/summaryConfig.js";
+import fetch from "node-fetch";
 
 export const generateSummary = async (req, res) => {
-  const { option, transcript, language, selectedModel, userId, video } = req.body
+  const { option, transcript, language, selectedModel, userId, video } =
+    req.body;
   const { prompt } = option;
-  const { sourceTitle } = video
+  const { sourceTitle } = video;
 
-  let fullResponseText = ""
+  console.log(" Selected model: ", selectedModel);
 
-  const stream = await anthropic.messages.create({
-    max_tokens: 1024,
-    messages: [
-      {
-        role: "user",
-        content:
-          "give your response in a makrdown, dont use a code interpreter and use the language" +
-          language +
-          "\n" + `you are given a transcript of a video titles:${sourceTitle}` +
-          prompt +
-          "Video Transcript:" + transcript,
-      },
-    ],
-    model: "claude-3-haiku-20240307",
-    stream: true,
-  });
+  let fullResponseText = "";
+  const max_tokens = 1300;
+  const system = "give your response in a makrdown, dont use a code interpreter and you must answer in the language: " + language
+  const messages = [
+    {
+      role: "user",
+      content:`you are given a transcript of a video titles:${sourceTitle}` +
+        prompt +
+        "Video Transcript:" +
+        transcript,
+    },
+  ];
 
-  for await (const messageStreamEvent of stream) {
-    if (
-      messageStreamEvent &&
-      messageStreamEvent.delta &&
-      messageStreamEvent.delta.text
-    ) {
-      fullResponseText += messageStreamEvent.delta.text
-      res.write(messageStreamEvent.delta.text);
-    } else {
-      console.log(
-        "The 'text' property is undefined or does not exist in the delta object."
-      );
-    }
+  const data = {
+    system,
+    messages,
+    fullResponseText,
+    max_tokens,
+    res,
+  };
+  switch (selectedModel) {
+    case "gpt35":
+       fullResponseText  = await summarizeWithOpenAI(data)
+      break;
+    case "claude3h":
+       fullResponseText  = await summarizeWithAnthropic(data)
+      break;
+    case "llama3":
+       fullResponseText  = await summarizeWithLlama3(data)
+      break;
   }
-
   return fullResponseText;
 };
 
@@ -59,6 +64,10 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
           const stream = await anthropic.messages.create({
             max_tokens: 1024,
             messages: [
+              {
+                role: "system",
+                content: "start a new conversation",
+              },
               {
                 role: "user",
                 content:
@@ -92,8 +101,9 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
 
   const summarizePromptsSeries = async () => {
     for (let i = 0; i < transcriptsArray.length; i++) {
-      const prompt = `you are given the ${i + 1} of ${transcriptsArray.length
-        } part of a meeting conversation, summarize this part in detail, list out all the action items.
+      const prompt = `you are given the ${i + 1} of ${
+        transcriptsArray.length
+      } part of a meeting conversation, summarize this part in detail, list out all the action items.
       list the reference timestamp at the end of your summary point, and end of each action items
       `;
       try {
@@ -193,4 +203,112 @@ export const parseSRT = (srt) => {
       return { index, start, end, text: textLines.join("\n") };
     })
     .filter((part) => part !== null); // 過濾掉所有null值，只保留有效的轉錄部分
+};
+async function summarizeWithAnthropic({
+  system,
+  max_tokens,
+  messages,
+  fullResponseText,
+  res,
+}) {
+  const stream = await anthropic.messages.create({
+    max_tokens,
+    messages,
+    model: "claude-3-haiku-20240307",
+    system,
+    stream: true,
+  });
+  for await (const messageStreamEvent of stream) {
+    if (
+      messageStreamEvent &&
+      messageStreamEvent.delta &&
+      messageStreamEvent.delta.text
+    ) {
+      fullResponseText += messageStreamEvent.delta.text;
+      res.write(messageStreamEvent.delta.text);
+    } else {
+      console.log(
+        "The 'text' property is undefined or does not exist in the delta object."
+      );
+    }
+  }
+  return fullResponseText 
+}
+
+async function summarizeWithOpenAI({
+  system,
+  messages,
+  fullResponseText,
+  max_tokens,
+  res,
+}) {
+ const stream = openai.beta.chat.completions.stream({
+    model: "gpt-3.5-turbo",
+    messages: [{ role: "system", content: system}, ...messages ],
+    stream: true,
+    temperature: 0.4,
+    max_tokens,
+  });
+  stream.on("content", (delta, snapshot) => {
+    fullResponseText += delta;
+    res.write(delta);
+  });
+  try {
+    await stream.finalChatCompletion();
+  } catch (error) {
+    console.log(error.message);
+    res.write("exceed length");
+  }
+  return fullResponseText 
+}
+const summarizeWithLlama3 = async ({
+  system,
+  messages,
+  fullResponseText,
+  max_tokens,
+  res,
+}) => {
+  try {
+    const stream = await fetch(
+      "https://api.deepinfra.com/v1/openai/chat/completions",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          model: "meta-llama/Meta-Llama-3-70B-Instruct",
+          messages: [{ role: "system", content: system}, ...messages ],
+          max_tokens,
+          stream: true,
+        }),
+        headers: deepInfraHeaders,
+      }
+    );
+
+    await new Promise((resolve, reject) => {
+    stream.body.on("data", (chunk) => { // data.choices[0].delta.content
+      const data = chunk.toString().split("data:")[1];
+      // try to parse the data
+      if (data && data.trim() === "[DONE]") {
+        return { stream, fullResponseText };
+      } else if (!data) {
+        return;
+      }
+      const parsedData = JSON.parse(data);
+      const content = parsedData.choices[0].delta.content;
+      fullResponseText += content;
+      if (content) {
+        res.write(content);
+      }
+    });
+    stream.body.on("end", () => {
+      resolve();
+    });
+  }
+  );
+    
+  } catch (error) {
+    console.log(error.message);
+    res.write("exceed length");
+  }
+
+  return  fullResponseText 
 };
