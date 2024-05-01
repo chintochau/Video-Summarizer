@@ -18,7 +18,7 @@ import ConsoleHome from "./components/SummarizerPage/ConsoleHome.jsx";
 import { SummaryProvider } from "./contexts/SummaryContext.jsx";
 import GeneralSummary from "./components/SummarizerPage/GeneralSummary.jsx";
 import { QuotaProvider } from "./contexts/QuotaContext.jsx";
-import RAGPage from "./pages/SearchPage.jsx";
+import SearchPage from "./pages/SearchPage.jsx";
 import AuthCheckPage from "./pages/AuthCheckPage.jsx";
 import { Toaster } from "./components/ui/toaster.jsx";
 
@@ -75,7 +75,7 @@ function App() {
                         <Route path='billing' element={<div />} />
                         <Route path='history' element={<HistoryPage />} />
                         <Route path='profile' element={<UserProfilePage />} />
-                        <Route path='rag' element={<RAGPage />} />
+                        <Route path='rag' element={<SearchPage />} />
                         
                       </Route>
                     </Routes>

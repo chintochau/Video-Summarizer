@@ -16,7 +16,7 @@ import UserProfilePage from '../../pages/UserProfilePage'
 import YoutubeSummary from '../SummarizerPage/YoutubeSummary'
 import UploadSummary from '../SummarizerPage/UploadSummary'
 import { useNavigate } from 'react-router-dom';
-import RAGPage from '@/pages/SearchPage'
+import SearchPage from '@/pages/SearchPage'
 
 
 function RootRedirect() {
@@ -179,7 +179,7 @@ const Dashboard = () => {
                         <Route path='billing' element={<div />} />
                         <Route path='history' element={<HistoryPage />} />
                         <Route path='profile' element={<UserProfilePage />} />
-                        <Route path='rag' element={<RAGPage />} />
+                        <Route path='rag' element={<SearchPage />} />
                     </Routes>
                 </main>
 
