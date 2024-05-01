@@ -221,7 +221,6 @@ const SearchPage = () => {
                 await EmbeddingsService.getEmbeddingCollectionAndVideos({
                   userId,
                 });
-              console.log(collection.videos);
               setSavedVideos(collection.videos);
             }}
           >

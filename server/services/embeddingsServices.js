@@ -139,7 +139,6 @@ const aggregation = [
 ];
 
   const results = await Embedding.aggregate(aggregation);
-  console.log("Search results:", results);
   return results;
 };
 

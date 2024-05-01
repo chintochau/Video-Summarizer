@@ -24,7 +24,6 @@ class EmbeddingsService {
 
   static async answerQuestions(data) {
     // data = {userInput, userId, referenceVideosArray}
-    console.log(data);
     try {
       const response = await fetch(api + "/api/answer-questions", {
         method: "POST",
@@ -33,7 +32,6 @@ class EmbeddingsService {
       });
 
       const result = await response.json();
-      console.log(result);
       const answer = result.choices[0].message.content;
       return answer;
     } catch (error) {
