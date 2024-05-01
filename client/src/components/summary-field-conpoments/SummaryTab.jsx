@@ -74,8 +74,8 @@ const linkOverride = {
 };
 
 const transformArticleWithClickableTimestamps = (articleContent) => {
-  // Updated regex to match both hh:mm:ss and mm:ss formats
-  const timestampRegex = /((\d{2}:)?\d{2}:\d{2})/g;
+  // Updated regex to match hh:mm:ss and mm:ss and m:ss formats
+  const timestampRegex = /(\d{1,2}:\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2})/g;
 
   return articleContent.replace(
     timestampRegex,
