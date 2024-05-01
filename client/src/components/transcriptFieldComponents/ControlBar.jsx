@@ -5,13 +5,19 @@ import {
   ClipboardDocumentIcon,
   PencilSquareIcon,
   TrashIcon,
-  BookmarkIcon
+  BookmarkIcon,
 } from "@heroicons/react/24/outline";
 import { useTranscriptContext } from "@/contexts/TranscriptContext";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "../ui/hover-card";
 import { useVideoContext } from "@/contexts/VideoContext";
 import EmbeddingsService from "@/services/EmbeddingsService";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useToast } from "../ui/use-toast";
 
 export const ControlBar = (params) => {
   const {
@@ -24,14 +30,15 @@ export const ControlBar = (params) => {
   } = params;
   const { resetTranscript, parentSrtText } = useTranscriptContext();
   const { video } = useVideoContext();
-  const {userId} = useAuth();
+  const { userId } = useAuth();
   const [currentTab, setCurrentTab] = useState("Transcript");
   const classNames = (...classes) => {
     return classes.filter(Boolean).join(" ");
   };
+  const { toast } = useToast();
 
   const handleBookmarkVideo = () => {
-    EmbeddingsService.saveEmbeddings({ video, parentSrtText,userId });
+    EmbeddingsService.saveEmbeddings({ video, parentSrtText, userId });
   };
 
   const tabs = [
@@ -65,26 +72,42 @@ export const ControlBar = (params) => {
           </nav>
 
           <div className="content-center">
-            <button className="h-8" onClick={handleBookmarkVideo}>
-              <HoverCard>
-                <HoverCardTrigger>
-                  <BookmarkIcon className="w-6 h-6" />
-                </HoverCardTrigger>
-                <HoverCardContent>
-                  Save Video to your Library
-                </HoverCardContent>
-              </HoverCard>
-            </button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger className="h-6 w-6 hover:text-indigo-400 text-indigo-600 duration-200 transition-colors">
+                  <BookmarkIcon
+                    onClick={() => {
+                      toast({
+                        title: "Video Saved",
+                        description: "Video is saved to your bookmarks, you can search the video content from search tab",
+                      });
+                      handleBookmarkVideo();
+                    }}
+                  />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    Save the video , you can then search the video content from search tab
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
-            <button
-              onClick={() => exportSRT(editableTranscript)}
-              className=" text-indigo-600 hover:text-indigo-400"
-            >
-              <div className="flex h-8 p-1">
-                <ArrowDownTrayIcon className="w-6 h-6" />
-                <p>SRT</p>
-              </div>
-            </button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger className=" hover:text-indigo-400 text-indigo-600 duration-200 transition-colors">
+                  <div className="flex" onClick={() => exportSRT(editableTranscript)}>
+                    <ArrowDownTrayIcon className="w-6 h-6"/>
+                    <p>SRT</p>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    Download the transcript in SRT format.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
             <button
               onClick={() =>
@@ -105,8 +128,9 @@ export const ControlBar = (params) => {
 
             <button
               onClick={() => setIsEditMode(!isEditMode)}
-              className={`w-8 p-1  text-indigo-600 rounded-md hover:text-indigo-400  outline-indigo-600 ${isEditMode ? " bg-indigo-500 text-white" : ""
-                }`}
+              className={`w-8 p-1  text-indigo-600 rounded-md hover:text-indigo-400  outline-indigo-600 ${
+                isEditMode ? " bg-indigo-500 text-white" : ""
+              }`}
             >
               <PencilSquareIcon />
             </button>

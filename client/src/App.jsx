@@ -20,6 +20,7 @@ import GeneralSummary from "./components/SummarizerPage/GeneralSummary.jsx";
 import { QuotaProvider } from "./contexts/QuotaContext.jsx";
 import RAGPage from "./pages/RAGPage.jsx";
 import AuthCheckPage from "./pages/AuthCheckPage.jsx";
+import { Toaster } from "./components/ui/toaster.jsx";
 
 function App() {
   const [announcement, setAnnouncement] = useState({
@@ -83,6 +84,7 @@ function App() {
               </SummaryProvider>
             </VideoProvider>
           </ModelProvider>
+          <Toaster />
         </div>
       </div>
     </>
