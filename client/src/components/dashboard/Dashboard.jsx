@@ -16,7 +16,7 @@ import UserProfilePage from '../../pages/UserProfilePage'
 import YoutubeSummary from '../SummarizerPage/YoutubeSummary'
 import UploadSummary from '../SummarizerPage/UploadSummary'
 import { useNavigate } from 'react-router-dom';
-import RAGPage from '@/pages/RAGPage'
+import RAGPage from '@/pages/SearchPage'
 
 
 function RootRedirect() {

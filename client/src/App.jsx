@@ -18,7 +18,7 @@ import ConsoleHome from "./components/SummarizerPage/ConsoleHome.jsx";
 import { SummaryProvider } from "./contexts/SummaryContext.jsx";
 import GeneralSummary from "./components/SummarizerPage/GeneralSummary.jsx";
 import { QuotaProvider } from "./contexts/QuotaContext.jsx";
-import RAGPage from "./pages/RAGPage.jsx";
+import RAGPage from "./pages/SearchPage.jsx";
 import AuthCheckPage from "./pages/AuthCheckPage.jsx";
 import { Toaster } from "./components/ui/toaster.jsx";
 

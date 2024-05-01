@@ -1,6 +1,6 @@
 import { openai } from "../config/summaryConfig.js";
 import Embedding from "../models/embeddingModel.js";
-import { generateTextEmbeddings, saveEmbeddings, searchForQuery } from "../services/embeddingsServices.js";
+import { generateTextEmbeddings, saveEmbeddings, searchForQuery,getEmbeddingCollection } from "../services/embeddingsServices.js";
 
 export const createEmbeddings = async (req, res) => {
     try {
@@ -25,5 +25,16 @@ export const vectorSearch = async (req, res) => {
     } catch (error) {
         console.error("Error occurred during vector search:", error);
         res.status(500).json({ error: "Error occurred during vector search" });
+    }
+}
+
+export const getEmbeddingCollectionAndVideos = async (req, res) => {
+    const { userId } = req.params;
+    try {
+        const collection = await getEmbeddingCollection(userId);
+        res.status(200).json(collection);
+    } catch (error) {
+        console.error("Error occurred while fetching embedding collection:", error);
+        res.status(500).json({ error: "Error occurred while fetching embedding collection" });
     }
 }

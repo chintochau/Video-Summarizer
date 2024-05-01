@@ -22,15 +22,15 @@ import { Bookmark, Send } from "lucide-react";
 import { useTranscriptContext } from "@/contexts/TranscriptContext";
 import { useNavigate } from "react-router-dom";
 import { useVideoContext } from "@/contexts/VideoContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 
 const RAGPage = () => {
   const navigate = useNavigate();
   const [displayArray, setDisplayArray] = useState([]); //[{videoSourceId, videoTitle, videoSourceType, , score, youtubeThumbnail, text: [{text, referenceTimeRange}]]
   const { resetTranscript, setLoadingTranscript } = useTranscriptContext();
-
-  const { setYoutubeId, setSourceId, setSourceType, setSourceTitle } =
-    useVideoContext();
+  const { setYoutubeId, setSourceId, setSourceType, setSourceTitle } =    useVideoContext();
+  const {userId} = useAuth();
   const turnIntoDisplayArray = (resultArray) => {
     if (resultArray.length > 0) {
       const videos = [];
@@ -174,6 +174,12 @@ const RAGPage = () => {
           </Card>
         ))}
       </div>
+      <Button onClick={async () => {
+        const collection = await EmbeddingsService.getEmbeddingCollectionAndVideos({ userId });
+        console.log(collection);
+      }}>
+        get collection
+      </Button>
     </Container>
   );
 };

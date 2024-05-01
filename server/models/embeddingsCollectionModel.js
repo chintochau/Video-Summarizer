@@ -10,6 +10,10 @@ const EmbeddingCollectionSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
+    videos: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Video"
+    }],
     embeddings: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Embedding"

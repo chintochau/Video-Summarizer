@@ -28,5 +28,10 @@ class EmbeddingsService {
         return response.json();
     }
 
+    static async getEmbeddingCollectionAndVideos({ userId }) {
+        const response = await fetch(`${api}/api/get-embeddings/${userId}`);
+        return response.json();
+    }
+
 }
 export default EmbeddingsService;
