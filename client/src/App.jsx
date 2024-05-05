@@ -21,6 +21,7 @@ import { QuotaProvider } from "./contexts/QuotaContext.jsx";
 import SearchPage from "./pages/SearchPage.jsx";
 import AuthCheckPage from "./pages/AuthCheckPage.jsx";
 import { Toaster } from "./components/ui/toaster.jsx";
+import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
 
 function App() {
   const [announcement, setAnnouncement] = useState({
@@ -68,6 +69,7 @@ function App() {
                       <Route path="/pricing" element={<div><Header /><PricingPage /></div>} />
                       <Route path="/history" element={<HistoryPage />} />
                       <Route path="/profile" element={<UserProfilePage />} />
+                      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                       <Route path="/console/*" element={<Dashboard />} >
                         <Route path='' element={<div />} />
                         <Route path='youtube' element={<YoutubeSummary />} />
@@ -76,7 +78,6 @@ function App() {
                         <Route path='history' element={<HistoryPage />} />
                         <Route path='profile' element={<UserProfilePage />} />
                         <Route path='rag' element={<SearchPage />} />
-                        
                       </Route>
                     </Routes>
                   </QuotaProvider>

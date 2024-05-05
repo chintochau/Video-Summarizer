@@ -17,6 +17,7 @@ import YoutubeSummary from '../SummarizerPage/YoutubeSummary'
 import UploadSummary from '../SummarizerPage/UploadSummary'
 import { useNavigate } from 'react-router-dom';
 import SearchPage from '@/pages/SearchPage'
+import logo from '@/assets/logo.svg'
 
 
 function RootRedirect() {
@@ -31,7 +32,7 @@ function RootRedirect() {
 const navigation = [
     { name: 'Youtube', to: 'youtube', icon: PlayCircleIcon, current: true },
     { name: 'Upload', to: 'upload', icon: CloudArrowUpIcon, current: false },
-    { name: 'Search', to: 'rag', icon: BookOpenIcon, current: false },
+    { name: 'Search', to: 'search', icon: BookOpenIcon, current: false },
     { name: 'History', to: 'history', icon: ClockIcon, current: false },
     { name: 'Billing', to: 'billing', icon: CreditCardIcon, current: false },
     { name: 'Profile', to: 'profile', icon: UserCircleIcon, current: false },
@@ -54,9 +55,9 @@ const Dashboard = () => {
     const Bar3Button = () => {
         return (
             <button type="button" className="-m-2.5 p-2.5 text-gray-400 lg:hidden" onClick={() => setSidebarOpen(true)}>
-            <span className="sr-only">Open sidebar</span>
-            <Bars3Icon className="h-6 w-6 mx-2" aria-hidden="true" />
-        </button>
+                <span className="sr-only">Open sidebar</span>
+                <Bars3Icon className="h-6 w-6 mx-2" aria-hidden="true" />
+            </button>
         )
     }
 
@@ -108,8 +109,11 @@ const Dashboard = () => {
                                     </Transition.Child>
 
                                     <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-2 ring-1 ring-white/10">
-                                        <div className="flex h-16 shrink-0 items-center text-white text-3xl">
-                                            Fusion AI
+                                        <div className='flex gap-x-2 pt-4'>
+                                            <img className="h-12 w-12" src={logo} alt="Fusion AI" />
+                                            <div className="flex shrink-0 items-center text-white text-3xl">
+                                                Fusion AI
+                                            </div>
                                         </div>
                                         <nav className="flex flex-1 flex-col">
                                             <ul role="list" className="-mx-2 flex-1 space-y-1">
@@ -118,12 +122,12 @@ const Dashboard = () => {
                                                         <Link
                                                             to={item.to}
                                                             className={classNames(
-                                                                currentPathname === item.to 
+                                                                currentPathname === item.to
                                                                     ? 'bg-gray-800 text-white'
                                                                     : 'text-gray-400 hover:text-white hover:bg-gray-800',
                                                                 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
                                                             )}
-                                                            onClick={()=>setSidebarOpen(false)}
+                                                            onClick={() => setSidebarOpen(false)}
                                                         >
                                                             <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
                                                             {item.name}
@@ -142,7 +146,8 @@ const Dashboard = () => {
                 {/* Static sidebar for desktop */}
                 <div className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block lg:p-4 lg:overflow-y-auto lg:bg-gray-900 lg:pb-4 w-44">
                     <Link to="/" className="flex h-16 shrink-0 items-center justify-center text-white text-2xl text-left">
-                        Fusion AI
+                        <img className="h-12 w-12 mr-1" src={logo} alt="Fusion AI" />
+                        FusionAI
                     </Link>
                     <nav className="mt-4">
                         <ul role="list" className="flex flex-col items-center space-y-1 ">
@@ -175,11 +180,11 @@ const Dashboard = () => {
                     <Routes>
                         <Route path='' element={<RootRedirect />} />
                         <Route path='youtube' element={<YoutubeSummary Bar3Button={Bar3Button} />} />
-                        <Route path='upload' element={<UploadSummary Bar3Button={Bar3Button}/>} />
+                        <Route path='upload' element={<UploadSummary Bar3Button={Bar3Button} />} />
                         <Route path='billing' element={<div />} />
                         <Route path='history' element={<HistoryPage />} />
                         <Route path='profile' element={<UserProfilePage />} />
-                        <Route path='rag' element={<SearchPage />} />
+                        <Route path='search' element={<SearchPage />} />
                     </Routes>
                 </main>
 

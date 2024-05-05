@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo.svg";
 import { useAuth } from "../../contexts/AuthContext";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -56,9 +56,12 @@ const Header = () => {
         aria-label="Global"
       >
         <div className="flex md:flex-1">
-          <Link to="/" className="-m-1.5">
+          <Link to="/" className="-m-1.5 flex items-center">
             <span className="sr-only">Fusion AI</span>
-            <img className="h-12 w-auto" src={logo} alt="" />
+            <img className="h-12 w-auto my-1 px-2" src={logo} alt="" />
+            <p
+            className="text-3xl font-semibold leading-6 text-gray-900"
+            >Fusion AI</p>
           </Link>
         </div>
         <div className="hidden md:flex md:gap-x-6 lg:gap-x-12">
@@ -100,11 +103,12 @@ const Header = () => {
           <div className="flex items-center gap-x-6">
             <Link to="/" className="-m-1.5 p-1.5">
               <span className="sr-only">Fusion AI</span>
-              <img
-                className="h-8 w-auto"
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                alt=""
-              />
+              <div className="flex items-center">
+                <img className="h-12 w-12" src={logo} alt="Fusion AI" />
+                <div 
+                className="text-2xl font-semibold leading-6 text-gray-900"
+                >Fusion AI</div>
+              </div>
             </Link>
             <Link
               to="/summarizer"
