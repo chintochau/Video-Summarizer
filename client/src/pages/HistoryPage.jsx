@@ -5,7 +5,7 @@ import SummaryService from "../services/SummaryService";
 import { formatDuration } from "../components/Utils";
 import { convertMongoDBDateToLocalTime } from "../utils/timeUtils";
 import { useVideoContext } from "../contexts/VideoContext";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useTranscriptContext } from "@/contexts/TranscriptContext";
 import {
   Pagination,
@@ -25,8 +25,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { cn } from "@/utils/utils";
+import defaultImage from "@/assets/default-image.png";
+import { Button } from "@/components/ui/button";
 
 const HistoryPage = ({ sourceType = "all" }) => {
   const navigate = useNavigate();
@@ -206,11 +207,11 @@ const HistoryPage = ({ sourceType = "all" }) => {
 
   return (
     <div className="h-full">
-      <PagnationComponent className="my-2"/>
+      <PagnationComponent className="my-2" />
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-1/4">Video</TableHead>
+            <TableHead className="w-1/2 sm:w-1/3 md:w-1/4">Video</TableHead>
             <TableHead>Title</TableHead>
             <TableHead
               className={classNames(
@@ -226,32 +227,36 @@ const HistoryPage = ({ sourceType = "all" }) => {
             >
               Last Updated
             </TableHead>
+            <TableHead/>
           </TableRow>
         </TableHeader>
         <TableBody>
           {videos.map((video, videoIndex) => (
             <TableRow
               key={video._id}
-              className="cursor-pointer"
+              className="cursor-pointer "
               onClick={() => openVideoHistory(video)}
             >
               <TableCell>
-                <AspectRatio ratio={4 / 3}>
+                {video.videoThumbnail ? (
                   <img
-                    className="h-full w-auto bg-gray-50"
+                    className="aspect-auto h-40 w-auto object-cover rounded-lg mx-auto"
                     src={video.videoThumbnail}
-                    alt=""
                   />
-                </AspectRatio>
+                ) : (
+                  <img
+                    className="aspect-auto h-40 w-auto object-cover rounded-lg mx-auto"
+                    src={defaultImage}
+                  />
+                )}
               </TableCell>
               <TableCell>
                 <p>{video.sourceTitle}</p>
-                <p className=" text-gray-400 font-normal">{video.sourceType}</p>
-                <p className=" text-gray-400 font-normal xl:hidden">
+                <p className="text-gray-400 font-normal">{video.sourceType}</p>
+                <p className="text-gray-400 font-normal xl:hidden">
                   {formatDuration(video.videoDuration)}
                 </p>
-                <p className=" text-gray-400 font-normal xl:hidden">
-                  {" "}
+                <p className="text-gray-400 font-normal xl:hidden">
                   {convertMongoDBDateToLocalTime(video.lastUpdated)}
                 </p>
               </TableCell>
@@ -273,11 +278,26 @@ const HistoryPage = ({ sourceType = "all" }) => {
                   {convertMongoDBDateToLocalTime(video.lastUpdated)}
                 </p>
               </TableCell>
+              <TableCell>
+                <Button 
+                variant="ghost"
+                className="hover:bg-transparent p-2 hover:text-red-500 text-gray-500"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  SummaryService.deleteVideoAndSummaries({
+                    userId,
+                    sourceId: video.sourceId,
+                  }).then(() => fetchVideos(currentPage));
+                }}
+                >
+                  <TrashIcon className="w-6 h-6 m-0 " />
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      <PagnationComponent className="py-2"/>
+      <PagnationComponent className="py-2" />
     </div>
   );
 };

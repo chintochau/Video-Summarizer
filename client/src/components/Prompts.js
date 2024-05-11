@@ -23,7 +23,7 @@ export const defaultModels = [
 export const summarizeOptions = {
   // The detail summary options are displayed in the OptionField component
   detailSummaryOptions: [
-    
+
     {
       id: "meeting-minutes",
       title: "Meeting minutes",
@@ -32,10 +32,11 @@ export const summarizeOptions = {
       premimum: true,
     },
     {
-      id:"seminar",
-      title:"Seminar",
-      description:"Summarize the main ideas, insights, and key messages from the TED Talk video.",
-      prompt:`Provide a concise overview of the key takeaways, insights, and recommendations from the seminar. Highlight the main topics covered, important points made by the speaker(s), and any actionable advice or next steps for the audience. Include relevant timestamp (hh:mm:ss) references from the seminar transcript to allow the user to refer back to the source material.`
+      id: "seminar",
+      title: "Seminar",
+      description: "Summarize the main ideas, insights, and key messages from the TED Talk video.",
+      prompt: `Provide a concise overview of the key takeaways, insights, and recommendations from the seminar. Highlight the main topics covered, important points made by the speaker(s), and any actionable advice or next steps for the audience. Include relevant timestamp (hh:mm:ss) references from the seminar transcript to allow the user to refer back to the source material.`,
+      premimum: true,
     },
     {
       id: "detail-summary",
@@ -110,26 +111,26 @@ export const summarizeOptions = {
   `,
     },
     {
-      id:"how-to",
-      title:"How to",
-      description:"Distill the step-by-step instructions or process demonstrated in the video into a clear, actionable summary.",
-      prompt:`Please provide a concise summary of the key steps and instructions outlined in the video script. Highlight the main actions and techniques that are demonstrated in the video, and provide enough detail to allow someone to understand the core process being taught, without reproducing any verbatim text from the original script. Focus on outlining the step-by-step procedure in your own words, and include any important safety considerations or tips mentioned. The goal is to give the reader a high-level overview of the method covered in the video, not a complete transcript. for each step, provide the timestamp (hh:mm:ss) from the transcript`
-    },{
-      id:"product-review",
-      title:"Product Review",
-      description:"Highlight the main features, pros, cons, and overall assessment of the product or service covered in the video.",
-      prompt:`Here is a prompt to summarize a video script of a product review:
+      id: "how-to",
+      title: "How to",
+      description: "Distill the step-by-step instructions or process demonstrated in the video into a clear, actionable summary.",
+      prompt: `Please provide a concise summary of the key steps and instructions outlined in the video script. Highlight the main actions and techniques that are demonstrated in the video, and provide enough detail to allow someone to understand the core process being taught, without reproducing any verbatim text from the original script. Focus on outlining the step-by-step procedure in your own words, and include any important safety considerations or tips mentioned. The goal is to give the reader a high-level overview of the method covered in the video, not a complete transcript. for each step, provide the timestamp (hh:mm:ss) from the transcript`
+    }, {
+      id: "product-review",
+      title: "Product Review",
+      description: "Highlight the main features, pros, cons, and overall assessment of the product or service covered in the video.",
+      prompt: `Here is a prompt to summarize a video script of a product review:
 
 Please review the provided video script transcript and provide a concise summary of the key points, including:
 1. A high-level overview of the product being reviewed and the main takeaways from the review.
 2. A list of the pros and cons mentioned in the video, along with the timestamp from the transcript where each point is discussed.
 3. Any other important details or insights from the video that would be helpful for the viewer to know.
 Please ensure your summary does not reproduce any copyrighted material from the transcript, bold the key words. Provide your summary a title, Paraphrase and summarize the key information in your own words. Provide the transcript timestamp references so the viewer can refer back to the full details in the source material.`
-    },{
-      id:"cooking",
-      title:"Cooking",
-      description:"Summarize the recipe, cooking techniques, and any other relevant information presented in the culinary video.",
-      prompt:`Please provide a summary of the key cooking steps, important tips, and relevant timestamps from the video transcript. Highlight the essential information a viewer would need to successfully recreate the dish, including:
+    }, {
+      id: "cooking",
+      title: "Cooking",
+      description: "Summarize the recipe, cooking techniques, and any other relevant information presented in the culinary video.",
+      prompt: `Please provide a summary of the key cooking steps, important tips, and relevant timestamps from the video transcript. Highlight the essential information a viewer would need to successfully recreate the dish, including:
 
       The main ingredients and their preparation
       The step-by-step cooking instructions, with timestamps for the key steps
@@ -138,22 +139,22 @@ Please ensure your summary does not reproduce any copyrighted material from the 
       Please do not reproduce any verbatim text from the transcript, but summarize the information in your own words. Cite the timestamp for any key details you include so the viewer can refer back to the original source.`
     },
     {
-      id:"travel",
-      title:"Travel",
-      description:"Provide an overview of the destination, must-see attractions, practical tips, and other key takeaways from the travel guide video.",
-      prompt:`Based on the provided video transcript, please summarize the key highlights of the travel guide, including the best aspects of the destination, important tips for visitors, and relevant timestamp (in format: hh:mm:ss) references from the transcript. Ensure your summary does not reproduce any copyrighted material verbatim. If there are any gaps or missing sections in the transcript, note where those occur and provide the summary to the best of your ability based on the available information.`
-    },    
-    {
-      id:"meeting-short",
-      title:"Meeting",
-      description:"Capture the main discussion points, action items, and conclusions from the meeting or presentation covered in the video.",
-      prompt:`Your task is to review the provided meeting notes and create a concise summary that captures the essential information, focusing on key takeaways and action items assigned to specific individuals or departments during the meeting. Use clear and professional language, and organize the summary in a logical manner using appropriate formatting such as headings, subheadings, and bullet points. Ensure that the summary is easy to understand and provides a comprehensive but succinct overview of the meeting's content, with a particular focus on clearly indicating who is responsible for each action item. For each takeaways, provide the timestamp from the transcript`
+      id: "travel",
+      title: "Travel",
+      description: "Provide an overview of the destination, must-see attractions, practical tips, and other key takeaways from the travel guide video.",
+      prompt: `Based on the provided video transcript, please summarize the key highlights of the travel guide, including the best aspects of the destination, important tips for visitors, and relevant timestamp (in format: hh:mm:ss) references from the transcript. Ensure your summary does not reproduce any copyrighted material verbatim. If there are any gaps or missing sections in the transcript, note where those occur and provide the summary to the best of your ability based on the available information.`
     },
     {
-      id:"ted-talk",
-      title:"TED Talk",
-      description:"Summarize the main ideas, insights, and key messages from the TED Talk video.",
-      prompt:`Distill the core message, key arguments, and impactful moments from the TED talk. Outline the speaker's main thesis or central theme, supporting evidence or examples provided, and any memorable quotes or anecdotes. Include timestamp (hh:mm:ss) references from the talk transcript to allow the user to revisit specific sections of interest.`
+      id: "meeting-short",
+      title: "Meeting",
+      description: "Capture the main discussion points, action items, and conclusions from the meeting or presentation covered in the video.",
+      prompt: `Your task is to review the provided meeting notes and create a concise summary that captures the essential information, focusing on key takeaways and action items assigned to specific individuals or departments during the meeting. Use clear and professional language, and organize the summary in a logical manner using appropriate formatting such as headings, subheadings, and bullet points. Ensure that the summary is easy to understand and provides a comprehensive but succinct overview of the meeting's content, with a particular focus on clearly indicating who is responsible for each action item. For each takeaways, provide the timestamp from the transcript`
+    },
+    {
+      id: "ted-talk",
+      title: "TED Talk",
+      description: "Summarize the main ideas, insights, and key messages from the TED Talk video.",
+      prompt: `Distill the core message, key arguments, and impactful moments from the TED talk. Outline the speaker's main thesis or central theme, supporting evidence or examples provided, and any memorable quotes or anecdotes. Include timestamp (hh:mm:ss) references from the talk transcript to allow the user to revisit specific sections of interest.`
     }
   ]
 }

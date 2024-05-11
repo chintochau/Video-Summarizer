@@ -149,3 +149,31 @@ export const handleSummaryRequestWithQuota = async (req, res) => {
     res.status(500).json({ message: "Failed to generate summary", error: error.message });
   }
 }
+export const deleteSummary = async (req, res) => {
+  try {
+    const { userId, summaryId } = req.body;
+    const summary = await Summary.findOneAndDelete
+    ({ _id: summaryId, userId: userId });
+    if (!summary) {
+      return res.status(404).json({ success: false, message: "Summary not found" });
+    }
+    res.status(200).json({ success: true, data: summary });
+  }
+  catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+export const deleteVideoAndSummaries = async (req, res) => {
+  try {
+    const { userId, sourceId } = req.body;
+    const video = await Video.findOneAndDelete({ sourceId, userId });
+    if (!video) {
+      return res.status(404).json({ success: false, message: "Video not found" });
+    }
+    const summaries = await Summary.deleteMany({ videoId: video._id });
+    res.status(200).json({ success: true, data: { video, summaries } });
+  }
+  catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+}

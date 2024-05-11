@@ -1,7 +1,9 @@
+import { STORAGE_KEYS } from "@/utils/StorageKeys";
+
 const apiUrl = `${import.meta.env.VITE_API_BASE_URL}`;
 
 class QuotaService {
-    static KEY = 'quota';
+    static KEY = STORAGE_KEYS.USER_QUOTA;
   
     static getQuota() {
       const quota = localStorage.getItem(this.KEY);

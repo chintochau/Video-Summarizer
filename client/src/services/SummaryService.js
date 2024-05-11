@@ -140,4 +140,43 @@ export default class SummaryService {
       return null;
     }
   };
+
+  static deleteSummary = async ({ userId, summaryId }) => {
+    try {
+      const response = await fetch(apiUrl + "/api/delete-summary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, summaryId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete summary");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error deleting summary:", error);
+      return null;
+    }
+  };
+  static deleteVideoAndSummaries = async ({ userId, sourceId }) => {
+    try {
+      const response = await fetch(apiUrl + "/api/delete-video", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, sourceId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete video and summaries");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error deleting video and summaries:", error);
+      return null;
+    }
+  }
 }

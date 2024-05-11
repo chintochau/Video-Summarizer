@@ -15,6 +15,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "../ui/resizable";
+import {  ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 
 const UploadSummary = ({ Bar3Button }) => {
   // state management
@@ -148,7 +149,8 @@ const UploadSummary = ({ Bar3Button }) => {
                   Selected File: {file.name} - {formatFileSize(file.size)}
                 </p>
               ) : (
-                <p className=" m-auto text-gray-600 text-sm p-1 flex items-center text-center">
+                <p className=" m-auto text-gray-600 text-sm p-1 flex flex-col items-center text-center">
+                  <ArrowUpTrayIcon className="w-14 h-14 mr-2 hidden lg:block" />
                   Upload Audio/ Video here <br/>(100 MB limitation for now)
                 </p>
               )}

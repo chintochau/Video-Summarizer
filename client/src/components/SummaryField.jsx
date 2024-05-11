@@ -22,6 +22,8 @@ import { Button } from "./ui/button.jsx";
 import { useQuota } from "@/contexts/QuotaContext.jsx";
 import QuotaService from "@/services/QuotaService.js";
 import { defaultModels } from "./Prompts.js";
+import { getItem, setItem } from "@/services/LocalStorageService.js";
+import { STORAGE_KEYS } from "@/utils/StorageKeys.js";
 
 const SummaryField = ({ videoRef }) => {
   // use context
@@ -33,10 +35,11 @@ const SummaryField = ({ videoRef }) => {
 
   // use state
   const [response, setResponse] = useState("");
-  const [language, setLanguage] = useState("English");
   const [creditCount, setCreditCount] = useState(0);
   const [startSummary, setStartSummary] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+
+  const [language, setLanguage] = useState("English");
   const [languageModel, setLanguageModel] = useState("claude3h");
 
   const insertNewTab = (summaryText, title) => {
@@ -68,11 +71,18 @@ const SummaryField = ({ videoRef }) => {
       );
       setActiveTab(0);
     }
-    return () => {};
+    return () => { };
   }, [parentTranscriptText]);
 
   const handleLanguageChange = (value) => {
     setLanguage(value);
+    //save preferred language to local storage
+    setItem(STORAGE_KEYS.PREFERRED_LANGUAGE, value);
+  };
+  const handleLanguageModelChange = (value) => {
+    setLanguageModel(value);
+    //save preferred llm to local storage
+    setItem(STORAGE_KEYS.PREFERRED_LLM, value);
   };
 
   const inputTranscript = (id) => {
@@ -84,6 +94,18 @@ const SummaryField = ({ videoRef }) => {
       default:
         return parentTranscriptText;
     }
+  };
+
+  useEffect(() => {
+    // read prefereed language and llm from local storage
+    getItem(STORAGE_KEYS.PREFERRED_LANGUAGE) && setLanguage(getItem(STORAGE_KEYS.PREFERRED_LANGUAGE));
+    getItem(STORAGE_KEYS.PREFERRED_LLM) && setLanguageModel(getItem(STORAGE_KEYS.PREFERRED_LLM));
+
+  });
+
+  const removeSummary = (index) => {
+    const updatedSummaries = summaries.filter((item, i) => i !== index);
+    setSummaries(updatedSummaries);
   };
 
   const performSummarize = async (option) => {
@@ -103,6 +125,7 @@ const SummaryField = ({ videoRef }) => {
           {
             option,
             transcript: parentTranscriptText,
+            selectedModel: languageModel,
             video,
             language,
           },
@@ -184,11 +207,10 @@ const SummaryField = ({ videoRef }) => {
   return (
     <div className="relative h-full flex flex-col dark:bg-zinc-800">
       <div className="flex justify-between px-3 pt-1">
-
         <div className=" flex flex-1 items-center gap-x-1 flex-wrap">
           <LanguageIcon className="h-6 w-6 text-indigo-600 " />
           <div className="w-28">
-            <Select onValueChange={handleLanguageChange} defaultValue="English">
+            <Select onValueChange={handleLanguageChange} value={language}>
               <SelectTrigger className=" h-7">
                 <SelectValue placeholder="Select Language" />
               </SelectTrigger>
@@ -201,10 +223,9 @@ const SummaryField = ({ videoRef }) => {
               </SelectContent>
             </Select>
           </div>
-
           <AcademicCapIcon className="h-6 w-6 text-indigo-600 " />
           <div>
-            <Select onValueChange={setLanguageModel} defaultValue="claude3h">
+            <Select onValueChange={handleLanguageModelChange} value={languageModel}>
               <SelectTrigger className="h-7">
                 <SelectValue placeholder="Select Language" />
               </SelectTrigger>
@@ -238,6 +259,19 @@ const SummaryField = ({ videoRef }) => {
         </div>
       </div>
 
+      {language !== "English" && (
+        <div
+          className="text-sm text-gray-500 px-3 py-1"
+        >
+          Note: AI functions best with English language. For other languages, we recommend summarizing in English first, then translating using tools like <a
+            className="text-blue-500 cursor-pointer"
+            target="_blank"
+            href="https://translate.google.com/"
+            >
+            Google Translate</a> for best results.
+        </div>
+      )}
+
       <HeadingsWithTabs
         startSummary={startSummary}
         summaries={summaries}
@@ -255,6 +289,7 @@ const SummaryField = ({ videoRef }) => {
         startSummary={startSummary}
         performSummarize={performSummarize}
         creditCount={creditCount}
+        removeSummary={removeSummary}
       />
     </div>
   );

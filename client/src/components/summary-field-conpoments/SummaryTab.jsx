@@ -2,6 +2,11 @@ import Markdown from "markdown-to-jsx";
 import React, { useState } from "react";
 import OptionField from "../OptionField";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "../ui/button";
+import { ClipboardDocumentIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { useToast } from "../ui/use-toast";
+import SummaryService from "@/services/SummaryService";
+import { useAuth } from "@/contexts/AuthContext";
 
 
 // Summary Tab
@@ -13,6 +18,7 @@ const SummaryTab = (data) => {
     response,
     startSummary,
     performSummarize,
+    removeSummary,
     creditCount = { creditCount },
   } = data;
   if (!summaryObject) {
@@ -28,63 +34,106 @@ const SummaryTab = (data) => {
       return response;
     }
   };
+  const { toast } = useToast()
+  const { userId } = useAuth()
 
 
-// 點擊轉錄時跳轉視頻
-const handleTimestampClick = (time) => {
-  let [hours, minutes, seconds] = time.split(":");
-  let secondsTotal;
+  // 點擊轉錄時跳轉視頻
+  const handleTimestampClick = (time) => {
+    let [hours, minutes, seconds] = time.split(":");
+    let secondsTotal;
 
-  if (time.split(":").length === 2) {
-    secondsTotal = parseInt(hours) * 60 + parseFloat(minutes);
-  } else if (time.split(":").length === 3) {
-    secondsTotal =
-      parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseFloat(seconds);
-  }
-
-  if (videoRef && videoRef.current) {
-    videoRef.current.currentTime = secondsTotal;
-    if (videoRef.current.internalPlayer) {
-      videoRef.current.internalPlayer.seekTo(secondsTotal);
+    if (time.split(":").length === 2) {
+      secondsTotal = parseInt(hours) * 60 + parseFloat(minutes);
+    } else if (time.split(":").length === 3) {
+      secondsTotal =
+        parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseFloat(seconds);
     }
-  }
-};
 
-const linkOverride = {
-  a: {
-    component: ({ children, href, ...props }) => {
-      if (href.startsWith("#timestamp")) {
-        const timestamp = children[0];
+    if (videoRef && videoRef.current) {
+      videoRef.current.currentTime = secondsTotal;
+      if (videoRef.current.internalPlayer) {
+        videoRef.current.internalPlayer.seekTo(secondsTotal);
+      }
+    }
+  };
+
+  const deleteSummary = async () => {
+    if (userId) {
+      const response = await SummaryService.deleteSummary({
+        userId,
+        summaryId: summaryObject._id,
+      });
+      if (response) {
+        removeSummary(activeTab);
+      }
+    } else {
+      removeSummary(activeTab);
+    }
+  };
+
+
+  const linkOverride = {
+    a: {
+      component: ({ children, href, ...props }) => {
+        if (href.startsWith("#timestamp")) {
+          const timestamp = children[0];
+          return (
+            <a
+              className={"text-blue-500 cursor-pointer"}
+              onClick={() => handleTimestampClick(timestamp)}
+            >
+              {children}
+            </a>
+          );
+        }
         return (
-          <a
-            className={"text-blue-500 cursor-pointer"}
-            onClick={() => handleTimestampClick(timestamp)}
-          >
+          <a href={href} {...props}>
             {children}
           </a>
         );
-      }
-      return (
-        <a href={href} {...props}>
-          {children}
-        </a>
-      );
+      },
     },
-  },
-};
+  };
 
-const transformArticleWithClickableTimestamps = (articleContent) => {
-  // Updated regex to match hh:mm:ss and mm:ss and m:ss formats
-  const timestampRegex = /(\d{1,2}:\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2})/g;
+  const transformArticleWithClickableTimestamps = (articleContent) => {
+    // Updated regex to match hh:mm:ss and mm:ss and m:ss formats
+    const timestampRegex = /(\d{1,2}:\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2})/g;
 
-  return articleContent.replace(
-    timestampRegex,
-    (match) => `[${match}](#timestamp-${match})`
-  );
-};
+    return articleContent.replace(
+      timestampRegex,
+      (match) => `[${match}](#timestamp-${match})`
+    );
+  };
 
   return (
     <ScrollArea className="overflow-y-auto">
+      {summary !== "" &&
+        <div className="absolute top-0 right-0 ">
+          <Button
+            className="p-2"
+            variant="transparent"
+            onClick={() => {
+              navigator.clipboard.writeText(showText())
+              toast({
+                title: "Saved to clipboard",
+                description: "The summary has been copied to your clipboard.",
+              })
+
+            }}
+          >
+            <ClipboardDocumentIcon className="w-6 h-6" />
+          </Button>
+          <Button
+            variant="transparent"
+            className="p-2 hover:text-red-500"
+            onClick={deleteSummary}
+          >
+            <TrashIcon className="w-6 h-6" />
+          </Button>
+        </div>
+      }
+
       {summary === "" && response === "" && !startSummary ? (
         <div className="overflow-y-auto ">
           <OptionField
