@@ -97,7 +97,13 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
     messages:[
       {
         role: "user",
-        content: `you are given the transcript of the first 5 minutes of a video titled: ${video.sourceTitle}, below is the transcript: ${getFirstNMinutesOfTranscript(transcript)}`,
+        content: `
+        give your response in a markdown, don't use a code interpreter, and you must answer in the language: ${language}
+        you are given the transcript of the first 5 minutes of a video titled: ${video.sourceTitle}, 
+        below is the transcript: ${getFirstNMinutesOfTranscript(transcript)}
+        You must use the template:
+        ### Summary
+        `,
       },
     ],
     fullResponseText:"",
@@ -105,6 +111,7 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
   }
 
   const videoContext = await summarizeWithAnthropic(data)
+  res.write(videoContext+"\n");
 
   const summarizePromptsSeries = async () => {
     for (let i = 0; i < transcriptsArray.length; i++) {
@@ -117,6 +124,7 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
       ${prompt}
       `;
       try {
+        res.write("### Part " + (i + 1) + " of " + transcriptsArray.length + "\n");
         const summary = await summarizePrompt(additionalPrompt);
         res.write("\n");
       } catch (error) {

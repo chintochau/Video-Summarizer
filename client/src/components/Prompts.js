@@ -36,7 +36,7 @@ export const summarizeOptions = {
       title: "Long Summary",
       description: "Summarize the main ideas, insights, and key messages from the TED Talk video.",
       prompt: `Your output should use the following template, provide timestamp (in the form hh:mm:ss) for each perspective:
-      ### Introduction
+
       ### Main Body
         #### perspective - title
         - 
@@ -47,8 +47,8 @@ export const summarizeOptions = {
         - 
         ...
         ……
-      ### Conclusion
-      ### call to action from author
+      ### Conclusion for this part
+      ### call to action from author for this part
         
         You are given a script from the video, it can be any type of video. You task is to write an summarize article based on the video content, and use the above template.
         

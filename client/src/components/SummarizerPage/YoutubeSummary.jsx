@@ -30,7 +30,7 @@ const YoutubeSummary = ({ Bar3Button }) => {
             <VideoField
               videoRef={videoRef}
               youtubeId={youtubeId}
-              className="fixed z-10 top-11 md:top-0 md:relative"
+              className="fixed z-10 top-11 md:top-0 md:relative border-b border-b-indigo-400"
             />
             <div className="h-40 flex-1 hidden md:block overscroll-scroll">
               <TranscriptField
@@ -39,7 +39,7 @@ const YoutubeSummary = ({ Bar3Button }) => {
                 displayMode="youtube"
               />
             </div>
-            <div className="pt-[66vw] md:hidden h-40 flex-1 flex flex-col">
+            <div className="pt-[67vw] md:hidden md:h-40 flex-1 flex flex-col">
               <Tabs defaultValue="summary" >
                 <TabsList className="w-full flex">                  
                   <TabsTrigger value="summary" className="flex-1">Summary</TabsTrigger>
