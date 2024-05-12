@@ -237,7 +237,7 @@ const HistoryPage = ({ sourceType = "all" }) => {
               className="cursor-pointer "
               onClick={() => openVideoHistory(video)}
             >
-              <TableCell>
+              <TableCell className="px-0 md:px-3">
                 {video.videoThumbnail ? (
                   <img
                     className="aspect-auto h-40 w-auto object-cover rounded-lg mx-auto"
@@ -250,7 +250,7 @@ const HistoryPage = ({ sourceType = "all" }) => {
                   />
                 )}
               </TableCell>
-              <TableCell>
+              <TableCell className="px-0 md:px-3">
                 <p>{video.sourceTitle}</p>
                 <p className="text-gray-400 font-normal">{video.sourceType}</p>
                 <p className="text-gray-400 font-normal xl:hidden">
@@ -278,7 +278,9 @@ const HistoryPage = ({ sourceType = "all" }) => {
                   {convertMongoDBDateToLocalTime(video.lastUpdated)}
                 </p>
               </TableCell>
-              <TableCell>
+              <TableCell
+              className='px-0 sm:px-1 md:px-2'
+              >
                 <Button 
                 variant="ghost"
                 className="hover:bg-transparent p-2 hover:text-red-500 text-gray-500"
