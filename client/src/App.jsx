@@ -1,6 +1,5 @@
 import Header from "./components/common/Header.jsx";
 import HomePage from "./pages/HomePage.jsx";
-import SummarizePage from "./pages/SummarizePage.jsx";
 import { Route, Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
 import LoginPage from "./pages/LoginPage.jsx";
@@ -11,10 +10,8 @@ import PricingPage from "./pages/PricingPage.jsx";
 import HistoryPage from "./pages/HistoryPage.jsx";
 import { VideoProvider } from "./contexts/VideoContext.jsx";
 import Dashboard from "./components/dashboard/Dashboard.jsx";
-import Summarizer from "./components/Summarizer.jsx";
 import { TranscriptProvider } from "./contexts/TranscriptContext.jsx";
 import YoutubeSummary from "./components/SummarizerPage/YoutubeSummary.jsx";
-import ConsoleHome from "./components/SummarizerPage/ConsoleHome.jsx";
 import { SummaryProvider } from "./contexts/SummaryContext.jsx";
 import GeneralSummary from "./components/SummarizerPage/GeneralSummary.jsx";
 import { QuotaProvider } from "./contexts/QuotaContext.jsx";

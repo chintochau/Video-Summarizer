@@ -9,3 +9,5 @@ export const languageList = [
     { code: 'ru', name: 'Russian' },
     { code: 'pt', name: 'Portuguese' }
 ];
+
+export const chromeStoreLink = "https://chromewebstore.google.com/detail/fusion-video-book/cncegakknkokakaclbpieegnhklkfpik"

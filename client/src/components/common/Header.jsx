@@ -58,7 +58,7 @@ const Header = () => {
         <div className="flex md:flex-1">
           <Link to="/" className="-m-1.5 flex items-center">
             <span className="sr-only">Fusion AI</span>
-            <img className="h-12 w-auto my-1 px-2" src={logo} alt="" />
+            <img className="h-14 w-16 my-1 px-2" src={logo} alt="" />
             <p
             className="text-3xl font-semibold leading-6 text-gray-900"
             >Fusion AI</p>

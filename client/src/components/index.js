@@ -5,7 +5,7 @@ import Summarizer from "./Summarizer";
 import HeroSection from "./home/HeroSection";
 import FeaturesAndBenefits from "./home/FeaturesAndBenefits";
 import SocialProof from "./home/SocialProof";
-import PatternInterruption from "./home/PatternInterruption";
+import ChromeExtension from "./home/PatternInterruption";
 import PricingPlans from "./home/PricingPlans";
 import FAQs from "./home/FAQ";
 import FinalCTA from "./home/FinalCTA";
@@ -18,7 +18,7 @@ export {
   HowItWorks,
   FeaturesAndBenefits,
   SocialProof,
-  PatternInterruption,
+  ChromeExtension,
   PricingPlans,
   FAQs,
   FinalCTA,

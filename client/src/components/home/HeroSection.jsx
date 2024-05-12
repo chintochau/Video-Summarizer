@@ -2,8 +2,17 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Container } from "../common/Container";
+import { HashLink } from "react-router-hash-link";
+import chromeIcon from "../../assets/chrome-icon.png";
+import { chromeStoreLink } from "@/constants";
 
 const HeroSection = () => {
+  const openChromeExtension = () => {
+    window.open(
+      chromeStoreLink
+    );
+  };
+
   return (
     <Container className="pb-16 pt-20 text-center lg:pt-32">
       <h1 className="mx-auto max-w-4xl text-5xl font-display font-medium tracking-tight text-slate-900 sm:text-7xl">
@@ -30,15 +39,35 @@ const HeroSection = () => {
         <Link to="summarizer">
           <Button href="/register">Try for Free</Button>
         </Link>
-        <Button variant="outline">
-          <svg
-            aria-hidden="true"
-            className="h-3 w-3 flex-none fill-indigo-600 group-active:fill-current"
-          >
-            <path d="m9.997 6.91-7.583 3.447A1 1 0 0 1 1 9.447V2.553a1 1 0 0 1 1.414-.91L9.997 5.09c.782.355.782 1.465 0 1.82Z" />
-          </svg>
-          <span className="ml-3">Watch video (later)</span>
+      </div>
+
+      <p
+        id="chrome-extension"
+        className="mt-8 text-lg text-slate-700 font-normal font-roboto"
+      >
+        Chrome Extension is also available now.
+      </p>
+
+      <div className="mt-2 flex justify-center gap-x-6">
+        <Button onClick={openChromeExtension}>
+          <img
+            src={chromeIcon}
+            alt="Chrome Extension Icon"
+            className="w-6 h-6 mr-2"
+          />
+          Add to Chrome
         </Button>
+        <HashLink to="/#how-it-works">
+          <Button variant="outline">
+            <svg
+              aria-hidden="true"
+              className="h-3 w-3 flex-none fill-indigo-600 group-active:fill-current mr-2"
+            >
+              <path d="m9.997 6.91-7.583 3.447A1 1 0 0 1 1 9.447V2.553a1 1 0 0 1 1.414-.91L9.997 5.09c.782.355.782 1.465 0 1.82Z" />
+            </svg>
+            How It Works
+          </Button>
+        </HashLink>
       </div>
     </Container>
   );

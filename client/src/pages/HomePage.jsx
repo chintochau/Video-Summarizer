@@ -3,12 +3,12 @@ import {
   HeroSection,
   HowItWorks,
   FeaturesAndBenefits,
-  PatternInterruption,
   SocialProof,
   PricingPlans,
   FAQs,
   FinalCTA,
   Footer,
+  ChromeExtension,
 } from "../components";
 
 const HomePage = () => {
@@ -26,8 +26,8 @@ const HomePage = () => {
       <div id="social-proof">
         <SocialProof />
       </div>
-      <div id="pattern-interruption">
-        <PatternInterruption />
+      <div id="how-it-works">
+        <ChromeExtension />
       </div>
       <div id="pricing">
         <PricingPlans home />
