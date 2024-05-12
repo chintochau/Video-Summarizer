@@ -18,6 +18,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useToast } from "../ui/use-toast";
+import { Button } from "../ui/button";
+import {tify, sify} from 'chinese-conv'
 
 export const ControlBar = (params) => {
   const {
@@ -28,7 +30,7 @@ export const ControlBar = (params) => {
     viewMode,
     setViewMode,
   } = params;
-  const { resetTranscript, parentSrtText } = useTranscriptContext();
+  const { resetTranscript, parentSrtText,setEditableTranscript } = useTranscriptContext();
   const { video } = useVideoContext();
   const { userId } = useAuth();
   const [currentTab, setCurrentTab] = useState("Transcript");
@@ -45,6 +47,13 @@ export const ControlBar = (params) => {
     { name: "Transcript", label: "transcript" },
     { name: "Text", label: "text" },
   ];
+
+  const chineseConvert = () => {
+    const updatedTranscript = editableTranscript.map((entry, i) => {
+      return {...entry,text: tify(entry.text)};
+    });
+    setEditableTranscript(updatedTranscript);
+  };
 
   return (
     <div>
@@ -71,7 +80,7 @@ export const ControlBar = (params) => {
             ))}
           </nav>
 
-          <div className="content-center">
+          <div className="content-center flex items-center">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger className="h-6 w-6 hover:text-indigo-400 text-indigo-600 duration-200 transition-colors">
@@ -97,7 +106,7 @@ export const ControlBar = (params) => {
               <Tooltip>
                 <TooltipTrigger className=" hover:text-indigo-400 text-indigo-600 duration-200 transition-colors">
                   <div className="flex" onClick={() => exportSRT(editableTranscript)}>
-                    <ArrowDownTrayIcon className="w-6 h-6"/>
+                    <ArrowDownTrayIcon className="w-6 h-6" />
                     <p>SRT</p>
                   </div>
                 </TooltipTrigger>
@@ -127,10 +136,17 @@ export const ControlBar = (params) => {
             </button>
 
             <button
+              onClick={chineseConvert}
+              className={`w-8 p-1  text-indigo-600 rounded-md hover:text-indigo-400  outline-indigo-600 `}
+            >
+              繁
+            </button>
+
+
+            <button
               onClick={() => setIsEditMode(!isEditMode)}
-              className={`w-8 p-1  text-indigo-600 rounded-md hover:text-indigo-400  outline-indigo-600 ${
-                isEditMode ? " bg-indigo-500 text-white" : ""
-              }`}
+              className={`w-8 p-1  text-indigo-600 rounded-md hover:text-indigo-400  outline-indigo-600 ${isEditMode ? " bg-indigo-500 text-white" : ""
+                }`}
             >
               <PencilSquareIcon />
             </button>

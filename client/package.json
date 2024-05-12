@@ -38,6 +38,7 @@
     "@stripe/stripe-js": "^3.1.0",
     "@tailwindcss/forms": "^0.5.7",
     "axios": "^1.6.8",
+    "chinese-conv": "^1.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "file-saver": "^2.0.5",
