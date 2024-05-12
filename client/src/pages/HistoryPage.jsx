@@ -237,7 +237,7 @@ const HistoryPage = ({ sourceType = "all" }) => {
               className="cursor-pointer "
               onClick={() => openVideoHistory(video)}
             >
-              <TableCell className="px-0 md:px-3">
+              <TableCell className="px-1 md:px-3">
                 {video.videoThumbnail ? (
                   <img
                     className="aspect-auto h-40 w-auto object-cover rounded-lg mx-auto"
