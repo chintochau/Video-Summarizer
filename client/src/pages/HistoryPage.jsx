@@ -29,7 +29,7 @@ import { cn } from "@/utils/utils";
 import defaultImage from "@/assets/default-image.png";
 import { Button } from "@/components/ui/button";
 
-const HistoryPage = ({ sourceType = "all" }) => {
+const HistoryPage = ({ sourceType = "all", className }) => {
   const navigate = useNavigate();
   const { userId, currentUser } = useAuth();
   const [videos, setVideos] = useState([]);
@@ -206,7 +206,12 @@ const HistoryPage = ({ sourceType = "all" }) => {
   };
 
   return (
-    <div className="h-full">
+    <div className={
+      cn(
+        "h-full",
+        className
+      )
+    }>
       <PagnationComponent className="my-2" />
       <Table>
         <TableHeader>

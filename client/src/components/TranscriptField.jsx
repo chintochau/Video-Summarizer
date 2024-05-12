@@ -326,9 +326,9 @@ const TranscriptField = (params) => {
                       <div className="h-12"></div>
                     </ScrollArea>
                   ) : (
-                    <div className="h-full p-1">
+                    <div className="md:h-full p-1">
                       <Textarea
-                        className="w-full h-full px-2 border-none resize-none bg-gray-50"
+                        className="w-full h-[80vh] md:h-full px-2 border-none resize-none bg-gray-50"
                         value={parentTranscriptText}
                         readOnly
                       ></Textarea>

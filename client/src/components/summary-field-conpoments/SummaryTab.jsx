@@ -8,7 +8,6 @@ import { useToast } from "../ui/use-toast";
 import SummaryService from "@/services/SummaryService";
 import { useAuth } from "@/contexts/AuthContext";
 
-
 // Summary Tab
 const SummaryTab = (data) => {
   const {
@@ -34,9 +33,8 @@ const SummaryTab = (data) => {
       return response;
     }
   };
-  const { toast } = useToast()
-  const { userId } = useAuth()
-
+  const { toast } = useToast();
+  const { userId } = useAuth();
 
   // 點擊轉錄時跳轉視頻
   const handleTimestampClick = (time) => {
@@ -72,7 +70,6 @@ const SummaryTab = (data) => {
     }
   };
 
-
   const linkOverride = {
     a: {
       component: ({ children, href, ...props }) => {
@@ -98,7 +95,8 @@ const SummaryTab = (data) => {
 
   const transformArticleWithClickableTimestamps = (articleContent) => {
     // Updated regex to match hh:mm:ss and mm:ss and m:ss formats
-    const timestampRegex = /(\d{1,2}:\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2})/g;
+    const timestampRegex =
+      /(\d{1,2}:\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2})/g;
 
     return articleContent.replace(
       timestampRegex,
@@ -108,31 +106,55 @@ const SummaryTab = (data) => {
 
   return (
     <ScrollArea className="overflow-y-auto">
-      {summary !== "" &&
-        <div className="absolute top-0 right-0 ">
-          <Button
-            className="p-2"
-            variant="transparent"
-            onClick={() => {
-              navigator.clipboard.writeText(showText())
-              toast({
-                title: "Saved to clipboard",
-                description: "The summary has been copied to your clipboard.",
-              })
-
-            }}
-          >
-            <ClipboardDocumentIcon className="w-6 h-6" />
-          </Button>
-          <Button
-            variant="transparent"
-            className="p-2 hover:text-red-500"
-            onClick={deleteSummary}
-          >
-            <TrashIcon className="w-6 h-6" />
-          </Button>
-        </div>
-      }
+      {summary !== "" && (
+        <>
+          <div className="hidden md:block md:absolute top-0 right-0 ">
+            <Button
+              className="p-2"
+              variant="transparent"
+              onClick={() => {
+                navigator.clipboard.writeText(showText());
+                toast({
+                  title: "Saved to clipboard",
+                  description: "The summary has been copied to your clipboard.",
+                });
+              }}
+            >
+              <ClipboardDocumentIcon className="w-6 h-6" />
+            </Button>
+            <Button
+              variant="transparent"
+              className="p-2 hover:text-red-500"
+              onClick={deleteSummary}
+            >
+              <TrashIcon className="w-6 h-6" />
+            </Button>
+          </div>
+          
+          <div className="flex justify-end md:hidden">
+            <Button
+              className="p-2 focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+              variant="ghost"
+              onClick={() => {
+                navigator.clipboard.writeText(showText());
+                toast({
+                  title: "Saved to clipboard",
+                  description: "The summary has been copied to your clipboard.",
+                });
+              }}
+            >
+              <ClipboardDocumentIcon className="w-6 h-6" />
+            </Button>
+            <Button
+              variant="ghost"
+              className="p-2 hover:text-red-500 focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+              onClick={deleteSummary}
+            >
+              <TrashIcon className="w-6 h-6" />
+            </Button>
+          </div>
+        </>
+      )}
 
       {summary === "" && response === "" && !startSummary ? (
         <div className="overflow-y-auto ">

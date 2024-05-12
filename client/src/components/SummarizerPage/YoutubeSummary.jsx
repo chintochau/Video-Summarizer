@@ -10,29 +10,52 @@ import {
   ResizablePanelGroup,
 } from "../ui/resizable";
 import YoutubeBar from "../summarizerComponents/YoutubeBar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const YoutubeSummary = ({ Bar3Button }) => {
   const videoRef = useRef(null);
   const { youtubeId } = useVideoContext();
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col md:h-full">
       {/* YoutubeBar */}
-      <YoutubeBar Bar3Button={Bar3Button} />
+      <YoutubeBar
+        Bar3Button={Bar3Button}
+        className="fixed z-10 top-0 w-full md:relative"
+      />
       {/* Main Content */}
       {youtubeId && (
         <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel className="flex-col flex-1 hidden md:flex">
-            <VideoField videoRef={videoRef} youtubeId={youtubeId} />
-            <div className=" h-40 flex-1 hidden md:block overscroll-scroll">
+          <ResizablePanel className="flex-col flex-1 flex">
+            <VideoField
+              videoRef={videoRef}
+              youtubeId={youtubeId}
+              className="fixed z-10 top-11 md:top-0 md:relative"
+            />
+            <div className="h-40 flex-1 hidden md:block overscroll-scroll">
               <TranscriptField
                 youtubeId={youtubeId}
                 videoRef={videoRef}
                 displayMode="youtube"
               />
             </div>
-            <div className="md:hidden h-40 flex-1">
-              <SummaryField videoRef={videoRef} />
+            <div className="pt-[66vw] md:hidden h-40 flex-1 flex flex-col">
+              <Tabs defaultValue="summary" >
+                <TabsList className="w-full flex">                  
+                  <TabsTrigger value="summary" className="flex-1">Summary</TabsTrigger>
+                  <TabsTrigger value="transcript" className="flex-1">Transcript</TabsTrigger>
+                </TabsList>
+                <TabsContent value="summary" className="my-0">
+                  <SummaryField videoRef={videoRef} />
+                </TabsContent>
+                <TabsContent value="transcript" className="my-0">
+                  <TranscriptField
+                    youtubeId={youtubeId}
+                    videoRef={videoRef}
+                    displayMode="youtube"
+                  />
+                </TabsContent>
+              </Tabs>
             </div>
           </ResizablePanel>
           <ResizableHandle className="w-1 bg-indigo-100 hidden md:flex" />
@@ -41,16 +64,12 @@ const YoutubeSummary = ({ Bar3Button }) => {
           </ResizablePanel>
         </ResizablePanelGroup>
       )}
-      {!youtubeId && <HistoryPage sourceType="youtube" />}
-
-      <div className="w-full md:hidden">
-        <VideoField
-          videoRef={videoRef}
-          youtubeId={youtubeId}
-          className="sticky top-0 z-10"
+      {!youtubeId && (
+        <HistoryPage
+          sourceType="youtube"
+          className="top-11 absolute sm:top-16"
         />
-        <SummaryField videoRef={videoRef} />
-      </div>
+      )}
     </div>
   );
 };

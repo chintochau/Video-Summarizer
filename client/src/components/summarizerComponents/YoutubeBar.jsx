@@ -7,7 +7,7 @@ import { DocumentArrowDownIcon } from '@heroicons/react/24/outline'
 import YoutubeService from "@/services/YoutubeService";
 import { cn } from "@/utils/utils";
 
-const YoutubeBar = ({Bar3Button}) => {
+const YoutubeBar = ({Bar3Button, className}) => {
   const { setYoutubeId, youtubeId } = useVideoContext();
   const [youtubeLink, setYoutubeLink] = useState(youtubeId ? "https://www.youtube.com/watch?v=" + youtubeId : "");
 
@@ -26,6 +26,7 @@ const YoutubeBar = ({Bar3Button}) => {
       cn(
         "flex gap-x-1 px-1 py-1 ",
         Bar3Button ? "bg-gray-900" : "",
+        className
       )
     }>
       {Bar3Button && <Bar3Button />}
