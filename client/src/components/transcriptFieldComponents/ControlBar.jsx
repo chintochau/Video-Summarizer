@@ -18,7 +18,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useToast } from "../ui/use-toast";
-import { Button } from "../ui/button";
 import {tify, sify} from 'chinese-conv'
 
 export const ControlBar = (params) => {
@@ -30,7 +29,7 @@ export const ControlBar = (params) => {
     viewMode,
     setViewMode,
   } = params;
-  const { resetTranscript, parentSrtText,setEditableTranscript } = useTranscriptContext();
+  const { resetTranscript, parentSrtText,setEditableTranscript,setParentTranscript,parentTranscriptText, setParentTranscriptText } = useTranscriptContext();
   const { video } = useVideoContext();
   const { userId } = useAuth();
   const [currentTab, setCurrentTab] = useState("Transcript");
@@ -38,6 +37,7 @@ export const ControlBar = (params) => {
     return classes.filter(Boolean).join(" ");
   };
   const { toast } = useToast();
+  const [chinexeConvert, setChineseConvert] = useState("traditional");
 
   const handleBookmarkVideo = () => {
     EmbeddingsService.saveEmbeddings({ video, parentSrtText, userId });
@@ -49,10 +49,19 @@ export const ControlBar = (params) => {
   ];
 
   const chineseConvert = () => {
+    if (chinexeConvert === "traditional") {
+      setChineseConvert("simplified");
     const updatedTranscript = editableTranscript.map((entry, i) => {
       return {...entry,text: tify(entry.text)};
     });
     setEditableTranscript(updatedTranscript);
+  } else {
+    setChineseConvert("traditional");
+    const updatedTranscript = editableTranscript.map((entry, i) => {
+      return {...entry,text: sify(entry.text)};
+    });
+    setEditableTranscript(updatedTranscript);
+  }
   };
 
   return (
@@ -139,7 +148,7 @@ export const ControlBar = (params) => {
               onClick={chineseConvert}
               className={`w-8 p-1  text-indigo-600 rounded-md hover:text-indigo-400  outline-indigo-600 `}
             >
-              繁
+              {chinexeConvert === "traditional" ? "繁" : "简"}
             </button>
 
 
