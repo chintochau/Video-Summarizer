@@ -11,15 +11,13 @@ export const generateSummary = async (req, res) => {
   const { prompt } = option;
   const { sourceTitle } = video;
 
-  console.log(" Selected model: ", selectedModel);
-
   let fullResponseText = "";
   const max_tokens = 1300;
   const system = "give your response in a makrdown, dont use a code interpreter and you must answer in the language: " + language
   const messages = [
     {
       role: "user",
-      content:`you are given a transcript of a video titles:${sourceTitle}` +
+      content: `you are given a transcript of a video titles:${sourceTitle}` +
         prompt +
         "Video Transcript:" +
         transcript,
@@ -35,13 +33,13 @@ export const generateSummary = async (req, res) => {
   };
   switch (selectedModel) {
     case "gpt35":
-       fullResponseText  = await summarizeWithOpenAI(data)
+      fullResponseText = await summarizeWithOpenAI(data)
       break;
     case "claude3h":
-       fullResponseText  = await summarizeWithAnthropic(data)
+      fullResponseText = await summarizeWithAnthropic(data)
       break;
     case "llama3":
-       fullResponseText  = await summarizeWithLlama3(data)
+      fullResponseText = await summarizeWithLlama3(data)
       break;
   }
   return fullResponseText;
@@ -49,14 +47,17 @@ export const generateSummary = async (req, res) => {
 
 export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
   // input Array of transcripts separated by interval lenth, 10mins/ 20mins each part
-  const { language, selectedModel } = req.body;
-
+  const { language, selectedModel,video, transcript,option } = req.body;
+  const { prompt } = option;
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
 
   // Wrap the summary task in a function that returns a promise.
-  const summarizePrompt = async (prompt) => {
+  const summarizePrompt = async (promptInput) => {
+
+    console.log(promptInput);
+
     return new Promise(async (resolve, reject) => {
       switch (selectedModel) {
         default:
@@ -65,16 +66,12 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
             max_tokens: 1024,
             messages: [
               {
-                role: "system",
-                content: "start a new conversation",
-              },
-              {
                 role: "user",
                 content:
-                  "give your response in a makrdown, dont use a code interpreter and use the language: " +
+                  "give your response in a makrdown, dont use a code interpreter, Your answer must be in the language " +
                   language +
                   "\n" +
-                  prompt,
+                  promptInput,
               },
             ],
             model: "claude-3-haiku-20240307",
@@ -88,10 +85,6 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
               messageStreamEvent.delta.text
             ) {
               res.write(messageStreamEvent.delta.text);
-            } else {
-              console.log(
-                "The 'text' property is undefined or does not exist in the delta object."
-              );
             }
           }
           resolve();
@@ -99,16 +92,32 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
     });
   };
 
+  const data = {
+    system:"",
+    messages:[
+      {
+        role: "user",
+        content: `you are given the transcript of the first 5 minutes of a video titled: ${video.sourceTitle}, below is the transcript: ${getFirstNMinutesOfTranscript(transcript)}`,
+      },
+    ],
+    fullResponseText:"",
+    max_tokens:1024
+  }
+
+  const videoContext = await summarizeWithAnthropic(data)
+
   const summarizePromptsSeries = async () => {
     for (let i = 0; i < transcriptsArray.length; i++) {
-      const prompt = `you are given the ${i + 1} of ${
-        transcriptsArray.length
-      } part of a meeting conversation, summarize this part in detail, list out all the action items.
-      list the reference timestamp at the end of your summary point, and end of each action items
+      const additionalPrompt = `you are given the ${i + 1} of ${transcriptsArray.length} part of a video, 
+      here is the brief context of the video:
+      ${videoContext}
+      here is the part of the video transcript you need to summarize:
+      ${transcriptsArray[i]}
+
+      ${prompt}
       `;
       try {
-        const summary = await summarizePrompt(prompt + transcriptsArray[i]);
-        console.log(summary);
+        const summary = await summarizePrompt(additionalPrompt);
         res.write("\n");
       } catch (error) {
         console.error("An error occurred:", error);
@@ -204,6 +213,75 @@ export const parseSRT = (srt) => {
     })
     .filter((part) => part !== null); // 過濾掉所有null值，只保留有效的轉錄部分
 };
+
+/***
+ * parse SRT and group by interval
+ * input
+ * srt:{
+ * 1
+ * 00:00:00,000 --> 00:00:01,000
+ * Hello World
+ * 
+ * 2
+ * 00:00:01,000 --> 00:00:02,000
+ * This is an example},
+ * intervalInSeconds: 60
+ * 
+ * output:
+ * " 00:00:00 - 00:01:00 Hello World This is an example"
+ * 
+ * 
+ */
+export const parseSRTAndGroupByInterval = (srt, intervalInSeconds, startTimeInclusion = 10) => {
+  const parsedSRT = parseSRT(srt);
+  let groupedText = [];
+  let currentText = "";
+  let currentEnd = intervalInSeconds;
+
+  parsedSRT.forEach((subtitle, index) => {
+    // only include start time for every x index
+    if (index % startTimeInclusion === 0) {
+      currentText += "\n" + subtitle.start.split(",")[0] + ":\n";
+    }
+    const { start, text } = subtitle;
+    const startSeconds = convertTimeToSeconds(start);
+
+    if (startSeconds <= currentEnd) {
+      currentText += text + " ";
+    } else {
+      groupedText.push(currentText.trim());
+      currentText = start.split(",")[0] + "\n" + text + " ";
+      currentEnd += intervalInSeconds;
+    }
+  });
+  groupedText.push(currentText.trim()); // Add the last remaining text
+  return groupedText;
+};
+
+const getFirstNMinutesOfTranscript = (transcript, n = 5) => {
+  const parsedSRT = parseSRT(transcript);
+  const intervalInSeconds = n * 60;
+  let transcriptText = "";
+
+  for (let i = 0; i < parsedSRT.length; i++) {
+    // only include start time for every 10 index
+    if (i % 10 === 0) {
+      transcriptText += "\n" + parsedSRT[i].start.split(",")[0] + ":\n";
+    }
+    
+    const { start, text } = parsedSRT[i];
+    const startSeconds = convertTimeToSeconds(start);
+
+    if (startSeconds <= intervalInSeconds) {
+      transcriptText += text + " ";
+    } else {
+      break;
+    }
+  }
+  
+  return getTextWithinInterval(parsedSRT, intervalInSeconds);
+};
+
 async function summarizeWithAnthropic({
   system,
   max_tokens,
@@ -225,14 +303,16 @@ async function summarizeWithAnthropic({
       messageStreamEvent.delta.text
     ) {
       fullResponseText += messageStreamEvent.delta.text;
-      res.write(messageStreamEvent.delta.text);
+      if (res) {
+        res.write(messageStreamEvent.delta.text);
+      }
     } else {
       console.log(
         "The 'text' property is undefined or does not exist in the delta object."
       );
     }
   }
-  return fullResponseText 
+  return fullResponseText
 }
 
 async function summarizeWithOpenAI({
@@ -242,25 +322,30 @@ async function summarizeWithOpenAI({
   max_tokens,
   res,
 }) {
- const stream = openai.beta.chat.completions.stream({
+  const stream = openai.beta.chat.completions.stream({
     model: "gpt-3.5-turbo",
-    messages: [{ role: "system", content: system}, ...messages ],
+    messages: [{ role: "system", content: system }, ...messages],
     stream: true,
     temperature: 0.4,
     max_tokens,
   });
   stream.on("content", (delta, snapshot) => {
     fullResponseText += delta;
-    res.write(delta);
+    if (res) {
+      res.write(delta);
+    }
   });
   try {
     await stream.finalChatCompletion();
   } catch (error) {
     console.log(error.message);
-    res.write("exceed length");
+    if (res) {
+      res.write("exceed length");
+    }
   }
-  return fullResponseText 
+  return fullResponseText
 }
+
 const summarizeWithLlama3 = async ({
   system,
   messages,
@@ -275,7 +360,7 @@ const summarizeWithLlama3 = async ({
         method: "POST",
         body: JSON.stringify({
           model: "meta-llama/Meta-Llama-3-70B-Instruct",
-          messages: [{ role: "system", content: system}, ...messages ],
+          messages: [{ role: "system", content: system }, ...messages],
           max_tokens,
           stream: true,
         }),
@@ -284,31 +369,37 @@ const summarizeWithLlama3 = async ({
     );
 
     await new Promise((resolve, reject) => {
-    stream.body.on("data", (chunk) => { // data.choices[0].delta.content
-      const data = chunk.toString().split("data:")[1];
-      // try to parse the data
-      if (data && data.trim() === "[DONE]") {
-        return { stream, fullResponseText };
-      } else if (!data) {
-        return;
-      }
-      const parsedData = JSON.parse(data);
-      const content = parsedData.choices[0].delta.content;
-      fullResponseText += content;
-      if (content) {
-        res.write(content);
-      }
-    });
-    stream.body.on("end", () => {
-      resolve();
-    });
-  }
-  );
-    
+      stream.body.on("data", (chunk) => { // data.choices[0].delta.content
+        const data = chunk.toString().split("data:")[1];
+        // try to parse the data
+        if (data && data.trim() === "[DONE]") {
+          return { stream, fullResponseText };
+        } else if (!data) {
+          return;
+        }
+        const parsedData = JSON.parse(data);
+        const content = parsedData.choices[0].delta.content;
+        fullResponseText += content;
+        if (content) {
+
+          if (res) {
+            res.write(content);
+          }
+        }
+      });
+      stream.body.on("end", () => {
+        resolve();
+      });
+    }
+    );
+
   } catch (error) {
     console.log(error.message);
-    res.write("exceed length");
+
+    if (res) {
+      res.write("exceed length");
+    }
   }
 
-  return  fullResponseText 
+  return fullResponseText
 };

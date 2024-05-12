@@ -1,17 +1,5 @@
 const apiUrl = `${import.meta.env.VITE_API_BASE_URL}`;
 
-const summaryApiCall = (id) => {
-  switch (id) {
-    case 1:
-      return "/api/stream-response-large-text";
-    case 6:
-      return "/api/stream-response-series";
-    case 7:
-      return "/api/get-summary-meetings";
-    default:
-      return "/api/get-summary";
-  }
-};
 
 export default class SummaryService {
   /**
@@ -47,9 +35,12 @@ export default class SummaryService {
       video,
     } = data;
 
-    console.log(data);
-
-    const apiRequest = summaryApiCall(option.id);
+    let apiRequest;
+    if (option.type === 'detail-summary') {
+      apiRequest = "/api/get-long-summary";
+    } else {
+      apiRequest = "/api/get-summary";
+    }
 
     try {
       const response = await fetch(apiUrl + apiRequest, {

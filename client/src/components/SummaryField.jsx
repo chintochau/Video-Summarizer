@@ -85,11 +85,9 @@ const SummaryField = ({ videoRef }) => {
     setItem(STORAGE_KEYS.PREFERRED_LLM, value);
   };
 
-  const inputTranscript = (id) => {
-    switch (id) {
-      case 1:
-      case 6:
-      case 7:
+  const inputTranscript = (type) => {
+    switch (type) {
+      case 'detail-summary':
         return parentSrtText;
       default:
         return parentTranscriptText;
@@ -169,7 +167,7 @@ const SummaryField = ({ videoRef }) => {
         await SummaryService.summarizeWithAI(
           {
             option,
-            transcript: inputTranscript(option.id),
+            transcript: inputTranscript(option.type),
             language,
             interval,
             selectedModel: languageModel,
@@ -231,7 +229,7 @@ const SummaryField = ({ videoRef }) => {
               </SelectTrigger>
               <SelectContent>
                 {defaultModels.map((item) => (
-                  <SelectItem key={item.code} value={item.id}>
+                  <SelectItem key={item.id} value={item.id}>
                     {item.name}
                   </SelectItem>
                 ))}
@@ -267,7 +265,7 @@ const SummaryField = ({ videoRef }) => {
             className="text-blue-500 cursor-pointer"
             target="_blank"
             href="https://translate.google.com/"
-            >
+          >
             Google Translate</a> for best results.
         </div>
       )}

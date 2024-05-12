@@ -3,6 +3,7 @@ import {
   parseSRT,
   getTextWithinInterval,
   generateSummaryInSeries,
+  parseSRTAndGroupByInterval,
 } from "../services/summaryServices.js";
 import Summary from "../models/summaryModel.js";
 import Video from "../models/videoModel.js";
@@ -12,7 +13,7 @@ import { getOrCreateVideoBySourceId } from "../services/videoServices.js";
 export const handleSummaryRequest = async (req, res) => {
   try {
     const { option, video, userId, language } = req.body;
-    const { creditAmount,title } = option;
+    const { creditAmount, title } = option;
     const { sourceId, sourceTitle, sourceType, author, videoDuration } = video;
     let videoThumbnail;
 
@@ -28,7 +29,7 @@ export const handleSummaryRequest = async (req, res) => {
       sourceTitle,
       language,
       videoId: existingVideo._id, // missing now
-      summaryType:title, // Example summary type
+      summaryType: title, // Example summary type
       summary,
     });
 
@@ -51,6 +52,25 @@ export const handleSummaryRequest = async (req, res) => {
       .json({ message: "Failed to generate summary", error: error.message });
   }
 };
+
+export const handleLongSummaryRequest = async (req, res) => {
+  console.log("Long summary request received");
+  const { option, transcript, interval, userId } = req.body;
+  const { creditAmount } = option;
+  const textByInterval = parseSRTAndGroupByInterval(transcript, interval);
+
+  try {
+    await checkUserCredit(userId, creditAmount);
+    await generateSummaryInSeries(textByInterval, req, res);
+    await deductCredits(userId, creditAmount);
+    res.status(200).end();
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to generate summary", error: error.message });
+  }
+  
+}
 
 export const handleMeetingSummary = async (req, res) => {
   const { option, transcript, interval, userId } = req.body;
@@ -99,7 +119,7 @@ export const getAllVideosForUser = async (req, res) => {
     const totalVideos = await Video.countDocuments({ userId: userId });
 
     // Find videos for the specified userId and sort them in descending order by the creation date
-    const videos = await Video.find({ userId: userId, sourceType: sourceType})
+    const videos = await Video.find({ userId: userId, sourceType: sourceType })
       .sort({ lastUpdated: -1 })
       .skip(startIndex)
       .limit(limit);
@@ -135,7 +155,7 @@ export const getTranscriptAndSummariesForVideo = async (req, res) => {
     // Find summaries for the video
     const summaries = await Summary.find({ videoId: video._id });
 
-    res.status(200).json({ success: true, data: summaries, video: video});
+    res.status(200).json({ success: true, data: summaries, video: video });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, error: error.message });
@@ -153,7 +173,7 @@ export const deleteSummary = async (req, res) => {
   try {
     const { userId, summaryId } = req.body;
     const summary = await Summary.findOneAndDelete
-    ({ _id: summaryId, userId: userId });
+      ({ _id: summaryId, userId: userId });
     if (!summary) {
       return res.status(404).json({ success: false, message: "Summary not found" });
     }

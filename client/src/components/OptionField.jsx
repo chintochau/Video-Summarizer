@@ -28,7 +28,7 @@ const OptionCard = (params) => {
   const { option, handleClick, creditCount, variant } = params;
   const { premimum } = option;
   const { videoDuration } = useVideoContext();
-  const { id, title, description, prompt,icon } = option;
+  const { id, title, description, prompt, icon } = option;
   const [adjustableCreditCount, setAdjustableCreditCount] = useState(0);
   const [interval, setInterval] = useState(600);
   const { parentSrtText } = useTranscriptContext();
@@ -79,12 +79,6 @@ const OptionCard = (params) => {
     }
   };
 
-  const SliderBar = () => {
-    switch (id) {
-      default:
-        return null;
-    }
-  };
 
   const memberOnly = !currentUser && premimum;
   const buttonDisalbed = !parentSrtText || memberOnly;
@@ -115,10 +109,7 @@ ${summarizeOptions.quickSummaryOptions[3].prompt}`}
       onClick={() => {
         if (!buttonDisalbed)
           handleClick({
-            id,
-            title,
-            description,
-            prompt: prompt,
+            ...option,
             interval,
             creditAmount: adjustableCreditCount,
           });
@@ -166,8 +157,8 @@ const OptionField = ({ handleClick, creditCount, setInterval }) => {
         <CardTitle className="text-indigo-600/80">Quick Summary</CardTitle>
         <HoverCard><HoverCardTrigger><Info className="w-5 h-5 ml-2 text-indigo-500 hover:text-indigo-400" /></HoverCardTrigger>
           <HoverCardContent className=" w-3/4 font-medium">
-              Quick Summary work best for video length between <span className=" font-semibold">8 to 15 minutes</span>  long.
-           </HoverCardContent>
+            Quick Summary work best for video length between <span className=" font-semibold">8 to 15 minutes</span>  long.
+          </HoverCardContent>
         </HoverCard>
       </div>
       <div className="xl:grid xl:grid-cols-2 flex flex-col gap-y-4 xl:gap-4">
