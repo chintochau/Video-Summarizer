@@ -44,14 +44,7 @@ const OptionCard = (params) => {
     }
 
     switch (id) {
-      case 1:
-        setAdjustableCreditCount((creditCount * 2).toFixed(1));
-        break;
-      case 6:
-        factor = Math.max(1, 8 / (interval / 60)); // = 3 ~ 5
-        setAdjustableCreditCount((creditCount * factor).toFixed(1));
-        break;
-      case 7:
+      case "long-summary":
         factor = Math.max(1, 1.3 * (videoDuration / interval));
         setAdjustableCreditCount((creditCount * factor).toFixed(1));
         break;
@@ -68,12 +61,12 @@ const OptionCard = (params) => {
         )}\nBreakdown the video into ${Math.ceil(
           videoDuration / interval
         )} Parts\nof ${formatDuration(interval)} each `;
-      case 7:
+      case "long-summary":
         return `Video length: ${formatDuration(
           videoDuration
         )}\nBreakdown the video into ${Math.ceil(
           videoDuration / interval
-        )} Parts\nof ${formatDuration(interval)} each `;
+        )} Parts\nof ${formatDuration(interval)} each: \n${description}`;
       default:
         return description;
     }
@@ -102,9 +95,8 @@ ${summarizeOptions.quickSummaryOptions[3].prompt}`}
     <Card
       className={cn(
         "shadow-md text-left ",
-        buttonDisalbed
-          ? "bg-gray-100"
-          : "hover:outline hover:outline-1 hover:outline-indigo-400 cursor-pointer"
+        buttonDisalbed ? "bg-gray-100" : "hover:outline hover:outline-1 hover:outline-indigo-400 cursor-pointer",
+        premimum && "border-2 border-yellow-400"
       )}
       onClick={() => {
         if (!buttonDisalbed)
@@ -155,7 +147,8 @@ const OptionField = ({ handleClick, creditCount, setInterval }) => {
       <OptionCard variant="custom" option={{ premimum: false }} /> */}
       <div className="flex items-center">
         <CardTitle className="text-indigo-600/80">Quick Summary</CardTitle>
-        <HoverCard><HoverCardTrigger><Info className="w-5 h-5 ml-2 text-indigo-500 hover:text-indigo-400" /></HoverCardTrigger>
+        <HoverCard>
+          <HoverCardTrigger><Info className="w-5 h-5 ml-2 text-indigo-500 hover:text-indigo-400" /></HoverCardTrigger>
           <HoverCardContent className=" w-3/4 font-medium">
             Quick Summary work best for video length between <span className=" font-semibold">8 to 15 minutes</span>  long.
           </HoverCardContent>
@@ -174,9 +167,8 @@ const OptionField = ({ handleClick, creditCount, setInterval }) => {
           );
         })}
       </div>
-      <CardTitle className="text-indigo-600/80">Detail Summary</CardTitle>
-      <div className=" bg-red-600/20 p-2 text-red-600 text-sm rounded-md">Detail summary is not working now, will be fixed soon</div>
-      <div className="xl:grid xl:grid-cols-2 flex flex-col gap-y-4 xl:gap-4">
+      <CardTitle className="text-indigo-600/80">Detail Summary for long video</CardTitle>
+      <div className="flex flex-col gap-y-4 xl:gap-4">
         {detailSummaryOptions.map((option, index) => {
           return (
             <OptionCard

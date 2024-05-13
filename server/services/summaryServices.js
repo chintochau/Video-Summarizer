@@ -53,11 +53,9 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
 
+  let fullResponseText = "";
   // Wrap the summary task in a function that returns a promise.
   const summarizePrompt = async (promptInput) => {
-
-    console.log(promptInput);
-
     return new Promise(async (resolve, reject) => {
       switch (selectedModel) {
         default:
@@ -85,6 +83,7 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
               messageStreamEvent.delta.text
             ) {
               res.write(messageStreamEvent.delta.text);
+              fullResponseText += messageStreamEvent.delta.text;
             }
           }
           resolve();
@@ -106,12 +105,13 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
         `,
       },
     ],
-    fullResponseText:"",
+    fullResponseText,
     max_tokens:1024
   }
 
   const videoContext = await summarizeWithAnthropic(data)
   res.write(videoContext+"\n");
+  fullResponseText += videoContext + "\n";
 
   const summarizePromptsSeries = async () => {
     for (let i = 0; i < transcriptsArray.length; i++) {
@@ -120,13 +120,16 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
       ${videoContext}
       here is the part of the video transcript you need to summarize:
       ${transcriptsArray[i]}
-
       ${prompt}
       `;
       try {
+        
         res.write("### Part " + (i + 1) + " of " + transcriptsArray.length + "\n");
+        fullResponseText += "### Part " + (i + 1) + " of " + transcriptsArray.length + "\n";
+
         const summary = await summarizePrompt(additionalPrompt);
         res.write("\n");
+        fullResponseText += "\n";
       } catch (error) {
         console.error("An error occurred:", error);
         res.write("An error occurred: " + error.message);
@@ -135,7 +138,7 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
   };
 
   await summarizePromptsSeries();
-  res.end();
+  return fullResponseText;
 };
 
 export const covertSRTtoStringFormat = (inputSRT) => {

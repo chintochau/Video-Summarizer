@@ -15,7 +15,6 @@ export const handleSummaryRequest = async (req, res) => {
     const { option, video, userId, language } = req.body;
     const { creditAmount, title } = option;
     const { sourceId, sourceTitle, sourceType, author, videoDuration } = video;
-    let videoThumbnail;
 
     await checkUserCredit(userId, creditAmount);
 
@@ -43,7 +42,7 @@ export const handleSummaryRequest = async (req, res) => {
     );
 
     // Deduct credits after the summary task
-    const remainingCredits = await deductCredits(userId, creditAmount);
+    await deductCredits(userId, creditAmount);
 
     res.status(200).end();
   } catch (error) {
@@ -54,14 +53,39 @@ export const handleSummaryRequest = async (req, res) => {
 };
 
 export const handleLongSummaryRequest = async (req, res) => {
-  console.log("Long summary request received");
-  const { option, transcript, interval, userId } = req.body;
-  const { creditAmount } = option;
-  const textByInterval = parseSRTAndGroupByInterval(transcript, interval);
-
   try {
+    const { option, transcript, interval, userId, video, language } = req.body;
+    const { creditAmount, title } = option;
+    const { sourceId, sourceTitle, sourceType, author, videoDuration } = video;
+    const textByInterval = parseSRTAndGroupByInterval(transcript, interval);
+
     await checkUserCredit(userId, creditAmount);
-    await generateSummaryInSeries(textByInterval, req, res);
+
+    let existingVideo = await getOrCreateVideoBySourceId({ video, userId });
+    
+    const summary = await generateSummaryInSeries(textByInterval, req, res);
+
+    const newSummary = new Summary({
+      userId,
+      sourceType,
+      sourceTitle,
+      language,
+      videoId: existingVideo._id, // missing now
+      summaryType: title, // Example summary type
+      summary,
+    });
+
+    await newSummary.save();
+
+    // Update the lastUpdated field of the corresponding video
+    await Video.findOneAndUpdate(
+      { sourceId },
+      { lastUpdated: new Date() },
+      { new: true }
+    );
+
+    // Deduct credits after the summary task    
+
     await deductCredits(userId, creditAmount);
     res.status(200).end();
   } catch (error) {
