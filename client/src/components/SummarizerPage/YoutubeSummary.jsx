@@ -39,8 +39,9 @@ const YoutubeSummary = ({ Bar3Button }) => {
                 displayMode="youtube"
               />
             </div>
-            <div className="pt-[67vw] md:hidden md:h-40 flex-1 flex flex-col">
-              <Tabs defaultValue="summary" >
+
+            <div className="pt-[66.5vw] md:hidden md:h-40 md:flex-1 flex flex-col">
+              <Tabs defaultValue="summary">
                 <TabsList className="w-full flex">                  
                   <TabsTrigger value="summary" className="flex-1">Summary</TabsTrigger>
                   <TabsTrigger value="transcript" className="flex-1">Transcript</TabsTrigger>

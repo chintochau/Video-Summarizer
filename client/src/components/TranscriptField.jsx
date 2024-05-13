@@ -244,7 +244,7 @@ const TranscriptField = (params) => {
           <div className="text-center text-lg">Fetching Transcript...</div>
         </div>
       ) : (
-        <div className="h-40 flex-1">
+        <div className="h-full md:h-96 flex-1">
           {generatingTranscriptWithAI ? (
             <Card className="m-4">
               <CardHeader>
