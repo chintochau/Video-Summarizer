@@ -1,6 +1,5 @@
 const apiUrl = `${import.meta.env.VITE_API_BASE_URL}`;
 
-
 export default class SummaryService {
   /**
    * Asynchronously sends a request to the ChatGPT API to process input data and handles the response.
@@ -36,7 +35,7 @@ export default class SummaryService {
     } = data;
 
     let apiRequest;
-    if (option.type === 'detail-summary') {
+    if (option.type === "detail-summary") {
       apiRequest = "/api/get-long-summary";
     } else {
       apiRequest = "/api/get-summary";
@@ -66,7 +65,7 @@ export default class SummaryService {
     }
   };
 
-  static summarizeWithAIUsingQuota = async (data,completionHandler) => {
+  static summarizeWithAIUsingQuota = async (data, completionHandler) => {
     try {
       const response = await fetch(apiUrl + "/api/summarize-with-quota", {
         method: "POST",
@@ -88,7 +87,7 @@ export default class SummaryService {
     } catch (error) {
       completionHandler(error, null);
     }
-  }
+  };
 
   // Function to fetch summaries for a video
   // 404 only when no video found
@@ -104,7 +103,11 @@ export default class SummaryService {
       }
       const result = await response.json();
       const { video, data } = result;
-      return { transcript:video.originalTranscript, summaries: data, success: true };
+      return {
+        transcript: video.originalTranscript,
+        summaries: data,
+        success: true,
+      };
     } catch (error) {
       throw error;
     }
@@ -113,7 +116,8 @@ export default class SummaryService {
   static getAllVideosForUser = async ({ userId, page = 1, sourceType }) => {
     try {
       const response = await fetch(
-        apiUrl + `/api/user/${userId}/videos?page=${page}&sourceType=${sourceType}`,
+        apiUrl +
+          `/api/user/${userId}/videos?page=${page}&sourceType=${sourceType}`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -169,5 +173,23 @@ export default class SummaryService {
       console.error("Error deleting video and summaries:", error);
       return null;
     }
-  }
+  };
+  static getSummary = async ({summaryId}) => {
+    try {
+      const response = await fetch(apiUrl + `/api/summary/${summaryId}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch summary");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching summary:", error);
+      return null;
+    }
+  };
 }

@@ -11,3 +11,4 @@ export const languageList = [
 ];
 
 export const chromeStoreLink = "https://chromewebstore.google.com/detail/fusion-video-book/cncegakknkokakaclbpieegnhklkfpik"
+export const shareLink = "https://fusionaivideo.io/share?s="

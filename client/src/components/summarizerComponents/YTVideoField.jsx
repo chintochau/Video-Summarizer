@@ -13,7 +13,7 @@ import { useTranscriptContext } from "@/contexts/TranscriptContext";
 import YoutubeService from "@/services/YoutubeService";
 import { cn } from "@/lib/utils";
 
-const VideoField = ({ youtubeId, videoRef, className }) => {
+const VideoField = ({ youtubeId, videoRef, className, shareMode }) => {
   const {
     setVideoDuration,
     setSourceTitle,
@@ -55,8 +55,10 @@ const VideoField = ({ youtubeId, videoRef, className }) => {
   }, [playing]);
 
   useEffect(() => {
+    if (shareMode) {
+      return;
+    }
     // fetch transcript and summaries for the video when the video source id changes
-
     const fetchTranscriptAndSummaries = async () => {
       setLoadingTranscript(true);
       try {

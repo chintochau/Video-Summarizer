@@ -19,6 +19,7 @@ import SearchPage from "./pages/SearchPage.jsx";
 import AuthCheckPage from "./pages/AuthCheckPage.jsx";
 import { Toaster } from "./components/ui/toaster.jsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
+import SharePage from "./pages/SharePage.jsx";
 
 function App() {
   const [announcement, setAnnouncement] = useState({
@@ -60,6 +61,7 @@ function App() {
                         <HomePage />
                       </div>
                       } />
+                      <Route path="/share" element={<SharePage />} />
                       <Route path="/auth" element={<AuthCheckPage/>}></Route>
                       <Route path="/login" element={<LoginPage />} />
                       <Route path="/register" element={<RegisterPage />} />

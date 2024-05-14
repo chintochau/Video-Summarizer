@@ -30,6 +30,7 @@ export const handleSummaryRequest = async (req, res) => {
       videoId: existingVideo._id, // missing now
       summaryType: title, // Example summary type
       summary,
+      sourceId
     });
 
     await newSummary.save();
@@ -73,6 +74,7 @@ export const handleLongSummaryRequest = async (req, res) => {
       videoId: existingVideo._id, // missing now
       summaryType: title, // Example summary type
       summary,
+      sourceId,
     });
 
     await newSummary.save();
@@ -216,6 +218,19 @@ export const deleteVideoAndSummaries = async (req, res) => {
     }
     const summaries = await Summary.deleteMany({ videoId: video._id });
     res.status(200).json({ success: true, data: { video, summaries } });
+  }
+  catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+export const getSummaryById = async (req, res) => {
+  try {
+    const summary = await Summary.findById(req.params.summaryId);
+    if (!summary) {
+      return res.status(404).json({ success: false, message: "Summary not found" });
+    }
+    res.status(200).json({ success: true, data: summary });
   }
   catch (error) {
     res.status(500).json({ success: false, error: error.message });

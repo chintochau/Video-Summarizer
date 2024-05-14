@@ -3,10 +3,33 @@ import React, { useState } from "react";
 import OptionField from "../OptionField";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "../ui/button";
-import { ClipboardDocumentIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  ClipboardDocumentIcon,
+  ShareIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import { useToast } from "../ui/use-toast";
 import SummaryService from "@/services/SummaryService";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { shareLink } from "@/constants";
+
+export const transformArticleWithClickableTimestamps = (articleContent) => {
+  // Updated regex to match hh:mm:ss and mm:ss and m:ss formats
+  const timestampRegex =
+    /(\d{1,2}:\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2})/g;
+
+  return articleContent.replace(
+    timestampRegex,
+    (match) => `[${match}](#timestamp-${match})`
+  );
+};
 
 // Summary Tab
 const SummaryTab = (data) => {
@@ -23,7 +46,7 @@ const SummaryTab = (data) => {
   if (!summaryObject) {
     return null;
   }
-  const { summary } = summaryObject;
+  const { summary, sourceId } = summaryObject;
 
   const showText = () => {
     if (summary !== "") {
@@ -70,6 +93,18 @@ const SummaryTab = (data) => {
     }
   };
 
+  const copyLink = async (e) => {
+    // select the text in the input field
+    if (e.target.tagName === "INPUT") {
+      e.target.select();
+    }
+    navigator.clipboard.writeText(shareLink + sourceId);
+    toast({
+      title: "Saved to clipboard",
+      description: "The link has been copied to your clipboard.",
+    });
+  };
+
   const linkOverride = {
     a: {
       component: ({ children, href, ...props }) => {
@@ -93,17 +128,6 @@ const SummaryTab = (data) => {
     },
   };
 
-  const transformArticleWithClickableTimestamps = (articleContent) => {
-    // Updated regex to match hh:mm:ss and mm:ss and m:ss formats
-    const timestampRegex =
-      /(\d{1,2}:\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2})/g;
-
-    return articleContent.replace(
-      timestampRegex,
-      (match) => `[${match}](#timestamp-${match})`
-    );
-  };
-
   return (
     <ScrollArea className="overflow-y-auto">
       {summary !== "" && (
@@ -122,6 +146,34 @@ const SummaryTab = (data) => {
             >
               <ClipboardDocumentIcon className="w-6 h-6" />
             </Button>
+
+            {sourceId && (
+              <Popover>
+                <PopoverTrigger>
+                  <Button variant="transparent" className="p-2">
+                    <ShareIcon className="w-6 h-6" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="flex flex-col gap-y-2 w-96">
+                  <Label>Share summary link</Label>
+                  <div className="flex items-center">
+                    <Input
+                      value={shareLink + sourceId}
+                      className=" bg-gray-100"
+                      onClick={(e) => copyLink(e)}
+                    />
+                    <Button
+                      className="p-2"
+                      variant="ghost"
+                      onClick={(e) => copyLink(e)}
+                    >
+                      <ClipboardDocumentIcon className="w-6 h-6" />
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
+
             <Button
               variant="transparent"
               className="p-2 hover:text-red-500"
@@ -130,21 +182,43 @@ const SummaryTab = (data) => {
               <TrashIcon className="w-6 h-6" />
             </Button>
           </div>
-          
-          <div className="flex justify-end md:hidden">
+
+          <div className="flex justify-end md:hidden pt-1">
             <Button
               className="p-2 focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
               variant="ghost"
-              onClick={() => {
-                navigator.clipboard.writeText(showText());
-                toast({
-                  title: "Saved to clipboard",
-                  description: "The summary has been copied to your clipboard.",
-                });
-              }}
+              onClick={copyLink}
             >
               <ClipboardDocumentIcon className="w-6 h-6" />
             </Button>
+
+            {sourceId && (
+              <Popover>
+                <PopoverTrigger>
+                  <Button variant="ghost" className="p-2">
+                    <ShareIcon className="w-6 h-6" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="flex flex-col gap-y-2 w-96">
+                  <Label>Share summary link</Label>
+                  <div className="flex items-center">
+                    <Input
+                      value={shareLink + sourceId}
+                      className=" bg-gray-100"
+                      onClick={(e) => copyLink(e)}
+                    />
+                    <Button
+                      className="p-2"
+                      variant="ghost"
+                      onClick={(e) => copyLink(e)}
+                    >
+                      <ClipboardDocumentIcon className="w-6 h-6" />
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
+
             <Button
               variant="ghost"
               className="p-2 hover:text-red-500 focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"

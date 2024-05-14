@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import logo from "../../assets/logo.svg";
+import logo from "../../assets/logo.png";
 import { useAuth } from "../../contexts/AuthContext";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "../ui/button";
 import { HashLink } from "react-router-hash-link";
-import { ArrowRightIcon } from '@heroicons/react/24/outline'
+import { ArrowRightIcon } from "@heroicons/react/24/outline";
+import { cn } from "@/lib/utils";
 
 const navigation = [
   { name: "Features", to: "", href: "/#features" },
@@ -14,7 +15,7 @@ const navigation = [
   { name: "F&Q", to: "", href: "/#faq" },
 ];
 
-const Header = () => {
+const Header = ({ className }) => {
   const { currentUser, credits } = useAuth();
   const location = useLocation();
   const pathname = location.pathname.substring(1);
@@ -32,7 +33,7 @@ const Header = () => {
             <Button variant="link">
               Sign in
               <ArrowRightIcon className="w-4 h-4" />
-            </Button >
+            </Button>
           </Link>
         </div>
       </div>
@@ -47,10 +48,10 @@ const Header = () => {
         </Link>
       </div>
     );
-  }
+  };
 
   return (
-    <header className=" bg-white sticky top-0 z-10 border-b">
+    <header className={cn("bg-white sticky top-0 z-10 border-b", className)}>
       <nav
         className="mx-auto flex max-w-7xl items-center justify-between gap-x-2 md:gap-x-6 py-1 px-2 md:py-2 lg:px-8"
         aria-label="Global"
@@ -58,10 +59,10 @@ const Header = () => {
         <div className="flex md:flex-1">
           <Link to="/" className="-m-1.5 flex items-center">
             <span className="sr-only">Fusion AI</span>
-            <img className="h-14 w-16 my-1 px-2" src={logo} alt="" />
-            <p
-            className="text-3xl font-semibold leading-6 text-gray-900"
-            >Fusion AI</p>
+            <img className="h-10 w-10 ml-3 mr-1 " src={logo} alt="" />
+            <p className="text-2xl font-semibold leading-6 text-gray-900">
+              Fusion AI
+            </p>
           </Link>
         </div>
         <div className="hidden md:flex md:gap-x-6 lg:gap-x-12">
@@ -78,7 +79,6 @@ const Header = () => {
         </div>
         <div className="flex flex-1 items-center justify-end gap-x-2 md:gap-x-6">
           {currentUser ? <SignedInMenu /> : <SignedOutMenu />}
-
         </div>
         <div className="flex lg:hidden">
           <button
@@ -105,9 +105,9 @@ const Header = () => {
               <span className="sr-only">Fusion AI</span>
               <div className="flex items-center">
                 <img className="h-12 w-12" src={logo} alt="Fusion AI" />
-                <div 
-                className="text-2xl font-semibold leading-6 text-gray-900"
-                >Fusion AI</div>
+                <div className="text-2xl font-semibold leading-6 text-gray-900">
+                  Fusion AI
+                </div>
               </div>
             </Link>
             <Link
