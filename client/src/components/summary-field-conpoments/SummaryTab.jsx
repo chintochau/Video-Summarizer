@@ -46,7 +46,7 @@ const SummaryTab = (data) => {
   if (!summaryObject) {
     return null;
   }
-  const { summary, sourceId } = summaryObject;
+  const { summary, sourceId, _id } = summaryObject;
 
   const showText = () => {
     if (summary !== "") {
@@ -98,7 +98,7 @@ const SummaryTab = (data) => {
     if (e.target.tagName === "INPUT") {
       e.target.select();
     }
-    navigator.clipboard.writeText(shareLink + sourceId);
+    navigator.clipboard.writeText(shareLink + _id);
     toast({
       title: "Saved to clipboard",
       description: "The link has been copied to your clipboard.",
@@ -158,7 +158,7 @@ const SummaryTab = (data) => {
                   <Label>Share summary link</Label>
                   <div className="flex items-center">
                     <Input
-                      value={shareLink + sourceId}
+                      value={shareLink + _id}
                       className=" bg-gray-100"
                       onClick={(e) => copyLink(e)}
                     />
@@ -203,7 +203,7 @@ const SummaryTab = (data) => {
                   <Label>Share summary link</Label>
                   <div className="flex items-center">
                     <Input
-                      value={shareLink + sourceId}
+                      value={shareLink + _id}
                       className=" bg-gray-100"
                       onClick={(e) => copyLink(e)}
                     />
