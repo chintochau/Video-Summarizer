@@ -1,5 +1,5 @@
 [build]
-  publish = "build"
+  publish = "dist"
   command = "npm run build"
 
 [[redirects]]
@@ -7,3 +7,8 @@
   to = "https://fusionaivideo.io/console"
   status = 301
   force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
