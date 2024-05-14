@@ -1,10 +1,5 @@
 [[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
-
-[[headers]]
-# Define which paths this specific [[headers]] block will cover.
-for = "/*"
-[headers.values]
-Access-Control-Allow-Origin = "*"
+  from = "https://console.fusionaivideo.io/"
+  to = "https://fusionaivideo.io/console"
+  status = 301
+  force = true
