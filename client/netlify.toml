@@ -4,7 +4,7 @@
 
 [[redirects]]
   from = "https://console.fusionaivideo.io/*"
-  to = "https://fusionaivideo.io/console"
+  to = "https://fusionaivideo.io/console/:splat"
   status = 301
   force = true
 
