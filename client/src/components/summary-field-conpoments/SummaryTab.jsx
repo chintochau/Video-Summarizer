@@ -187,7 +187,13 @@ const SummaryTab = (data) => {
             <Button
               className="p-2 focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
               variant="ghost"
-              onClick={copyLink}
+              onClick={() => {
+                navigator.clipboard.writeText(showText());
+                toast({
+                  title: "Saved to clipboard",
+                  description: "The summary has been copied to your clipboard.",
+                });
+              }}
             >
               <ClipboardDocumentIcon className="w-6 h-6" />
             </Button>

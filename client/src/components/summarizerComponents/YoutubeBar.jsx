@@ -30,7 +30,7 @@ const YoutubeBar = ({Bar3Button, className}) => {
       )
     }>
       {Bar3Button && <Bar3Button />}
-      <div className="flex h-9 sm:h-12 md:h-12 shrink-0 items-center gap-x-4 border-2 rounded-lg border-gray-200  pl-4 shadow-sm sm:gap-x-6 sm:pl-6 lg:pl-8 sm:pr-1 flex-1 bg-gray-50">
+      <div className="flex h-9 md:h-12 shrink-0 items-center gap-x-4 border-2 rounded-lg border-gray-200  pl-4 shadow-sm md:gap-x-6 md:pl-6 lg:pl-8 md:pr-1 flex-1 bg-gray-50">
         <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
           <form
             className="relative flex flex-1 items-center"
@@ -45,7 +45,7 @@ const YoutubeBar = ({Bar3Button, className}) => {
             />
             <input
               id="search-field"
-              className=" block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm bg-gray-50"
+              className=" block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 md:text-sm bg-gray-50"
               placeholder="Youtube link"
               type="search"
               autoComplete="off"
@@ -53,11 +53,11 @@ const YoutubeBar = ({Bar3Button, className}) => {
               onChange={(e) => setYoutubeLink(e.target.value)}
               onFocus={(e) => e.target.select()}
             />
-            <Button type="submit" size="sm" className="hidden sm:block">
+            <Button type="submit" size="sm" className="hidden md:block">
               Submit
             </Button>
             {youtubeId && (
-              <Button variant="outline" type="button" size="sm" className="ml-1 hidden sm:flex"
+              <Button variant="outline" type="button" size="sm" className="ml-1 hidden md:flex"
                 onClick={() => YoutubeService.getYoutubeAudio({ youtubeLink })}
               >
                 <DocumentArrowDownIcon className="w-6 h-6 mr-1" />
@@ -67,7 +67,7 @@ const YoutubeBar = ({Bar3Button, className}) => {
           </form>
         </div>
       </div>
-      <div className="sm:hidden items-center flex">
+      <div className="md:hidden items-center flex">
         <Button onClick={submitYoutubeLink} size="sm" variant='outline'>
           Submit
         </Button>
