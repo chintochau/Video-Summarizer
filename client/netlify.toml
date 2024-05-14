@@ -6,7 +6,6 @@
   from = "https://console.fusionaivideo.io/*"
   to = "https://fusionaivideo.io/console/"
   status = 200
-  force = true
 
 [[redirects]]
   from = "/*"
