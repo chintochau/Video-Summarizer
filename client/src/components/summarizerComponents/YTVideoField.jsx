@@ -21,6 +21,7 @@ const VideoField = ({ youtubeId, videoRef, className, shareMode }) => {
     setSourceId,
     setVideoCredits,
     setCurrentPlayTime,
+    setAuthor,
     video,
   } = useVideoContext();
   const { setSummaries } = useSummaryContext();
@@ -109,10 +110,13 @@ const VideoField = ({ youtubeId, videoRef, className, shareMode }) => {
           setSourceType("youtube");
           setSourceId(youtubeId);
           setSourceTitle(e.target.videoTitle);
-          setVideoDuration(e.target.playerInfo.duration);
-          setVideoCredits(calculateVideoCredits(e.target.playerInfo.duration));
+          setVideoDuration(e.target.v.duration);
+          setVideoCredits(calculateVideoCredits(e.target.v.duration));
+          setAuthor(e.target.v.videoData.author);
         }}
-        onPlay={() => setPlaying(true)}
+        onPlay={(e) => {
+          setAuthor(e.target.v.videoData.author);
+          setPlaying(true)}}
         onPause={() => setPlaying(false)}
       />
     </div>
