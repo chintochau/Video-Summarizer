@@ -22,8 +22,7 @@ import { Button } from "./ui/button.jsx";
 import { useQuota } from "@/contexts/QuotaContext.jsx";
 import QuotaService from "@/services/QuotaService.js";
 import { defaultModels } from "./Prompts.js";
-import { getItem, setItem } from "@/services/LocalStorageService.js";
-import { STORAGE_KEYS } from "@/utils/StorageKeys.js";
+import { useModels } from "@/contexts/ModelContext.jsx";
 
 const SummaryField = ({ videoRef }) => {
   // use context
@@ -39,8 +38,7 @@ const SummaryField = ({ videoRef }) => {
   const [startSummary, setStartSummary] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
 
-  const [language, setLanguage] = useState("English");
-  const [languageModel, setLanguageModel] = useState("claude3h");
+  const  {selectedModel,setSelectedModel,language, setLanguage} = useModels();
 
   const insertNewTab = (summaryText, title) => {
     setSummaries((prev) => [
@@ -66,24 +64,13 @@ const SummaryField = ({ videoRef }) => {
       setCreditCount(
         calculateCredit({
           transcript: parentTranscriptText,
-          model: languageModel,
+          model: selectedModel,
         })
       );
       setActiveTab(0);
     }
     return () => { };
   }, [parentTranscriptText]);
-
-  const handleLanguageChange = (value) => {
-    setLanguage(value);
-    //save preferred language to local storage
-    setItem(STORAGE_KEYS.PREFERRED_LANGUAGE, value);
-  };
-  const handleLanguageModelChange = (value) => {
-    setLanguageModel(value);
-    //save preferred llm to local storage
-    setItem(STORAGE_KEYS.PREFERRED_LLM, value);
-  };
 
   const inputTranscript = (type) => {
     switch (type) {
@@ -94,12 +81,6 @@ const SummaryField = ({ videoRef }) => {
     }
   };
 
-  useEffect(() => {
-    // read prefereed language and llm from local storage
-    getItem(STORAGE_KEYS.PREFERRED_LANGUAGE) && setLanguage(getItem(STORAGE_KEYS.PREFERRED_LANGUAGE));
-    getItem(STORAGE_KEYS.PREFERRED_LLM) && setLanguageModel(getItem(STORAGE_KEYS.PREFERRED_LLM));
-
-  });
 
   const removeSummary = (index) => {
     const updatedSummaries = summaries.filter((item, i) => i !== index);
@@ -123,7 +104,7 @@ const SummaryField = ({ videoRef }) => {
           {
             option,
             transcript: parentTranscriptText,
-            selectedModel: languageModel,
+            selectedModel: selectedModel,
             video,
             language,
           },
@@ -170,7 +151,7 @@ const SummaryField = ({ videoRef }) => {
             transcript: inputTranscript(option.type),
             language,
             interval,
-            selectedModel: languageModel,
+            selectedModel: selectedModel,
             userId,
             video,
           },
@@ -182,7 +163,6 @@ const SummaryField = ({ videoRef }) => {
             }
             // Check if the data signals completion
             if (data && data.completed) {
-              console.log("Summary process completed.");
               setResponse("");
               insertNewTab(finalOutput, title);
               setCredits((prev) => (prev - creditCount).toFixed(1));
@@ -208,7 +188,7 @@ const SummaryField = ({ videoRef }) => {
         <div className=" flex flex-1 items-center gap-x-1 flex-wrap">
           <LanguageIcon className="h-6 w-6 text-indigo-600 " />
           <div className="w-28">
-            <Select onValueChange={handleLanguageChange} value={language}>
+            <Select onValueChange={setLanguage} value={language}>
               <SelectTrigger className=" h-7">
                 <SelectValue placeholder="Select Language" />
               </SelectTrigger>
@@ -223,16 +203,19 @@ const SummaryField = ({ videoRef }) => {
           </div>
           <AcademicCapIcon className="h-6 w-6 text-indigo-600 " />
           <div>
-            <Select onValueChange={handleLanguageModelChange} value={languageModel}>
+            <Select onValueChange={setSelectedModel} value={selectedModel}>
               <SelectTrigger className="h-7">
                 <SelectValue placeholder="Select Language" />
               </SelectTrigger>
               <SelectContent>
-                {defaultModels.map((item) => (
-                  <SelectItem key={item.id} value={item.id}>
-                    {item.name}
-                  </SelectItem>
-                ))}
+                {defaultModels.map((item) => {
+                  const modelAvailable = currentUser ? true : !item.premimum;
+                  return (
+                    <SelectItem key={item.id} value={item.id} disabled={!modelAvailable}>
+                      {item.name}
+                    </SelectItem>
+                  )
+                })}
               </SelectContent>
             </Select>
           </div>

@@ -154,14 +154,15 @@ const SummaryTab = (data) => {
                     <ShareIcon className="w-6 h-6" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="flex flex-col gap-y-2 w-96">
+                <PopoverContent className="flex flex-col gap-y-2 mx-4 px-4 w-80">
                   <Label>Share summary link</Label>
-                  <div className="flex items-center">
-                    <Input
-                      value={shareLink + _id}
-                      className=" bg-gray-100"
+                  <div className="flex items-center ">
+                    <div
+                      className=" bg-gray-100 rounded-md cursor-pointer p-2 mr-1"
                       onClick={(e) => copyLink(e)}
-                    />
+                    >
+                      {shareLink + _id}
+                    </div>
                     <Button
                       className="p-2"
                       variant="ghost"

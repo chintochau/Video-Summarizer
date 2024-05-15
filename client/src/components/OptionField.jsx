@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/hover-card";
 import { Textarea } from "./ui/textarea";
 import { Info } from 'lucide-react';
+import { useModels } from "@/contexts/ModelContext";
 
 const OptionCard = (params) => {
   const { option, handleClick, creditCount, variant } = params;
@@ -33,29 +34,28 @@ const OptionCard = (params) => {
   const [interval, setInterval] = useState(600);
   const { parentSrtText } = useTranscriptContext();
   const { currentUser } = useAuth();
+  const {selectedModelDetails} = useModels();
 
 
   useEffect(() => {
     let factor;
-
     if (!currentUser) {
       setAdjustableCreditCount(1);
       return;
     }
-
     switch (id) {
       case "long-summary":
-        factor = Math.max(1, 1.3 * (videoDuration / interval));
+        factor = Math.max(1, 1.3 * (videoDuration / interval)) * selectedModelDetails.factor;
         setAdjustableCreditCount((creditCount * factor).toFixed(1));
         break;
       default:
-        setAdjustableCreditCount(creditCount);
+        setAdjustableCreditCount(creditCount * selectedModelDetails.factor);
     }
-  }, [creditCount, interval]);
+  }, [creditCount, interval, selectedModelDetails]);
 
   const showModifiedDescription = () => {
     switch (id) {
-      case 6:
+      case "meeting-summary":
         return `Video length: ${formatDuration(
           videoDuration
         )}\nBreakdown the video into ${Math.ceil(
@@ -71,7 +71,6 @@ const OptionCard = (params) => {
         return description;
     }
   };
-
 
   const memberOnly = !currentUser && premimum;
   const buttonDisalbed = !parentSrtText || memberOnly;

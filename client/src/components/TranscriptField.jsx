@@ -378,10 +378,10 @@ const TranscriptBox = ({
     >
       <div className="p-1 pt-0">
         <div
-          className="cursor-pointer underline text-nowrap text-blue-600 hover:text-blue-800"
+          className="mr-1 cursor-pointer underline text-nowrap text-blue-600 hover:text-blue-800"
           onClick={() => onClick(start)}
         >
-          {start.split(",")[0] + " :"}
+          {start.split(",")[0]}
         </div>
         {isEditMode && (
           <div className=" text-xs text-gray-400">{end.split(",")[0]}</div>

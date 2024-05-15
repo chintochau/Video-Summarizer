@@ -30,9 +30,11 @@ export const generateSummary = async (req, res) => {
     fullResponseText,
     max_tokens,
     res,
+    selectedModel
   };
   switch (selectedModel) {
     case "gpt35":
+    case "gpt4o":
       fullResponseText = await summarizeWithOpenAI(data)
       break;
     case "claude3h":
@@ -47,7 +49,7 @@ export const generateSummary = async (req, res) => {
 
 export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
   // input Array of transcripts separated by interval lenth, 10mins/ 20mins each part
-  const { language, selectedModel,video, transcript,option } = req.body;
+  const { language, selectedModel, video, transcript, option } = req.body;
   const { prompt } = option;
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
@@ -92,8 +94,8 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
   };
 
   const data = {
-    system:"",
-    messages:[
+    system: "",
+    messages: [
       {
         role: "user",
         content: `
@@ -106,11 +108,11 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
       },
     ],
     fullResponseText,
-    max_tokens:1024
+    max_tokens: 1024
   }
 
   const videoContext = await summarizeWithAnthropic(data)
-  res.write(videoContext+"\n");
+  res.write(videoContext + "\n");
   fullResponseText += videoContext + "\n";
 
   const summarizePromptsSeries = async () => {
@@ -123,7 +125,7 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
       ${prompt}
       `;
       try {
-        
+
         res.write("### Part " + (i + 1) + " of " + transcriptsArray.length + "\n");
         fullResponseText += "### Part " + (i + 1) + " of " + transcriptsArray.length + "\n";
 
@@ -279,7 +281,7 @@ const getFirstNMinutesOfTranscript = (transcript, n = 5) => {
     if (i % 10 === 0) {
       transcriptText += "\n" + parsedSRT[i].start.split(",")[0] + ":\n";
     }
-    
+
     const { start, text } = parsedSRT[i];
     const startSeconds = convertTimeToSeconds(start);
 
@@ -289,7 +291,7 @@ const getFirstNMinutesOfTranscript = (transcript, n = 5) => {
       break;
     }
   }
-  
+
   return getTextWithinInterval(parsedSRT, intervalInSeconds);
 };
 
@@ -332,9 +334,20 @@ async function summarizeWithOpenAI({
   fullResponseText,
   max_tokens,
   res,
+  selectedModel
 }) {
+
+  let model
+  switch (selectedModel) {
+    case "gpt35":
+      model = "gpt-3.5-turbo"
+      break;
+    case "gpt4o":
+      model = "gpt-4o"
+      break;
+  }
   const stream = openai.beta.chat.completions.stream({
-    model: "gpt-3.5-turbo",
+    model,
     messages: [{ role: "system", content: system }, ...messages],
     stream: true,
     temperature: 0.4,

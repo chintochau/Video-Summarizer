@@ -109,6 +109,7 @@ export const handleMeetingSummary = async (req, res) => {
     await checkUserCredit(userId, creditAmount);
     generateSummaryInSeries(textByInterval, req, res);
     const remainingCredits = await deductCredits(userId, creditAmount);
+    await deductCredits(userId, creditAmount);
 
     res.status(200).end();
   } catch (error) {
