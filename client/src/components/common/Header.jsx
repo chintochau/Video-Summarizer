@@ -51,7 +51,7 @@ const Header = ({ className }) => {
   };
 
   return (
-    <header className={cn("bg-white sticky top-0 z-10 border-b", className)}>
+    <header className={cn("bg-white sticky top-0 z-10 border-b bg-gradient-to-b", className)}>
       <nav
         className="mx-auto flex max-w-7xl items-center justify-between gap-x-2 md:gap-x-6 py-1 px-2 md:py-2 lg:px-8"
         aria-label="Global"

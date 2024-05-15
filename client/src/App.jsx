@@ -63,7 +63,7 @@ function App() {
                       } />
                       <Route path="/share" element={<SharePage />} />
                       <Route path="/auth" element={<AuthCheckPage/>}></Route>
-                      <Route path="/login" element={<LoginPage />} />
+                      <Route path="/login" element={<div><Header/><LoginPage /></div>} />
                       <Route path="/register" element={<RegisterPage />} />
                       <Route path="/pricing" element={<div><Header /><PricingPage /></div>} />
                       <Route path="/history" element={<HistoryPage />} />

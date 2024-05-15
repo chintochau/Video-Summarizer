@@ -29,23 +29,25 @@ const GeneralSummary = () => {
 
   if (!youtubeId) {
     return (
-      <div className=" h-3/4 flex flex-col justify-center mx-auto max-w-3xl w-full">
-        <div className="flex flex-col items-center justify-center">
-          <h1 className="text-3xl font-bold">Summarize Youtube Video</h1>
-          <p className="text-lg text-gray-500">Input yourtube link to get started</p>
-        </div>
-        <div className=""><YoutubeBar /></div>
-        <div className="text-center">
-          <Separator className="my-4"/>
-          <div className="font-semibold text-lg my-4"> Or Sign in to upload video</div>
-          <Button variant="outline" onClick={() => navigate("/login")}>Sign in</Button>
+      <div className="w-full bg-gradient-to-t from-indigo-50 to-blue-50 h-full">
+        <div className=" h-3/4 flex flex-col justify-center mx-auto max-w-3xl w-full ">
+          <div className="flex flex-col items-center justify-center">
+            <h1 className="text-3xl font-bold">Summarize Youtube Video</h1>
+            <p className="text-lg text-gray-500">Input yourtube link to get started</p>
+          </div>
+          <div className=""><YoutubeBar /></div>
+          <div className="text-center">
+            <Separator className="my-4"/>
+            <div className="font-semibold text-lg my-4"> Or Sign in to upload video</div>
+            <Button variant="outline" onClick={() => navigate("/login")}>Sign in</Button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className=" flex flex-col h-40 flex-1">
+    <div className=" flex flex-col h-40 flex-1 ">
       <YoutubeBar />
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel className="flex flex-col flex-1">
