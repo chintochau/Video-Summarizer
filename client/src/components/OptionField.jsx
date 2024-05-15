@@ -108,7 +108,11 @@ ${summarizeOptions.quickSummaryOptions[3].prompt}`}
     >
       <CardHeader>
         <div className="flex justify-between">
-          <CardTitle className="pt-1">{title}</CardTitle>
+          <CardTitle className={
+            cn(
+              buttonDisalbed ? "text-gray-400" : "",
+            )
+          }>{title}</CardTitle>
           {memberOnly ? (
             <HoverCard>
               <HoverCardTrigger>
@@ -141,7 +145,7 @@ ${summarizeOptions.quickSummaryOptions[3].prompt}`}
 const OptionField = ({ handleClick, creditCount, setInterval }) => {
   const { quickSummaryOptions, detailSummaryOptions } = summarizeOptions;
   return (
-    <div className="flex flex-col gap-y-4 mx-4 pb-8 pt-4">
+    <div className="flex flex-col gap-y-4 mx-8 py-6">
       {/* <CardTitle className="text-indigo-600/80">Custom prompt:</CardTitle>
       <OptionCard variant="custom" option={{ premimum: false }} /> */}
       <div className="flex items-center">
@@ -180,6 +184,7 @@ const OptionField = ({ handleClick, creditCount, setInterval }) => {
           );
         })}
       </div>
+      <div className="w-full h-10"/>
     </div>
   );
 };

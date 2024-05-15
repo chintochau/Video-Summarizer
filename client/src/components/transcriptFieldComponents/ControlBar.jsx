@@ -65,8 +65,7 @@ export const ControlBar = (params) => {
   };
 
   return (
-    <div>
-      <div className="bg-gray-50">
+      <>
         <div className="border-b border-gray-200 flex justify-between ">
           <nav className="-mb-px flex space-x-2 pl-2" aria-label="Tabs">
             {tabs.map((tab) => (
@@ -167,8 +166,7 @@ export const ControlBar = (params) => {
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </>
   );
 };
 

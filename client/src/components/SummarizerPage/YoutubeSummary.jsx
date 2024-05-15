@@ -34,6 +34,7 @@ const YoutubeSummary = ({ Bar3Button }) => {
             />
             <div className="h-40 flex-1 hidden md:block overscroll-scroll">
               <TranscriptField
+                className=" rounded-lg overflow-hidden"
                 youtubeId={youtubeId}
                 videoRef={videoRef}
                 displayMode="youtube"
@@ -42,7 +43,7 @@ const YoutubeSummary = ({ Bar3Button }) => {
 
             <div className="pt-[66.5vw] md:hidden md:h-40 md:flex-1 flex flex-col">
               <Tabs defaultValue="summary">
-                <TabsList className="w-full flex">                  
+                <TabsList className="w-full flex">
                   <TabsTrigger value="summary" className="flex-1">Summary</TabsTrigger>
                   <TabsTrigger value="transcript" className="flex-1">Transcript</TabsTrigger>
                 </TabsList>
@@ -58,10 +59,11 @@ const YoutubeSummary = ({ Bar3Button }) => {
                 </TabsContent>
               </Tabs>
             </div>
+
           </ResizablePanel>
-          <ResizableHandle className="w-1 bg-indigo-100 hidden md:flex" />
-          <ResizablePanel className="hidden sticky top-20 shrink-0 md:block w-full md:w-1/2  h-1/2  md:h-full p-1 bg-gray-50">
-            <SummaryField videoRef={videoRef} />
+          <ResizableHandle className=" hidden md:flex" />
+          <ResizablePanel className="hidden sticky top-20 shrink-0 md:block w-full md:w-1/2  h-1/2  md:h-full">
+            <SummaryField videoRef={videoRef} className=" rounded-lg"/>
           </ResizablePanel>
         </ResizablePanelGroup>
       )}

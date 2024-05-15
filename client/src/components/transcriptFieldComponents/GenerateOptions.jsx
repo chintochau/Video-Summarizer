@@ -37,14 +37,14 @@ const GenerateOptions = (params) => {
     const { uploadToCloudAndTranscribe } = params
     const { setupTranscriptWithInputSRT } = useTranscriptContext()
     const { videoCredits, videoDuration } = useVideoContext()
-    const [selectedIndex, setSelectedIndex] = useState(null)
+    const [selectedIndex, setSelectedIndex] = useState(0)
     const { currentUser } = useAuth()
     const { selectedTranscribeOption,
         setSelectedTranscribeOption
     } = useTranscriptContext()
 
     useEffect(() => {
-        setSelectedTranscribeOption(null)
+        setSelectedTranscribeOption(transcribeOptions[0])
     }, [])
 
     const getTranscriptWithUpload = (file) => {
@@ -62,7 +62,7 @@ const GenerateOptions = (params) => {
         return `${lower} - ${upper}`
     }
 
-     const TransbeOptionTable = () => {
+    const TransbeOptionTable = () => {
         return (<Table>
             <TableHeader>
                 <TableRow>
@@ -94,7 +94,7 @@ const GenerateOptions = (params) => {
                                 index === selectedIndex ? '' : 'hidden',
                                 ' text-indigo-900 size-4')} /></TableCell>
                     </TableRow>))
-                    }
+                }
             </TableBody>
 
         </Table>)
@@ -129,41 +129,48 @@ const GenerateOptions = (params) => {
 
     return (
         <ScrollArea className="h-full">
-            <Card className="flex-col m-4 shadow-md">
-                <CardHeader>
-                    <CardTitle>Generate Transcript with AI</CardTitle>
-                    <CardDescription>Different options to generate transcript</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <TransbeOptionTable options={transcribeOptions} />
-                </CardContent>
-                <CardFooter>
-                    <div className='flex flex-col gap-y-1'>
-                        <Label htmlFor="model" className="pt-2"><CreditsCost /></Label>
-                        <Button className="mx-auto" onClick={uploadToCloudAndTranscribe} disabled={!selectedTranscribeOption}>Generate</Button>
-                    </div>
-                </CardFooter>
-            </Card>
-            <Card className="flex-col m-4 shadow-md">
+            <div className='flex flex-col py-6 px-10 gap-y-4'>
 
-                <CardHeader>
-                    <CardTitle>History</CardTitle>
-                    <CardDescription>Load a previous transcription from server</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <TranscriptHistoryTable />
-                </CardContent>
-            </Card>
-            <Card className="flex-col m-4 shadow-md">
+                <CardTitle className="text-indigo-400">
+                    Choose an option to generate transcript
+                </CardTitle>
 
-                <CardHeader>
-                    <CardTitle>Upload Transcript</CardTitle>
-                    <CardDescription>Upload SRT file from local storage</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Input type="file" onChange={(e) => getTranscriptWithUpload(e.target.files[0])} />
-                </CardContent>
-            </Card>
+                <Card className="flex-colshadow-md">
+                    <CardHeader>
+                        <CardTitle>1. Generate Transcript with AI</CardTitle>
+                        <CardDescription>Utilize AI to generate video transcripts. You can either wait on the screen or return later after initiating the process.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className='rounded-md border '><TransbeOptionTable options={transcribeOptions} /></div>
+                    </CardContent>
+                    <CardFooter>
+                        <div className='flex flex-col gap-y-1'>
+                            <Label htmlFor="model" className="pt-2"><CreditsCost /></Label>
+                            <Button className="mx-auto" onClick={uploadToCloudAndTranscribe} disabled={!selectedTranscribeOption}>Generate</Button>
+                        </div>
+                    </CardFooter>
+                </Card>
+                <Card className="flex-col shadow-md">
+
+                    <CardHeader>
+                        <CardTitle>2. Browse from History</CardTitle>
+                        <CardDescription>Retrieve a previous transcription from the server.</CardDescription>
+
+                    </CardHeader>
+                    <CardContent>
+                        <TranscriptHistoryTable />
+                    </CardContent>
+                </Card>
+                <Card className="flex-col shadow-md">
+                    <CardHeader>
+                        <CardTitle>3. Upload Transcript</CardTitle>
+                        <CardDescription>Upload an SRT file from your computer.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Input className=" cursor-pointer" type="file" onChange={(e) => getTranscriptWithUpload(e.target.files[0])} />
+                    </CardContent>
+                </Card>
+            </div>
         </ScrollArea>
     )
 }

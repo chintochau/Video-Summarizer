@@ -23,8 +23,11 @@ import { useQuota } from "@/contexts/QuotaContext.jsx";
 import QuotaService from "@/services/QuotaService.js";
 import { defaultModels } from "./Prompts.js";
 import { useModels } from "@/contexts/ModelContext.jsx";
+import { useToast } from "./ui/use-toast.js";
+import { ToastAction } from "./ui/toast.jsx";
+import { cn } from "@/lib/utils.js";
 
-const SummaryField = ({ videoRef }) => {
+const SummaryField = ({ videoRef, className }) => {
   // use context
   const { summaries, setSummaries } = useSummaryContext();
   const { userId, setCredits, credits, currentUser } = useAuth();
@@ -37,6 +40,8 @@ const SummaryField = ({ videoRef }) => {
   const [creditCount, setCreditCount] = useState(0);
   const [startSummary, setStartSummary] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+
+  const { toast} = useToast();
 
   const  {selectedModel,setSelectedModel,language, setLanguage} = useModels();
 
@@ -144,6 +149,25 @@ const SummaryField = ({ videoRef }) => {
 
       try {
         checkCredits(credits, creditAmount);
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Insufficient Credits",
+          description: "Please purchase more credits to continue.",
+          action: <Button 
+          variant="outline"
+          altText="Get more Credits"
+          onClick={() => {
+            window.location.href = "/pricing";
+          }}
+          >Get more Credits</Button>,
+        });
+        setStartSummary(false);
+        return;
+      }
+
+
+      try {
         updateSummaryOfIndex(activeTab, "sourceType", title);
         await SummaryService.summarizeWithAI(
           {
@@ -183,95 +207,100 @@ const SummaryField = ({ videoRef }) => {
   };
 
   return (
-    <div className="relative h-full flex flex-col dark:bg-zinc-800">
-      <div className="flex justify-between px-3 pt-1">
-        <div className=" flex flex-1 items-center gap-x-1 flex-wrap">
-          <LanguageIcon className="h-6 w-6 text-indigo-600 " />
-          <div className="w-28">
-            <Select onValueChange={setLanguage} value={language}>
-              <SelectTrigger className=" h-7">
-                <SelectValue placeholder="Select Language" />
-              </SelectTrigger>
-              <SelectContent>
-                {languageList.map((item) => (
-                  <SelectItem key={item.code} value={item.name}>
-                    {item.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <AcademicCapIcon className="h-6 w-6 text-indigo-600 " />
-          <div>
-            <Select onValueChange={setSelectedModel} value={selectedModel}>
-              <SelectTrigger className="h-7">
-                <SelectValue placeholder="Select Language" />
-              </SelectTrigger>
-              <SelectContent>
-                {defaultModels.map((item) => {
-                  const modelAvailable = currentUser ? true : !item.premimum;
-                  return (
-                    <SelectItem key={item.id} value={item.id} disabled={!modelAvailable}>
+    <div className={cn(
+      "relative h-full flex flex-col dark:bg-zinc-800",
+      className
+    )}>
+      <div className=" bg-gray-50">
+        <div className="flex justify-between px-3 pt-1">
+          <div className=" flex flex-1 items-center gap-x-1 flex-wrap">
+            <LanguageIcon className="h-6 w-6 text-indigo-600 " />
+            <div className="w-28">
+              <Select onValueChange={setLanguage} value={language}>
+                <SelectTrigger className=" h-7">
+                  <SelectValue placeholder="Select Language" />
+                </SelectTrigger>
+                <SelectContent>
+                  {languageList.map((item) => (
+                    <SelectItem key={item.code} value={item.name}>
                       {item.name}
                     </SelectItem>
-                  )
-                })}
-              </SelectContent>
-            </Select>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <AcademicCapIcon className="h-6 w-6 text-indigo-600 " />
+            <div>
+              <Select onValueChange={setSelectedModel} value={selectedModel}>
+                <SelectTrigger className="h-7">
+                  <SelectValue placeholder="Select Language" />
+                </SelectTrigger>
+                <SelectContent>
+                  {defaultModels.map((item) => {
+                    const modelAvailable = currentUser ? true : !item.premimum;
+                    return (
+                      <SelectItem key={item.id} value={item.id} disabled={!modelAvailable}>
+                        {item.name}
+                      </SelectItem>
+                    )
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+  
+          <div>
+            {currentUser && userId ? (
+              <Button
+                className="h-8 text-sm text-indigo-600 flex items-center "
+                variant="outline"
+              >
+                <BoltIcon className="w-4 h-6" />:{credits}
+              </Button>
+            ) : (
+              <Button
+                className="h-8 text-sm flex items-center cursor-default hover:bg-white"
+                variant="outline"
+              >
+                <BoltIcon className="w-4 h-6 text-yellow-500" />: {quota}
+              </Button>
+            )}
           </div>
         </div>
-
-        <div className="">
-          {currentUser && userId ? (
-            <Button
-              className="h-8 text-sm text-indigo-600 flex items-center "
-              variant="outline"
-            >
-              <BoltIcon className="w-4 h-6" />:{credits}
-            </Button>
-          ) : (
-            <Button
-              className="h-8 text-sm flex items-center cursor-default hover:bg-white"
-              variant="outline"
-            >
-              <BoltIcon className="w-4 h-6 text-yellow-500" />: {quota}
-            </Button>
-          )}
-        </div>
-      </div>
-
-      {language !== "English" && (
-        <div
-          className="text-sm text-gray-500 px-3 py-1"
-        >
-          Note: AI functions best with English language. For other languages, we recommend summarizing in English first, then translating using tools like <a
-            className="text-blue-500 cursor-pointer"
-            target="_blank"
-            href="https://translate.google.com/"
+  
+        {language !== "English" && (
+          <div
+            className="text-sm text-gray-500 px-3 py-1"
           >
-            Google Translate</a> for best results.
-        </div>
-      )}
+            Note: AI functions best with English language. For other languages, we recommend summarizing in English first, then translating using tools like <a
+              className="text-blue-500 cursor-pointer"
+              target="_blank"
+              href="https://translate.google.com/"
+            >
+              Google Translate</a> for best results.
+          </div>
+        )}
+  
+        <HeadingsWithTabs
+          startSummary={startSummary}
+          summaries={summaries}
+          setActiveTab={setActiveTab}
+          activeTab={activeTab}
+        />
+      </div>
+        <SummaryTab
+          videoRef={videoRef}
+          activeTab={activeTab}
+          summaryObject={summaries[activeTab]}
+          updateSummaryOfIndex={updateSummaryOfIndex}
+          insertNewTab={insertNewTab}
+          response={response}
+          startSummary={startSummary}
+          performSummarize={performSummarize}
+          creditCount={creditCount}
+          removeSummary={removeSummary}
+        />
 
-      <HeadingsWithTabs
-        startSummary={startSummary}
-        summaries={summaries}
-        setActiveTab={setActiveTab}
-        activeTab={activeTab}
-      />
-
-      <SummaryTab
-        videoRef={videoRef}
-        activeTab={activeTab}
-        summaryObject={summaries[activeTab]}
-        updateSummaryOfIndex={updateSummaryOfIndex}
-        insertNewTab={insertNewTab}
-        response={response}
-        startSummary={startSummary}
-        performSummarize={performSummarize}
-        creditCount={creditCount}
-        removeSummary={removeSummary}
-      />
     </div>
   );
 };

@@ -20,8 +20,8 @@ const HeadingsWithTabs = ({
   };
 
   return (
-    <div className="w-full">
-      <div className="sm:hidden flex items-center gap-x-2 px-3 border-gray-200 border-b pb-1">
+    <div className="w-full border-gray-200 border-b">
+      <div className="sm:hidden flex items-center gap-x-2 px-3  pb-1">
         <label htmlFor="tabs" className="sr-only">
           Select a tab
         </label>
@@ -43,8 +43,7 @@ const HeadingsWithTabs = ({
           </SelectContent>
         </Select>
       </div>
-      <div className="hidden sm:block">
-        <div className="border-b border-gray-200">
+      <div className="hidden sm:block px-2">
           <nav className="-mb-px flex space-x-4 flex-wrap" aria-label="Tabs">
             {summaries.map((summary, index) => (
               <a
@@ -62,7 +61,6 @@ const HeadingsWithTabs = ({
               </a>
             ))}
           </nav>
-        </div>
       </div>
     </div>
   );

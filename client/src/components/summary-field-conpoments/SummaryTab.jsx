@@ -129,7 +129,7 @@ const SummaryTab = (data) => {
   };
 
   return (
-    <ScrollArea className="overflow-y-auto">
+    <ScrollArea className="overflow-y-auto px-2">
       {summary !== "" && (
         <>
           <div className="hidden md:block md:absolute top-0 right-0 ">

@@ -32,10 +32,12 @@ import {
   CardTitle,
 } from "./ui/card";
 import UploadService from "@/services/UploadService";
+import { useToast } from "./ui/use-toast";
+import { cn } from "@/lib/utils";
 
 // Field
 const TranscriptField = (params) => {
-  const { youtubeId, videoRef, file, displayMode } = params;
+  const { youtubeId, videoRef, file, displayMode, className } = params;
   const [viewMode, setViewMode] = useState("transcript"); // 新增狀態變量
   const [isEditMode, setIsEditMode] = useState(false);
   const { videoCredits, currentPlayTime, currentLine, setCurrentLine, video } =
@@ -57,6 +59,7 @@ const TranscriptField = (params) => {
   const [transcribeProgress, setTranscribeProgress] = useState(0);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     setCurrentLine("");
@@ -89,14 +92,15 @@ const TranscriptField = (params) => {
     resetProgress();
     setGeneratingTranscriptWithAI(true);
     try {
-      // console.log("using fake link");
+
       if (displayMode === "youtube") {
-        generateTranscript({fileLink:null, publicId:null, resourceType:null});
+        generateTranscript({ fileLink: null, publicId: null, resourceType: null });
       } else {
         const uploadResult = await UploadService.uploadVideo(
           file,
           onUploadProgress
         );
+
         const data = {
           fileLink: uploadResult.secure_url,
           publicId: uploadResult.public_id,
@@ -105,6 +109,7 @@ const TranscriptField = (params) => {
 
         generateTranscript(data);
       }
+
     } catch (error) {
       console.error(error);
     }
@@ -116,9 +121,27 @@ const TranscriptField = (params) => {
     if (displayMode !== "youtube" && !file && !fileLink) {
       alert("please select a file");
     }
-    
+
     try {
-      checkCredits(credits, videoCredits);
+      checkCredits(credits, parseFloat(videoCredits) + 1000)
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Insufficient Credits",
+        description: "Please purchase more credits to continue.",
+        action: <Button
+          variant="outline"
+          altText="Get more Credits"
+          onClick={() => {
+            window.location.href = "/pricing";
+          }}
+        >Get more Credits</Button>,
+      });
+      setGeneratingTranscriptWithAI(false);
+      return;
+    }
+
+    try {
       setGeneratingTranscriptWithAI(true);
       switch (displayMode) {
         case "youtube":
@@ -233,10 +256,11 @@ const TranscriptField = (params) => {
   };
 
   return (
-    <div className="flex-col h-full flex">
-      <div className="text-center font-semibold border border-gray-50 mt-1 rounded-sm text-lg shadow-sm ">
-        {currentLine}
-      </div>
+    <div className={cn(
+      "flex-col h-full flex",
+      className
+    )}>
+
 
       {loadingTranscript ? (
         <div className="flex-col pt-12">
@@ -281,19 +305,24 @@ const TranscriptField = (params) => {
             <div className="flex-col h-full">
               {transcriptAvailable ? (
                 <div className="h-full flex flex-col">
-                  <ControlBar
-                    exportSRT={exportSRT}
-                    setIsEditMode={setIsEditMode}
-                    isEditMode={isEditMode}
-                    setViewMode={setViewMode}
-                    editableTranscript={editableTranscript}
-                    viewMode={viewMode}
-                  />
+                  <div className=" bg-gray-50">
+                    <div className="text-center font-semibold rounded-sm text-lg ">
+                      {currentLine}
+                    </div>
+                    <ControlBar
+                      exportSRT={exportSRT}
+                      setIsEditMode={setIsEditMode}
+                      isEditMode={isEditMode}
+                      setViewMode={setViewMode}
+                      editableTranscript={editableTranscript}
+                      viewMode={viewMode}
+                    />
+                  </div>
                   {/* 根據viewMode渲染不同的內容 */}
                   {/* Transcript Box */}
 
                   {viewMode === "transcript" ? (
-                    <ScrollArea className="bg-gray-50 h-full">
+                    <ScrollArea className=" h-full px-2">
                       {editableTranscript.map(({ start, end, text }, index) => {
                         const startTime = timeToSeconds(start.split(",")[0]);
                         const endTime = timeToSeconds(end.split(",")[0]);
@@ -371,9 +400,8 @@ const TranscriptBox = ({
 
   return (
     <div
-      className={`flex shadow-sm mx-2 rounded-md  ${
-        isCurrent ? " bg-indigo-100" : " bg-gray-50"
-      } hover:outline outline-1 outline-indigo-300 cursor-pointer`}
+      className={`flex mx-2 rounded-md  ${isCurrent ? " bg-indigo-100" : ""
+        } hover:outline outline-1 outline-indigo-300 cursor-pointer`}
       onClick={() => onClick(start)}
     >
       <div className="p-1 pt-0">
@@ -406,9 +434,8 @@ const TranscriptBox = ({
             {/**merge up */}
             {
               <button
-                className={`text-gray-200  w-full ${
-                  index !== 0 && "hover:text-blue-500"
-                }`}
+                className={`text-gray-200  w-full ${index !== 0 && "hover:text-blue-500"
+                  }`}
                 onClick={() => mergeTranscriptToPrevious(index)}
                 disabled={index === 0}
               >

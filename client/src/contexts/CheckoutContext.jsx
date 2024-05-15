@@ -67,8 +67,9 @@ export const tiers = [
       "SRT Editor",
       "Summary History",
     ],
-    mostPopular: true,
-    available: true,
+    mostPopular: false,
+    available: false,
+    hide:true
   },
   {
     name: "Mastermind",
@@ -90,5 +91,6 @@ export const tiers = [
     ],
     mostPopular: false,
     available: false,
+    hide:true
   },
 ];

@@ -264,7 +264,7 @@ const PricingTier = ({ tier, frequency }) => {
           })
         }
       >
-        {tier.available ? "Buy plan" : "Internal Beta"}
+        {tier.available ? "Buy plan" : "Not available"}
       </button>
       <ul
         role="list"
