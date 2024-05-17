@@ -133,7 +133,7 @@ const GenerateOptions = (params) => {
       return (
         <div className="flex flex-col gap-y-1">
           <Label htmlFor="model" className="pt-2">
-            Credits: {videoCredits * selectedTranscribeOption.creditFactor}
+            Credits: {(videoCredits * selectedTranscribeOption.creditFactor).toFixed(2)}
           </Label>
         </div>
       );
@@ -173,7 +173,7 @@ const GenerateOptions = (params) => {
 
   return (
     <ScrollArea className="h-full">
-      <div className="flex flex-col py-6 px-10 gap-y-4">
+      <div className="flex flex-col py-6 px-1 md:px-2 lg:px-4 xl:p-10  gap-y-4">
         <CardTitle className="text-indigo-400">
           Choose an option to generate transcript
         </CardTitle>

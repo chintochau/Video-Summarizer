@@ -192,7 +192,7 @@ export const parseSRTToArray = (srt) => {
 };
 
 // 導出為SRT格式
-export const exportSRT = (editableTranscript) => {
+export const exportSRT = (editableTranscript,videoTitle) => {
   const srtContent = editableTranscript
     .map(
       ({ index, start, end, text }) => `${index}\n${start} --> ${end}\n${text}`
@@ -201,7 +201,7 @@ export const exportSRT = (editableTranscript) => {
   const blob = new Blob([srtContent], { type: "text/plain" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-  link.download = "transcript.srt";
+  link.download = videoTitle + ".srt";
   link.href = url;
   link.click();
 };

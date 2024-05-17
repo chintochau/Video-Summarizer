@@ -242,8 +242,6 @@ export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
         currentStatus = "COMPLETED";
       }
     }
-    console.log("DATA",data);
-    console.log("DATA.TRANSCRIPT",data.output.transcription);
 
     const result = data.output.transcription;
     await getOrCreateVideoAndUpdateTranscript({
@@ -251,8 +249,6 @@ export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
       userId,
       originalTranscript: result,
     });
-
-
 
     res.json(result);
   } catch (error) {

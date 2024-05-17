@@ -113,7 +113,7 @@ export const ControlBar = (params) => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger className=" hover:text-indigo-400 text-indigo-600 duration-200 transition-colors">
-                  <div className="flex" onClick={() => exportSRT(editableTranscript)}>
+                  <div className="flex" onClick={() => exportSRT(editableTranscript,video.sourceTitle || "transcript")}>
                     <ArrowDownTrayIcon className="w-6 h-6" />
                     <p>SRT</p>
                   </div>

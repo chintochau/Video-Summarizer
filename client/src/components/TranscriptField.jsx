@@ -42,6 +42,7 @@ const TranscriptField = (params) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const { videoCredits, currentPlayTime, currentLine, setCurrentLine, video } =
     useVideoContext();
+    const {transcribeOptions} = useTranscriptContext();
   const {
     parentTranscriptText,
     selectedTranscribeOption,
@@ -123,7 +124,7 @@ const TranscriptField = (params) => {
     }
 
     try {
-      checkCredits(credits, parseFloat(videoCredits))
+      checkCredits(credits, parseFloat(videoCredits * transcribeOptions.creditFactor).toFixed(2))
     } catch (error) {
       toast({
         variant: "destructive",
@@ -260,8 +261,6 @@ const TranscriptField = (params) => {
       "flex-col h-full flex",
       className
     )}>
-
-
       {loadingTranscript ? (
         <div className="flex-col pt-12">
           <Loader2 className="mx-auto size-16 opacity-20 animate-spin" />
