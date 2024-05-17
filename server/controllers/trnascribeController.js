@@ -17,6 +17,11 @@ import tmp from "tmp";
 import util from "util";
 import { pipeline } from "stream";
 import fs from "fs";
+import {
+  checkTranscriptionStatusWithRunPod,
+  transcribeLinkWithRunPod,
+} from "../services/runpodService.js";
+import { uploadAudioToS3 } from "../services/amazonService.js";
 
 export const handleTranscribeRequest = async (req, res) => {
   const { userId } = req.body;
@@ -143,10 +148,10 @@ export const processVideo = async (req, res) => {
 
 const pipelineAsync = util.promisify(pipeline);
 
+// processYoutubeVideo function using queue
 export const handleYoutubeTranscribeRequest = async (req, res) => {
   const { youtubeId, userId, video } = req.body;
   const { sourceTitle } = video;
-
   try {
     console.log("Processing youtube video", youtubeId);
     transcribeQueue.push(async (cb) => {
@@ -201,4 +206,65 @@ export const handleYoutubeTranscribeRequest = async (req, res) => {
       .status(500)
       .send("Error processing video audio. GPU server may be busy.");
   }
+};
+
+// processYoutubeVideo function using S3 and runpod
+export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
+  const { youtubeId, userId, video } = req.body;
+  const { sourceTitle } = video;
+  let tempFilePath;
+  try {
+    const videoInfo = await ytdl.getInfo(youtubeId);
+    // Check if the video has available audio streams
+    const audioFormats = ytdl.filterFormats(videoInfo.formats, "audioonly");
+    if (audioFormats.length === 0) {
+      return res.status(400).send("Unable to obtain video audio.");
+    }
+    // upload the audio to S3
+    tempFilePath = tmp.tmpNameSync({ postfix: ".mp3" });
+    const audioStream = ytdl(youtubeId, { filter: "audioonly" });
+    const fileStream = fs.createWriteStream(tempFilePath);
+    await pipelineAsync(audioStream, fileStream);
+
+    const filePublicUrl = await uploadAudioToS3(tempFilePath, videoInfo);
+    const id = await transcribeLinkWithRunPod(filePublicUrl);
+    // const id = "a671ac14-4c07-4c09-a5c6-113c75b72b43-u1"
+
+    // add id to array, and check status every 10 seconds
+    let currentStatus = "IN_PROGRESS";
+    let data
+    while (currentStatus !== "COMPLETED") {
+      await new Promise((resolve) => setTimeout(resolve, 10000));
+      data = await checkTranscriptionStatusWithRunPod(id);
+      if (data.status === "FAILED") {
+        throw new Error("Transcription failed");
+      } else if (data.status === "COMPLETED") {
+        currentStatus = "COMPLETED";
+      }
+    }
+    console.log("DATA",data);
+    console.log("DATA.TRANSCRIPT",data.output.transcription);
+
+    const result = data.output.transcription;
+    await getOrCreateVideoAndUpdateTranscript({
+      video,
+      userId,
+      originalTranscript: result,
+    });
+
+
+
+    res.json(result);
+  } catch (error) {
+    // 将错误消息发送回客户端
+    console.error(error);
+    res
+      .status(500)
+      .send("Error processing video audio. GPU server may be busy.");
+  }
+
+  // Clean up: Delete the temporary file if no longer needed
+  // fs.unlink(tempFilePath, (err) => {
+  //   if (err) throw err;
+  // });
 };

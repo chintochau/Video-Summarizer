@@ -70,7 +70,10 @@ export const TranscriptProvider = ({ children }) => {
 
 
 export const transcribeOptions = [
-  { value: 'faster-whisper', label: 'Queue', information: 'Take longer timer', creditFactor: 0.3, timeFactor: { lower: 0.13, upper: 0.36 }, available:true},
-  { value: 'assembly', label: 'Dedicated', information: 'Free for now', creditFactor: 0.6, timeFactor: { lower: 0.07, upper: 0.1 } , available:false},
-  { value: 'openai', label: 'Express', information: 'Better Performance', creditFactor: 1, timeFactor: { lower: 0.033, upper: 0.06 } , available:false},
+  { value: 'base', label: 'Quick Performance', accuracy:1, information: 'Optimized for speed, ideal for English.', creditFactor: 0.3, timeFactor: { lower: 0.04, upper: 0.12 }, available:true},
+  { value: 'medium', label: 'Balanced Performance', accuracy:2, information: 'Balances speed and accuracy for multilingual tasks.', creditFactor: 0.3, timeFactor: { lower: 0.08, upper: 0.24 }, available:true},
+  { value: 'large-v3', label: 'High Accuracy', accuracy:3, information: 'Delivers superior accuracy for various languages.', creditFactor: 0.3, timeFactor: { lower: 0.13, upper: 0.36 }, available:true},
+  // { value: 'dedicated', label: 'Dedicated Server', accuracy:3, information: 'Dedicated resources for optimized performance.', creditFactor: 0.6, timeFactor: { lower: 0.07, upper: 0.1 } , available:false},
+  // { value: 'server', label: 'Express Server', accuracy:3, information: 'Highest speed and accuracy for critical tasks.', creditFactor: 1, timeFactor: { lower: 0.033, upper: 0.06 } , available:false}
 ]
+

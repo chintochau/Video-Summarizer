@@ -95,7 +95,7 @@ const TranscriptField = (params) => {
 
       if (displayMode === "youtube") {
         generateTranscript({ fileLink: null, publicId: null, resourceType: null });
-      } else {
+      } else { // display mode is file
         const uploadResult = await UploadService.uploadVideo(
           file,
           onUploadProgress
@@ -123,7 +123,7 @@ const TranscriptField = (params) => {
     }
 
     try {
-      checkCredits(credits, parseFloat(videoCredits) + 1000)
+      checkCredits(credits, parseFloat(videoCredits))
     } catch (error) {
       toast({
         variant: "destructive",

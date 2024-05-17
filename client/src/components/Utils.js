@@ -133,7 +133,7 @@ export const transcribeWithAI = async (data) => {
 // Youtube related
 export const transcribeYoutubeVideo = async (data) => {
   try {
-    const response = await fetch(apiUrl + "/api/transcribeYoutubeVideo", {
+    const response = await fetch(apiUrl + "/api/beta/transcribeYoutubeVideo", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
