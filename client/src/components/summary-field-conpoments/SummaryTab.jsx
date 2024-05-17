@@ -16,7 +16,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { shareLink } from "@/constants";
 
@@ -24,6 +23,16 @@ export const transformArticleWithClickableTimestamps = (articleContent) => {
   // Updated regex to match hh:mm:ss and mm:ss and m:ss formats
   const timestampRegex =
     /(\d{1,2}:\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2})/g;
+
+  return articleContent.replace(
+    timestampRegex,
+    (match) => `[${match}](#timestamp-${match})`
+  );
+};
+
+export const transformTimestampRangeFromArticleToSingleLink = (articleContent) => {
+  const timestampRegex =
+  /(\d{1,2}:\d{1,2}:\d{1,2} - \d{1,2}:\d{1,2}:\d{1,2} |\d{1,2}:\d{1,2} - \d{1,2}:\d{1,2} |\d{1,2}:\d{1,2} - \d{1,2}:\d{1,2} |\d{1,2}:\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2})/g;
 
   return articleContent.replace(
     timestampRegex,
@@ -109,7 +118,7 @@ const SummaryTab = (data) => {
     a: {
       component: ({ children, href, ...props }) => {
         if (href.startsWith("#timestamp")) {
-          const timestamp = children[0];
+          const timestamp = children[0].split(" - ")[0];
           return (
             <a
               className={"text-blue-500 cursor-pointer"}
@@ -150,7 +159,7 @@ const SummaryTab = (data) => {
             {sourceId && (
               <Popover>
                 <PopoverTrigger>
-                  <Button variant="transparent" className="p-2">
+                  <Button variant="transparent" className="p-2" onClick={(e) => copyLink(e)}>
                     <ShareIcon className="w-6 h-6" />
                   </Button>
                 </PopoverTrigger>
@@ -202,7 +211,7 @@ const SummaryTab = (data) => {
             {sourceId && (
               <Popover>
                 <PopoverTrigger>
-                  <Button variant="ghost" className="p-2">
+                  <Button variant="ghost" className="p-2" onClick={(e) => copyLink(e)}>
                     <ShareIcon className="w-6 h-6" />
                   </Button>
                 </PopoverTrigger>
@@ -258,7 +267,7 @@ const SummaryTab = (data) => {
               className="prose max-w-full h-full p-2 px-4 text-start leading-5"
               options={{ overrides: linkOverride }}
             >
-              {transformArticleWithClickableTimestamps(showText())}
+              {transformTimestampRangeFromArticleToSingleLink(showText())}
             </Markdown>
           )}
           <div className="h-20" />

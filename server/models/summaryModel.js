@@ -18,6 +18,9 @@ const SummarySchema = new mongoose.Schema({
     sourceId: {
         type: String,
     },
+    sourceTitle: {
+        type: String,
+    },
     summary: {
         type: String,
     },

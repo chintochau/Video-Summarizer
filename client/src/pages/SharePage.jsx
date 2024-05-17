@@ -1,7 +1,8 @@
 import { Footer } from "@/components";
 import Header from "@/components/common/Header";
 import VideoField from "@/components/summarizerComponents/YTVideoField";
-import { transformArticleWithClickableTimestamps } from "@/components/summary-field-conpoments/SummaryTab";
+import { transformArticleWithClickableTimestamps, transformTimestampRangeFromArticleToSingleLink } from "@/components/summary-field-conpoments/SummaryTab";
+import { fusionaiLink } from "@/constants";
 import SummaryService from "@/services/SummaryService";
 import { Loader2 } from "lucide-react";
 import Markdown from "markdown-to-jsx";
@@ -12,6 +13,8 @@ const SharePage = () => {
   const [summaryId, setSummaryId] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
   const [sourceId, setSourceId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [videoTitle, setVideoTitle] = useState("");
 
   const videoRef = useRef(null);
   // Effect hook to run once when the component mounts
@@ -28,9 +31,12 @@ const SharePage = () => {
     if (summaryId) {
       // Fetch the summary data
       SummaryService.getSummary({ summaryId }).then((response) => {
+        setLoading(false);
         // Check if the summary data was fetched
         if (response.success) {
-          console.log("Summary data fetched", response.data);
+          // set the website title
+          console.log(response.data);
+          setVideoTitle(response.data.sourceTitle);
           setSummaryData(response.data);
           setSourceId(response.data.sourceId);
         } else {
@@ -50,7 +56,7 @@ const SharePage = () => {
     a: {
       component: ({ children, href, ...props }) => {
         if (href.startsWith("#timestamp")) {
-          const timestamp = children[0];
+          const timestamp = children[0].split(" - ")[0];
           return (
             <a
               className={"text-blue-500 cursor-pointer"}
@@ -71,6 +77,7 @@ const SharePage = () => {
 
   // 點擊轉錄時跳轉視頻
   const handleTimestampClick = (time) => {
+    console.log(time);
     let [hours, minutes, seconds] = time.split(":");
     let secondsTotal;
 
@@ -89,10 +96,10 @@ const SharePage = () => {
     }
   };
 
-  if (!summaryData) {
+  if (loading) {
     return (
       <>
-        <Header/>
+        <Header />
         <h1 className=" w-full flex items-center flex-col py-20">
           <Loader2 size="50" className=" animate-spin" />
           Loading...
@@ -101,7 +108,7 @@ const SharePage = () => {
     );
   }
 
-  if (!sourceId) {
+  if (!sourceId || !summaryData) {
     return (
       <>
         <h1>Invalid URL</h1>
@@ -113,17 +120,32 @@ const SharePage = () => {
     <>
       <Header className="relative" />
       <div
-        className="z-10 sticky top-0 left-0 w-full bg-white pb-2 shadow-sm max-w-3xl mx-auto"
+        className="z-10 sticky top-0 left-0 w-full bg-white shadow-sm max-w-3xl mx-auto"
         id="videoDiv"
       >
-        <VideoField shareMode={true} youtubeId={sourceId} videoRef={videoRef} className="max-w-2xl mx-auto shadow-md"/>
+        <VideoField
+          shareMode={true}
+          youtubeId={sourceId}
+          videoRef={videoRef}
+          className="max-w-2xl mx-auto shadow-md"
+        />
       </div>
-      <Markdown
-        className="px-6 md:px-0 prose max-w-3xl mx-auto py-10"
-        options={{ overrides: linkOverride }}
-      >
-        {transformArticleWithClickableTimestamps(summaryData.summary)}
-      </Markdown>
+      <div className="px-6 md:px-0 prose max-w-3xl mx-auto py-4">
+        <h1 className="text-2xl font-bold">
+          <span className=" text-gray-400 font-semibold text-lg">
+            Youtube Video Summary:{" "}
+          </span>
+          <br /> {videoTitle}
+        </h1>
+        <Markdown className="" options={{ overrides: linkOverride }}>
+          {transformTimestampRangeFromArticleToSingleLink(summaryData.summary)}
+        </Markdown>
+      <div 
+        className="text-sm text-gray-400 text-center"
+      >This Summary is brought to you by <a href={fusionaiLink}>Fusion AI</a>, a AI-powered video summarization tool.
+      </div>
+      </div>
+
     </>
   );
 };

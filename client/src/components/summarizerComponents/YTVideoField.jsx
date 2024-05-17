@@ -115,7 +115,7 @@ const VideoField = ({ youtubeId, videoRef, className, shareMode }) => {
           setVideoCredits(calculateVideoCredits(e.target.v.duration));
           setAuthor(e.target.v.videoData.author);
           // set the website title
-          document.title = e.target.videoTitle + " - Fusion AI Video Summarizer";
+          document.title = e.target.videoTitle + " - Fusion AI Youtube Summarizer";
         }}
         onPlay={(e) => {
           setAuthor(e.target.v.videoData.author);
