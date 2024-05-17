@@ -96,6 +96,7 @@ const VideoField = ({ youtubeId, videoRef, className, shareMode }) => {
     return () => {
       setSummaries([defaultNewSummary]);
       resetTranscript();
+      document.title = "Fusion AI";
     };
   }, [userId, youtubeId]);
 
@@ -113,6 +114,8 @@ const VideoField = ({ youtubeId, videoRef, className, shareMode }) => {
           setVideoDuration(e.target.v.duration);
           setVideoCredits(calculateVideoCredits(e.target.v.duration));
           setAuthor(e.target.v.videoData.author);
+          // set the website title
+          document.title = e.target.videoTitle + " - Fusion AI Video Summarizer";
         }}
         onPlay={(e) => {
           setAuthor(e.target.v.videoData.author);

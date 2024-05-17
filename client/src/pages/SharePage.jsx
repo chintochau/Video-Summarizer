@@ -12,10 +12,8 @@ const SharePage = () => {
   const [summaryId, setSummaryId] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
   const [sourceId, setSourceId] = useState(null);
-  const [videoWidth, setVideoWidth] = useState(100)
 
   const videoRef = useRef(null);
-
   // Effect hook to run once when the component mounts
   useEffect(() => {
     // Function to extract URL parameters
@@ -40,6 +38,12 @@ const SharePage = () => {
         }
       });
     }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      document.title = "Fusion AI";
+    };
   }, []);
 
   const linkOverride = {
