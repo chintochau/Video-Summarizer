@@ -83,7 +83,7 @@ const GenerateOptions = (params) => {
         <TableHeader>
           <TableRow>
             <TableHead>Options</TableHead>
-            <TableHead className="text-center">Time</TableHead>
+            <TableHead className="text-center">Estimate Time</TableHead>
             <TableHead className="text-center">Accuracy</TableHead>
             <TableHead className="text-center">Credits</TableHead>
             <TableHead className="text-center"></TableHead>
