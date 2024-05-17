@@ -42,7 +42,6 @@ const TranscriptField = (params) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const { videoCredits, currentPlayTime, currentLine, setCurrentLine, video } =
     useVideoContext();
-    const {transcribeOptions} = useTranscriptContext();
   const {
     parentTranscriptText,
     selectedTranscribeOption,
@@ -124,7 +123,7 @@ const TranscriptField = (params) => {
     }
 
     try {
-      checkCredits(credits, parseFloat(videoCredits * transcribeOptions.creditFactor).toFixed(2))
+      checkCredits(parseFloat(credits), parseFloat(videoCredits * selectedTranscribeOption.creditFactor).toFixed(2))
     } catch (error) {
       toast({
         variant: "destructive",
