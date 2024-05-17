@@ -210,7 +210,7 @@ export const handleYoutubeTranscribeRequest = async (req, res) => {
 
 // processYoutubeVideo function using S3 and runpod
 export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
-  const { youtubeId, userId, video } = req.body;
+  const { youtubeId, userId, video, transcribeOption } = req.body;
   const { sourceTitle } = video;
   let tempFilePath;
   try {
@@ -227,7 +227,7 @@ export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
     await pipelineAsync(audioStream, fileStream);
 
     const filePublicUrl = await uploadAudioToS3(tempFilePath, videoInfo);
-    const id = await transcribeLinkWithRunPod(filePublicUrl);
+    const id = await transcribeLinkWithRunPod(filePublicUrl,transcribeOption.value || "base");
     // const id = "a671ac14-4c07-4c09-a5c6-113c75b72b43-u1"
 
     // add id to array, and check status every 10 seconds
