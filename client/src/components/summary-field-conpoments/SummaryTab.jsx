@@ -36,7 +36,7 @@ export const transformTimestampRangeFromArticleToSingleLink = (articleContent) =
 
   return articleContent.replace(
     timestampRegex,
-    (match) => `[${match}](#timestamp-${match})`
+    (match) => `[${match.split(" - ")[0]}](#timestamp) ~ `
   );
 };
 

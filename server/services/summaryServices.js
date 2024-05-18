@@ -13,11 +13,14 @@ export const generateSummary = async (req, res) => {
 
   let fullResponseText = "";
   const max_tokens = 1300;
-  const system = "give your response in a makrdown, dont use a code interpreter and you must answer in the language: " + language
+  const system =
+    "give your response in a makrdown, dont use a code interpreter and you must answer in the language: " +
+    language;
   const messages = [
     {
       role: "user",
-      content: `you are given a transcript of a video titles:${sourceTitle}` +
+      content:
+        `you are given a transcript of a video titles:${sourceTitle}` +
         prompt +
         "Video Transcript:" +
         transcript,
@@ -30,18 +33,18 @@ export const generateSummary = async (req, res) => {
     fullResponseText,
     max_tokens,
     res,
-    selectedModel
+    selectedModel,
   };
   switch (selectedModel) {
     case "gpt35":
     case "gpt4o":
-      fullResponseText = await summarizeWithOpenAI(data)
+      fullResponseText = await summarizeWithOpenAI(data);
       break;
     case "claude3h":
-      fullResponseText = await summarizeWithAnthropic(data)
+      fullResponseText = await summarizeWithAnthropic(data);
       break;
     case "llama3":
-      fullResponseText = await summarizeWithLlama3(data)
+      fullResponseText = await summarizeWithLlama3(data);
       break;
   }
   return fullResponseText;
@@ -59,21 +62,52 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
   // Wrap the summary task in a function that returns a promise.
   const summarizePrompt = async (promptInput) => {
     return new Promise(async (resolve, reject) => {
+      const messages = [
+        {
+          role: "user",
+          content:
+            "give your response in a makrdown, dont use a code interpreter, Your answer must be in the language " +
+            language +
+            "\n" +
+            promptInput,
+        },
+      ];
+      const max_tokens = 1024
+
+      let stream;
       switch (selectedModel) {
+        case "gpt35":
+          let model = "gpt-3.5-turbo";
+        case "gpt4o":
+          model = "gpt-4o";
+          const openaiStream = openai.beta.chat.completions.stream({
+            model,
+            messages,
+            stream: true,
+            temperature: 0.4,
+            max_tokens,
+          });
+          openaiStream.on("content", (delta, snapshot) => {
+            fullResponseText += delta;
+            if (res) {
+              res.write(delta);
+            }
+          });
+          try {
+            await openaiStream.finalChatCompletion();
+          } catch (error) {
+            console.log(error.message);
+            if (res) {
+              res.write("exceed length");
+            }
+          }
+          resolve();
+          break;
         default:
           // anthropic AI
-          const stream = await anthropic.messages.create({
-            max_tokens: 1024,
-            messages: [
-              {
-                role: "user",
-                content:
-                  "give your response in a makrdown, dont use a code interpreter, Your answer must be in the language " +
-                  language +
-                  "\n" +
-                  promptInput,
-              },
-            ],
+          stream = await anthropic.messages.create({
+            max_tokens,
+            messages,
             model: "claude-3-haiku-20240307",
             stream: true,
           });
@@ -100,7 +134,9 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
         role: "user",
         content: `
         give your response in a markdown, don't use a code interpreter, and you must answer in the language: ${language}
-        you are given the transcript of the first 5 minutes of a video titled: ${video.sourceTitle}, 
+        you are given the transcript of the first 5 minutes of a video titled: ${
+          video.sourceTitle
+        }, 
         below is the transcript: ${getFirstNMinutesOfTranscript(transcript)}
         You must use the template:
         ### Summary
@@ -108,16 +144,34 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
       },
     ],
     fullResponseText,
-    max_tokens: 1024
+    max_tokens: 1024,
+    selectedModel,
+  };
+  
+  let videoContext
+
+  switch (selectedModel) {
+    case "gpt35":
+    case "gpt4o":
+      videoContext = await summarizeWithOpenAI(data);
+      break;
+    case "claude3h":
+      videoContext = await summarizeWithAnthropic(data);
+      break;
+    case "llama3":
+      videoContext = await summarizeWithLlama3(data);
+      break;
   }
 
-  const videoContext = await summarizeWithAnthropic(data)
   res.write(videoContext + "\n");
   fullResponseText += videoContext + "\n";
 
   const summarizePromptsSeries = async () => {
     for (let i = 0; i < transcriptsArray.length; i++) {
-      const additionalPrompt = `you are given the ${i + 1} of ${transcriptsArray.length} part of a video, 
+      console.log("transcriptsArray[i]", transcriptsArray[i]);
+      const additionalPrompt = `you are given the ${i + 1} of ${
+        transcriptsArray.length
+      } part of a video, 
       here is the brief context of the video:
       ${videoContext}
       here is the part of the video transcript you need to summarize:
@@ -125,9 +179,11 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
       ${prompt}
       `;
       try {
-
-        res.write("### Part " + (i + 1) + " of " + transcriptsArray.length + "\n");
-        fullResponseText += "### Part " + (i + 1) + " of " + transcriptsArray.length + "\n";
+        res.write(
+          "### Part " + (i + 1) + " of " + transcriptsArray.length + "\n"
+        );
+        fullResponseText +=
+          "### Part " + (i + 1) + " of " + transcriptsArray.length + "\n";
 
         const summary = await summarizePrompt(additionalPrompt);
         res.write("\n");
@@ -234,18 +290,22 @@ export const parseSRT = (srt) => {
  * 1
  * 00:00:00,000 --> 00:00:01,000
  * Hello World
- * 
+ *
  * 2
  * 00:00:01,000 --> 00:00:02,000
  * This is an example},
  * intervalInSeconds: 60
- * 
+ *
  * output:
  * " 00:00:00 - 00:01:00 Hello World This is an example"
- * 
- * 
+ *
+ *
  */
-export const parseSRTAndGroupByInterval = (srt, intervalInSeconds, startTimeInclusion = 10) => {
+export const parseSRTAndGroupByInterval = (
+  srt,
+  intervalInSeconds,
+  startTimeInclusion = 10
+) => {
   const parsedSRT = parseSRT(srt);
   let groupedText = [];
   let currentText = "";
@@ -254,7 +314,7 @@ export const parseSRTAndGroupByInterval = (srt, intervalInSeconds, startTimeIncl
   parsedSRT.forEach((subtitle, index) => {
     // only include start time for every x index
     if (index % startTimeInclusion === 0) {
-      currentText += "\n" + subtitle.start.split(",")[0] + ":\n";
+      currentText += "\n" + subtitle.start.split(",")[0] + ": ";
     }
     const { start, text } = subtitle;
     const startSeconds = convertTimeToSeconds(start);
@@ -279,7 +339,7 @@ const getFirstNMinutesOfTranscript = (transcript, n = 5) => {
   for (let i = 0; i < parsedSRT.length; i++) {
     // only include start time for every 10 index
     if (i % 10 === 0) {
-      transcriptText += "\n" + parsedSRT[i].start.split(",")[0] + ":\n";
+      transcriptText += "\n" + parsedSRT[i].start.split(",")[0] + ": ";
     }
 
     const { start, text } = parsedSRT[i];
@@ -292,7 +352,7 @@ const getFirstNMinutesOfTranscript = (transcript, n = 5) => {
     }
   }
 
-  return getTextWithinInterval(parsedSRT, intervalInSeconds);
+  return transcriptText;
 };
 
 async function summarizeWithAnthropic({
@@ -325,7 +385,7 @@ async function summarizeWithAnthropic({
       );
     }
   }
-  return fullResponseText
+  return fullResponseText;
 }
 
 async function summarizeWithOpenAI({
@@ -334,16 +394,15 @@ async function summarizeWithOpenAI({
   fullResponseText,
   max_tokens,
   res,
-  selectedModel
+  selectedModel,
 }) {
-
-  let model
+  let model;
   switch (selectedModel) {
     case "gpt35":
-      model = "gpt-3.5-turbo"
+      model = "gpt-3.5-turbo";
       break;
     case "gpt4o":
-      model = "gpt-4o"
+      model = "gpt-4o";
       break;
   }
   const stream = openai.beta.chat.completions.stream({
@@ -367,7 +426,7 @@ async function summarizeWithOpenAI({
       res.write("exceed length");
     }
   }
-  return fullResponseText
+  return fullResponseText;
 }
 
 const summarizeWithLlama3 = async ({
@@ -393,7 +452,8 @@ const summarizeWithLlama3 = async ({
     );
 
     await new Promise((resolve, reject) => {
-      stream.body.on("data", (chunk) => { // data.choices[0].delta.content
+      stream.body.on("data", (chunk) => {
+        // data.choices[0].delta.content
         const data = chunk.toString().split("data:")[1];
         // try to parse the data
         if (data && data.trim() === "[DONE]") {
@@ -405,7 +465,6 @@ const summarizeWithLlama3 = async ({
         const content = parsedData.choices[0].delta.content;
         fullResponseText += content;
         if (content) {
-
           if (res) {
             res.write(content);
           }
@@ -414,9 +473,7 @@ const summarizeWithLlama3 = async ({
       stream.body.on("end", () => {
         resolve();
       });
-    }
-    );
-
+    });
   } catch (error) {
     console.log(error.message);
 
@@ -425,5 +482,5 @@ const summarizeWithLlama3 = async ({
     }
   }
 
-  return fullResponseText
+  return fullResponseText;
 };
