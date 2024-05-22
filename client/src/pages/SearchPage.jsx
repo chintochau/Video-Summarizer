@@ -110,37 +110,11 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="flex h-full p-10 bg-gray-50">
+    <div className="flex h-full p-2 md:p-10 bg-gray-50">
       <div className="h-full container flex flex-col overflow-auto">
         <Card className="rounded-xl ">
           <CardHeader>
             <CardTitle>Search content from saved videos</CardTitle>
-            <CardDescription>
-              <TooltipProvider delayDuration={200}>
-                <Tooltip>
-                  <TooltipTrigger className="text-lg font-semibold text-gray-500 underline cursor-pointer hover:text-indigo-600">
-                    How does it work?
-                  </TooltipTrigger>
-                  <TooltipContent side="right">
-                    <ul className="text-left  space-y-1">
-                      <li>1. Go to any video.</li>
-                      <li className="flex items-center">
-                        2. Click on the bookmark icon <Bookmark /> to save the
-                        video's transcript.
-                      </li>
-                      <li>3. Navigate to the Search page.</li>
-                      <li>
-                        4. Enter your question or keyword in the search bar.
-                      </li>
-                      <li>
-                        5. The AI will provide information from the saved video.
-                      </li>
-                    </ul>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </CardDescription>
-
             <form onSubmit={handleVectorSearch} className="pt-1 w-full">
               <div className="flex gap-x-2 pt-4">
                 <Input
@@ -167,11 +141,29 @@ const SearchPage = () => {
                 <p className="text-indigo-600">Loading...</p>
               </>
             )}
-            
-            {answer !== "" && <Markdown 
+
+            {answer !== "" && <Markdown
               className="prose max-w-full h-full p-2 px-4 text-start leading-5">{answer}</Markdown>}
           </CardContent>
         </Card>
+
+
+        <h3 className="text-2xl font-semibold text-indigo-600 pt-4">How does it work?</h3>
+
+        <ul className="text-left  space-y-1">
+          <li>1. Go to any video.</li>
+          <li className="flex items-center flex-wrap">
+            2. Click on the bookmark icon <Bookmark /> to save the
+            video's transcript.
+          </li>
+          <li>3. Navigate to the Search page.</li>
+          <li>
+            4. Enter your question or keyword in the search bar.
+          </li>
+          <li>
+            5. The AI will provide information from the saved video.
+          </li>
+        </ul>
 
         {displayArray.length !== 0 && (
           <CardTitle className="pt-8 px-4 text-indigo-500">
