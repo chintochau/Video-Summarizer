@@ -10,6 +10,7 @@ import PricingPlans from "./home/PricingPlans";
 import FAQs from "./home/FAQ";
 import FinalCTA from "./home/FinalCTA";
 import YTVideoField from "./summarizerComponents/YTVideoField";
+import Why from "./home/Why";
 export {
   About,
   Footer,
@@ -23,4 +24,5 @@ export {
   FAQs,
   FinalCTA,
   YTVideoField,
+  Why,
 };

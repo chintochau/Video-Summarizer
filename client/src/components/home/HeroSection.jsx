@@ -30,7 +30,7 @@ const HeroSection = () => {
         <p className="pt-2">Easier Than Ever</p>
       </h1>
       <p className="mx-auto mt-6 max-w-2xl text-lg  text-slate-700 font-normal font-roboto">
-        Turn any long videos, meetings into mindmaps, summaries, and notes in a few clicks.
+        Turn long videos, meetings into MindMaps, Summaries and Notes.
       </p>
 
       <div className="mt-10 flex justify-center gap-x-6">

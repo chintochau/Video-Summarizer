@@ -8,6 +8,7 @@ import {
   FAQs,
   FinalCTA,
   Footer,
+  Why,
   ChromeExtension,
 } from "../components";
 
@@ -17,14 +18,15 @@ const HomePage = () => {
       <div id="hero-section">
         <HeroSection />
       </div>
-      <div id="features">
+      <div id="why">
+        <Why />
+      </div>
+      <div id="how">
         <HowItWorks />
       </div>
       <div id="features">
-        <FeaturesAndBenefits />
       </div>
       <div id="social-proof">
-        <SocialProof />
       </div>
       <div id="how-it-works">
         <ChromeExtension />
