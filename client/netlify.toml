@@ -10,4 +10,5 @@
 [[redirects]]
   from = "https://share.fusionaivideo.io"
   to = "https://google.com"
-  status = 200
+  status = 301
+  force=true
