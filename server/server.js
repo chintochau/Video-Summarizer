@@ -605,9 +605,10 @@ app.post(
   }
 );
 
-// app.get("/", (req, res) => {
-//   res.send("Running~");
-// });
+app.get("/", (req, res) => {
+  // redirect to "https://fusionaivideo.io"
+  res.redirect("https://fusionaivideo.io");
+});
 
 // 啟動服務器
 app.listen(port, () => {
