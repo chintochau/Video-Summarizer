@@ -605,9 +605,9 @@ app.post(
   }
 );
 
-app.get("/", (req, res) => {
-  res.send("Running~");
-});
+// app.get("/", (req, res) => {
+//   res.send("Running~");
+// });
 
 // 啟動服務器
 app.listen(port, () => {
