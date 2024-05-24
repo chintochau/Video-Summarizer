@@ -13,7 +13,13 @@ import { useTranscriptContext } from "@/contexts/TranscriptContext";
 import YoutubeService from "@/services/YoutubeService";
 import { cn } from "@/lib/utils";
 
-const VideoField = ({ youtubeId, videoRef, className, shareMode }) => {
+const VideoField = ({
+  youtubeId,
+  videoRef,
+  className,
+  shareMode,
+  homeMode,
+}) => {
   const {
     setVideoDuration,
     setSourceTitle,
@@ -56,7 +62,7 @@ const VideoField = ({ youtubeId, videoRef, className, shareMode }) => {
   }, [playing]);
 
   useEffect(() => {
-    if (shareMode) {
+    if (shareMode || homeMode) {
       return;
     }
     // fetch transcript and summaries for the video when the video source id changes
@@ -107,19 +113,23 @@ const VideoField = ({ youtubeId, videoRef, className, shareMode }) => {
         ref={videoRef}
         videoId={youtubeId}
         opts={opts}
-        onReady={(e) => {
+        onReady={async (e) => {
           setSourceType("youtube");
           setSourceId(youtubeId);
           setSourceTitle(e.target.videoTitle);
-          setVideoDuration(e.target.v.duration);
-          setVideoCredits(calculateVideoCredits(e.target.v.duration));
-          setAuthor(e.target.v.videoData.author);
+          setVideoDuration(await e.target.getDuration());
+          setVideoCredits(calculateVideoCredits(await e.target.getDuration()));
+          setAuthor("");
           // set the website title
-          document.title = e.target.videoTitle + " - Fusion AI Youtube Summarizer";
+          if (!homeMode) {
+            document.title =
+              e.target.videoTitle + " - Fusion AI Youtube Summarizer";
+          }
         }}
         onPlay={(e) => {
-          setAuthor(e.target.v.videoData.author);
-          setPlaying(true)}}
+          setAuthor("");
+          setPlaying(true);
+        }}
         onPause={() => setPlaying(false)}
       />
     </div>

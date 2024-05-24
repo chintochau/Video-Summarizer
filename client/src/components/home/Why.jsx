@@ -1,4 +1,4 @@
-import { whyUsContent } from '@/constants'
+import { homeContents } from '@/constants'
 import React from 'react'
 
 
@@ -8,19 +8,16 @@ const Why = () => {
         <div className=' bg-slate-50'>
             <div className='container
             '>
+                <h2
+                    className="text-4xl font-bold text-center text-indigo-800 pt-12"
+                >
+                    {homeContents.headline}
+                </h2>
                 {
-                    whyUsContent.scenarios.map((feature, index) => (
+                    homeContents.why.map((feature, index) => (
                         <div className="flex flex-col justify-center py-12 " key={index}>
-                            <p
-                                className='text-lg font-semibold text-left text-gray-600 tracking-wider mb-2'
-                            > When...
-                            </p>
-                            <h2 className="text-3xl font-bold text-indigo-600">{feature.when}</h2>
-                            <p>
-                                But...
-                            </p>
-                            <h2 className="text-3xl font-bold text-indigo-600">{feature.but}</h2>
-                            <p className="text-lg text-center text-gray-600 mt-4">{feature.description}</p>
+                            <h2 className="text-3xl font-bold text-gray-800">{feature.title}</h2>
+                            <p className="text-lg text-gray-600 mt-4 max-w-2xl">{feature.description}</p>
                         </div>
                     ))
                 }

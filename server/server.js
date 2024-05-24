@@ -19,6 +19,8 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import youtubeRoutes from "./routes/youtubeRoutes.js";
 import vastaiRoutes from "./routes/vastaiRoutes.js";
 import embeddingsRoutes from "./routes/embeddingsRoutes.js";
+import shareRoutes from "./routes/shareRoutes.js";
+import { fileURLToPath } from 'url';
 //running python code for testing
 import { pythonRunner, } from "./utils/pythonRunner.js";
 import { formatGroupedSubtitle, groupSubtitlesByInterval } from "./utils/transcripUtils.js";
@@ -47,6 +49,13 @@ app.use(upload.single("file"));
 //   bodyParser.raw({ inflate: true, limit: "100kb", type: "application/json" })
 // );
 
+// Set the view engine to EJS
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
 //Routes
 app.use("/api", cors(), summaryRoutes); // to get summary
 app.use("/users", cors(), userRoutes);
@@ -55,6 +64,7 @@ app.use("/api", cors(), paymentRoutes);
 app.use("/api", cors(), youtubeRoutes);
 app.use("/api", cors(), embeddingsRoutes);
 app.use("/", cors(), vastaiRoutes);
+app.use("/", cors(), shareRoutes);
 
 //PRIVATE transcribe Audio
 async function transcribeWithWhisperApi(data) {

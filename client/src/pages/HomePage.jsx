@@ -11,6 +11,7 @@ import {
   Why,
   ChromeExtension,
 } from "../components";
+import SeeInAction from "@/components/home/SeeInAction";
 
 const HomePage = () => {
   return (
@@ -18,21 +19,22 @@ const HomePage = () => {
       <div id="hero-section">
         <HeroSection />
       </div>
-      <div id="why">
-        <Why />
+      <div id="inAction">
+        <SeeInAction/>
       </div>
+      {/* <div id="why">
+        <Why />
+      </div> */}
       <div id="how">
         <HowItWorks />
       </div>
-      <div id="features">
-      </div>
-      <div id="social-proof">
+      <div id="features"></div>
+      <div id="social-proof"></div>
+      <div id="pricing">
+        <PricingPlans home />
       </div>
       <div id="how-it-works">
         <ChromeExtension />
-      </div>
-      <div id="pricing">
-        <PricingPlans home />
       </div>
       <div id="faq">
         <FAQs />

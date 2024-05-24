@@ -50,7 +50,7 @@ const SummaryTab = (data) => {
     startSummary,
     performSummarize,
     removeSummary,
-    creditCount = { creditCount },
+    creditCount,
   } = data;
   if (!summaryObject) {
     return null;
