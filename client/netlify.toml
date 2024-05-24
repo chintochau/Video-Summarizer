@@ -6,9 +6,3 @@
   from = "/*"
   to = "/index.html"
   status = 200
-
-[[redirects]]
-  from = "https://share.fusionaivideo.io"
-  to = "https://google.com"
-  status = 301
-  force=true
