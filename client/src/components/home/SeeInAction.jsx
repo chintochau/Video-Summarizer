@@ -12,6 +12,7 @@ import {
 import { transformTimestampRangeFromArticleToSingleLink } from "../summary-field-conpoments/SummaryTab";
 import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
+import { ScrollArea } from "../ui/scroll-area";
 
 const SeeInAction = () => {
   const videoRef = useRef(null);
@@ -84,7 +85,7 @@ const SeeInAction = () => {
                 </CardHeader>
               </CardTitle>
               <CardContent className="flex flex-col md:flex-row gap-2 lg:gap-8">
-                <div className="w-full md:w-2/5 flex flex-col gap-4">
+                <div className="w-full md:w-2/5  lg:w-5/12 flex flex-col gap-4">
                   <YTVideoField
                     youtubeId={video.youtubeId}
                     homeMode
@@ -101,16 +102,16 @@ const SeeInAction = () => {
                     </Button>
                   </Link>
                 </div>
-                <div className="w-full md:w-3/5 h-80 md:h-[40vw] text-left overflow-auto border-l-indigo-50 border-l px-2 lg:px-8">
+                <ScrollArea className="w-full md:w-3/5 lg:w-7/12 h-80 md:h-[40vw] text-left overflow-auto border-l-indigo-50 border-l px-2 lg:px-8 ">
                   <Markdown
-                    className="prose"
+                    className="prose max-w-full"
                     options={{ overrides: linkOverride }}
                   >
                     {transformTimestampRangeFromArticleToSingleLink(
                       video.summary
                     )}
                   </Markdown>
-                </div>
+                </ScrollArea>
 
                 <Link to="summarizer" className="md:hidden pt-4">
                   <Button

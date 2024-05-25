@@ -108,14 +108,6 @@ const SharePage = () => {
     );
   }
 
-  if (!sourceId || !summaryData) {
-    return (
-      <>
-        <h1>Invalid URL</h1>
-      </>
-    );
-  }
-
   return (
     <>
       <Header className="relative" />

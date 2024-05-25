@@ -11,14 +11,14 @@ import VideoField from "../summarizerComponents/YTVideoField";
 import { useVideoContext } from "@/contexts/VideoContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from 'react-router-dom';
-import {Loader2} from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 
 const GeneralSummary = () => {
   const videoRef = useRef(null);
   const { youtubeId } = useVideoContext();
-  const { currentUser} = useAuth();
+  const { currentUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,7 +37,7 @@ const GeneralSummary = () => {
           </div>
           <div className=""><YoutubeBar /></div>
           <div className="text-center">
-            <Separator className="my-4"/>
+            <Separator className="my-4" />
             <div className="font-semibold text-lg my-4"> Or Sign in to upload video</div>
             <Button variant="outline" onClick={() => navigate("/login")}>Sign in</Button>
           </div>

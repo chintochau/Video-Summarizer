@@ -168,7 +168,6 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
 
   const summarizePromptsSeries = async () => {
     for (let i = 0; i < transcriptsArray.length; i++) {
-      console.log("transcriptsArray[i]", transcriptsArray[i]);
       const additionalPrompt = `you are given the ${i + 1} of ${
         transcriptsArray.length
       } part of a video, 
