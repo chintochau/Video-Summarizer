@@ -82,9 +82,9 @@ const SeeInAction = () => {
         </TabsList>
         {demoVideos.map((video, index) => (
           <TabsContent key={index} value={`video-${index}`}>
-            <Card className="border-indigo-50 shadow-md container px-0 lg:px-2">
-              <CardHeader className="text-left lg:pt-10 pb-2 px-2.5 lg:px-5 lg:pb-4 ">
-                <CardTitle className="text-indigo-500">
+            <Card className="border-indigo-50 shadow-md container px-0 lg:px-2 my-2 rounded-xl">
+              <CardHeader className="text-left py-4 lg:pt-10 pb-2 px-2.5 lg:px-5 lg:pb-4 ">
+                <CardTitle className=" text-gray-800 lg:text-indigo-500">
                   {video.title}
                 </CardTitle>
                 <CardDescription>
@@ -94,18 +94,18 @@ const SeeInAction = () => {
               <div className="w-full px-2 lg:px-6 pb-4">
                 <Separator className="w-full" />
               </div>
-              <CardContent className="flex flex-col md:flex-row gap-2 lg:gap-3 px-2.5 lg:px-5">
+              <CardContent className="flex flex-col md:flex-row gap-2 lg:gap-3 px-2.5 lg:px-5 pb-4">
                 <div className="w-full md:w-2/5  lg:w-5/12 flex flex-col">
                   <YTVideoField
                     youtubeId={video.youtubeId}
                     homeMode
                     videoRef={videoRef}
                   />
-                  <CardDescription className='text-left font-semibold text-base'>
+                  <CardDescription className='text-left font-semibold text-base hidden lg:block'>
                     Youtube Video:
                   </CardDescription>
                   <CardDescription
-                    className="text-left text-gray-800 text-xl font-semibold flex items-center gap-2 pb-2  lg:text-2xl"
+                    className="text-left text-gray-800 text-xl font-semibold items-center gap-2 pb-2  lg:text-2xl hidden lg:block"
                   >{video.videoTitle} - ({video.videoLength})
                   </CardDescription>
                 </div>
@@ -125,7 +125,7 @@ const SeeInAction = () => {
                   {
                     video.summary.map((summary, index) => (
                       <TabsContent key={index} value={`summary-${index}`}>
-                        <ScrollArea className=" h-[50vh] min-h-[40vh] md:h-[40vw] text-left overflow-auto border-l-indigo-50 border-l-2 px-2 lg:px-8 ">
+                        <ScrollArea className=" h-[40vh] min-h-[40vh] md:h-[40vw] text-left overflow-auto border-l-indigo-50 border-l-2 px-2 lg:px-8 ">
                           <Markdown
                             className="prose max-w-full"
                             options={{ overrides: linkOverride }}
@@ -140,9 +140,11 @@ const SeeInAction = () => {
                   }
                 </Tabs>
               </CardContent>
-              <CardFooter>
+              <CardFooter
+              className="pb-2 lg:pb-6"
+              >
               <Button
-                    className="w-full"
+                    className="w-full lg:w-auto"
                     size="lg"
                     onClick={() => {
                       window.scrollTo(0, 0);
