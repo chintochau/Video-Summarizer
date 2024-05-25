@@ -73,13 +73,15 @@ const SeeInAction = () => {
         See in Action
       </h2>
       <Tabs className="w-full lg:text-center" defaultValue="video-0">
-        <TabsList className="mx-2.5 lg:mx-6 lg:mt-2 lg:mb-5  bg-indigo-50">
-          {demoVideos.map((video, index) => (
-            <TabsTrigger key={index} value={`video-${index}`}>
-              {video.option}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+        <div className=" overflow-x-auto ">
+          <TabsList className="mx-2.5 lg:mx-6 lg:mt-2 lg:mb-5  bg-indigo-50 ">
+            {demoVideos.map((video, index) => (
+              <TabsTrigger key={index} value={`video-${index}`}>
+                {video.option}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
         {demoVideos.map((video, index) => (
           <TabsContent key={index} value={`video-${index}`}>
             <Card className="border-indigo-50 shadow-md container px-0 lg:px-2 my-2 rounded-xl">
@@ -95,22 +97,22 @@ const SeeInAction = () => {
                 <Separator className="w-full" />
               </div>
               <CardContent className="flex flex-col md:flex-row gap-2 lg:gap-3 px-2.5 lg:px-5 pb-4">
-                <div className="w-full md:w-2/5  lg:w-5/12 flex flex-col">
+                <div className="w-full md:w-1/2  lg:w-5/12 flex flex-col">
                   <YTVideoField
                     youtubeId={video.youtubeId}
                     homeMode
                     videoRef={videoRef}
                   />
-                  <CardDescription className='text-left font-semibold text-base hidden lg:block'>
+                  <CardDescription className='text-left font-semibold text-base hidden md:block'>
                     Youtube Video:
                   </CardDescription>
                   <CardDescription
-                    className="text-left text-gray-800 text-xl font-semibold items-center gap-2 pb-2  lg:text-2xl hidden lg:block"
+                    className="text-left text-gray-800 text-xl font-semibold items-center gap-2 pb-2  lg:text-2xl hidden md:block"
                   >{video.videoTitle} - ({video.videoLength})
                   </CardDescription>
                 </div>
 
-                <Tabs defaultValue="summary-0" className=" w-full md:w-3/5 lg:w-7/12 lg:text-left">
+                <Tabs defaultValue="summary-0" className=" w-full md:w-1/2 lg:w-7/12 lg:text-left">
                   <TabsList className="lg:mx-2">
                     {
                       video.summary.map((summary, index) => (
@@ -125,7 +127,7 @@ const SeeInAction = () => {
                   {
                     video.summary.map((summary, index) => (
                       <TabsContent key={index} value={`summary-${index}`}>
-                        <ScrollArea className=" h-[40vh] min-h-[40vh] md:h-[40vw] text-left overflow-auto border-l-indigo-50 border-l-2 px-2 lg:px-8 ">
+                        <ScrollArea className=" h-[40vh] min-h-[40vh] md:h-[40vw] md:max-h-[60vh] text-left overflow-auto border-l-indigo-50 border-l-2 px-2 lg:px-8 ">
                           <Markdown
                             className="prose max-w-full"
                             options={{ overrides: linkOverride }}
@@ -140,8 +142,11 @@ const SeeInAction = () => {
                   }
                 </Tabs>
               </CardContent>
+              <div className="lg:px-6 px-2">
+                <Separator className="w-full my-4 " />
+              </div>
               <CardFooter
-              className="pb-2 lg:pb-6"
+              className="pb-4 lg:pb-6"
               >
               <Button
                     className="w-full lg:w-auto"
@@ -154,7 +159,6 @@ const SeeInAction = () => {
                       Try your own video now
                     </Link>
                   </Button>
-
               </CardFooter>
             </Card>
             <div className="flex flex-col md:flex-row w-full justify-between items-center bg-gray-50 p-2 rounded-md"></div>
@@ -169,7 +173,7 @@ export default SeeInAction;
 
 const demoVideos = [
   {
-    option: "Detail Summary",
+    option: "Long Turotial Video",
     title: "Detail Summary of a 2-hour long video",
     additionalInfo: "*Detail summary is only available for registered users",
     videoTitle: "30 Years of Business Knowledge in 2hrs 26mins",
@@ -954,7 +958,7 @@ The speaker in this part of the video provides several perspectives and strategi
     ],
   },
   {
-    option: "Short Summary",
+    option: "Book Review Video",
     title: "Quick Outline of a 15 mins video",
     additionalInfo: "    ",
     videoTitle:
@@ -1048,6 +1052,218 @@ The video provides a comprehensive overview of the key perspectives and lessons 
 ### Call to Action from Author
 The author strongly recommends this book, "Anything You Want", to anyone interested in entrepreneurship and building a fulfilling career. The principles and mindset espoused by Sivers offer a unique and inspiring perspective on what it means to be a successful founder. The author also promotes their own email newsletter, which shares insights and strategies for achieving financial, physical, and mental freedom.
 `
+      }
+    ],
+  },
+  {
+    option: "Meeting Minutes",
+    title: "Meeting Minutes of a 1-hour meeting",
+    additionalInfo: "*GPT-4o is recommended for meeting minutes ",
+    videoTitle:
+      "Product Marketing Meeting (weekly) 2021-06-07",
+    youtubeId: "06dkG-smO78",
+    videoLength: "49:33",
+    summary: [
+      {
+        language: "en",
+        content: `## Product Marketing Meeting Summary (2021-06-07)
+
+## Key Takeaways
+
+### 1. Sales and Messaging Strategy
+- **Timestamp: 00:00:02 - 00:02:21**
+  - Sami proposed tracking the top 30-40 deals to understand sales conversations and improve messaging.
+  - Focus on qualitative information from sales calls and direct team interactions.
+  - Action: Split the identified deals across the team for analysis.
+
+### 2. Team Goals and Responsibilities
+- **Timestamp: 00:02:21 - 00:06:14**
+  - The team should focus on messaging, assisting in deals, and understanding the buyer's journey.
+  - Develop a tight PM-PMM relationship to convey customer feedback effectively.
+  - Action: Cindy to continue her role in joining calls and providing market knowledge.
+
+### 3. Engaging with Sales Process
+- **Timestamp: 00:06:14 - 00:09:20**
+  - PMMs should assist in accelerating the sales cycle by overcoming objections and providing feedback to PMs.
+  - Action: Team members to establish themselves as subject matter experts to be naturally looped into relevant sales calls.
+
+### 4. Tracking Top Deals
+- **Timestamp: 00:09:20 - 00:16:14**
+  - Each team member should track the top 5-7 deals by revenue each quarter, including enterprise, mid-market, and SMB deals.
+  - Action: Review sales dashboards and QBRs to identify and track these deals.
+
+### 5. Competitive Pages Redesign
+- **Timestamp: 00:35:00 - 00:42:00**
+  - The new format for competitive pages will include the name of the capability, a descriptor, and a 0-1-2 rating system.
+  - Future iterations will allow for specific descriptions per competitor.
+  - Action: Team to draft generic descriptors for capabilities and iterate to make them specific.
+
+### 6. Security Growth Initiative
+- **Timestamp: 00:45:11 - 00:46:56**
+  - Cindy is leading an initiative to grow security, involving broad plans and short-term progress.
+  - Action: Follow the discussions in the security channel and review Pyle's document on sales plays and growth.
+
+### 7. Microsoft Competitive Intel
+- **Timestamp: 00:47:38 - 00:48:43**
+  - Elita has created a comprehensive Microsoft report with suggestions for various segments.
+  - Action: Review the document, coordinate with Elita, and determine follow-up actions for agile, GitHub, and GitHub Actions content.
+
+## Action Items by Individual/Department
+
+### Sami
+- Split identified deals across the team for analysis.
+- Review sales dashboards and QBRs to identify top deals.
+
+### Cindy
+- Continue joining sales calls and providing market knowledge.
+- Lead the security growth initiative and follow discussions in the security channel.
+
+### Team Members
+- Establish themselves as subject matter experts to be naturally looped into relevant sales calls.
+- Track the top 5-7 deals by revenue each quarter, including enterprise, mid-market, and SMB deals.
+- Draft generic descriptors for capabilities and iterate to make them specific.
+
+### William
+- Document the four reasons to be involved in the sales motion in the handbook.
+- Poke into Pyle's weekly meeting to find out what deals are on the agenda.
+
+### Brian
+- Track down who populates the "wins key deals" channel and report back to the team.
+
+### Elita
+- Coordinate with team members on the Microsoft competitive intel and follow up on agile, GitHub, and GitHub Actions content.
+
+This summary provides a comprehensive overview of the meeting's content, focusing on key takeaways and action items assigned to specific individuals or departments.`
+      },
+      {
+        language: "zh-tw",
+        content: `## 產品行銷會議總結(2021-06-07)
+
+## 要點
+
+### 1. 銷售與訊息傳遞策略
+- **時間戳記：00:00:02 - 00:02:21**
+   - Sami 建議追蹤前 30-40 筆交易，以了解銷售對話並改善訊息傳遞。
+   - 專注於來自銷售電話和直接團隊互動的定性資訊。
+   - 行動：將已確定的交易拆分到團隊中進行分析。
+
+### 2. 團隊目標與責任
+- **時間戳記：00:02:21 - 00:06:14**
+   - 團隊應專注於訊息傳遞、協助交易以及了解買家的旅程。
+   - 建立緊密的 PM-PMM 關係，以有效傳達客戶回饋。
+   - 行動：Cindy 繼續在加入電話會議和提供市場知識方面發揮作用。
+
+### 3. 參與銷售流程
+- **時間戳記：00:06:14 - 00:09:20**
+   - PMM 應透過克服異議並向 PM 提供回饋來協助加快銷售週期。
+   - 行動：團隊成員將自己打造為主題專家，以便自然參與相關的銷售拜訪。
+
+### 4. 追蹤熱門優惠
+- **時間戳記：00:09:20 - 00:16:14**
+   - 每個團隊成員應追蹤每季收入排名前 5-7 名的交易，包括企業、中端市場和中小企業交易。
+   - 行動：查看銷售儀表板和 QBR 以識別和追蹤這些交易。
+
+### 5. 競賽頁面重新設計
+- **時間戳記：00:35:00 - 00:42:00**
+   - 競爭性頁面的新格式將包括能力名稱、描述符和 0-1-2 評級系統。
+   - 未來的迭代將允許對每個競爭對手進行具體描述。
+   - 行動：團隊起草能力的通用描述符並迭代以使其具體化。
+
+### 6. 安全成長計劃
+- **時間戳記：00:45:11 - 00:46:56**
+   - 辛迪正在領導一項增強安全性的舉措，涉及廣泛的計劃和短期進展。
+   - 行動：關注安全頻道中的討論並查看 Pyle 關於銷售活動和成長的文件。
+
+### 7. 微軟競爭英特爾
+- **時間戳記：00:47:38 - 00:48:43**
+   - Elita 創建了一份全面的 Microsoft 報告，其中包含針對各個細分市場的建議。
+   - 行動：審查文檔，與 Elita 協調，並確定敏捷、GitHub 和 GitHub Actions 內容的後續行動。
+
+## 個人/部門的行動項目
+
+### Sami
+- 將確定的交易拆分到整個團隊中進行分析。
+- 查看銷售儀表板和 QBR 以識別熱門交易。
+
+### Cindy
+- 繼續參加銷售電話並提供市場知識。
+- 領導安全成長計畫並關注安全頻道中的討論。
+
+### 團隊成員
+- 使自己成為主題專家，自然地參與相關的銷售拜訪。
+- 追蹤每季收入排名前 5-7 名的交易，包括企業、中端市場和中小企業交易。
+- 起草功能的通用描述符並迭代以使其具體化。
+
+### William
+- 在手冊中記錄參與銷售動議的四個原因。
+- 深入查看派爾的每週會議，以了解議程上有哪些交易。
+
+### Brian
+- 追蹤誰填充了「贏得關鍵交易」頻道並向團隊報告。
+
+### Elita
+- 與團隊成員就 Microsoft 競爭情報進行協調，並跟進敏捷、GitHub 和 GitHub Actions 內容。
+
+本摘要全面概述了會議內容，重點在於關鍵要點和分配給特定個人或部門的行動項目。`},
+    ],
+  },
+  {
+    option: "Product Review Video",
+    title: "Quick Outline of a 15 mins video",
+    additionalInfo: "",
+    videoTitle:"iPhone 15 Pro: 3 Months Later!",
+    youtubeId: "YmwskGLycHo",
+    videoLength: "10:26",
+    summary: [
+      {
+        language: "en",
+        content: `Title: A Comprehensive Review of the iPhone 15 Pro After 3 Months of Use
+
+### Summary:
+
+**High-level Overview and Key Takeaways**:
+   - The video reviews the Titanium iPhone 15 Pro after using it for 3 months without a case.
+   - The reviewer provides insights on the long-term usage and performance of the device, focusing on features such as the camera, action button, and USB-C implementation.
+
+**Pros and Cons**:
+- Pros:
+     - The titanium frame and lighter color show fewer fingerprints (0:07:10)
+     - The USB-C implementation is much more convenient for charging and data transfer (0:05:00)
+     - The action button provides customization options, though the placement could be improved (0:02:25 - 0:04:23)
+- Cons:
+     - The multiple focal length camera feature is not used much by the reviewer (0:01:37 - 0:02:06)
+     - The action button placement is not very reachable, especially for one-handed use (0:03:10)
+     - The reviewer still needs to carry a Lightning cable for certain accessories (0:05:31 - 0:06:01)
+
+**Other Important Details**:
+   - The phone has received several software updates, including the introduction of the new Journal app and support for spatial video recording for the Apple Vision Pro (0:06:17 - 0:08:00)
+   - The reviewer has had the opportunity to experience the Apple Vision Pro and provides tips on capturing spatial videos (0:08:06 - 0:08:41)
+   - The reviewer concludes that the iPhone 15 Pro is a worthy upgrade, especially for users with older iPhones, and compares it to the Porsche 911 in terms of refined design evolution (0:09:17 - 0:10:10)
+`},
+      {
+        language: "zh-tw",
+        content: `標題：iPhone 15 Pro 使用 3 個月後的全面評測
+
+### 概括：
+
+### 高層概述與要點
+  - 影片回顧了鈦金 iPhone 15 Pro 在不使用保護殼的情況下使用 3 個月後的情況。
+  - 審核者提供有關裝置的長期使用和效能的見解，重點在於相機、操作按鈕和 USB-C 實作等功能。
+
+**優點和缺點**：
+- 優點：
+      - 鈦金屬框架和較淺的顏色顯示較少的指紋 (0:07:10)
+      - USB-C 實現充電和資料傳輸更加方便 (0:05:00)
+      - 操作按鈕提供了自訂選項，但位置還可以改進 (0:02:25 - 0:04:23)
+- 缺點：
+      - 審稿者較不使用多焦距相機功能 (0:01:37 - 0:02:06)
+      - 操作按鈕的位置較不容易觸及，尤其是單手使用時 (0:03:10)
+      - 評論者仍需要攜帶某些配件的閃電電纜 (0:05:31 - 0:06:01)
+
+### 其他重要細節：
+  - 該手機已獲得多項軟體更新，包括引入新的 Journal 應用程式以及對 Apple Vision Pro 空間錄影的支援 (0:06:17 - 0:08:00)
+  - 評測者有機會體驗 Apple Vision Pro 並提供了拍攝空間影片的技巧 (0:08:06 - 0:08:41)
+  - 評測者的結論是，iPhone 15 Pro 值得升級，尤其是對於使用較舊 iPhone 的用戶，並將其與保時捷 911 的精緻設計演變進行比較 (0:09:17 - 0:10:10)`
       }
     ],
   },

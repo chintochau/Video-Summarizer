@@ -13,7 +13,8 @@ const HeroSection = () => {
 
   return (
     <div className="w-full bg-gray-900">
-      <Container className="pt-16 pb-20 text-center lg:pt-32">
+      <Container className="pt-16 pb-10 text-center lg:pt-32">
+        
         <h1 className="mx-auto max-w-4xl text-5xl font-display font-medium tracking-tight text-gray-100 sm:text-7xl">
           Understand any
           <span className="relative whitespace-nowrap text-cyan-500">
@@ -30,11 +31,12 @@ const HeroSection = () => {
           <br />
           <p className="pt-2">Easier Than Ever</p>
         </h1>
+
         <p className="mx-auto mt-6 max-w-2xl text-lg  text-gray-200 font-normal font-roboto">
-          Turn long videos, meetings into MindMaps, Summaries and Notes.
+          We turn long videos and meetings <br className="bloack lg:hidden"/> into Summaries and Notes.
         </p>
   
-        <Button href="/register" size="lg" className='text-xl mt-6 px-4 bg-gradient-to-tl from-indigo-800 to-cyan-500 hover:from-indigo-700 hover:to-cyan-200
+        <Button href="/register" size="lg" className='text-xl my-16 px-4 bg-gradient-to-tl from-indigo-800 to-cyan-500 hover:from-indigo-700 hover:to-cyan-200
         '>
           <Link to="summarizer">
             Try for Free
@@ -43,7 +45,7 @@ const HeroSection = () => {
   
         <p
           id="chrome-extension"
-          className="mt-8 text-lg text-slate-200 font-normal font-roboto pt-10"
+          className="text-lg text-slate-200 font-normal font-roboto pt-10"
         >
           Chrome Extension is also available now.
         </p>
