@@ -1,14 +1,20 @@
+
 export const languageList = [
-    { code: 'en', name: 'English' },
-    { code: 'zh-tw', name: '繁體中文' },
-    { code: 'zh-cn', name: '简体中文' },
-    { code: 'jp', name: 'Japanese' },
-    { code: 'es', name: 'Spanish' },
-    { code: 'fr', name: 'French' },
-    { code: 'ar', name: 'Arabic' },
-    { code: 'ru', name: 'Russian' },
-    { code: 'pt', name: 'Portuguese' }
+  { code: 'en', name: 'English', flag :"http://purecatamphetamine.github.io/country-flag-icons/3x2/US.svg"},
+  { code: 'zh-tw', name: '繁體中文', flag :"http://purecatamphetamine.github.io/country-flag-icons/3x2/TW.svg"},
+  { code: 'zh-cn', name: '简体中文', flag :"http://purecatamphetamine.github.io/country-flag-icons/3x2/CN.svg"},
+  { code: 'jp', name: 'Japanese', flag :"http://purecatamphetamine.github.io/country-flag-icons/3x2/JP.svg"},
+  { code: 'es', name: 'Spanish', flag :"http://purecatamphetamine.github.io/country-flag-icons/3x2/ES.svg"},
+  { code: 'fr', name: 'French', flag :"http://purecatamphetamine.github.io/country-flag-icons/3x2/FR.svg"},
+  { code: 'ar', name: 'Arabic', flag :"http://purecatamphetamine.github.io/country-flag-icons/3x2/SA.svg"},
+  { code: 'ru', name: 'Russian', flag :"http://purecatamphetamine.github.io/country-flag-icons/3x2/RU.svg"},
+  { code: 'pt', name: 'Portuguese', flag :"http://purecatamphetamine.github.io/country-flag-icons/3x2/PT.svg"}
 ];
+
+export function getLanguageNameByCode(code) {
+  const language = languageList.find(lang => lang.code === code);
+  return language ? language : null;
+}
 
 export const chromeStoreLink = "https://chromewebstore.google.com/detail/fusion-video-book/cncegakknkokakaclbpieegnhklkfpik"
 export const shareLink = import.meta.env.VITE_FUSIONAI_SHARE_URL

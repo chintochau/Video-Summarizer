@@ -29,8 +29,8 @@ const GeneralSummary = () => {
 
   if (!youtubeId) {
     return (
-      <div className="w-full bg-gradient-to-t from-indigo-50 to-blue-50 h-full">
-        <div className=" h-3/4 flex flex-col justify-center mx-auto max-w-3xl w-full ">
+      <div className="w-full bg-white h-full px-2">
+        <div className=" h-2/4 flex flex-col justify-center mx-auto max-w-3xl w-full ">
           <div className="flex flex-col items-center justify-center">
             <h1 className="text-3xl font-bold">Summarize Youtube Video</h1>
             <p className="text-lg text-gray-500">Input yourtube link to get started</p>

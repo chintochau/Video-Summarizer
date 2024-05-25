@@ -24,13 +24,15 @@ const Header = ({ className }) => {
   const SignedOutMenu = () => {
     return (
       <div className=" flex items-center">
-        <Link to="/summarizer">
-          <Button size="sm">Summarize</Button>
-        </Link>
+        <Button size="sm">
+          <Link to="/summarizer">
+            Summarize
+          </Link>
+        </Button>
 
         <div className="flex items-center">
           <Link to="/login">
-            <Button variant="link">
+            <Button variant="link" className="text-white px-2">
               Sign in
               <ArrowRightIcon className="w-4 h-4" />
             </Button>
@@ -51,7 +53,7 @@ const Header = ({ className }) => {
   };
 
   return (
-    <header className={cn("bg-white sticky top-0 z-10 border-b bg-gradient-to-b", className)}>
+    <header className={cn("bg-gray-900 sticky top-0 z-10 text-white", className)}>
       <nav
         className="mx-auto flex max-w-7xl items-center justify-between gap-x-2 md:gap-x-6 py-1 px-2 md:py-2 lg:px-8"
         aria-label="Global"
@@ -60,7 +62,7 @@ const Header = ({ className }) => {
           <Link to="/" className="-m-1.5 flex items-center">
             <span className="sr-only">Fusion AI</span>
             <img className="h-10 w-10 ml-3 mr-1 " src={logo} alt="" />
-            <p className="text-2xl font-semibold leading-6 text-gray-900">
+            <p className="text-2xl font-semibold leading-6 ">
               Fusion AI
             </p>
           </Link>
@@ -71,7 +73,7 @@ const Header = ({ className }) => {
               smooth
               key={item.name}
               to={item.href}
-              className="text-sm font-semibold leading-6 text-gray-900"
+              className="text-sm font-semibold leading-6 "
             >
               {item.name}
             </HashLink>
@@ -83,7 +85,7 @@ const Header = ({ className }) => {
         <div className="flex lg:hidden">
           <button
             type="button"
-            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-200"
             onClick={() => setMobileMenuOpen(true)}
           >
             <span className="sr-only">Open main menu</span>

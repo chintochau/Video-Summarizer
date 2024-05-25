@@ -42,6 +42,7 @@
     "chinese-conv": "^1.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "country-flag-icons": "^1.5.11",
     "file-saver": "^2.0.5",
     "firebase": "^10.9.0",
     "lucide-react": "^0.365.0",

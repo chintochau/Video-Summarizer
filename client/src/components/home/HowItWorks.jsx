@@ -59,13 +59,9 @@ const HowItWorks = () => {
     <section
       id="features"
       aria-label="Features for running your books"
-      className="relative overflow-hidden bg-blue-600 pb-28 pt-20 sm:py-32"
+      className="relative overflow-hidden  pb-28 pt-20 sm:py-32 bg-gradient-to-tl from-cyan-900 to-indigo-500"
     >
-      <img
-        className="absolute left-1/2 top-1/2 max-w-none translate-x-[-44%] translate-y-[-42%]"
-        src={backgroundImage}
-        alt=""
-      />
+
       <Container className="relative">
         <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
           <h2 className="text-3xl tracking-tight text-white sm:text-4xl md:text-5xl font-medium">
