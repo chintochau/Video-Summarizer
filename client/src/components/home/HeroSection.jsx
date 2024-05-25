@@ -13,7 +13,7 @@ const HeroSection = () => {
 
   return (
     <div className="w-full bg-gray-900">
-      <Container className="pt-40 pb-20 text-center lg:pt-32">
+      <Container className="pt-16 pb-20 text-center lg:pt-32">
         <h1 className="mx-auto max-w-4xl text-5xl font-display font-medium tracking-tight text-gray-100 sm:text-7xl">
           Understand any
           <span className="relative whitespace-nowrap text-cyan-500">

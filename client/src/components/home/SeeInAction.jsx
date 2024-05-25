@@ -6,6 +6,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "../ui/card";
@@ -15,6 +16,7 @@ import { Link } from "react-router-dom";
 import { ScrollArea } from "../ui/scroll-area";
 import { getLanguageNameByCode } from "@/constants";
 import { Play } from "lucide-react";
+import { Separator } from "../ui/separator";
 
 
 
@@ -66,53 +68,50 @@ const SeeInAction = () => {
 
 
   return (
-    <div className="bg-gray-50 pt-20 pb-20">
-      <h2 className="text-4xl font-bold text-center text-indigo-800 py-2">
+    <div className="bg-gray-50 pt-4 lg:pt-10 lg:pb-20">
+      <h2 className="text-3xl pb-2 mx-2.5 lg:px-6 lg:text-4xl font-bold lg:text-center text-indigo-800 lg:py-2">
         See in Action
       </h2>
-
-      <Tabs className="w-full text-center " defaultValue="video-0">
-        <TabsList className="mt-2 mb-5 ">
+      <Tabs className="w-full lg:text-center" defaultValue="video-0">
+        <TabsList className="mx-2.5 lg:mx-6 lg:mt-2 lg:mb-5  bg-indigo-50">
           {demoVideos.map((video, index) => (
             <TabsTrigger key={index} value={`video-${index}`}>
-              {video.title}
+              {video.option}
             </TabsTrigger>
           ))}
         </TabsList>
         {demoVideos.map((video, index) => (
           <TabsContent key={index} value={`video-${index}`}>
             <Card className="border-indigo-50 shadow-md container px-0 lg:px-2">
-              <CardTitle>
-                <CardHeader className="text-indigo-800 text-left pt-10 text-3xl">
-                  {video.description}
-                </CardHeader>
-              </CardTitle>
-              <CardContent className="flex flex-col md:flex-row gap-2 lg:gap-8">
-                <div className="w-full md:w-2/5  lg:w-5/12 flex flex-col gap-4">
+              <CardHeader className="text-left lg:pt-10 pb-2 px-2.5 lg:px-5 lg:pb-4 ">
+                <CardTitle className="text-indigo-500">
+                  {video.title}
+                </CardTitle>
+                <CardDescription>
+                  {video.additionalInfo}
+                </CardDescription>
+              </CardHeader>
+              <div className="w-full px-2 lg:px-6 pb-4">
+                <Separator className="w-full" />
+              </div>
+              <CardContent className="flex flex-col md:flex-row gap-2 lg:gap-3 px-2.5 lg:px-5">
+                <div className="w-full md:w-2/5  lg:w-5/12 flex flex-col">
                   <YTVideoField
                     youtubeId={video.youtubeId}
                     homeMode
                     videoRef={videoRef}
                   />
-                  <CardDescription
-                    className="text-gray-600 text-center md:text-left text-xl font-semibold flex items-center justify-center gap-2"
-                  >
-                    Youtube: {video.videoTitle}
+                  <CardDescription className='text-left font-semibold text-base'>
+                    Youtube Video:
                   </CardDescription>
-                  <Button
-                    className="w-full my-10"
-                    onClick={() => {
-                      window.scrollTo(0, 0);
-                    }}
-                  >
-                    <Link to="summarizer" className="hidden md:block">
-                      Try your own video now
-                    </Link>
-                  </Button>
+                  <CardDescription
+                    className="text-left text-gray-800 text-xl font-semibold flex items-center gap-2 pb-2  lg:text-2xl"
+                  >{video.videoTitle} - ({video.videoLength})
+                  </CardDescription>
                 </div>
 
-                <Tabs defaultValue="summary-0" className=" w-full md:w-3/5 lg:w-7/12 text-left">
-                  <TabsList >
+                <Tabs defaultValue="summary-0" className=" w-full md:w-3/5 lg:w-7/12 lg:text-left">
+                  <TabsList className="lg:mx-2">
                     {
                       video.summary.map((summary, index) => (
                         <TabsTrigger key={index} value={`summary-${index}`}
@@ -126,7 +125,7 @@ const SeeInAction = () => {
                   {
                     video.summary.map((summary, index) => (
                       <TabsContent key={index} value={`summary-${index}`}>
-                        <ScrollArea className=" h-80 md:h-[40vw] text-left overflow-auto border-l-indigo-50 border-l px-2 lg:px-8 ">
+                        <ScrollArea className=" h-[50vh] min-h-[40vh] md:h-[40vw] text-left overflow-auto border-l-indigo-50 border-l-2 px-2 lg:px-8 ">
                           <Markdown
                             className="prose max-w-full"
                             options={{ overrides: linkOverride }}
@@ -140,24 +139,27 @@ const SeeInAction = () => {
                     ))
                   }
                 </Tabs>
-
-                <Link to="summarizer" className="md:hidden pt-4">
-                  <Button
+              </CardContent>
+              <CardFooter>
+              <Button
                     className="w-full"
+                    size="lg"
                     onClick={() => {
                       window.scrollTo(0, 0);
                     }}
                   >
-                    Try your own video now
+                    <Link to="summarizer" >
+                      Try your own video now
+                    </Link>
                   </Button>
-                </Link>
-              </CardContent>
+
+              </CardFooter>
             </Card>
             <div className="flex flex-col md:flex-row w-full justify-between items-center bg-gray-50 p-2 rounded-md"></div>
           </TabsContent>
         ))}
       </Tabs>
-    </div>
+    </div >
   );
 };
 
@@ -165,10 +167,12 @@ export default SeeInAction;
 
 const demoVideos = [
   {
-    title: "Detail Summary",
+    option: "Detail Summary",
+    title: "Detail Summary of a 2-hour long video",
+    additionalInfo: "*Detail summary is only available for registered users",
     videoTitle: "30 Years of Business Knowledge in 2hrs 26mins",
     youtubeId: "9VlvbpXwLJs",
-    description: "Detail Summary of a 2-hour long video",
+    videoLength: "2:26:13",
     summary: [{
       language: "en", content: `### Summary
 
@@ -948,11 +952,13 @@ The speaker in this part of the video provides several perspectives and strategi
     ],
   },
   {
-    title: "Short Summary",
+    option: "Short Summary",
+    title: "Quick Outline of a 15 mins video",
+    additionalInfo: "    ",
     videoTitle:
       "Anything You Want：微型創業者必修的 8 堂課，一人公司的最佳指南",
     youtubeId: "oqeJGz1Fdww",
-    description: "Short outline of the key points in the video",
+    videoLength: "15:45",
     summary: [
       {
         language: "zh-tw",
