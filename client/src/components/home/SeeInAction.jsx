@@ -14,6 +14,7 @@ import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
 import { ScrollArea } from "../ui/scroll-area";
 import { getLanguageNameByCode } from "@/constants";
+import { Play } from "lucide-react";
 
 
 
@@ -82,11 +83,8 @@ const SeeInAction = () => {
           <TabsContent key={index} value={`video-${index}`}>
             <Card className="border-indigo-50 shadow-md container px-0 lg:px-2">
               <CardTitle>
-                <CardHeader>
-                  {video.videoTitle}
-                  <CardDescription className="mt-4">
-                    {video.description}
-                  </CardDescription>
+                <CardHeader className="text-indigo-800 text-left pt-10 text-3xl">
+                  {video.description}
                 </CardHeader>
               </CardTitle>
               <CardContent className="flex flex-col md:flex-row gap-2 lg:gap-8">
@@ -96,16 +94,21 @@ const SeeInAction = () => {
                     homeMode
                     videoRef={videoRef}
                   />
-                  <Link to="summarizer" className="hidden md:block">
-                    <Button
-                      className="w-full"
-                      onClick={() => {
-                        window.scrollTo(0, 0);
-                      }}
-                    >
+                  <CardDescription
+                    className="text-gray-600 text-center md:text-left text-xl font-semibold flex items-center justify-center gap-2"
+                  >
+                    Youtube: {video.videoTitle}
+                  </CardDescription>
+                  <Button
+                    className="w-full my-10"
+                    onClick={() => {
+                      window.scrollTo(0, 0);
+                    }}
+                  >
+                    <Link to="summarizer" className="hidden md:block">
                       Try your own video now
-                    </Button>
-                  </Link>
+                    </Link>
+                  </Button>
                 </div>
 
                 <Tabs defaultValue="summary-0" className=" w-full md:w-3/5 lg:w-7/12 text-left">
@@ -165,7 +168,7 @@ const demoVideos = [
     title: "Detail Summary",
     videoTitle: "30 Years of Business Knowledge in 2hrs 26mins",
     youtubeId: "9VlvbpXwLJs",
-    description: "Summary of a long video on business knowledge",
+    description: "Detail Summary of a 2-hour long video",
     summary: [{
       language: "en", content: `### Summary
 
@@ -949,7 +952,7 @@ The speaker in this part of the video provides several perspectives and strategi
     videoTitle:
       "Anything You Want：微型創業者必修的 8 堂課，一人公司的最佳指南",
     youtubeId: "oqeJGz1Fdww",
-    description: "Summary of a short video about entrepreneurship",
+    description: "Short outline of the key points in the video",
     summary: [
       {
         language: "zh-tw",
