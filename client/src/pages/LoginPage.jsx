@@ -17,7 +17,7 @@ const LoginPage = () => {
   }, [currentUser, navigate]);
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-t from-indigo-50 to-blue-50">
+    <div className="h-screen flex flex-col">
       <div className="h-5/6 flex flex-col justify-center">
         <Card className="max-w-2xl md:mx-auto md:w-1/2 my-2 sm:my-8 mx-2 sm:mx-4 border-0 bg-transparent shadow-none">
           <CardHeader>
@@ -30,7 +30,7 @@ const LoginPage = () => {
                 <div className="w-full border-t border-gray-200" />
               </div>
               <div className="relative flex justify-center text-sm font-medium leading-6">
-                <span className="bg-indigo-50 px-6 text-gray-900">Or continue with</span>
+                <span className="bg-white px-6 text-gray-900">Or continue with</span>
               </div>
             </div>
             <div className="flex items-center justify-center dark:bg-gray-800 mt-4">
