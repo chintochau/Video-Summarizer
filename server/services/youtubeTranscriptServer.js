@@ -1,4 +1,5 @@
 import { parse } from "node-html-parser";
+import ytdl from "ytdl-core";
 const RE_YOUTUBE =
     /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
 const USER_AGENT =
@@ -22,7 +23,7 @@ class YoutubeTranscript {
      */
     static async fetchTranscript(videoId, config = {}) {
         const identifier = this.retrieveVideoId(videoId);
-        const lang = config?.lang ?? "en";
+        const lang = config?.lang ?? "zh-Hant";
         try {
             const transcriptUrl = await fetch(
                 `https://www.youtube.com/watch?v=${identifier}`,

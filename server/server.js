@@ -20,6 +20,7 @@ import youtubeRoutes from "./routes/youtubeRoutes.js";
 import vastaiRoutes from "./routes/vastaiRoutes.js";
 import embeddingsRoutes from "./routes/embeddingsRoutes.js";
 import shareRoutes from "./routes/shareRoutes.js";
+import ttsRoutes from "./routes/ttsRoutes.js";
 import { fileURLToPath } from 'url';
 //running python code for testing
 import { pythonRunner, } from "./utils/pythonRunner.js";
@@ -63,8 +64,10 @@ app.use("/api", cors(), transcribeRoutes);
 app.use("/api", cors(), paymentRoutes);
 app.use("/api", cors(), youtubeRoutes);
 app.use("/api", cors(), embeddingsRoutes);
+app.use("/api", cors(), ttsRoutes)
 app.use("/", cors(), vastaiRoutes);
 app.use("/", cors(), shareRoutes);
+
 
 //PRIVATE transcribe Audio
 async function transcribeWithWhisperApi(data) {
