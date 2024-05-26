@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { YTVideoField } from "..";
 import Markdown from "markdown-to-jsx";
@@ -15,13 +15,13 @@ import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
 import { ScrollArea } from "../ui/scroll-area";
 import { getLanguageNameByCode } from "@/constants";
-import { Play } from "lucide-react";
 import { Separator } from "../ui/separator";
 
 
 
 const SeeInAction = () => {
   const videoRef = useRef(null);
+  const [summaries, setSummaries] = useState(demoVideos.map((video, index) => video.summary.map((summary, index) => "")));
 
   // 點擊轉錄時跳轉視頻
   const handleTimestampClick = (time) => {
@@ -69,14 +69,16 @@ const SeeInAction = () => {
 
   return (
     <div className="bg-gray-50 pt-4 lg:pt-10 lg:pb-20">
-      <h2 className="text-3xl pb-2 mx-2.5 lg:px-6 lg:text-4xl font-bold lg:text-center text-indigo-800 lg:py-2">
+      <h2 className="px-4 text-3xl pb-2 mx-2.5 lg:px-6 lg:text-4xl font-bold text-center text-indigo-800 lg:py-2">
         See in Action
       </h2>
       <Tabs className="w-full lg:text-center" defaultValue="video-0">
-        <div className=" overflow-x-auto ">
-          <TabsList className="mx-2.5 lg:mx-6 lg:mt-2 lg:mb-5  bg-indigo-50 ">
+        <div className=" overflow-x-auto pb-2 md:pb-0">
+          <TabsList className="mx-4 lg:mx-6 lg:mt-2 lg:mb-5 md:py-6 border border-indigo-200 bg-transparent rounded-lg">
             {demoVideos.map((video, index) => (
-              <TabsTrigger key={index} value={`video-${index}`}>
+              <TabsTrigger key={index} value={`video-${index}`}
+                className="md:text-lg data-[state=active]:bg-indigo-800/80 data-[state=active]:text-white data-[state=active]:hover:bg-indigo-500 data-[state=active]:hover:text-white border mx-1 rounded-lg hover:bg-indigo-100 hover:text-indigo-900 hover:border-indigo-200"
+              >
                 {video.option}
               </TabsTrigger>
             ))}
@@ -85,7 +87,7 @@ const SeeInAction = () => {
         {demoVideos.map((video, index) => (
           <TabsContent key={index} value={`video-${index}`}>
             <Card className="border-indigo-50 shadow-md container px-0 lg:px-2 my-2 rounded-xl">
-              <CardHeader className="text-left py-4 lg:pt-10 pb-2 px-2.5 lg:px-5 lg:pb-4 ">
+              <CardHeader className="text-left py-4 lg:pt-10 pb-2  lg:px-5 lg:pb-4 ">
                 <CardTitle className=" text-gray-800 lg:text-indigo-500">
                   {video.title}
                 </CardTitle>
@@ -125,40 +127,73 @@ const SeeInAction = () => {
                     }
                   </TabsList>
                   {
-                    video.summary.map((summary, index) => (
-                      <TabsContent key={index} value={`summary-${index}`}>
-                        <ScrollArea className=" h-[40vh] min-h-[40vh] md:h-[40vw] md:max-h-[60vh] text-left overflow-auto border-l-indigo-50 border-l-2 px-2 lg:px-8 ">
-                          <Markdown
+                    video.summary.map((summary, summaryIndex) => (
+                      <TabsContent key={summaryIndex} value={`summary-${summaryIndex}`}>
+                        {summaries[index][summaryIndex] === "" ? (
+                          <div className=" text-center lg:text-left mt-4 lg:px-10 lg:py-4 ">
+                            <Button
+                              className="w-full h-40 md:h-56 border-indigo-500 text-indigo-500 hover:bg-indigo-500 hover:text-white md:text-2xl"
+                              variant="outline"
+                              onClick={() => {
+                                // when click, loop through the summari[index], and set the summary[index] to the content using setSummaries, and set timeout, each time add 10 more characters
+                                let i = 0;
+                                const interval = setInterval(() => {
+                                  if (i >= summary.content.length) {
+                                    clearInterval(interval);
+                                  }
+                                  setSummaries((prev) => {
+                                    const newSummaries = [...prev];
+                                    newSummaries[index][summaryIndex] = summary.content.substring(0, i);
+                                    return newSummaries;
+                                  });
+                                  i += 20;
+                                  if (i > 2000) {
+                                    i += 2000
+                                  }
+                                  if (i > 300) {
+                                    i += 90
+                                  }
+
+                                }, 70);
+                              }}
+                            >
+                              Generate Summary
+                            </Button>
+                          </div>
+                        )
+                          : <ScrollArea className="h-[40vh] min-h-[40vh] md:h-[40vw] md:max-h-[60vh] text-left overflow-auto border-l-indigo-50 border-l-2 px-2 lg:px-8 "><Markdown
                             className="prose max-w-full"
                             options={{ overrides: linkOverride }}
                           >
                             {transformTimestampRangeFromArticleToSingleLink(
-                              summary.content
+                              summaries[index][summaryIndex]
                             )}
                           </Markdown>
-                        </ScrollArea>
+                          </ScrollArea>
+                        }
                       </TabsContent>
                     ))
                   }
                 </Tabs>
               </CardContent>
               <div className="lg:px-6 px-2">
-                <Separator className="w-full my-4 " />
+                <Separator className="w-full my-2 " />
               </div>
               <CardFooter
-              className="pb-4 lg:pb-6"
+                className="pb-4 lg:pb-6"
               >
-              <Button
-                    className="w-full lg:w-auto"
-                    size="lg"
-                    onClick={() => {
-                      window.scrollTo(0, 0);
-                    }}
-                  >
-                    <Link to="summarizer" >
-                      Try your own video now
-                    </Link>
-                  </Button>
+                <Button
+                  className="w-full"
+                  variant="outline"
+                  size="lg"
+                  onClick={() => {
+                    window.scrollTo(0, 0);
+                  }}
+                >
+                  <Link to="summarizer" >
+                    Try your own video now
+                  </Link>
+                </Button>
               </CardFooter>
             </Card>
             <div className="flex flex-col md:flex-row w-full justify-between items-center bg-gray-50 p-2 rounded-md"></div>
@@ -173,12 +208,13 @@ export default SeeInAction;
 
 const demoVideos = [
   {
-    option: "Long Turotial Video",
+    option: "Long Turotial",
     title: "Detail Summary of a 2-hour long video",
     additionalInfo: "*Detail summary is only available for registered users",
     videoTitle: "30 Years of Business Knowledge in 2hrs 26mins",
     youtubeId: "9VlvbpXwLJs",
     videoLength: "2:26:13",
+    summaryButton: "Long Summary",
     summary: [{
       language: "en", content: `### Summary
 
@@ -958,13 +994,14 @@ The speaker in this part of the video provides several perspectives and strategi
     ],
   },
   {
-    option: "Book Review Video",
+    option: "Book Review",
     title: "Quick Outline of a 15 mins video",
     additionalInfo: "    ",
     videoTitle:
       "Anything You Want：微型創業者必修的 8 堂課，一人公司的最佳指南",
     youtubeId: "oqeJGz1Fdww",
     videoLength: "15:45",
+    summaryBUtton: "Summary",
     summary: [
       {
         language: "zh-tw",
@@ -1063,6 +1100,7 @@ The author strongly recommends this book, "Anything You Want", to anyone interes
       "Product Marketing Meeting (weekly) 2021-06-07",
     youtubeId: "06dkG-smO78",
     videoLength: "49:33",
+    summaryBUtton: "Meeting Minutes",
     summary: [
       {
         language: "en",
@@ -1208,16 +1246,17 @@ This summary provides a comprehensive overview of the meeting's content, focusin
     ],
   },
   {
-    option: "Product Review Video",
+    option: "Product Review",
     title: "Quick Outline of a 15 mins video",
     additionalInfo: "",
-    videoTitle:"iPhone 15 Pro: 3 Months Later!",
+    videoTitle: "iPhone 15 Pro: 3 Months Later!",
     youtubeId: "YmwskGLycHo",
     videoLength: "10:26",
+    summaryBUtton: "Product Review",
     summary: [
       {
         language: "en",
-        content: `Title: A Comprehensive Review of the iPhone 15 Pro After 3 Months of Use
+        content: `## Title: A Comprehensive Review of the iPhone 15 Pro After 3 Months of Use
 
 ### Summary:
 
@@ -1242,7 +1281,7 @@ This summary provides a comprehensive overview of the meeting's content, focusin
 `},
       {
         language: "zh-tw",
-        content: `標題：iPhone 15 Pro 使用 3 個月後的全面評測
+        content: `## 標題：iPhone 15 Pro 使用 3 個月後的全面評測
 
 ### 概括：
 
@@ -1257,7 +1296,8 @@ This summary provides a comprehensive overview of the meeting's content, focusin
       - 操作按鈕提供了自訂選項，但位置還可以改進 (0:02:25 - 0:04:23)
 - 缺點：
       - 審稿者較不使用多焦距相機功能 (0:01:37 - 0:02:06)
-      - 操作按鈕的位置較不容易觸及，尤其是單手使用時 (0:03:10)
+      - 操作按鈕的位置較不容易觸及，尤其是單手使用
+      時 (0:03:10)
       - 評論者仍需要攜帶某些配件的閃電電纜 (0:05:31 - 0:06:01)
 
 ### 其他重要細節：
