@@ -1,5 +1,4 @@
 import React from 'react';
-import { Container } from '../common/Container';
 import { useEffect, useState } from 'react'
 import { cn } from '@/utils/utils';
 import backgroundImage from '@/assets/background-features.jpg'
@@ -7,38 +6,21 @@ import screenshotHistory from '@/assets/history-demo.png'
 import screenshotYoutube from '@/assets/youtube-demo.png'
 import screenshotUpload from '@/assets/upload-demo.png'
 import screenshotSummaryOption from '@/assets/summary-options.png'
+import screenshot from '@/assets/screenshot.png'
+import { featuresContents } from '@/constants';
+import { Separator } from '../ui/separator';
+import { BoltIcon, PlayCircleIcon, ArrowUpTrayIcon, DocumentTextIcon, ArchiveBoxArrowDownIcon, ShareIcon } from '@heroicons/react/24/outline';
 
 
-const features = [
-  {
-    title: 'Youtube integration',
-    description:
-      "Get Transcript and Summary of Youtube videos in minutes",
-    image: screenshotYoutube,
-  },
-  {
-    title: 'Upload your Video',
-    description:
-      "Upload Video / Audio / Subtitle files to start, and get the summary in minutes.",
-    image: screenshotUpload,
-  },
-  {
-    title: 'Video Notebook',
-    description:
-      "Never fotget what you have watched, get the summary of the video you have watched.",
-    image: screenshotHistory,
-  },
-  {
-    title: 'Variety Summary Options',
-    description:
-      "Choose from a variety of summary options to get the summary you need.",
-    image: screenshotSummaryOption,
-  },
-]
+const icons = {
+  BoltIcon, PlayCircleIcon, ArrowUpTrayIcon, DocumentTextIcon, ArchiveBoxArrowDownIcon, ShareIcon
+};
+
 
 const HowItWorks = () => {
   let [tabOrientation, setTabOrientation] = useState('horizontal')
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const { features } = featuresContents
 
   useEffect(() => {
     let lgMediaQuery = window.matchMedia('(min-width: 1024px)')
@@ -55,67 +37,60 @@ const HowItWorks = () => {
     }
   }, [])
 
+
+
   return (
     <section
       id="features"
-      aria-label="Features for running your books"
-      className="relative overflow-hidden  pb-28 pt-20 sm:py-32 bg-gradient-to-tl from-cyan-900 to-indigo-500"
+      aria-label="Features for Fusion AI Video Summarization Tool"
+      className="relative overflow-hidden  pb-28 pt-20 sm:py-32 bg-gradient-to-br from-cyan-900 to-indigo-900"
     >
-
-      <Container className="relative">
-        <div className="max-w-2xl md:mx-auto md:text-center xl:max-w-none">
-          <h2 className="text-3xl tracking-tight text-white sm:text-4xl md:text-5xl font-medium">
-            Empower Your Learning with AI Summarization.
-          </h2>
-          <p className="mt-6 text-lg tracking-tight text-blue-100">
-            Unleash the Potential of Knowledge in Minutes.
-
-          </p>
-        </div>
-
+      <div className='container '>
         <div
-          className="mt-16 gap-y-2 pt-10 sm:gap-y-6 md:mt-20 lg:pt-0 flex flex-col lg:flex-row"
+          className='mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2 lg:items-start '
         >
-
-          <div className='flex flex-wrap lg:flex-col w-full lg:w-1/3 justify-center lg:py-24 '>
+          <div className='md:px-10 my-auto'>
+            <h2
+              className="text-3xl md:text-4xl text-white font-display font-semibold"
+            >
+              {featuresContents.headline}
+            </h2>
+            <p
+              className="text-md md:text-xl  text-gray-300 f ont-roboto font-normal max-w-3xl mt-4"
+            >
+              {featuresContents.subheadline}
+            </p>
+            <div className='pr-4'><Separator className='mt-8 bg-gray-100/30' /></div>
             {
-              features.map((feature, featureIndex) => (
-                <div key={featureIndex} className={cn(
-                  'group relative rounded-full px-4 py-1 lg:rounded-l-xl lg:rounded-r-none lg:p-6 cursor-pointer',
-                  selectedIndex === featureIndex
-                    ? 'bg-white lg:bg-white/10 lg:ring-1 lg:ring-inset lg:ring-white/10'
-                    : 'hover:bg-white/10 lg:hover:bg-white/5',
-                )}
-                  onClick={() => setSelectedIndex(featureIndex)}>
-                  <h3 className={cn(
-                    ' text-lg ui-not-focus-visible:outline-none font-medium',
-                    selectedIndex === featureIndex
-                      ? 'text-blue-600 lg:text-white'
-                      : 'text-blue-100 hover:text-white lg:text-white',
-                  )}>{feature.title}</h3>
-                  <p
-                    className={cn(
-                      'mt-2 hidden text-sm lg:block font-thin',
-                      selectedIndex === featureIndex
-                        ? 'text-white'
-                        : 'text-blue-100 group-hover:text-white',
-                    )}
+              features.map((feature, index) => {
+                const IconComponent = icons[feature.image];
+                return (
+                  <div
+                    key={index}
+                    className={cn('mt-8 flex items-start', {
+                      'flex-col': tabOrientation === 'vertical'
+                    })}
                   >
-                    {feature.description}
-                  </p>
-                </div>
-              ))
+                    <div className='flex-shrink-0'>
+                      <IconComponent className='w-6 h-6' />
+                    </div>
+                    <div className='ml-4'>
+                      <h3 className='text-xl font-semibold text-white'>{feature.title}</h3>
+                      <p className='text-gray-300 font-roboto font-normal mt-2'>{feature.mobileDescription}</p>
+                    </div>
+                  </div>
+                )
+              })
             }
           </div>
-
-          <div className='lg:block '>
-            <img src={features[selectedIndex].image} alt="" className='lg:absolute h-full rounded-xl' loading='lazy'/>
+          <div className='p-0.5 my-auto w-[48rem] h-[27.4rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[1427px] sm:h-[809px] bg-gradient-to-br from-cyan-500 to-indigo-900' >
+          <img src={screenshot} className='my-auto w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[1423px] ' />
           </div>
-
         </div>
-      </Container>
+      </div>
     </section>
   )
 };
 
 export default HowItWorks;
+

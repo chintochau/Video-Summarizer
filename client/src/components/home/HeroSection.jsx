@@ -14,7 +14,7 @@ const HeroSection = () => {
   return (
     <div className="w-full bg-gray-900">
       <Container className="pt-16 pb-10 text-center lg:pt-32">
-        
+
         <h1 className="mx-auto max-w-4xl text-5xl font-display font-medium tracking-tight text-gray-100 sm:text-7xl">
           Understand any
           <span className="relative whitespace-nowrap text-cyan-500">
@@ -33,25 +33,25 @@ const HeroSection = () => {
         </h1>
 
         <p className="mx-auto mt-6 max-w-2xl text-lg  text-gray-200 font-normal font-roboto">
-          We turn long videos and meetings <br className="bloack lg:hidden"/> into Summaries and Notes.
+          We help you grasp key points in seconds. Skip the fluff, and make the most of your time.  Watch smarter, not longer!
         </p>
-  
+
         <Button href="/register" size="lg" className='text-xl my-16 px-4 bg-gradient-to-tl from-indigo-800 to-cyan-500 hover:from-indigo-700 hover:to-cyan-200
         '>
           <Link to="summarizer">
             Try for Free
           </Link>
         </Button>
-  
+
         <p
           id="chrome-extension"
           className="text-lg text-slate-200 font-normal font-roboto pt-10"
         >
           Chrome Extension is also available now.
         </p>
-  
+
         <div className="mt-2 flex justify-center gap-x-6">
-          <Button onClick={openChromeExtension} className="">
+          <Button onClick={openChromeExtension} className=" bg-cyan-500/70 hover:bg-cyan-800">
             <img
               src={chromeIcon}
               alt="Chrome Extension Icon"
@@ -63,7 +63,7 @@ const HeroSection = () => {
             <Button variant="outline">
               <svg
                 aria-hidden="true"
-                className="h-3 w-3 flex-none fill-indigo-600 group-active:fill-current mr-2"
+                className="h-3 w-3 flex-none fill-cyan-800 group-active:fill-current mr-2"
               >
                 <path d="m9.997 6.91-7.583 3.447A1 1 0 0 1 1 9.447V2.553a1 1 0 0 1 1.414-.91L9.997 5.09c.782.355.782 1.465 0 1.82Z" />
               </svg>

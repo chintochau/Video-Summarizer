@@ -14,8 +14,9 @@ import { transformTimestampRangeFromArticleToSingleLink } from "../summary-field
 import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
 import { ScrollArea } from "../ui/scroll-area";
-import { getLanguageNameByCode } from "@/constants";
+import { getLanguageNameByCode, inActionContents } from "@/constants";
 import { Separator } from "../ui/separator";
+import { ArrowRight } from "lucide-react";
 
 
 
@@ -68,16 +69,21 @@ const SeeInAction = () => {
 
 
   return (
-    <div className="bg-gray-50 pt-4 lg:pt-10 lg:pb-20">
-      <h2 className="px-4 text-3xl pb-2 mx-2.5 lg:px-6 lg:text-4xl font-bold text-center text-indigo-800 lg:py-2">
-        See in Action
-      </h2>
+    <div className="bg-gray-50 pt-8 lg:pt-10 lg:pb-5">
+        <h2 className=" text-3xl pb-2 mx-2.5 lg:px-6 lg:text-4xl font-bold sm:text-center text-cyan-700/70 py-2 lg:py-2">
+          {inActionContents.headline}
+        </h2>
+        <p
+          className="mx-2.5 py-2 lg:px-6 lg:text-lg text-gray-800 sm:text-center lg:py-2 font-normal font-roboto"
+        >
+          {inActionContents.description}
+        </p>
       <Tabs className="w-full lg:text-center" defaultValue="video-0">
-        <div className=" overflow-x-auto pb-2 md:pb-0">
-          <TabsList className="mx-4 lg:mx-6 lg:mt-2 lg:mb-5 md:py-6 border border-indigo-200 bg-transparent rounded-lg">
+        <div className=" overflow-x-auto pb-2 md:pb-0 mb-2">
+          <TabsList className="lg:mx-6 lg:mt-2 lg:mb-5 md:py-5 bg-transparent rounded-lg">
             {demoVideos.map((video, index) => (
               <TabsTrigger key={index} value={`video-${index}`}
-                className="md:text-lg data-[state=active]:bg-indigo-800/80 data-[state=active]:text-white data-[state=active]:hover:bg-indigo-500 data-[state=active]:hover:text-white border mx-1 rounded-lg hover:bg-indigo-100 hover:text-indigo-900 hover:border-indigo-200"
+                className=" data-[state=active]:bg-cyan-600/70 data-[state=active]:text-white data-[state=active]:hover:bg-cyan-800 data-[state=active]:hover:text-white border mx-1 rounded-lg hover:bg-cyan-100 hover:text-cyan-900 hover:border-cyan-200"
               >
                 {video.option}
               </TabsTrigger>
@@ -86,9 +92,9 @@ const SeeInAction = () => {
         </div>
         {demoVideos.map((video, index) => (
           <TabsContent key={index} value={`video-${index}`}>
-            <Card className="border-indigo-50 shadow-md container px-0 lg:px-2 my-2 rounded-xl">
+            <Card className="border-indigo-50 md:shadow-md container px-0 lg:px-2 my-2 rounded-xl border-0 sm:border">
               <CardHeader className="text-left py-4 lg:pt-10 pb-2  lg:px-5 lg:pb-4 ">
-                <CardTitle className=" text-gray-800 lg:text-indigo-500">
+                <CardTitle className=" text-gray-800 lg:text-cyan-600/70">
                   {video.title}
                 </CardTitle>
                 <CardDescription>
@@ -115,10 +121,10 @@ const SeeInAction = () => {
                 </div>
 
                 <Tabs defaultValue="summary-0" className=" w-full md:w-1/2 lg:w-7/12 lg:text-left">
-                  <TabsList className="lg:mx-2">
+                  <TabsList className="lg:mx-6 lg:mt-2 lg:mb-5 md:py-5 bg-transparent rounded-lg">
                     {
                       video.summary.map((summary, index) => (
-                        <TabsTrigger key={index} value={`summary-${index}`}
+                        <TabsTrigger key={index} value={`summary-${index}`} className="data-[state=active]:bg-cyan-600/70 data-[state=active]:text-white data-[state=active]:hover:bg-cyan-800 data-[state=active]:hover:text-white border mx-1 rounded-lg hover:bg-cyan-100 hover:text-cyan-900 hover:border-cyan-200"
                         >
                           <img src={getLanguageNameByCode(summary.language).flag} alt={getLanguageNameByCode(summary.language).name} className="w-6 h-4 inline-block mr-2" />
                           {getLanguageNameByCode(summary.language).name}
@@ -130,9 +136,9 @@ const SeeInAction = () => {
                     video.summary.map((summary, summaryIndex) => (
                       <TabsContent key={summaryIndex} value={`summary-${summaryIndex}`}>
                         {summaries[index][summaryIndex] === "" ? (
-                          <div className=" text-center lg:text-left mt-4 lg:px-10 lg:py-4 ">
+                          <div className=" text-center lg:text-left mt-4 lg:px-10 lg:py-4">
                             <Button
-                              className="w-full h-40 md:h-56 border-indigo-500 text-indigo-500 hover:bg-indigo-500 hover:text-white md:text-2xl"
+                              className="w-full h-40 md:h-56 border-cyan-500 text-cyan-500 hover:bg-cyan-800 hover:text-white md:text-2xl rounded-xl shadow-md"
                               variant="outline"
                               onClick={() => {
                                 // when click, loop through the summari[index], and set the summary[index] to the content using setSummaries, and set timeout, each time add 10 more characters
@@ -161,8 +167,9 @@ const SeeInAction = () => {
                             </Button>
                           </div>
                         )
-                          : <ScrollArea className="h-[40vh] min-h-[40vh] md:h-[40vw] md:max-h-[60vh] text-left overflow-auto border-l-indigo-50 border-l-2 px-2 lg:px-8 "><Markdown
-                            className="prose max-w-full"
+                          : <ScrollArea className="h-[40vh] min-h-[40vh] md:h-[40vw] md:max-h-[60vh] text-left overflow-auto border-l-indigo-50 border-l-2 px-2 lg:px-8 ">
+                            <Markdown
+                            className="prose max-w-full "
                             options={{ overrides: linkOverride }}
                           >
                             {transformTimestampRangeFromArticleToSingleLink(
@@ -180,20 +187,18 @@ const SeeInAction = () => {
                 <Separator className="w-full my-2 " />
               </div>
               <CardFooter
-                className="pb-4 lg:pb-6"
+                className="pb-4 lg:pb-6 lg:pt-3"
               >
+                <Link to="summarizer" className="flex items-center gap-x-2 mx-auto" >
                 <Button
-                  className="w-full"
-                  variant="outline"
+                  className="w-full text-cyan-500"
+                  variant="link"
                   size="lg"
-                  onClick={() => {
-                    window.scrollTo(0, 0);
-                  }}
                 >
-                  <Link to="summarizer" >
-                    Try your own video now
-                  </Link>
+                    Summarize your own videos now
+                  <ArrowRight size={20} />
                 </Button>
+                  </Link>
               </CardFooter>
             </Card>
             <div className="flex flex-col md:flex-row w-full justify-between items-center bg-gray-50 p-2 rounded-md"></div>

@@ -56,10 +56,10 @@ function App() {
                       <Route path="/Summarizer" element={<div className="h-screen flex flex-col">
                         <Header />
                         <GeneralSummary /></div>} />
-                      <Route path="/" element={<div>
+                      <Route path="/" element={<>
                         <Header />
                         <HomePage />
-                      </div>
+                      </>
                       } />
                       <Route path="/share" element={<SharePage />} />
                       <Route path="/auth" element={<AuthCheckPage/>}></Route>

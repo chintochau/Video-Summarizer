@@ -22,14 +22,12 @@ const HomePage = () => {
       <div id="inAction">
         <SeeInAction/>
       </div>
-      {/* <div id="why">
+      <div id="why">
         <Why />
-      </div> */}
-      <div id="how">
+      </div>
+      <div id="features">
         <HowItWorks />
       </div>
-      <div id="features"></div>
-      <div id="social-proof"></div>
       <div id="pricing">
         <PricingPlans home />
       </div>
