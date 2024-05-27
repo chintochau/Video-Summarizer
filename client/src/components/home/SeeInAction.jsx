@@ -216,7 +216,7 @@ const demoVideos = [
   {
     option: "Long Turotial",
     title: "Detail Summary of a 2-hour long video",
-    additionalInfo: "*Detail summary is only available for registered users",
+    additionalInfo: "",
     videoTitle: "30 Years of Business Knowledge in 2hrs 26mins",
     youtubeId: "9VlvbpXwLJs",
     videoLength: "2:26:13",
@@ -1002,7 +1002,7 @@ The speaker in this part of the video provides several perspectives and strategi
   {
     option: "Book Review",
     title: "Quick Outline of a 15 mins video",
-    additionalInfo: "    ",
+    additionalInfo: "",
     videoTitle:
       "Anything You Want：微型創業者必修的 8 堂課，一人公司的最佳指南",
     youtubeId: "oqeJGz1Fdww",
