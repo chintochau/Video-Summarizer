@@ -94,54 +94,57 @@ const HowItWorks = () => {
                 )
               })
             }
+            <div className=' text-left mt-12 px-10 hidden md:block'>
+              <Link to='/summarizer'>
+                <Button variant="outline" >
+                  Summarize Now
+                </Button>
+              </Link>
+            </div>
           </div>
-
           <div className=' p-0.5 my-auto w-[48rem] h-[27.4rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[1427px] sm:h-[809px] bg-gradient-to-br from-cyan-500 to-indigo-900' >
             <img src={screenshot} className='my-auto w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[1423px] ' />
           </div>
-
-         <div >
+          <div className='md:hidden' >
             {
-                features.map((feature, index) => {
-                  const IconComponent = icons[feature.image];
-                  return (
-                    <div
-                      key={index}
-                      className={cn('my-5 items-start md:hidden flex')}
-                    >
-                      <div>
-                        <IconComponent className='w-6 h-6 text-cyan-300' />
-                      </div>
-                      <div className=' ml-4'>
-                        <h3 className=' md:text-xl font-semibold text-white'>{feature.title}</h3>
-                        <p className=' text-sm text-gray-300 font-roboto font-normal mt-1'>{feature.mobileDescription}</p>
-                        {
-                          feature.button && (
-                            <Link to={feature.button.link}>
-                              <Button
-                                variant='link'
-                                size='sm'
-                                className='text-sm text-cyan-300 font-semibold mt-2 flex items-center mr-2 px-0'>
-                                {feature.button.text} <ArrowRight size={18} />
-                                </Button>
-                            </Link>
-                          )
-                        }
-                      </div>
+              features.map((feature, index) => {
+                const IconComponent = icons[feature.image];
+                return (
+                  <div
+                    key={index}
+                    className={cn('my-5 items-start md:hidden flex')}
+                  >
+                    <div>
+                      <IconComponent className='w-6 h-6 text-cyan-300' />
                     </div>
-                  )
-                })
-              }
-         </div>
-
-
-        </div>
-        <div className=' text-center sm:text-left sm:px-20 pt-10'>
-          <Link to='/summarizer'>
-            <Button variant="outline" >
-              Summarize Now
-            </Button>
-          </Link>
+                    <div className=' ml-4'>
+                      <h3 className=' md:text-xl font-semibold text-white'>{feature.title}</h3>
+                      <p className=' text-sm text-gray-300 font-roboto font-normal mt-1'>{feature.mobileDescription}</p>
+                      {
+                        feature.button && (
+                          <Link to={feature.button.link}>
+                            <Button
+                              variant='link'
+                              size='sm'
+                              className='text-sm text-cyan-300 font-semibold mt-2 flex items-center mr-2 px-0'>
+                              {feature.button.text} <ArrowRight size={18} />
+                            </Button>
+                          </Link>
+                        )
+                      }
+                    </div>
+                  </div>
+                )
+              })
+            }
+            <div className=' text-center sm:text-left px-10 pt-4'>
+              <Link to='/summarizer'>
+                <Button variant="outline" >
+                  Summarize Now
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>
