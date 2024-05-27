@@ -5,6 +5,7 @@ import { CheckIcon } from "@heroicons/react/20/solid";
 import CheckoutService from "../../services/CheckoutService";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 
 const frequencies = [
   { value: "monthly", label: "Monthly", priceSuffix: "/month", amount: 1 },
@@ -33,46 +34,33 @@ const PricingPlans = () => {
   };
 
   return (
-    <div className="bg-white py-24 sm:py-32">
+    <div className="bg-white py-16  sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-4xl text-center">
-          <h2 className="text-base font-semibold leading-7 text-indigo-600">
-            Pricing
+        <div className="mx-auto max-w-4xl sm:text-center text-left">
+          <h2 className="text-3xl font-extrabold leading-8 text-cyan-700/70 sm:text-4xl sm:leading-10 ">
+            Pricing Plans
           </h2>
-          <p className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-            Pricing plans for your needs
+          <p className="text-sm md:text-xl text-gray-800 font-roboto font-normal max-w-3xl mt-4 mx-auto">
+            Choose an affordable plan that’s packed with the best features for
+            your needs.
           </p>
         </div>
-        <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-gray-600">
-          Choose an affordable plan that’s packed with the best features for
-          your needs.
-        </p>
-        <div className="mt-16 flex justify-center">
-          <RadioGroup
-            value={frequency}
-            onChange={setFrequency}
-            className="grid grid-cols-2 gap-x-1 rounded-full p-1 text-center text-xs font-semibold leading-5 ring-1 ring-inset ring-gray-200"
-          >
-            <RadioGroup.Label className="sr-only">
-              Payment frequency
-            </RadioGroup.Label>
-            {frequencies.map((option) => (
-              <RadioGroup.Option
-                key={option.value}
-                value={option}
-                className={({ checked }) =>
-                  classNames(
-                    checked ? "bg-indigo-600 text-white" : "text-gray-500",
-                    "cursor-pointer rounded-full px-2.5 py-1"
-                  )
-                }
-              >
-                <span>{option.label}</span>
-              </RadioGroup.Option>
-            ))}
-          </RadioGroup>
+        <div className=" mt-6 md:mt-10 flex justify-center">
+          <Tabs defaultValue={frequencies[0].value}>
+          <TabsList className="lg:mx-6 lg:mt-2 lg:mb-5 md:py-5 bg-transparent border px-0 rounded-xl">
+              {frequencies.map((option) => (
+                <TabsTrigger 
+                className="data-[state=active]:bg-cyan-600/70 data-[state=active]:text-white data-[state=active]:hover:bg-cyan-800 data-[state=active]:hover:text-white border mx-1 rounded-lg hover:bg-cyan-100 hover:text-cyan-900 hover:border-cyan-200"
+                key={option.value} value={option.value} onClick={
+                  () => setFrequency(option)
+                }>
+                  {option.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         </div>
-        <div className="isolate mx-auto mt-10 grid max-w-md grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+        <div className="isolate mx-auto mt-6 grid max-w-md grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
           {tiers.map((tier) => RenderComponent({ tier }))}
         </div>
       </div>
@@ -84,7 +72,7 @@ const CreditsTier = ({ tier }) => {
   const { priceOptions, features } = tier;
   const [creditsToBuy, setCreditsToBuy] = useState(tiers[0].priceOptions[0]);
   const { setSelectedPlan } = useCheckout();
-  const {userId} = useAuth()
+  const { userId } = useAuth()
   const navigate = useNavigate();
 
   const selectPlan = async () => {
@@ -104,12 +92,12 @@ const CreditsTier = ({ tier }) => {
     const paymentUrl = await CheckoutService.processPayment(plan);
     window.location.href = paymentUrl;
   };
-  
+
   return (
     <div
       key={tier.id}
       className={classNames(
-        tier.mostPopular ? "ring-2 ring-indigo-600" : "ring-1 ring-gray-200",
+        tier.mostPopular ? "ring-2 ring-cyan-600" : "ring-1 ring-gray-200",
         "rounded-3xl p-8 xl:p-10"
       )}
     >
@@ -117,14 +105,14 @@ const CreditsTier = ({ tier }) => {
         <h3
           id={tier.id}
           className={classNames(
-            tier.mostPopular ? "text-indigo-600" : "text-gray-900",
+            tier.mostPopular ? "text-cyan-600" : "text-gray-900",
             "text-lg font-semibold leading-8"
           )}
         >
           {tier.name}
         </h3>
         {tier.mostPopular ? (
-          <p className="rounded-full bg-indigo-600/10 px-2.5 py-1 text-xs font-semibold leading-5 text-indigo-600">
+          <p className="rounded-full bg-cyan-600/10 px-2.5 py-1 text-xs font-semibold leading-5 text-cyan-600">
             Most popular
           </p>
         ) : null}
@@ -149,7 +137,7 @@ const CreditsTier = ({ tier }) => {
                 value={option}
                 className={({ checked }) =>
                   classNames(
-                    checked ? "bg-indigo-600 text-white" : "text-gray-500",
+                    checked ? "bg-cyan-600 text-white" : "text-gray-500",
                     "cursor-pointer rounded-md px-2.5 py-1"
                   )
                 }
@@ -164,9 +152,9 @@ const CreditsTier = ({ tier }) => {
         aria-describedby={tier.id}
         className={classNames(
           tier.mostPopular
-            ? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-500"
-            : "text-indigo-600 ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300",
-          "mt-2 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            ? "bg-cyan-600 text-white shadow-sm hover:bg-cyan-500"
+            : "text-cyan-600 ring-1 ring-inset ring-cyan-200 hover:ring-cyan-300",
+          "mt-2 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600"
         )}
         onClick={selectPlan}
       >
@@ -179,7 +167,7 @@ const CreditsTier = ({ tier }) => {
         {creditsToBuy.featureList.map((feature) => (
           <li key={feature} className="flex gap-x-3">
             <CheckIcon
-              className="h-6 w-5 flex-none text-indigo-600 whitespace-break-spaces"
+              className="h-6 w-5 flex-none text-cyan-600 whitespace-break-spaces"
               aria-hidden="true"
             />
             <div className=" whitespace-break-spaces">{feature}</div>
@@ -217,7 +205,7 @@ const PricingTier = ({ tier, frequency }) => {
     <div
       key={tier.id}
       className={classNames(
-        tier.mostPopular ? "ring-2 ring-indigo-600" : "ring-1 ring-gray-200",
+        tier.mostPopular ? "ring-2 ring-cyan-600" : "ring-1 ring-gray-200",
         "rounded-3xl p-8 xl:p-10"
       )}
     >
@@ -225,14 +213,14 @@ const PricingTier = ({ tier, frequency }) => {
         <h3
           id={tier.id}
           className={classNames(
-            tier.mostPopular ? "text-indigo-600" : "text-gray-900",
+            tier.mostPopular ? "text-cyan-600" : "text-gray-900",
             "text-lg font-semibold leading-8"
           )}
         >
           {tier.name}
         </h3>
         {tier.mostPopular ? (
-          <p className="rounded-full bg-indigo-600/10 px-2.5 py-1 text-xs font-semibold leading-5 text-indigo-600">
+          <p className="rounded-full bg-cyan-600/10 px-2.5 py-1 text-xs font-semibold leading-5 text-cyan-600">
             Most popular
           </p>
         ) : null}
@@ -251,9 +239,9 @@ const PricingTier = ({ tier, frequency }) => {
         aria-describedby={tier.id}
         className={classNames(
           tier.mostPopular
-            ? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-500"
-            : "text-indigo-600 ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300",
-          "mt-6 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:bg-gray-500 disabled:text-white disabled:ring-gray-500"
+            ? "bg-cyan-600 text-white shadow-sm hover:bg-cyan-500"
+            : "text-cyan-600 ring-1 ring-inset ring-cyan-200 hover:ring-cyan-300",
+          "mt-6 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 disabled:bg-gray-500 disabled:text-white disabled:ring-gray-500"
         )}
         disabled={!tier.available}
         onClick={() =>
@@ -273,7 +261,7 @@ const PricingTier = ({ tier, frequency }) => {
         {tier.features.map((feature) => (
           <li key={feature} className="flex gap-x-3">
             <CheckIcon
-              className="h-6 w-5 flex-none text-indigo-600"
+              className="h-6 w-5 flex-none text-cyan-600"
               aria-hidden="true"
             />
             <div className=" whitespace-break-spaces">{feature}</div>

@@ -10,6 +10,9 @@ import screenshot from '@/assets/screenshot.png'
 import { featuresContents } from '@/constants';
 import { Separator } from '../ui/separator';
 import { BoltIcon, PlayCircleIcon, ArrowUpTrayIcon, DocumentTextIcon, ArchiveBoxArrowDownIcon, ShareIcon } from '@heroicons/react/24/outline';
+import { ArrowRight } from 'lucide-react';
+import { Button } from '../ui/button';
+import { Link } from 'react-router-dom';
 
 
 const icons = {
@@ -43,49 +46,102 @@ const HowItWorks = () => {
     <section
       id="features"
       aria-label="Features for Fusion AI Video Summarization Tool"
-      className="relative overflow-hidden  pb-28 pt-20 sm:py-32 bg-gradient-to-br from-cyan-900 to-indigo-900"
+      className="relative overflow-hidden  pb-12 pt-10 sm:pt-32 sm:pb-16 bg-gradient-to-br from-cyan-900 to-indigo-900"
     >
       <div className='container '>
         <div
-          className='mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2 lg:items-start '
+          className='mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-8 md:gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2 lg:items-start '
         >
-          <div className='md:px-10 my-auto'>
+
+          <div className='md:px-6 my-auto'>
             <h2
               className="text-3xl md:text-4xl text-white font-display font-semibold"
             >
               {featuresContents.headline}
             </h2>
             <p
-              className="text-md md:text-xl  text-gray-300 f ont-roboto font-normal max-w-3xl mt-4"
+              className="text-sm md:text-xl  text-gray-300 f ont-roboto font-normal max-w-3xl mt-4"
             >
               {featuresContents.subheadline}
             </p>
-            <div className='pr-4'><Separator className='mt-8 bg-gray-100/30' /></div>
+            <div className='pr-4'>
+              <Separator className='mt-8 bg-gray-100/30' />
+            </div>
             {
               features.map((feature, index) => {
                 const IconComponent = icons[feature.image];
                 return (
                   <div
                     key={index}
-                    className={cn('mt-8 flex items-start', {
-                      'flex-col': tabOrientation === 'vertical'
-                    })}
+                    className={cn('mt-4 md:mt-8 items-start hidden md:flex')}
                   >
-                    <div className='flex-shrink-0'>
-                      <IconComponent className='w-6 h-6' />
+                    <div>
+                      <IconComponent className='w-6 h-6 text-cyan-300' />
                     </div>
-                    <div className='ml-4'>
-                      <h3 className='text-xl font-semibold text-white'>{feature.title}</h3>
-                      <p className='text-gray-300 font-roboto font-normal mt-2'>{feature.mobileDescription}</p>
+                    <div className=' ml-4'>
+                      <h3 className=' md:text-xl font-semibold text-white'>{feature.title}</h3>
+                      <p className=' text-sm text-gray-300 font-roboto font-normal mt-1'>{feature.mobileDescription}</p>
+                      {
+                        feature.button && (
+                          <Button
+                            variant='link'
+                            className='text-md text-cyan-300 font-semibold mt-2 flex items-center mr-2 px-0'>
+                            {feature.button.text} <ArrowRight size={18} /></Button>
+                        )
+                      }
                     </div>
                   </div>
                 )
               })
             }
           </div>
-          <div className='p-0.5 my-auto w-[48rem] h-[27.4rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[1427px] sm:h-[809px] bg-gradient-to-br from-cyan-500 to-indigo-900' >
-          <img src={screenshot} className='my-auto w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[1423px] ' />
+
+          <div className=' p-0.5 my-auto w-[48rem] h-[27.4rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[1427px] sm:h-[809px] bg-gradient-to-br from-cyan-500 to-indigo-900' >
+            <img src={screenshot} className='my-auto w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[1423px] ' />
           </div>
+
+         <div >
+            {
+                features.map((feature, index) => {
+                  const IconComponent = icons[feature.image];
+                  return (
+                    <div
+                      key={index}
+                      className={cn('my-5 items-start md:hidden flex')}
+                    >
+                      <div>
+                        <IconComponent className='w-6 h-6 text-cyan-300' />
+                      </div>
+                      <div className=' ml-4'>
+                        <h3 className=' md:text-xl font-semibold text-white'>{feature.title}</h3>
+                        <p className=' text-sm text-gray-300 font-roboto font-normal mt-1'>{feature.mobileDescription}</p>
+                        {
+                          feature.button && (
+                            <Link to={feature.button.link}>
+                              <Button
+                                variant='link'
+                                size='sm'
+                                className='text-sm text-cyan-300 font-semibold mt-2 flex items-center mr-2 px-0'>
+                                {feature.button.text} <ArrowRight size={18} />
+                                </Button>
+                            </Link>
+                          )
+                        }
+                      </div>
+                    </div>
+                  )
+                })
+              }
+         </div>
+
+
+        </div>
+        <div className=' text-center sm:text-left sm:px-20 pt-10'>
+          <Link to='/summarizer'>
+            <Button variant="outline" >
+              Summarize Now
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

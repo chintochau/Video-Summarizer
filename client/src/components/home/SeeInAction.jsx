@@ -124,7 +124,8 @@ const SeeInAction = () => {
                   <TabsList className="lg:mx-6 lg:mt-2 lg:mb-5 md:py-5 bg-transparent rounded-lg">
                     {
                       video.summary.map((summary, index) => (
-                        <TabsTrigger key={index} value={`summary-${index}`} className="data-[state=active]:bg-cyan-600/70 data-[state=active]:text-white data-[state=active]:hover:bg-cyan-800 data-[state=active]:hover:text-white border mx-1 rounded-lg hover:bg-cyan-100 hover:text-cyan-900 hover:border-cyan-200"
+                        <TabsTrigger key={index} value={`summary-${index}`} 
+                        className="data-[state=active]:bg-cyan-600/70 data-[state=active]:text-white data-[state=active]:hover:bg-cyan-800 data-[state=active]:hover:text-white border mx-1 rounded-lg hover:bg-cyan-100 hover:text-cyan-900 hover:border-cyan-200"
                         >
                           <img src={getLanguageNameByCode(summary.language).flag} alt={getLanguageNameByCode(summary.language).name} className="w-6 h-4 inline-block mr-2" />
                           {getLanguageNameByCode(summary.language).name}

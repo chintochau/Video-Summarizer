@@ -80,7 +80,7 @@ export const featuresContents = {
       title: "Low Cost, High Speed Transcription",
       description: "Experience the power of advanced AI technologies that deliver fast and accurate speech-to-text and video-to-text services. Our platform supports various languages, offering low-cost solutions without compromising on speed or quality.",
       mobileDescription: "Advanced AI delivers quick, accurate speech-to-text for multiple languages at a low cost.",
-      image: "BoltIcon"
+      image: "BoltIcon",
     },
     {
       title: "YouTube Video Support",

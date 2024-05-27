@@ -12,8 +12,8 @@ const ChromeExtension = () => {
   };
 
   return (
-    <div className="py-16 bg-indigo-500 text-center">
-      <div className="max-w-4xl mx-auto">
+    <div className="py-16  text-center bg-gradient-to-br from-cyan-800 to-indigo-900">
+      <div className="mx-4 max-w-4xl md:mx-auto">
         <div className="text-white">
           <h2 className="text-3xl font-bold mb-4">Chrome Extension</h2>
           <p className="mb-8">
@@ -24,7 +24,7 @@ const ChromeExtension = () => {
         </div>
         <Button
           variant="outline"
-          className="my-2"
+          className="mb-10"
           onClick={openChromeExtension}
         >
           <img

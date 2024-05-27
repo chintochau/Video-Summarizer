@@ -17,7 +17,7 @@ import YoutubeSummary from '../SummarizerPage/YoutubeSummary'
 import UploadSummary from '../SummarizerPage/UploadSummary'
 import { useNavigate } from 'react-router-dom';
 import SearchPage from '@/pages/SearchPage'
-import logo from '@/assets/logo.svg'
+import logo from '@/assets/logo.png'
 
 
 function RootRedirect() {
