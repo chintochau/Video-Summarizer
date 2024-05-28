@@ -178,7 +178,7 @@ const Dashboard = () => {
 
                 <main className="lg:pl-44 h-[80vh] flex-1">
                     <Routes>
-                        <Route path='' element={<RootRedirect />} />
+                        <Route path='' element={<YoutubeSummary Bar3Button={Bar3Button} />} />
                         <Route path='youtube' element={<YoutubeSummary Bar3Button={Bar3Button} />} />
                         <Route path='upload' element={<UploadSummary Bar3Button={Bar3Button} />} />
                         <Route path='billing' element={<div />} />

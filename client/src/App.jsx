@@ -1,6 +1,6 @@
 import Header from "./components/common/Header.jsx";
 import HomePage from "./pages/HomePage.jsx";
-import { Route, Routes } from "react-router-dom";
+import { Route, Router, Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
@@ -38,54 +38,71 @@ function App() {
 
   return (
     <>
-      <div className="relative">
-        {/* {announcement.visible && (
-          <div className=" bg-indigo-50 flex text-center">
-            <div className="mx-auto max-w-[1280px] w-[1280] text-gray-600">
-              {announcement.message}
-            </div>
-          </div>
-        )} */}
-        <div className="w-full">
-          <ModelProvider>
-            <VideoProvider>
-              <SummaryProvider>
-                <TranscriptProvider>
-                  <QuotaProvider>
-                    <Routes>
-                      <Route path="/Summarizer" element={<div className="h-screen flex flex-col">
-                        <Header />
-                        <GeneralSummary /></div>} />
-                      <Route path="/" element={<>
-                        <Header />
-                        <HomePage />
-                      </>
-                      } />
-                      <Route path="/share" element={<SharePage />} />
-                      <Route path="/auth" element={<AuthCheckPage/>}></Route>
-                      <Route path="/login" element={<div><Header/><LoginPage /></div>} />
-                      <Route path="/register" element={<RegisterPage />} />
-                      <Route path="/pricing" element={<div><Header /><PricingPage /></div>} />
-                      <Route path="/history" element={<HistoryPage />} />
-                      <Route path="/profile" element={<UserProfilePage />} />
-                      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                      <Route path="/console/*" element={<Dashboard />} >
-                        <Route path='' element={<div />} />
-                        <Route path='youtube' element={<YoutubeSummary />} />
-                        <Route path='upload' element={<div />} />
-                        <Route path='billing' element={<div />} />
-                        <Route path='history' element={<HistoryPage />} />
-                        <Route path='profile' element={<UserProfilePage />} />
-                        <Route path='rag' element={<SearchPage />} />
-                      </Route>
-                    </Routes>
-                  </QuotaProvider>
-                </TranscriptProvider>
-              </SummaryProvider>
-            </VideoProvider>
-          </ModelProvider>
-          <Toaster />
-        </div>
+      <div className="w-full">
+        <ModelProvider>
+          <VideoProvider>
+            <SummaryProvider>
+              <TranscriptProvider>
+                <QuotaProvider>
+                  <Routes>
+                    <Route
+                      path="/Summarizer"
+                      element={
+                        <div className="h-screen flex flex-col">
+                          <Header />
+                          <GeneralSummary />
+                        </div>
+                      }
+                    />
+                    <Route
+                      path="/"
+                      element={
+                        <>
+                          <Header />
+                          <HomePage />
+                        </>
+                      }
+                    />
+                    <Route path="/share" element={<SharePage />} />
+                    <Route path="/auth" element={<AuthCheckPage />}></Route>
+                    <Route
+                      path="/login"
+                      element={
+                        <div>
+                          <Header />
+                          <LoginPage />
+                        </div>
+                      }
+                    />
+                    <Route path="/register" element={<RegisterPage />} />
+                    <Route
+                      path="/pricing"
+                      element={
+                        <div>
+                          <Header />
+                          <PricingPage />
+                        </div>
+                      }
+                    />
+                    <Route path="/history" element={<HistoryPage />} />
+                    <Route path="/profile" element={<UserProfilePage />} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                    <Route path="/console/*" element={<Dashboard />}>
+                      <Route path="" element={<div />} />
+                      <Route path="youtube" element={<YoutubeSummary />} />
+                      <Route path="upload" element={<div />} />
+                      <Route path="billing" element={<div />} />
+                      <Route path="history" element={<HistoryPage />} />
+                      <Route path="profile" element={<UserProfilePage />} />
+                      <Route path="rag" element={<SearchPage />} />
+                    </Route>
+                  </Routes>
+                </QuotaProvider>
+              </TranscriptProvider>
+            </SummaryProvider>
+          </VideoProvider>
+        </ModelProvider>
+        <Toaster />
       </div>
     </>
   );

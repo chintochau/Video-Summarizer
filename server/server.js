@@ -21,10 +21,13 @@ import vastaiRoutes from "./routes/vastaiRoutes.js";
 import embeddingsRoutes from "./routes/embeddingsRoutes.js";
 import shareRoutes from "./routes/shareRoutes.js";
 import ttsRoutes from "./routes/ttsRoutes.js";
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from "url";
 //running python code for testing
-import { pythonRunner, } from "./utils/pythonRunner.js";
-import { formatGroupedSubtitle, groupSubtitlesByInterval } from "./utils/transcripUtils.js";
+import { pythonRunner } from "./utils/pythonRunner.js";
+import {
+  formatGroupedSubtitle,
+  groupSubtitlesByInterval,
+} from "./utils/transcripUtils.js";
 const variableToPass = "";
 pythonRunner("--version", [variableToPass])
   .then((output) => {
@@ -64,13 +67,12 @@ app.use("/api", cors(), transcribeRoutes);
 app.use("/api", cors(), paymentRoutes);
 app.use("/api", cors(), youtubeRoutes);
 app.use("/api", cors(), embeddingsRoutes);
-app.use("/api", cors(), ttsRoutes)
+app.use("/api", cors(), ttsRoutes);
 app.use("/", cors(), vastaiRoutes);
 app.use("/", cors(), shareRoutes);
 
-
 //PRIVATE transcribe Audio
-async function transcribeWithWhisperApi(data) {
+const transcribeWithWhisperApi = async (data) => {
   const { filePath, language, response_format } = data;
   let transcription;
 
@@ -120,7 +122,6 @@ app.post(
   upload.single("file"),
   async (req, res) => {
     const { language, response_format, selectedModel } = req.body;
-    console.log(req.body);
     const file = req.file;
     const model = selectedModel || "assembly";
     let result;
@@ -128,7 +129,7 @@ app.post(
     let originalFilePath;
 
     if (!file) {
-      return res.status(400).send("請上傳一個檔案");
+      return res.status(400).send("please upload a file");
     }
 
     try {
@@ -138,13 +139,10 @@ app.post(
       filePath = originalFilePath;
       // Check if the file is a video, and extract audio if necessary
 
-      console.log("Start: ", filePath);
-
       if (
         file.mimetype.startsWith("video") ||
         videoExtensions.includes(path.extname(originalFilePath).toLowerCase())
       ) {
-        console.log("getting audio from video");
         const audioFilePath = originalFilePath.replace(
           path.extname(originalFilePath),
           ".wav"
@@ -182,7 +180,6 @@ app.post(
     }
   }
 );
-
 
 app.post(
   "/api/stream-response",
@@ -419,7 +416,7 @@ app.post(
             encoding_format: "float",
           });
           embeddingArray.push(embedding.data[0].embedding);
-        } catch (error) { }
+        } catch (error) {}
       }
     };
 

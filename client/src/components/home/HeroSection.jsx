@@ -5,16 +5,18 @@ import { Container } from "../common/Container";
 import { HashLink } from "react-router-hash-link";
 import chromeIcon from "../../assets/chrome-icon.png";
 import { chromeStoreLink } from "@/constants";
+import { useAuth } from "@/contexts/AuthContext";
 
 const HeroSection = () => {
   const openChromeExtension = () => {
     window.open(chromeStoreLink);
   };
 
+  const { currentUser } = useAuth();
+
   return (
     <div className="w-full bg-gray-900">
       <Container className="pt-16 pb-10 text-center lg:pt-32">
-
         <h1 className="mx-auto max-w-4xl text-5xl font-display font-medium tracking-tight text-gray-100 sm:text-7xl">
           Understand any
           <span className="relative whitespace-nowrap text-cyan-500">
@@ -33,13 +35,18 @@ const HeroSection = () => {
         </h1>
 
         <p className="mx-auto mt-6 max-w-2xl text-lg  text-gray-200 font-normal font-roboto">
-          We help you grasp key points in seconds. Skip the fluff, and make the most of your time.  Watch smarter, not longer!
+          We help you grasp key points in seconds. Skip the fluff, and make the
+          most of your time. Watch smarter, not longer!
         </p>
 
-        <Button href="/register" size="lg" className='text-xl my-16 px-4 bg-gradient-to-tl from-indigo-800 to-cyan-500 hover:from-indigo-700 hover:to-cyan-200
-        '>
-          <Link to="summarizer">
-            Try for Free
+        <Button
+          href="/register"
+          size="lg"
+          className="text-xl my-16 px-4 bg-gradient-to-tl from-indigo-800 to-cyan-500 hover:from-indigo-700 hover:to-cyan-200
+        "
+        >
+          <Link to={currentUser ? "console" : "summarizer"}>
+            {currentUser ? "Go To Console" : "Try for Free"}
           </Link>
         </Button>
 
@@ -51,7 +58,10 @@ const HeroSection = () => {
         </p>
 
         <div className="mt-2 flex justify-center gap-x-6">
-          <Button onClick={openChromeExtension} className=" bg-cyan-500/70 hover:bg-cyan-800">
+          <Button
+            onClick={openChromeExtension}
+            className=" bg-cyan-500/70 hover:bg-cyan-800"
+          >
             <img
               src={chromeIcon}
               alt="Chrome Extension Icon"
