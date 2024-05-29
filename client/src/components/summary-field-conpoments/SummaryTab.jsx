@@ -19,7 +19,7 @@ import {
 import { Label } from "../ui/label";
 import { shareLink } from "@/constants";
 
-export const transformArticleWithClickableTimestamps = (articleContent) => {
+export const transformArticleWithClickableTimestamps = (articleContent="") => {
   // Updated regex to match hh:mm:ss and mm:ss and m:ss formats
   const timestampRegex =
     /(\d{1,2}:\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2})/g;
@@ -30,7 +30,7 @@ export const transformArticleWithClickableTimestamps = (articleContent) => {
   );
 };
 
-export const transformTimestampRangeFromArticleToSingleLink = (articleContent) => {
+export const transformTimestampRangeFromArticleToSingleLink = (articleContent="") => {
   const timestampRegex =
   /(\d{1,2}:\d{1,2}:\d{1,2} - \d{1,2}:\d{1,2}:\d{1,2} |\d{1,2}:\d{1,2} - \d{1,2}:\d{1,2} |\d{1,2}:\d{1,2} - \d{1,2}:\d{1,2} |\d{1,2}:\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2})/g;
 
@@ -55,6 +55,7 @@ const SummaryTab = (data) => {
   if (!summaryObject) {
     return null;
   }
+
   const { summary, sourceId, _id } = summaryObject;
 
   const showText = () => {

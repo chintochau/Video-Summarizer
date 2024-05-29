@@ -152,7 +152,7 @@ const SharePage = () => {
   return (
     <>
       <Helmet>
-        <title>{videoTitle} | Fusion AI</title>
+        <title>{videoTitle || "Video Summary"} | Fusion AI</title>
         <meta name="title" content={`${videoTitle} | Fusion AI`} />
         <meta name="description" content={`Summary of the video: ${videoTitle}`} />      
         <meta name="og:title" content={`${videoTitle} | Fusion AI`} />
