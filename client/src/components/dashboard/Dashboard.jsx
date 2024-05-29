@@ -50,6 +50,7 @@ const Dashboard = () => {
     useEffect(() => {
         setCurrentPathname(location.pathname.split("/")[2])
 
+        console.log("currentPathname: ", currentPathname)
     }, [location.pathname])
 
     const Bar3Button = () => {

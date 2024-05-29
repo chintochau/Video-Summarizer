@@ -68,10 +68,10 @@ function App() {
                     <Route
                       path="/login"
                       element={
-                        <div>
+                        <>
                           <Header />
                           <LoginPage />
-                        </div>
+                        </>
                       }
                     />
                     <Route path="/register" element={<RegisterPage />} />
