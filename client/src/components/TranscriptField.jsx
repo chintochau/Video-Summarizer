@@ -16,7 +16,7 @@ import {
   ChevronDoubleUpIcon,
   XCircleIcon,
 } from "@heroicons/react/24/outline";
-import GenerateOptions from "./transcriptFieldComponents/GenerateOptions";
+import TranscriptOptions from "./transcriptFieldComponents/TranscriptOptions";
 import { useTranscriptContext } from "@/contexts/TranscriptContext";
 import { ScrollArea } from "./ui/scroll-area";
 import { Textarea } from "./ui/textarea";
@@ -363,7 +363,7 @@ const TranscriptField = (params) => {
                   )}
                 </div>
               ) : (
-                <GenerateOptions
+                <TranscriptOptions
                   loadSrtTranscript={setupTranscriptWithInputSRT}
                   generateTranscript={generateTranscript}
                   uploadToCloudAndTranscribe={uploadToCloudAndTranscribe}

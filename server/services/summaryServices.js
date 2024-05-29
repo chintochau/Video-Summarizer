@@ -35,6 +35,7 @@ export const generateSummary = async (req, res) => {
     res,
     selectedModel,
   };
+
   switch (selectedModel) {
     case "gpt35":
     case "gpt4o":
@@ -49,6 +50,48 @@ export const generateSummary = async (req, res) => {
   }
   return fullResponseText;
 };
+
+export const generateSummaryInJson = async (req, res) => {
+  const { option, transcript, language, selectedModel, userId, video } =
+    req.body;
+  const { prompt } = option;
+  const { sourceTitle } = video;
+
+  let fullResponseText = "";
+  const max_tokens = 2000;
+  const system = `your response must be in json format, and the language of the content should be ${language}`;
+  const messages = [
+    {
+      role: "user",
+      content: `you are given a transcript of a video titles:${sourceTitle} + 
+Here is the instruction: ${prompt} 
+Video Transcript: ${transcript}`
+    },
+  ];
+  const data = {
+    system,
+    messages,
+    fullResponseText,
+    max_tokens,
+    res,
+    selectedModel,
+  };
+  switch (selectedModel) {
+    case "gpt35":
+    case "gpt4o":
+      fullResponseText = await summarizeWithOpenAI(data);
+      break;
+    case "claude3h":
+      fullResponseText = await summarizeWithAnthropic(data);
+      break;
+    case "llama3":
+      fullResponseText = await summarizeWithLlama3(data);
+      break;
+  }
+  return fullResponseText;
+
+
+}
 
 export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
   // input Array of transcripts separated by interval lenth, 10mins/ 20mins each part

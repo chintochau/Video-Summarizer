@@ -2,10 +2,10 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{js,jsx}',
-    './components/**/*.{js,jsx}',
-    './app/**/*.{js,jsx}',
-    './src/**/*.{js,jsx}',
+    "./pages/**/*.{js,jsx}",
+    "./components/**/*.{js,jsx}",
+    "./app/**/*.{js,jsx}",
+    "./src/**/*.{js,jsx}",
   ],
   prefix: "",
   theme: {
@@ -18,6 +18,43 @@ module.exports = {
       },
     },
     extend: {
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            color: theme("colors.foreground"),
+            a: {
+              color: theme("colors.primary.DEFAULT"),
+              "&:hover": {
+                color: theme("colors.primary.foreground"),
+              },
+            },
+            "h1, h2,h3": {
+              color: theme("colors.primary"),
+            },
+            "h4": {
+              color: theme("colors.secondary.DEFAULT"),
+            },
+            h1: {
+              color: theme("colors.primary.DEFAULT"),
+            },
+            h2: {
+              color: theme("colors.primary.DEFAULT"),
+            },
+            h3: {
+              color: theme("colors.primary.DEFAULT"),
+            },
+            h4: {
+              color: theme("colors.primary.DEFAULT"),
+            },
+            h5: {
+              color: theme("colors.primary.DEFAULT"),
+            },
+            h6: {
+              color: theme("colors.primary.DEFAULT"),
+            },
+          },
+        },
+      }),
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -73,14 +110,14 @@ module.exports = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
       fontFamily: {
-        'roboto': ['Roboto', 'sans-serif'],
-        'display': ['var(--font-lexend)'],
-      }
+        roboto: ["Roboto", "sans-serif"],
+        display: ["var(--font-lexend)"],
+      },
     },
   },
   plugins: [
     require("tailwindcss-animate"),
-    require('@tailwindcss/typography'),
-    require('@tailwindcss/forms')
+    require("@tailwindcss/typography"),
+    require("@tailwindcss/forms"),
   ],
-}
+};

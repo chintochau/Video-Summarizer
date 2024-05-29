@@ -1,6 +1,6 @@
 import Markdown from "markdown-to-jsx";
-import React, { useState } from "react";
-import OptionField from "../OptionField";
+import React, { useEffect, useState } from "react";
+import SummaryOptions from "../SummaryOptions";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "../ui/button";
 import {
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/popover";
 import { Label } from "../ui/label";
 import { shareLink } from "@/constants";
+import JsonSummaryField from "./JsonSummaryField";
 
 export const transformArticleWithClickableTimestamps = (articleContent="") => {
   // Updated regex to match hh:mm:ss and mm:ss and m:ss formats
@@ -56,7 +57,18 @@ const SummaryTab = (data) => {
     return null;
   }
 
-  const { summary, sourceId, _id } = summaryObject;
+  const [displayFormat, setDisplayFormat] = useState(null)
+  const { summary, sourceId, summaryFormat, _id } = summaryObject;
+
+  useEffect(() => {
+    if (summaryFormat) { 
+      setDisplayFormat(summaryFormat)
+    }
+    return () => {
+      setDisplayFormat(null)
+    }
+  }, [summaryFormat])
+
 
   const showText = () => {
     if (summary !== "") {
@@ -138,7 +150,7 @@ const SummaryTab = (data) => {
     },
   };
 
-  return (
+   return (
     <ScrollArea className="overflow-y-auto px-2">
       {summary !== "" && (
         <>
@@ -250,7 +262,7 @@ const SummaryTab = (data) => {
 
       {summary === "" && response === "" && !startSummary ? (
         <div className="overflow-y-auto ">
-          <OptionField
+          <SummaryOptions
             handleClick={performSummarize}
             activeTab={activeTab}
             creditCount={creditCount}
@@ -264,12 +276,16 @@ const SummaryTab = (data) => {
               Loading Summary...
             </div>
           ) : (
+            displayFormat === "json" ? (
+              <div className="p-4"><JsonSummaryField summary={showText()} handleTimestampClick={handleTimestampClick}/></div>
+            ) : (
             <Markdown
               className="prose max-w-full h-full p-2 px-4 text-start leading-5"
               options={{ overrides: linkOverride }}
             >
               {transformTimestampRangeFromArticleToSingleLink(showText())}
             </Markdown>
+            )
           )}
           <div className="h-20" />
         </div>

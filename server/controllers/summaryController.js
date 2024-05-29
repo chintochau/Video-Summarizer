@@ -4,6 +4,7 @@ import {
   getTextWithinInterval,
   generateSummaryInSeries,
   parseSRTAndGroupByInterval,
+  generateSummaryInJson,
 } from "../services/summaryServices.js";
 import Summary from "../models/summaryModel.js";
 import Video from "../models/videoModel.js";
@@ -13,14 +14,22 @@ import { getOrCreateVideoBySourceId } from "../services/videoServices.js";
 export const handleSummaryRequest = async (req, res) => {
   try {
     const { option, video, userId, language } = req.body;
-    const { creditAmount, title } = option;
+    const { creditAmount, title, summaryFormat } = option;
     const { sourceId, sourceTitle, sourceType, author, videoDuration } = video;
 
     await checkUserCredit(userId, creditAmount);
 
     let existingVideo = await getOrCreateVideoBySourceId({ video, userId });
 
-    const summary = await generateSummary(req, res);
+    let summary
+
+    console.log("format", summaryFormat);
+
+    if (summaryFormat && summaryFormat === "json") {
+      summary = await generateSummaryInJson(req, res);
+    } else {
+      summary = await generateSummary(req, res);
+    }
 
     const newSummary = new Summary({
       userId,
@@ -30,7 +39,8 @@ export const handleSummaryRequest = async (req, res) => {
       videoId: existingVideo._id, // missing now
       summaryType: title, // Example summary type
       summary,
-      sourceId
+      sourceId,
+      summaryFormat: summaryFormat || "markdown",
     });
 
     await newSummary.save();

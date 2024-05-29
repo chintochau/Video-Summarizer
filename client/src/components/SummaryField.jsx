@@ -47,18 +47,18 @@ const SummaryField = ({ videoRef, className }) => {
 
   const  {selectedModel,setSelectedModel,language, setLanguage} = useModels();
 
-  const insertNewTab = (summaryText, title) => {
+  const insertNewTab = (summaryText, title,summaryFormat) => {
     setSummaries((prev) => [
-      { summary: summaryText, summaryType: title },
+      { summary: summaryText, summaryType: title,summaryFormat: summaryFormat},
       ...prev,
     ]);
   };
 
-  const updateSummaryOfIndex = (indexToUpdate, field, value) => {
+  const updateSummaryOfIndex = (indexToUpdate, field, value,summaryFormat) => {
     const updatedSummaries = summaries.map((item, index) => {
       // Update the summaryType of the specified item
       if (index === indexToUpdate) {
-        return { ...item, [field]: value };
+        return { ...item, [field]: value, summaryFormat: summaryFormat};
       }
       return item; // Keep other items unchanged
     });
@@ -96,7 +96,7 @@ const SummaryField = ({ videoRef, className }) => {
 
   const performSummarize = async (option) => {
     setStartSummary(true);
-    const { interval, creditAmount, title } = option;
+    const { interval, creditAmount, title, summaryFormat } = option;
 
     let finalOutput = "";
 
@@ -125,7 +125,7 @@ const SummaryField = ({ videoRef, className }) => {
             if (data && data.completed) {
               console.log("Summary process completed.");
               setResponse("");
-              insertNewTab(finalOutput, title);
+              insertNewTab(finalOutput, title,summaryFormat);
               setActiveTab(0);
               return; // Stop further processing
             }
@@ -190,7 +190,7 @@ const SummaryField = ({ videoRef, className }) => {
             // Check if the data signals completion
             if (data && data.completed) {
               setResponse("");
-              insertNewTab(finalOutput, title);
+              insertNewTab(finalOutput, title,summaryFormat);
               setCredits((prev) => (prev - creditCount).toFixed(1));
               setActiveTab(0);
               return; // Stop further processing

@@ -16,6 +16,7 @@ import bodyParser from "body-parser";
 // generate summary
 router.post("/get-summary",bodyParser.json({ limit: "10mb" }), handleSummaryRequest);
 router.post("/get-long-summary",bodyParser.json({ limit: "10mb" }), handleLongSummaryRequest);
+
 router.post("/summarize-with-quota",bodyParser.json({ limit: "10mb" }), handleSummaryRequestWithQuota);
 router.post("/get-summary-meetings",bodyParser.json({ limit: "10mb" }), handleMeetingSummary);// currently not being used
 

@@ -33,7 +33,7 @@ import { Signal, SignalHigh, SignalMedium } from "lucide-react";
 
 const classNames = (...classes) => classes.filter(Boolean).join(" ");
 
-const GenerateOptions = (params) => {
+const TranscriptOptions = (params) => {
   const { uploadToCloudAndTranscribe } = params;
   const { setupTranscriptWithInputSRT } = useTranscriptContext();
   const { videoCredits, videoDuration } = useVideoContext();
@@ -237,4 +237,4 @@ const GenerateOptions = (params) => {
   );
 };
 
-export default GenerateOptions;
+export default TranscriptOptions;

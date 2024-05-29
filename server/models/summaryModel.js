@@ -15,6 +15,9 @@ const SummarySchema = new mongoose.Schema({
     originalTranscript: {
         type: String,
     },
+    summaryFormat: { // optional, e.g. "json", "markdown"
+        type: String,
+    },
     sourceId: {
         type: String,
     },

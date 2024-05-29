@@ -1,6 +1,7 @@
 import { Footer } from "@/components";
 import Header from "@/components/common/Header";
 import VideoField from "@/components/summarizerComponents/YTVideoField";
+import JsonSummaryField from "@/components/summary-field-conpoments/JsonSummaryField";
 import {
   transformArticleWithClickableTimestamps,
   transformTimestampRangeFromArticleToSingleLink,
@@ -19,6 +20,7 @@ const SharePage = () => {
   const [sourceId, setSourceId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [videoTitle, setVideoTitle] = useState("");
+  const [summaryFormat, setSummaryFormat] = useState(null);
 
   const videoRef = useRef(null);
   // Effect hook to run once when the component mounts
@@ -42,6 +44,7 @@ const SharePage = () => {
           setVideoTitle(response.data.sourceTitle);
           setSummaryData(response.data);
           setSourceId(response.data.sourceId);
+          setSummaryFormat(response.data.summaryFormat);
         } else {
           console.log("Failed to fetch summary data");
         }
@@ -116,17 +119,38 @@ const SharePage = () => {
   if (!loading && !summaryData) {
     return (
       <>
-      <Helmet>
-        <title>Easy Steps to Share Your Summaries | Fusion AI</title>
-        <meta name="title" content="How to Share Video Summaries with Fusion AI | Easy Steps to Share Your Summaries"/>
-        <meta name="description" content="Learn how to share video summaries with Fusion AI. Follow simple steps to create and share concise summaries of your favorite videos."/>
-        <meta name="keywords" content="share video summaries, Fusion AI sharing instructions, how to share summaries, video summarization guide, share YouTube summaries"/>
-        <meta property="og:title" content="How to Share Video Summaries with Fusion AI | Easy Steps to Share Your Summaries"/>
-        <meta property="og:description" content="Learn how to share video summaries with Fusion AI. Follow simple steps to create and share concise summaries of your favorite videos."/>
-        <meta name="twitter:title" content="How to Share Video Summaries with Fusion AI | Easy Steps to Share Your Summaries"/>
-        <meta name="twitter:description" content="Learn how to share video summaries with Fusion AI. Follow simple steps to create and share concise summaries of your favorite videos."/>
-        <link rel="canonical" href={`${fusionaiLink}/share`} />
-      </Helmet>
+        <Helmet>
+          <title>Easy Steps to Share Your Summaries | Fusion AI</title>
+          <meta
+            name="title"
+            content="How to Share Video Summaries with Fusion AI | Easy Steps to Share Your Summaries"
+          />
+          <meta
+            name="description"
+            content="Learn how to share video summaries with Fusion AI. Follow simple steps to create and share concise summaries of your favorite videos."
+          />
+          <meta
+            name="keywords"
+            content="share video summaries, Fusion AI sharing instructions, how to share summaries, video summarization guide, share YouTube summaries"
+          />
+          <meta
+            property="og:title"
+            content="How to Share Video Summaries with Fusion AI | Easy Steps to Share Your Summaries"
+          />
+          <meta
+            property="og:description"
+            content="Learn how to share video summaries with Fusion AI. Follow simple steps to create and share concise summaries of your favorite videos."
+          />
+          <meta
+            name="twitter:title"
+            content="How to Share Video Summaries with Fusion AI | Easy Steps to Share Your Summaries"
+          />
+          <meta
+            name="twitter:description"
+            content="Learn how to share video summaries with Fusion AI. Follow simple steps to create and share concise summaries of your favorite videos."
+          />
+          <link rel="canonical" href={`${fusionaiLink}/share`} />
+        </Helmet>
         <Header />
         <div className=" w-full flex flex-col py-20">
           <h1 className="text-2xl font-bold text-center">
@@ -137,12 +161,30 @@ const SharePage = () => {
           </p>
           <ol className="list-decimal list-inside mx-auto space-y-2 py-4">
             <li>Login to Fusion AI: Access your account on Fusion AI.</li>
-            <li>Go to Console Page: Navigate to the console page to start summarizing.</li>
-            <li>Input YouTube Link: If you want to summarize a YouTube video, input the YouTube link in the text field.</li>
-            <li>Generate Transcript: If the video transcript is not available, use our AI generation feature to create a transcript.</li>
-            <li>Select Summarization Option: Once the transcript is ready, choose the summarization option that suits your needs.</li>
-            <li>Click the Share Button: After the summary is done, click the sharebutton.</li>
-            <li>Share the Link: Share the generated link with your friends, colleagues, or on social media.</li>
+            <li>
+              Go to Console Page: Navigate to the console page to start
+              summarizing.
+            </li>
+            <li>
+              Input YouTube Link: If you want to summarize a YouTube video,
+              input the YouTube link in the text field.
+            </li>
+            <li>
+              Generate Transcript: If the video transcript is not available, use
+              our AI generation feature to create a transcript.
+            </li>
+            <li>
+              Select Summarization Option: Once the transcript is ready, choose
+              the summarization option that suits your needs.
+            </li>
+            <li>
+              Click the Share Button: After the summary is done, click the
+              sharebutton.
+            </li>
+            <li>
+              Share the Link: Share the generated link with your friends,
+              colleagues, or on social media.
+            </li>
           </ol>
         </div>
       </>
@@ -154,13 +196,28 @@ const SharePage = () => {
       <Helmet>
         <title>{videoTitle || "Video Summary"} | Fusion AI</title>
         <meta name="title" content={`${videoTitle} | Fusion AI`} />
-        <meta name="description" content={`Summary of the video: ${videoTitle}`} />      
+        <meta
+          name="description"
+          content={`Summary of the video: ${videoTitle}`}
+        />
         <meta name="og:title" content={`${videoTitle} | Fusion AI`} />
-        <meta name="og:description" content={`Summary of the video: ${videoTitle}`} />
-        <meta name="og:image" content={`https://img.youtube.com/vi/${sourceId}/0.jpg`} />
+        <meta
+          name="og:description"
+          content={`Summary of the video: ${videoTitle}`}
+        />
+        <meta
+          name="og:image"
+          content={`https://img.youtube.com/vi/${sourceId}/0.jpg`}
+        />
         <meta name="twitter:title" content={`${videoTitle} | Fusion AI`} />
-        <meta name="twitter:description" content={`Summary of the video: ${videoTitle}`} />
-        <meta name="twitter:image" content={`https://img.youtube.com/vi/${sourceId}/0.jpg`} />
+        <meta
+          name="twitter:description"
+          content={`Summary of the video: ${videoTitle}`}
+        />
+        <meta
+          name="twitter:image"
+          content={`https://img.youtube.com/vi/${sourceId}/0.jpg`}
+        />
         <link rel="canonical" href={`${fusionaiLink}/share?s=${summaryId}`} />
       </Helmet>
       <Header className="relative" />
@@ -175,16 +232,22 @@ const SharePage = () => {
           className="max-w-2xl mx-auto shadow-md"
         />
       </div>
-      <div className="px-6 md:px-0 prose max-w-3xl mx-auto py-4">
+      <div className="px-6 md:px-0 max-w-3xl mx-auto py-4">
         <h1 className="text-2xl font-bold">
           <span className=" text-gray-400 font-semibold text-lg">
             Youtube Video Summary:{" "}
           </span>
           <br /> {videoTitle}
         </h1>
-        <Markdown className="" options={{ overrides: linkOverride }}>
-          {transformTimestampRangeFromArticleToSingleLink(summaryData.summary)}
-        </Markdown>
+        {summaryFormat === "json" ? (
+          <JsonSummaryField summary={summaryData.summary} handleTimestampClick={handleTimestampClick}/>
+        ) : (
+          <Markdown className="prose" options={{ overrides: linkOverride }}>
+            {transformTimestampRangeFromArticleToSingleLink(
+              summaryData.summary
+            )}
+          </Markdown>
+        )}
         <div className="text-sm text-gray-400 text-center">
           This Summary is brought to you by <a href={fusionaiLink}>Fusion AI</a>
           , a AI-powered video summarization tool.

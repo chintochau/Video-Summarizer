@@ -142,7 +142,7 @@ ${summarizeOptions.quickSummaryOptions[3].prompt}`}
   );
 };
 
-const OptionField = ({ handleClick, creditCount, setInterval }) => {
+const SummaryOptions = ({ handleClick, creditCount, setInterval }) => {
   const { quickSummaryOptions, detailSummaryOptions } = summarizeOptions;
   return (
     <div className="flex flex-col gap-y-4 mx-8 py-6">
@@ -189,4 +189,4 @@ const OptionField = ({ handleClick, creditCount, setInterval }) => {
   );
 };
 
-export default OptionField;
+export default SummaryOptions;
