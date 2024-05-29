@@ -6,7 +6,6 @@ export const renderSharePage = async (req, res) => {
 
         const summary = await Summary.findById(req.params.summaryId).populate("videoId");
 
-
         if (summary) {
             res.render("share", { 
                 title: `Summary: ${summary.sourceTitle} - Fusion AI Video Book`,

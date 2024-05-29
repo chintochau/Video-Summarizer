@@ -123,7 +123,7 @@ const VideoField = ({
           // set the website title
           if (!homeMode) {
             document.title =
-              e.target.videoTitle + " - Fusion AI Youtube Summarizer";
+              e.target.videoTitle + " | Fusion AI";
           }
         }}
         onPlay={(e) => {

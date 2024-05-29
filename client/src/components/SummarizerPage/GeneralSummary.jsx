@@ -36,6 +36,10 @@ const GeneralSummary = () => {
         <meta name="title" content="Free YouTube Video Summarizer | Try Fusion AI's Summarizing Tool"/>
         <meta name="description" content="Use Fusion AI's free YouTube video summarizer to quickly get concise summaries. Try it now with a free quota and register for more features!"/>
         <meta name="keywords" content="Free YouTube summarizer, video summarization tool, AI video summary, YouTube transcript, video transcription, Fusion AI"/>
+        <meta name="og:title" content="Free YouTube Video Summarizer | Try Fusion AI's Summarizing Tool"/>
+        <meta name="og:description" content="Use Fusion AI's free YouTube video summarizer to quickly get concise summaries. Try it now with a free quota and register for more features!"/>
+        <meta name="twitter:title" content="Free YouTube Video Summarizer | Try Fusion AI's Summarizing Tool"/>
+        <meta name="twitter:description" content="Use Fusion AI's free YouTube video summarizer to quickly get concise summaries. Try it now with a free quota and register for more features!"/>
         <link rel="canonical" href="/summarizer"/>
       </Helmet>
         <div className="w-full bg-white h-full px-2">
