@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react'
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
+import { Helmet } from "react-helmet-async";
 
 const GeneralSummary = () => {
   const videoRef = useRef(null);
@@ -29,20 +30,29 @@ const GeneralSummary = () => {
 
   if (!youtubeId) {
     return (
-      <div className="w-full bg-white h-full px-2">
-        <div className=" h-2/4 flex flex-col justify-center mx-auto max-w-3xl w-full ">
-          <div className="flex flex-col items-center justify-center">
-            <h1 className="text-3xl font-bold">Summarize Youtube Video</h1>
-            <p className="text-lg text-gray-500">Input yourtube link to get started</p>
-          </div>
-          <div className=""><YoutubeBar /></div>
-          <div className="text-center">
-            <Separator className="my-4" />
-            <div className="font-semibold text-lg my-4"> Or Sign in to upload video</div>
-            <Button variant="outline" onClick={() => navigate("/login")}>Sign in</Button>
+      <>
+      <Helmet>
+        <title>Free YouTube Video Summarizer | Try Fusion AI's Summarizing Tool</title>
+        <meta name="title" content="Free YouTube Video Summarizer | Try Fusion AI's Summarizing Tool"/>
+        <meta name="description" content="Use Fusion AI's free YouTube video summarizer to quickly get concise summaries. Try it now with a free quota and register for more features!"/>
+        <meta name="keywords" content="Free YouTube summarizer, video summarization tool, AI video summary, YouTube transcript, video transcription, Fusion AI"/>
+        <link rel="canonical" href="/summarizer"/>
+      </Helmet>
+        <div className="w-full bg-white h-full px-2">
+          <div className=" h-2/4 flex flex-col justify-center mx-auto max-w-3xl w-full ">
+            <div className="flex flex-col items-center justify-center">
+              <h1 className="text-3xl font-bold">Summarize Youtube Video</h1>
+              <p className="text-lg text-gray-500">Input yourtube link to get started</p>
+            </div>
+            <div className=""><YoutubeBar /></div>
+            <div className="text-center">
+              <Separator className="my-4" />
+              <div className="font-semibold text-lg my-4"> Or Sign in to upload video</div>
+              <Button variant="outline" onClick={() => navigate("/login")}>Sign in</Button>
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
