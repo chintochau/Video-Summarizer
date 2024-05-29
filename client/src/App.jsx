@@ -48,7 +48,7 @@ function App() {
                     <Route
                       path="/Summarizer"
                       element={
-                        <div className="h-screen flex flex-col">
+                        <div className=" h-screen flex flex-col">
                           <Header />
                           <GeneralSummary />
                         </div>
@@ -68,10 +68,7 @@ function App() {
                     <Route
                       path="/login"
                       element={
-                        <>
-                          <Header />
                           <LoginPage />
-                        </>
                       }
                     />
                     <Route path="/register" element={<RegisterPage />} />

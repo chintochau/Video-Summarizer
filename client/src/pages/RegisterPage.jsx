@@ -24,7 +24,7 @@ const RegisterPage = () => {
       <div className="h-5/6 flex flex-col justify-center">
         <Card className="max-w-2xl md:mx-auto md:w-1/2 my-2 sm:my-8 mx-2 sm:mx-4 border-0 shadow-none">
           <CardHeader>
-            <CardTitle className="text-center">Sign up</CardTitle>
+            <CardTitle className="text-center text-3xl font-extrabold leading-8 text-cyan-700/70 sm:text-4xl sm:leading-10 ">Sign up</CardTitle>
           </CardHeader>
           <CardContent>
             <SignupForm />

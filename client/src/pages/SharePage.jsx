@@ -121,11 +121,11 @@ const SharePage = () => {
         <meta name="title" content="How to Share Video Summaries with Fusion AI | Easy Steps to Share Your Summaries"/>
         <meta name="description" content="Learn how to share video summaries with Fusion AI. Follow simple steps to create and share concise summaries of your favorite videos."/>
         <meta name="keywords" content="share video summaries, Fusion AI sharing instructions, how to share summaries, video summarization guide, share YouTube summaries"/>
-        <link rel="canonical" href="/share" />
         <meta property="og:title" content="How to Share Video Summaries with Fusion AI | Easy Steps to Share Your Summaries"/>
         <meta property="og:description" content="Learn how to share video summaries with Fusion AI. Follow simple steps to create and share concise summaries of your favorite videos."/>
         <meta name="twitter:title" content="How to Share Video Summaries with Fusion AI | Easy Steps to Share Your Summaries"/>
         <meta name="twitter:description" content="Learn how to share video summaries with Fusion AI. Follow simple steps to create and share concise summaries of your favorite videos."/>
+        <link rel="canonical" href={`${fusionaiLink}/share`} />
       </Helmet>
         <Header />
         <div className=" w-full flex flex-col py-20">
@@ -161,7 +161,7 @@ const SharePage = () => {
         <meta name="twitter:title" content={`${videoTitle} | Fusion AI`} />
         <meta name="twitter:description" content={`Summary of the video: ${videoTitle}`} />
         <meta name="twitter:image" content={`https://img.youtube.com/vi/${sourceId}/0.jpg`} />
-        <link rel="canonical" href={`/share?s=${summaryId}`} />
+        <link rel="canonical" href={`${fusionaiLink}/share?s=${summaryId}`} />
       </Helmet>
       <Header className="relative" />
       <div

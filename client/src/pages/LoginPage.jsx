@@ -6,6 +6,7 @@ import { LoginForm } from "@/forms/LoginForm";
 import Header from "@/components/common/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Helmet } from "react-helmet-async";
+import { fusionaiLink } from "@/constants";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -26,13 +27,14 @@ const LoginPage = () => {
           name="description"
           content="Sign in to Fusion AI to access your account and start summarizing videos."
         />
-        <link rel="canonical" href="/login" />
+        <link rel="canonical" href={`${fusionaiLink}/login`} />
       </Helmet>
+      <Header/>
       
       <div className="h-5/6 flex flex-col justify-center">
         <Card className="max-w-2xl md:mx-auto md:w-1/2 my-2 sm:my-8 mx-2 sm:mx-4 border-0 bg-transparent shadow-none">
           <CardHeader>
-            <CardTitle className="text-center">Sign In</CardTitle>
+            <CardTitle className="text-center text-3xl font-extrabold leading-8 text-cyan-700/70 sm:text-4xl sm:leading-10 ">Sign In</CardTitle>
           </CardHeader>
           <CardContent>
             <LoginForm />

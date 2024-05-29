@@ -15,6 +15,8 @@ import { Loader2 } from 'lucide-react'
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import { Helmet } from "react-helmet-async";
+import { fusionaiLink } from "@/constants";
+import { Link } from "react-router-dom";
 
 const GeneralSummary = () => {
   const videoRef = useRef(null);
@@ -40,18 +42,31 @@ const GeneralSummary = () => {
         <meta name="og:description" content="Use Fusion AI's free YouTube video summarizer to quickly get concise summaries. Try it now with a free quota and register for more features!"/>
         <meta name="twitter:title" content="Free YouTube Video Summarizer | Try Fusion AI's Summarizing Tool"/>
         <meta name="twitter:description" content="Use Fusion AI's free YouTube video summarizer to quickly get concise summaries. Try it now with a free quota and register for more features!"/>
-        <link rel="canonical" href="/summarizer"/>
+        <link rel="canonical" href={`${fusionaiLink}/summarizer`}/>
       </Helmet>
-        <div className="w-full bg-white h-full px-2">
-          <div className=" h-2/4 flex flex-col justify-center mx-auto max-w-3xl w-full ">
+        <div className="w-full px-2 py-10 md:py-20">
+          <div className="flex flex-col justify-center mx-auto max-w-3xl w-full  ">
             <div className="flex flex-col items-center justify-center">
-              <h1 className="text-3xl font-bold">Summarize Youtube Video</h1>
-              <p className="text-lg text-gray-500">Input yourtube link to get started</p>
+            <h1 className="w-full text-left md:text-center text-3xl font-extrabold leading-8 text-cyan-700/70 sm:text-4xl sm:leading-10 ">
+            Free YouTube Video Summarizer
+          </h1>
+          <p className="w-full px-1 text-left md:text-center text-sm md:text-xl text-gray-800 font-roboto font-normal max-w-3xl mt-4 mx-auto">
+          Quickly get concise summaries of a YouTube video. 
+          </p>
             </div>
-            <div className=""><YoutubeBar /></div>
-            <div className="text-center">
-              <Separator className="my-4" />
-              <div className="font-semibold text-lg my-4"> Or Sign in to upload video</div>
+            <div className=" my-4"><YoutubeBar className="outline outline-1 rounded-lg outline-cyan-700/70" /></div>
+          <p
+          className="w-full px-2  text-left text-sm md:text-lg text-gray-400 font-roboto font-normal max-w-3xl mx-auto"
+          >
+          Simply input the video link, and let our advanced AI generate a precise summary for you. <br className="hidden"/>Save time and get straight to the point with Fusion AI.
+          </p>
+            <div className="text-left">
+              <Separator className="mb-8 mt-20" />
+              <p
+                className="text-gray-400 text-sm md:text-lg px-1 pb-4"
+              >
+              Want unlimited access and advanced features? Log in now to unlock the full potential of Fusion AI, including more summaries, cloud storage, and personalized video knowledge database.
+              </p>
               <Button variant="outline" onClick={() => navigate("/login")}>Sign in</Button>
             </div>
           </div>
@@ -59,6 +74,7 @@ const GeneralSummary = () => {
       </>
     );
   }
+
 
   return (
     <div className=" flex flex-col h-40 flex-1 ">
