@@ -29,7 +29,7 @@ const OptionCard = (params) => {
   const { option, handleClick, creditCount, variant } = params;
   const { premimum } = option;
   const { videoDuration } = useVideoContext();
-  const { id, title, description, prompt, icon } = option;
+  const { id, title, description, prompt, icon,beta } = option;
   const [adjustableCreditCount, setAdjustableCreditCount] = useState(0);
   const [interval, setInterval] = useState(600);
   const { parentSrtText } = useTranscriptContext();
@@ -112,7 +112,9 @@ ${summarizeOptions.quickSummaryOptions[3].prompt}`}
             cn(
               buttonDisalbed ? "text-gray-400" : "",
             )
-          }>{title}</CardTitle>
+          }>{title}
+          {beta && <span className="text-xs text-cyan-700/70 ml-2">Beta</span>}
+          </CardTitle>
           {memberOnly ? (
             <HoverCard>
               <HoverCardTrigger>

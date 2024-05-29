@@ -99,7 +99,7 @@ export const summarizeOptions = {
   quickSummaryOptions: [
     {
       id: "quick-essay-json",
-      title: "Summary by section",
+      title: "Summary",
       description: `Analyze the video content from multiple angles and perspectives, then synthesize the information into a balanced, well-reasoned summary.`,
       prompt: `Your output should use the following json format, provide timestamp (in the form hh:mm:ss) for each perspective:
 
@@ -144,6 +144,7 @@ For the part 2, you must list out the main perspectives and the title of that fr
 For conclusion part, briefly summary the video`,
       summaryFormat: "json",
       type: "quick-summary",
+      beta:true,
     },
     {
       id: "quick-essay",
@@ -196,25 +197,25 @@ For conclusion part, briefly summary the video`,
   `,
       type: "quick-summary",
     },
-    {
-      id: "quick-list-json",
-      title: "List by Section",
-      description:
-        "Summarize the essential points from the video in a clean, easy-to-scan bulleted list format.",
-      prompt: `Summarize the text, give a title of the script, a brief about the script, then, List out at least 15 keypoints for the video transcript in a list format, as much key point as possible, for each point, give a starting timestamp reference. drop all unrelated info/ promotional info, such as advertising
+  //   {
+  //     id: "quick-list-json",
+  //     title: "List by Section",
+  //     description:
+  //       "Summarize the essential points from the video in a clean, easy-to-scan bulleted list format.",
+  //     prompt: `Summarize the text, give a title of the script, a brief about the script, then, List out at least 15 keypoints for the video transcript in a list format, as much key point as possible, for each point, give a starting timestamp reference. drop all unrelated info/ promotional info, such as advertising
  
-    use the template
-    {"title": "Title",
-    "introduction": "summary",
-    "content":[
-      {"timestamp": hh:mm:ss,
-      "content": ["keypoint"] // only 1 keypoint is needed
-    }
-    ]}
-  `,
-      type: "quick-summary",
-      summaryFormat: "json",
-    },
+  //   use the template
+  //   {"title": "Title",
+  //   "introduction": "summary",
+  //   "content":[
+  //     {"timestamp": hh:mm:ss,
+  //     "content": ["keypoint"] // only 1 keypoint is needed
+  //   }
+  //   ]}
+  // `,
+  //     type: "quick-summary",
+  //     summaryFormat: "json",
+  //   },
     {
       id: "how-to",
       title: "How to",
