@@ -34,7 +34,7 @@ const navigation = [
     { name: 'Upload', to: 'upload', icon: CloudArrowUpIcon, current: false },
     { name: 'Search', to: 'search', icon: BookOpenIcon, current: false },
     { name: 'History', to: 'history', icon: ClockIcon, current: false },
-    { name: 'Billing', to: 'billing', icon: CreditCardIcon, current: false },
+    // { name: 'Billing', to: 'billing', icon: CreditCardIcon, current: false },
     { name: 'Profile', to: 'profile', icon: UserCircleIcon, current: false },
 ]
 
@@ -146,9 +146,9 @@ const Dashboard = () => {
 
                 {/* Static sidebar for desktop */}
                 <div className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block lg:p-4 lg:overflow-y-auto lg:bg-gray-900 lg:pb-4 w-44">
-                    <Link to="/" className="flex h-16 shrink-0 items-center justify-center text-white text-2xl text-left">
-                        <img className="h-12 w-12 mr-1" src={logo} alt="Fusion AI" />
-                        FusionAI
+                    <Link to="/" className=" font-bold flex h-16 shrink-0 items-center justify-center text-white text-2xl text-left text-nowrap">
+                        <img className="h-10 w-10 mr-1 " src={logo} alt="Fusion AI" />
+                        Fusion AI
                     </Link>
                     <nav className="mt-4">
                         <ul role="list" className="flex flex-col items-center space-y-1 ">

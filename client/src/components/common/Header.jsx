@@ -14,6 +14,7 @@ const navigation = [
   { name: "Features", to: "", href: "/#features" },
   { name: "Pricing", to: "", href: "/#pricing" },
   { name: "F&Q", to: "", href: "/#faq" },
+  // { name: "About", to: "", href: "/about" },
 ];
 
 const Header = ({ className }) => {

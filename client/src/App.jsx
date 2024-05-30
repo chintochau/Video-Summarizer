@@ -20,6 +20,7 @@ import AuthCheckPage from "./pages/AuthCheckPage.jsx";
 import { Toaster } from "./components/ui/toaster.jsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
 import SharePage from "./pages/SharePage.jsx";
+import AboutPage from "./pages/AboutPage.jsx";
 
 function App() {
   const [announcement, setAnnouncement] = useState({
@@ -38,52 +39,24 @@ function App() {
 
   return (
     <>
-      <div className="w-full">
+      <div className="">
         <ModelProvider>
           <VideoProvider>
             <SummaryProvider>
               <TranscriptProvider>
                 <QuotaProvider>
                   <Routes>
-                    <Route
-                      path="/Summarizer"
-                      element={
-                        <div className=" h-screen flex flex-col">
-                          <Header />
-                          <GeneralSummary />
-                        </div>
-                      }
-                    />
-                    <Route
-                      path="/"
-                      element={
-                        <>
-                          <Header />
-                          <HomePage />
-                        </>
-                      }
-                    />
+                    <Route path="/Summarizer" element={<GeneralSummary />} />
+                    <Route path="/" element={<HomePage />} />
                     <Route path="/share" element={<SharePage />} />
-                    <Route path="/auth" element={<AuthCheckPage />}></Route>
-                    <Route
-                      path="/login"
-                      element={
-                          <LoginPage />
-                      }
-                    />
+                    <Route path="/auth" element={<AuthCheckPage />} />
+                    <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
-                    <Route
-                      path="/pricing"
-                      element={
-                        <div>
-                          <Header />
-                          <PricingPage />
-                        </div>
-                      }
-                    />
+                    <Route path="/pricing" element={<PricingPage />} />
                     <Route path="/history" element={<HistoryPage />} />
                     <Route path="/profile" element={<UserProfilePage />} />
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                    <Route path="/about" element={<AboutPage />} />
                     <Route path="/console/*" element={<Dashboard />}>
                       <Route path="" element={<div />} />
                       <Route path="youtube" element={<YoutubeSummary />} />

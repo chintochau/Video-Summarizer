@@ -2,6 +2,7 @@ import React from 'react'
 import PricingPlans from '../components/home/PricingPlans'
 import { Helmet } from 'react-helmet-async'
 import { fusionaiLink } from '@/constants'
+import Header from '@/components/common/Header'
 
 const PricingPage = () => {
   return (
@@ -17,7 +18,9 @@ const PricingPage = () => {
       <meta property="og:image" content={`${fusionaiLink}/fusionai-logo.png`}/>
       <meta property="og:image:alt" content="Fusion AI logo"/>
     </Helmet>
-    <PricingPlans/></>
+    <Header title="Pricing Plans"/>
+    <PricingPlans/>
+    </>
   )
 }
 

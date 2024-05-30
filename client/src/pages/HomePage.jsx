@@ -12,10 +12,12 @@ import {
   ChromeExtension,
 } from "../components";
 import SeeInAction from "@/components/home/SeeInAction";
+import Header from "@/components/common/Header";
 
 const HomePage = () => {
   return (
     <div className="mx-auto">
+      <Header />
       <div id="hero-section">
         <HeroSection />
       </div>

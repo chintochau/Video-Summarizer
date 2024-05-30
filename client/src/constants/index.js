@@ -114,3 +114,52 @@ export const featuresContents = {
     }
   ]
 }
+
+export const aboutPageContents = {
+  title: "About Fusion AI",
+  headline: "About Fusion AI",
+  seoDescription: "Our mission is to make video content easily accessible and digestible for everyone, saving you time and effort in extracting valuable information.",
+  description: "Welcome to Fusion AI, your go-to platform for advanced video transcription and summarization. Our mission is to make video content easily accessible and digestible for everyone, saving you time and effort in extracting valuable information.",
+  introduction: {
+    headline: "Our Mission",
+    description: "At Fusion AI, we believe that time is your most valuable asset. Our goal is to empower you with the tools to quickly and accurately summarize and transcribe video content, enabling you to focus on what truly matters. Whether you're a student, professional, or content creator, Fusion AI helps you harness the power of AI to streamline your workflow.",
+  },
+  story: {
+    headline: "Our Story",
+    description: "Fusion AI was born out of the need to simplify the overwhelming amount of video content available online. Our founders, passionate about artificial intelligence and efficiency, set out to create a solution that would transform how people consume and interact with video content. Since our inception, we've been dedicated to innovation, constantly improving our platform to meet the evolving needs of our users."
+  },
+  technology:{
+    headline: "Our Technology",
+    description: "Our platform leverages state-of-the-art AI algorithms to deliver fast and accurate transcription and summarization services. We support multiple languages and formats, ensuring that you can work with a diverse range of content. Our cloud-based solution offers secure storage and advanced search capabilities, turning your video content into a powerful knowledge database."
+  },
+  team:{
+    headline: "Our Team",
+    description: "Fusion AI is powered by a team of dedicated professionals with expertise in AI, machine learning, and software development. Our team's diverse backgrounds and shared passion for technology drive our commitment to excellence and continuous improvement. We're here to support you every step of the way, from initial use to advanced feature adoption."
+  },
+  why:{
+    headline: "Why Choose Fusion AI",
+    description: "At Fusion AI, we're committed to providing you with the best possible experience when it comes to video transcription and summarization. Here are a few reasons why you should choose us:",
+    reasons: [
+      {
+        title: "Innovation",
+        description: "We utilize cutting-edge AI technology to provide the most accurate and efficient transcription and summarization services."
+      },
+      {
+        title: "User-Centric Design",
+        description: "Our platform is designed with you in mind, offering intuitive features that save you time and enhance productivity."
+      },
+      {
+        title: "Security",
+        description: "We prioritize your data security, with robust measures in place to protect your content and personal information."
+      },
+      {
+        title: "Support",
+        description: "Our dedicated support team is always ready to assist you with any questions or issues you may encounter."
+      }
+    ]
+  },
+  cta:{
+    text: 
+      "Join the Fusion AI community today and transform the way you interact with video content. Sign up for a free trial and experience the future of video summarization and transcription."
+  }
+}
