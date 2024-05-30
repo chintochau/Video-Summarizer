@@ -13,6 +13,7 @@ import { BoltIcon, PlayCircleIcon, ArrowUpTrayIcon, DocumentTextIcon, ArchiveBox
 import { ArrowRight } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Link } from 'react-router-dom';
+import { LinkToDashboard } from '../common/RoutingLinks';
 
 
 const icons = {
@@ -95,11 +96,11 @@ const HowItWorks = () => {
               })
             }
             <div className=' text-left mt-12 px-10 hidden md:block'>
-              <Link to='/summarizer'>
+              <LinkToDashboard>
                 <Button variant="outline" >
                   Summarize Now
                 </Button>
-              </Link>
+              </LinkToDashboard>
             </div>
           </div>
           <div className=' p-0.5 my-auto w-[48rem] h-[27.4rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[1427px] sm:h-[809px] bg-gradient-to-br from-cyan-500 to-indigo-900' >

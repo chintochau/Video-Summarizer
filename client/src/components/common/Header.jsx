@@ -8,6 +8,7 @@ import { Button } from "../ui/button";
 import { HashLink } from "react-router-hash-link";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import { cn } from "@/lib/utils";
+import { LinkToDashboard } from "./RoutingLinks";
 
 const navigation = [
   { name: "Features", to: "", href: "/#features" },
@@ -25,9 +26,7 @@ const Header = ({ className }) => {
     return (
       <div className=" flex items-center">
         <Button size="sm">
-          <Link to="/summarizer">
-            Summarize
-          </Link>
+          <LinkToDashboard>Summarize</LinkToDashboard>
         </Button>
 
         <div className="flex items-center">
@@ -45,15 +44,17 @@ const Header = ({ className }) => {
   const SignedInMenu = () => {
     return (
       <div className=" flex items-center">
-        <Link to="/console/youtube">
+        <LinkToDashboard>
           <Button size="sm">Console</Button>
-        </Link>
+        </LinkToDashboard>
       </div>
     );
   };
 
   return (
-    <header className={cn("bg-gray-900 sticky top-0 z-10 text-white", className)}>
+    <header
+      className={cn("bg-gray-900 sticky top-0 z-10 text-white", className)}
+    >
       <nav
         className="mx-auto flex max-w-7xl items-center justify-between gap-x-2 md:gap-x-6 py-1 px-2 md:py-2 lg:px-8"
         aria-label="Global"
@@ -62,9 +63,7 @@ const Header = ({ className }) => {
           <Link to="/" className="-m-1.5 flex items-center">
             <span className="sr-only">Fusion AI</span>
             <img className="h-10 w-10 ml-3 mr-1 " src={logo} alt="" />
-            <p className="text-2xl font-semibold leading-6 ">
-              Fusion AI
-            </p>
+            <p className="text-2xl font-semibold leading-6 ">Fusion AI</p>
           </Link>
         </div>
         <div className="hidden md:flex md:gap-x-6 lg:gap-x-12">
@@ -82,7 +81,7 @@ const Header = ({ className }) => {
         <div className="flex flex-1 items-center justify-end gap-x-2 md:gap-x-6">
           {currentUser ? <SignedInMenu /> : <SignedOutMenu />}
         </div>
-        <div className="flex lg:hidden">
+        <div className="flex md:hidden">
           <button
             type="button"
             className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-200"
@@ -101,23 +100,20 @@ const Header = ({ className }) => {
         onClose={setMobileMenuOpen}
       >
         <div className="fixed inset-0 z-10" />
-        <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+        <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-gray-900 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center gap-x-6">
             <Link to="/" className="-m-1.5 p-1.5">
               <span className="sr-only">Fusion AI</span>
               <div className="flex items-center">
                 <img className="h-12 w-12" src={logo} alt="Fusion AI" />
-                <div className="text-2xl font-semibold leading-6 text-gray-900">
+                <div className="text-3xl ml-2 font-semibold leading-6 text-white">
                   Fusion AI
                 </div>
               </div>
             </Link>
-            <Link
-              to="/summarizer"
-              className="ml-auto rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Summarize
-            </Link>
+            <LinkToDashboard className="ml-auto">
+              <Button>Summarize</Button>
+            </LinkToDashboard>
             <button
               type="button"
               className="-m-2.5 rounded-md p-2.5 text-gray-700"
@@ -131,22 +127,26 @@ const Header = ({ className }) => {
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
                 {navigation.map((item) => (
-                  <Link
+                  <HashLink
+                    smooth
                     key={item.name}
-                    to={item.to}
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                    to={item.href}
+                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-gray-50"
+                    onClick={() => setMobileMenuOpen(false)}
                   >
                     {item.name}
-                  </Link>
+                  </HashLink>
                 ))}
               </div>
               <div className="py-6">
-                <Link
-                  to="/login"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                >
-                  Sign in
-                </Link>
+                {currentUser ? null : (
+                  <Link
+                    to="/login"
+                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white hover:bg-gray-50"
+                  >
+                    Sign in
+                  </Link>
+                )}
               </div>
             </div>
           </div>

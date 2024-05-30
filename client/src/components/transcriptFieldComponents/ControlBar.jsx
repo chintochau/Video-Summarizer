@@ -77,7 +77,7 @@ export const ControlBar = (params) => {
                 }}
                 className={classNames(
                   currentTab === tab.name
-                    ? "border-indigo-500 text-indigo-600"
+                    ? "border-primary/80 text-primary"
                     : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
                   "whitespace-nowrap border-b-2 py-1 px-1 text-md text-base cursor-pointer"
                 )}
@@ -91,7 +91,7 @@ export const ControlBar = (params) => {
           <div className="content-center flex items-center">
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger className="h-6 w-6 hover:text-indigo-400 text-indigo-600 duration-200 transition-colors">
+                <TooltipTrigger className="h-6 w-6 hover:text-primary/50 text-primary duration-200 transition-colors">
                   <BookmarkIcon
                     onClick={() => {
                       toast({
@@ -112,7 +112,7 @@ export const ControlBar = (params) => {
 
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger className=" hover:text-indigo-400 text-indigo-600 duration-200 transition-colors">
+                <TooltipTrigger className=" hover:text-primary/50 text-primary duration-200 transition-colors">
                   <div className="flex" onClick={() => exportSRT(editableTranscript,video.sourceTitle || "transcript")}>
                     <ArrowDownTrayIcon className="w-6 h-6" />
                     <p>SRT</p>
@@ -138,14 +138,14 @@ export const ControlBar = (params) => {
                     .join("\n")
                 )
               }
-              className="w-8 p-1  text-indigo-600  hover:text-indigo-400 "
+              className="w-8 p-1  text-primary  hover:text-primary/50 "
             >
               <ClipboardDocumentIcon />
             </button>
 
             <button
               onClick={chineseConvert}
-              className={`w-8 p-1  text-indigo-600 rounded-md hover:text-indigo-400  outline-indigo-600 `}
+              className={`w-8 p-1  text-primary rounded-md hover:text-primary/50  outline-primary `}
             >
               {chinexeConvert === "traditional" ? "繁" : "简"}
             </button>
@@ -153,7 +153,7 @@ export const ControlBar = (params) => {
 
             <button
               onClick={() => setIsEditMode(!isEditMode)}
-              className={`w-8 p-1  text-indigo-600 rounded-md hover:text-indigo-400  outline-indigo-600 ${isEditMode ? " bg-indigo-500 text-white" : ""
+              className={`w-8 p-1  text-primary rounded-md hover:text-primary/50  outline-primary ${isEditMode ? " bg-primary/80 text-white" : ""
                 }`}
             >
               <PencilSquareIcon />

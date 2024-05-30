@@ -17,12 +17,13 @@ import { ScrollArea } from "../ui/scroll-area";
 import { getLanguageNameByCode, inActionContents } from "@/constants";
 import { Separator } from "../ui/separator";
 import { ArrowRight } from "lucide-react";
-
-
+import { LinkToDashboard } from "../common/RoutingLinks";
 
 const SeeInAction = () => {
   const videoRef = useRef(null);
-  const [summaries, setSummaries] = useState(demoVideos.map((video, index) => video.summary.map((summary, index) => "")));
+  const [summaries, setSummaries] = useState(
+    demoVideos.map((video, index) => video.summary.map((summary, index) => ""))
+  );
 
   // 點擊轉錄時跳轉視頻
   const handleTimestampClick = (time) => {
@@ -67,22 +68,21 @@ const SeeInAction = () => {
     },
   };
 
-
   return (
     <div className="bg-gray-50 pt-8 lg:pt-10 lg:pb-5">
-        <h2 className=" text-3xl pb-2 mx-2.5 lg:px-6 lg:text-4xl font-bold sm:text-center text-cyan-700/70 py-2 lg:py-2">
-          {inActionContents.headline}
-        </h2>
-        <p
-          className="mx-2.5 py-2 lg:px-6 lg:text-lg text-gray-800 sm:text-center lg:py-2 font-normal font-roboto"
-        >
-          {inActionContents.description}
-        </p>
+      <h2 className=" text-3xl pb-2 mx-2.5 lg:px-6 lg:text-4xl font-bold sm:text-center text-cyan-700/70 py-2 lg:py-2">
+        {inActionContents.headline}
+      </h2>
+      <p className="mx-2.5 py-2 lg:px-6 lg:text-lg text-gray-800 sm:text-center lg:py-2 font-normal font-roboto">
+        {inActionContents.description}
+      </p>
       <Tabs className="w-full lg:text-center" defaultValue="video-0">
         <div className=" overflow-x-auto pb-2 md:pb-0 mb-2">
           <TabsList className="lg:mx-6 lg:mt-2 lg:mb-5 md:py-5 bg-transparent rounded-lg">
             {demoVideos.map((video, index) => (
-              <TabsTrigger key={index} value={`video-${index}`}
+              <TabsTrigger
+                key={index}
+                value={`video-${index}`}
                 className=" data-[state=active]:bg-cyan-600/70 data-[state=active]:text-white data-[state=active]:hover:bg-cyan-800 data-[state=active]:hover:text-white border mx-1 rounded-lg hover:bg-cyan-100 hover:text-cyan-900 hover:border-cyan-200"
               >
                 {video.option}
@@ -97,9 +97,7 @@ const SeeInAction = () => {
                 <CardTitle className=" text-gray-800 lg:text-cyan-600/70">
                   {video.title}
                 </CardTitle>
-                <CardDescription>
-                  {video.additionalInfo}
-                </CardDescription>
+                <CardDescription>{video.additionalInfo}</CardDescription>
               </CardHeader>
               <div className="w-full px-2 lg:px-6 pb-4">
                 <Separator className="w-full" />
@@ -111,65 +109,73 @@ const SeeInAction = () => {
                     homeMode
                     videoRef={videoRef}
                   />
-                  <CardDescription className='text-left font-semibold text-base hidden md:block'>
+                  <CardDescription className="text-left font-semibold text-base hidden md:block">
                     Youtube Video:
                   </CardDescription>
-                  <CardDescription
-                    className="text-left text-gray-800 text-xl font-semibold items-center gap-2 pb-2  lg:text-2xl hidden md:block"
-                  >{video.videoTitle} - ({video.videoLength})
+                  <CardDescription className="text-left text-gray-800 text-xl font-semibold items-center gap-2 pb-2  lg:text-2xl hidden md:block">
+                    {video.videoTitle} - ({video.videoLength})
                   </CardDescription>
                 </div>
 
-                <Tabs defaultValue="summary-0" className=" w-full md:w-1/2 lg:w-7/12 lg:text-left">
+                <Tabs
+                  defaultValue="summary-0"
+                  className=" w-full md:w-1/2 lg:w-7/12 lg:text-left"
+                >
                   <TabsList className="lg:mx-6 lg:mt-2 lg:mb-5 md:py-5 bg-transparent rounded-lg">
-                    {
-                      video.summary.map((summary, index) => (
-                        <TabsTrigger key={index} value={`summary-${index}`} 
+                    {video.summary.map((summary, index) => (
+                      <TabsTrigger
+                        key={index}
+                        value={`summary-${index}`}
                         className="data-[state=active]:bg-cyan-600/70 data-[state=active]:text-white data-[state=active]:hover:bg-cyan-800 data-[state=active]:hover:text-white border mx-1 rounded-lg hover:bg-cyan-100 hover:text-cyan-900 hover:border-cyan-200"
-                        >
-                          <img src={getLanguageNameByCode(summary.language).flag} alt={getLanguageNameByCode(summary.language).name} className="w-6 h-4 inline-block mr-2" />
-                          {getLanguageNameByCode(summary.language).name}
-                        </TabsTrigger>
-                      ))
-                    }
+                      >
+                        <img
+                          src={getLanguageNameByCode(summary.language).flag}
+                          alt={getLanguageNameByCode(summary.language).name}
+                          className="w-6 h-4 inline-block mr-2"
+                        />
+                        {getLanguageNameByCode(summary.language).name}
+                      </TabsTrigger>
+                    ))}
                   </TabsList>
-                  {
-                    video.summary.map((summary, summaryIndex) => (
-                      <TabsContent key={summaryIndex} value={`summary-${summaryIndex}`}>
-                        {summaries[index][summaryIndex] === "" ? (
-                          <div className=" text-center lg:text-left mt-4 lg:px-10 lg:py-4">
-                            <Button
-                              className="w-full h-40 md:h-56 border-cyan-500 text-cyan-500 hover:bg-cyan-800 hover:text-white md:text-2xl rounded-xl shadow-md"
-                              variant="outline"
-                              onClick={() => {
-                                // when click, loop through the summari[index], and set the summary[index] to the content using setSummaries, and set timeout, each time add 10 more characters
-                                let i = 0;
-                                const interval = setInterval(() => {
-                                  if (i >= summary.content.length) {
-                                    clearInterval(interval);
-                                  }
-                                  setSummaries((prev) => {
-                                    const newSummaries = [...prev];
-                                    newSummaries[index][summaryIndex] = summary.content.substring(0, i);
-                                    return newSummaries;
-                                  });
-                                  i += 20;
-                                  if (i > 2000) {
-                                    i += 2000
-                                  }
-                                  if (i > 300) {
-                                    i += 90
-                                  }
-
-                                }, 70);
-                              }}
-                            >
-                              Generate Summary
-                            </Button>
-                          </div>
-                        )
-                          : <ScrollArea className="h-[40vh] min-h-[40vh] md:h-[40vw] md:max-h-[60vh] text-left overflow-auto border-l-indigo-50 border-l-2 px-2 lg:px-8 ">
-                            <Markdown
+                  {video.summary.map((summary, summaryIndex) => (
+                    <TabsContent
+                      key={summaryIndex}
+                      value={`summary-${summaryIndex}`}
+                    >
+                      {summaries[index][summaryIndex] === "" ? (
+                        <div className=" text-center lg:text-left mt-4 lg:px-10 lg:py-4">
+                          <Button
+                            className="w-full h-40 md:h-56 border-cyan-500 text-cyan-500 hover:bg-cyan-800 hover:text-white md:text-2xl rounded-xl shadow-md"
+                            variant="outline"
+                            onClick={() => {
+                              // when click, loop through the summari[index], and set the summary[index] to the content using setSummaries, and set timeout, each time add 10 more characters
+                              let i = 0;
+                              const interval = setInterval(() => {
+                                if (i >= summary.content.length) {
+                                  clearInterval(interval);
+                                }
+                                setSummaries((prev) => {
+                                  const newSummaries = [...prev];
+                                  newSummaries[index][summaryIndex] =
+                                    summary.content.substring(0, i);
+                                  return newSummaries;
+                                });
+                                i += 20;
+                                if (i > 2000) {
+                                  i += 2000;
+                                }
+                                if (i > 300) {
+                                  i += 90;
+                                }
+                              }, 70);
+                            }}
+                          >
+                            Generate Summary
+                          </Button>
+                        </div>
+                      ) : (
+                        <ScrollArea className="h-[40vh] min-h-[40vh] md:h-[40vw] md:max-h-[60vh] text-left overflow-auto border-l-indigo-50 border-l-2 px-2 lg:px-8 ">
+                          <Markdown
                             className="prose max-w-full "
                             options={{ overrides: linkOverride }}
                           >
@@ -177,36 +183,35 @@ const SeeInAction = () => {
                               summaries[index][summaryIndex]
                             )}
                           </Markdown>
-                          </ScrollArea>
-                        }
-                      </TabsContent>
-                    ))
-                  }
+                        </ScrollArea>
+                      )}
+                    </TabsContent>
+                  ))}
                 </Tabs>
               </CardContent>
               <div className="lg:px-6 px-2">
                 <Separator className="w-full my-2 " />
               </div>
-              <CardFooter
-                className="pb-4 lg:pb-6 lg:pt-3"
-              >
-                <Link to="summarizer" className="flex items-center gap-x-2 mx-auto" >
-                <Button
-                  className="w-full text-cyan-500"
-                  variant="link"
-                  size="lg"
+              <CardFooter className="pb-4 lg:pb-6 lg:pt-3">
+                <LinkToDashboard
+                  className="flex items-center gap-x-2 mx-auto"
                 >
+                  <Button
+                    className="w-full text-cyan-500"
+                    variant="link"
+                    size="lg"
+                  >
                     Summarize your own videos now
-                  <ArrowRight size={20} />
-                </Button>
-                  </Link>
+                    <ArrowRight size={20} />
+                  </Button>
+                </LinkToDashboard>
               </CardFooter>
             </Card>
             <div className="flex flex-col md:flex-row w-full justify-between items-center bg-gray-50 p-2 rounded-md"></div>
           </TabsContent>
         ))}
       </Tabs>
-    </div >
+    </div>
   );
 };
 
@@ -221,8 +226,10 @@ const demoVideos = [
     youtubeId: "9VlvbpXwLJs",
     videoLength: "2:26:13",
     summaryButton: "Long Summary",
-    summary: [{
-      language: "en", content: `### Summary
+    summary: [
+      {
+        language: "en",
+        content: `### Summary
 
 The transcript provided is the first 5 minutes of a video titled "30 Years of Business Knowledge in 2hrs 26mins". The speaker, who has built 19 companies and invested in 78 startups over the last 30 years, is offering to share all his business knowledge and expertise for free. He plans to cover a wide range of topics, including how to start, grow, maintain, and sell a business, as well as strategies for finding purpose, co-founders, investors, mentors, and more. The speaker emphasizes that the key to success is not finding a unique idea, but rather following your passions and applying a business mindset to what you love. He believes that the first step in starting a business is to identify what you enjoy doing and then build a business around it.
 ### Part 1 of 15
@@ -531,9 +538,11 @@ In this part of the video, the speaker primarily focuses on the topic of equity 
 The speaker in this part of the video provides several perspectives and strategies for successfully selling a business. He emphasizes the importance of building a business you are passionate about, as this can lead to an "accidental" sale at a high valuation. He also discusses the benefits of partnering with potential acquirers, working with sales agents, merging with competitors, and allowing the management team to buy the company. Overall, the speaker presents a nuanced view on the best approaches to selling a business.
 
   
-`},
-    {
-      language: "zh-tw", content: `### 摘要
+`,
+      },
+      {
+        language: "zh-tw",
+        content: `### 摘要
   這段視頻的前5分鐘中，講者分享了他在過去30年中專注於經營業務的經驗。他建立了19家公司，投資了78家初創企業。他強調不收費幫助他人，而是願意免費分享知識。在接下來的45分鐘中，他將講解如何創業、成長業務、維持業務和出售業務的關鍵。他提到了改變思維、成功工具、失敗重要性、心智圖、目的尋找、合夥人選擇、銷售技巧、營銷策略、投資者、贊助商、品牌建立、個人品牌、招聘、擴張、全球化、導師選擇、避免錯誤、運氣、以及如何出售業務等主題。他認為業務的開始不是源於市場空白或尋找利基，而是從追隨自己的熱情開始，並將其應用於商業思維。他強調追隨熱情是開展業務的第一步，並分享了自己從事營銷的經歷作為例子。
   ### Part 1 of 15
   ### Main Body
@@ -995,8 +1004,8 @@ The speaker in this part of the video provides several perspectives and strategi
   
   這段視頻的最後部分，講者詳細介紹了幾種出售公司的策略，包括不想出售、建立合作關係、使用專業代理、合併以及管理層收購。他強調，最重要的是建立一個你熱愛的業務，而不是為了出售而建立公司。這樣不僅能吸引投資者，還能讓潛在買家更感興趣。
   
-  `
-    }
+  `,
+      },
     ],
   },
   {
@@ -1042,7 +1051,8 @@ Derek Sivers 是一位獨特的創業家,他的經歷和理念值得我們細細
 
 ### 結論
 Derek Sivers是一位不同尋常的創業家,他的思維和做事方式也格外獨特。他的創業心法強調簡單、專注、自主,以及追求真正的快樂,不論是對自己還是對他
-`},
+`,
+      },
       {
         language: "en",
         content: `### Introduction
@@ -1094,16 +1104,15 @@ The video provides a comprehensive overview of the key perspectives and lessons 
 
 ### Call to Action from Author
 The author strongly recommends this book, "Anything You Want", to anyone interested in entrepreneurship and building a fulfilling career. The principles and mindset espoused by Sivers offer a unique and inspiring perspective on what it means to be a successful founder. The author also promotes their own email newsletter, which shares insights and strategies for achieving financial, physical, and mental freedom.
-`
-      }
+`,
+      },
     ],
   },
   {
     option: "Meeting Minutes",
     title: "Meeting Minutes of a 1-hour meeting",
     additionalInfo: "*GPT-4o is recommended for meeting minutes ",
-    videoTitle:
-      "Product Marketing Meeting (weekly) 2021-06-07",
+    videoTitle: "Product Marketing Meeting (weekly) 2021-06-07",
     youtubeId: "06dkG-smO78",
     videoLength: "49:33",
     summaryBUtton: "Meeting Minutes",
@@ -1177,7 +1186,7 @@ The author strongly recommends this book, "Anything You Want", to anyone interes
 ### Elita
 - Coordinate with team members on the Microsoft competitive intel and follow up on agile, GitHub, and GitHub Actions content.
 
-This summary provides a comprehensive overview of the meeting's content, focusing on key takeaways and action items assigned to specific individuals or departments.`
+This summary provides a comprehensive overview of the meeting's content, focusing on key takeaways and action items assigned to specific individuals or departments.`,
       },
       {
         language: "zh-tw",
@@ -1248,7 +1257,8 @@ This summary provides a comprehensive overview of the meeting's content, focusin
 ### Elita
 - 與團隊成員就 Microsoft 競爭情報進行協調，並跟進敏捷、GitHub 和 GitHub Actions 內容。
 
-本摘要全面概述了會議內容，重點在於關鍵要點和分配給特定個人或部門的行動項目。`},
+本摘要全面概述了會議內容，重點在於關鍵要點和分配給特定個人或部門的行動項目。`,
+      },
     ],
   },
   {
@@ -1284,7 +1294,8 @@ This summary provides a comprehensive overview of the meeting's content, focusin
    - The phone has received several software updates, including the introduction of the new Journal app and support for spatial video recording for the Apple Vision Pro (0:06:17 - 0:08:00)
    - The reviewer has had the opportunity to experience the Apple Vision Pro and provides tips on capturing spatial videos (0:08:06 - 0:08:41)
    - The reviewer concludes that the iPhone 15 Pro is a worthy upgrade, especially for users with older iPhones, and compares it to the Porsche 911 in terms of refined design evolution (0:09:17 - 0:10:10)
-`},
+`,
+      },
       {
         language: "zh-tw",
         content: `## 標題：iPhone 15 Pro 使用 3 個月後的全面評測
@@ -1309,8 +1320,8 @@ This summary provides a comprehensive overview of the meeting's content, focusin
 ### 其他重要細節：
   - 該手機已獲得多項軟體更新，包括引入新的 Journal 應用程式以及對 Apple Vision Pro 空間錄影的支援 (0:06:17 - 0:08:00)
   - 評測者有機會體驗 Apple Vision Pro 並提供了拍攝空間影片的技巧 (0:08:06 - 0:08:41)
-  - 評測者的結論是，iPhone 15 Pro 值得升級，尤其是對於使用較舊 iPhone 的用戶，並將其與保時捷 911 的精緻設計演變進行比較 (0:09:17 - 0:10:10)`
-      }
+  - 評測者的結論是，iPhone 15 Pro 值得升級，尤其是對於使用較舊 iPhone 的用戶，並將其與保時捷 911 的精緻設計演變進行比較 (0:09:17 - 0:10:10)`,
+      },
     ],
   },
 ];

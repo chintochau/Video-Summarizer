@@ -47,8 +47,7 @@ const JsonSummaryField = (params) => {
               {section.title}
             </h2>
             <a
-              className="text-sm text-left text-blue-500 underline"
-              href="#"
+              className="text-sm text-left text-blue-500 underline cursor-pointer"
               onClick={() => handleTimestampClick(section.timestamp)}
             >
               {section.timestamp}

@@ -22,20 +22,24 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Textarea } from "./ui/textarea";
-import { Info } from 'lucide-react';
+import { Info } from "lucide-react";
 import { useModels } from "@/contexts/ModelContext";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const OptionCard = (params) => {
   const { option, handleClick, creditCount, variant } = params;
   const { premimum } = option;
   const { videoDuration } = useVideoContext();
-  const { id, title, description, prompt, icon,beta } = option;
+  const { id, title, description, prompt, icon, beta } = option;
   const [adjustableCreditCount, setAdjustableCreditCount] = useState(0);
   const [interval, setInterval] = useState(600);
   const { parentSrtText } = useTranscriptContext();
   const { currentUser } = useAuth();
-  const {selectedModelDetails} = useModels();
-
+  const { selectedModelDetails } = useModels();
 
   useEffect(() => {
     let factor;
@@ -45,7 +49,9 @@ const OptionCard = (params) => {
     }
     switch (id) {
       case "long-summary":
-        factor = Math.max(1, 1.3 * (videoDuration / interval)) * selectedModelDetails.factor;
+        factor =
+          Math.max(1, 1.3 * (videoDuration / interval)) *
+          selectedModelDetails.factor;
         setAdjustableCreditCount((creditCount * factor).toFixed(1));
         break;
       default:
@@ -76,25 +82,28 @@ const OptionCard = (params) => {
   const buttonDisalbed = !parentSrtText || memberOnly;
 
   if (variant === "custom") {
-    return (<div className="flex flex-col items-end">
-      <Textarea
-        placeholder={`Write your prompt here, for Example: \n 
+    return (
+      <div className="flex flex-col items-end">
+        <Textarea
+          placeholder={`Write your prompt here, for Example: \n 
 ${summarizeOptions.quickSummaryOptions[3].prompt}`}
-        onChange={(e) => {
-          console.log(e.target.value);
-        }}
-        className="h-40 placeholder:text-slate-400"
-      />
-      <Button className="w-auto mt-2">Summarize</Button>
-    </div>)
+          onChange={(e) => {
+            console.log(e.target.value);
+          }}
+          className="h-40 placeholder:text-slate-400"
+        />
+        <Button className="w-auto mt-2">Summarize</Button>
+      </div>
+    );
   }
-
 
   return (
     <Card
       className={cn(
         "shadow-md text-left ",
-        buttonDisalbed ? "bg-gray-100" : "hover:outline hover:outline-1 hover:outline-indigo-400 cursor-pointer",
+        buttonDisalbed
+          ? "bg-gray-100"
+          : "hover:outline hover:outline-1 hover:outline-primary cursor-pointer",
         premimum && "border-2 border-yellow-400"
       )}
       onClick={() => {
@@ -108,12 +117,11 @@ ${summarizeOptions.quickSummaryOptions[3].prompt}`}
     >
       <CardHeader>
         <div className="flex justify-between">
-          <CardTitle className={
-            cn(
-              buttonDisalbed ? "text-gray-400" : "",
-            )
-          }>{title}
-          {beta && <span className="text-xs text-cyan-700/70 ml-2">Beta</span>}
+          <CardTitle className={cn(buttonDisalbed ? "text-gray-400" : "")}>
+            {title}
+            {beta && (
+              <span className="text-xs text-cyan-700/70 ml-2">Beta</span>
+            )}
           </CardTitle>
           {memberOnly ? (
             <HoverCard>
@@ -129,7 +137,7 @@ ${summarizeOptions.quickSummaryOptions[3].prompt}`}
               <BoltIcon
                 className={cn(
                   "w-4 h-6 mr-1",
-                  currentUser ? "text-indigo-500" : "text-yellow-400"
+                  currentUser ? "text-indigo-600" : "text-yellow-400"
                 )}
               />
               {parentSrtText ? adjustableCreditCount : "--"}
@@ -148,16 +156,20 @@ const SummaryOptions = ({ handleClick, creditCount, setInterval }) => {
   const { quickSummaryOptions, detailSummaryOptions } = summarizeOptions;
   return (
     <div className="flex flex-col gap-y-4 mx-8 py-6">
-      {/* <CardTitle className="text-indigo-600/80">Custom prompt:</CardTitle>
+      {/* <CardTitle className="text-primary/80">Custom prompt:</CardTitle>
       <OptionCard variant="custom" option={{ premimum: false }} /> */}
       <div className="flex items-center">
-        <CardTitle className="text-indigo-600/80">Quick Summary</CardTitle>
-        <HoverCard>
-          <HoverCardTrigger><Info className="w-5 h-5 ml-2 text-indigo-500 hover:text-indigo-400" /></HoverCardTrigger>
-          <HoverCardContent className=" w-3/4 font-medium">
-            Quick Summary work best for video length between <span className=" font-semibold">8 to 15 minutes</span>  long.
-          </HoverCardContent>
-        </HoverCard>
+        <h3 className=" text-2xl font-semibold text-primary">Quick Summary</h3>
+        <Popover>
+          <PopoverTrigger>
+            <Info className="w-5 h-5 ml-2 text-secondary hover:text-secondary/70" />
+          </PopoverTrigger>
+          <PopoverContent className="w-3/4 font-medium">
+            Quick Summary work best for video length between{" "}
+            <span className=" font-semibold text-primary">8 to 15 minutes</span>{" "}
+            long.
+          </PopoverContent>
+        </Popover>
       </div>
       <div className="xl:grid xl:grid-cols-2 flex flex-col gap-y-4 xl:gap-4">
         {quickSummaryOptions.map((option, index) => {
@@ -172,7 +184,9 @@ const SummaryOptions = ({ handleClick, creditCount, setInterval }) => {
           );
         })}
       </div>
-      <CardTitle className="text-indigo-600/80">Detail Summary for long video</CardTitle>
+      <h3 className=" text-2xl font-semibold text-primary">
+        Detail Summary for long video
+      </h3>
       <div className="flex flex-col gap-y-4 xl:gap-4">
         {detailSummaryOptions.map((option, index) => {
           return (
@@ -186,7 +200,7 @@ const SummaryOptions = ({ handleClick, creditCount, setInterval }) => {
           );
         })}
       </div>
-      <div className="w-full h-10"/>
+      <div className="w-full h-10" />
     </div>
   );
 };

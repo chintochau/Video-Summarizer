@@ -26,7 +26,7 @@ const HeadingsWithTabs = ({
           Select a tab
         </label>
         {/* Use an "onChange" listener to redirect the user to the selected tab URL. */}
-        <DocumentTextIcon className="w-6 h-6 text-indigo-600"/>
+        <DocumentTextIcon className="w-6 h-6 text-primary"/>
         <Select
           onValueChange={(e) => setActiveTab(e) }
           defaultValue={0}
@@ -51,7 +51,7 @@ const HeadingsWithTabs = ({
                 onClick={() => changeTab(index)}
                 className={classNames(
                   activeTab === index
-                    ? "border-indigo-500 text-indigo-600"
+                    ? "border-primary/80 text-primary"
                     : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
                   "whitespace-nowrap border-b-2 py-1.5 px-1 text-sm font-medium cursor-pointer"
                 )}

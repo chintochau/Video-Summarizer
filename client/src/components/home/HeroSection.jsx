@@ -6,6 +6,7 @@ import { HashLink } from "react-router-hash-link";
 import chromeIcon from "../../assets/chrome-icon.png";
 import { chromeStoreLink } from "@/constants";
 import { useAuth } from "@/contexts/AuthContext";
+import { LinkToDashboard } from "../common/RoutingLinks";
 
 const HeroSection = () => {
   const openChromeExtension = () => {
@@ -45,9 +46,9 @@ const HeroSection = () => {
           className="text-xl my-16 px-4 bg-gradient-to-tl from-indigo-800 to-cyan-500 hover:from-indigo-700 hover:to-cyan-200
         "
         >
-          <Link to={currentUser ? "console" : "summarizer"}>
+          <LinkToDashboard >
             {currentUser ? "Go To Console" : "Try for Free"}
-          </Link>
+          </LinkToDashboard>
         </Button>
 
         <p

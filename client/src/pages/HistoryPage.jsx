@@ -117,7 +117,7 @@ const HistoryPage = ({ sourceType = "all", className }) => {
                   <PaginationLink
                     onClick={() => fetchVideos(page)}
                     className={classNames(
-                      page === currentPage ? "bg-blue-500 text-white" : "",
+                      page === currentPage ? "bg-primary/70 text-white" : "",
                       "px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
                     )}
                   >
@@ -138,7 +138,7 @@ const HistoryPage = ({ sourceType = "all", className }) => {
                   <PaginationLink
                     onClick={() => fetchVideos(1)}
                     className={classNames(
-                      1 === currentPage ? "bg-blue-500 text-white" : "",
+                      1 === currentPage ? "bg-primary/70 text-white" : "",
                       "px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
                     )}
                   >
@@ -163,7 +163,7 @@ const HistoryPage = ({ sourceType = "all", className }) => {
                     <PaginationLink
                       onClick={() => fetchVideos(currentPage)}
                       className={classNames(
-                        "px-3 py-2 rounded-md text-sm font-medium cursor-pointer bg-blue-500 text-white"
+                        "px-3 py-2 rounded-md text-sm font-medium cursor-pointer bg-primary/70 text-white"
                       )}
                     >
                       {currentPage}
@@ -187,7 +187,7 @@ const HistoryPage = ({ sourceType = "all", className }) => {
                   <PaginationLink
                     onClick={() => fetchVideos(totalPage)}
                     className={classNames(
-                      totalPage === currentPage ? "bg-blue-500 text-white" : "",
+                      totalPage === currentPage ? "bg-primary/70 text-white" : "",
                       "px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
                     )}
                   >

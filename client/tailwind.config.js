@@ -25,7 +25,7 @@ module.exports = {
             a: {
               color: theme("colors.primary.DEFAULT"),
               "&:hover": {
-                color: theme("colors.primary.foreground"),
+                color: theme("colors.primary.DEFAULT"),
               },
             },
             "h1, h2,h3": {

@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 
 const FinalCTA = () => {
   return (
-    <div className=" text-center py-20">
+    <div className=" text-center py-20 bg-gray-50">
       <div className='container'>
-        <h2 className="text-3xl font-bold mb-4 text-gray-900">Ready to Get Started?</h2>
+        <h2 className="text-3xl font-bold mb-4 text-primary">Ready to Get Started?</h2>
         <p className="mb-8 text-gray-900">Join thousands of satisfied users transforming their video content into knowledge. Sign up today and experience efficiency like never before.</p>
         <Button variant="outline"   >
           <Link to="/login">

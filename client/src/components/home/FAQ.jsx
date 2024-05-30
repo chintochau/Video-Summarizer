@@ -59,9 +59,9 @@ const FAQs = () => {
   };
 
   return (
-    <Container className="py-12 bg-white">
+    <Container className="py-12">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold">Frequently Asked Questions</h2>
+        <h2 className="text-3xl font-bold text-primary">Frequently Asked Questions</h2>
       </div>
       <Accordion type="single" collapsible 
       className="max-w-3xl mx-auto"
