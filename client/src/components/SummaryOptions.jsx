@@ -43,19 +43,31 @@ const OptionCard = (params) => {
 
   useEffect(() => {
     let factor;
+
     if (!currentUser) {
       setAdjustableCreditCount(1);
       return;
     }
+
+    const parts = Math.ceil(videoDuration / interval);
+
     switch (id) {
       case "long-summary":
-        factor =
-          Math.max(1, 1.3 * (videoDuration / interval)) *
-          selectedModelDetails.factor;
+        factor = (Math.max(1, 3 * parts) * selectedModelDetails.factor) / parts;
         setAdjustableCreditCount((creditCount * factor).toFixed(1));
+
+        if (!videoDuration) {
+          setAdjustableCreditCount(
+            creditCount * selectedModelDetails.factor * 5
+          );
+        }
         break;
       default:
-        setAdjustableCreditCount(creditCount * selectedModelDetails.factor);
+        if (creditCount !== 0) {
+          setAdjustableCreditCount(creditCount * selectedModelDetails.factor);
+        } else {
+          setAdjustableCreditCount(1);
+        }
     }
   }, [creditCount, interval, selectedModelDetails]);
 
