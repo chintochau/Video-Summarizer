@@ -42,6 +42,8 @@ const SummaryField = ({ videoRef, className }) => {
   const { video } = useVideoContext();
   const { parentTranscriptText, parentSrtText } = useTranscriptContext();
   const { quota, setQuota } = useQuota();
+  const { selectedModel, setSelectedModel, language, setLanguage } =
+    useModels();
 
   // use state
   const [response, setResponse] = useState("");
@@ -50,9 +52,6 @@ const SummaryField = ({ videoRef, className }) => {
   const [activeTab, setActiveTab] = useState(0);
 
   const { toast } = useToast();
-
-  const { selectedModel, setSelectedModel, language, setLanguage } =
-    useModels();
 
   const insertNewTab = (summaryText, title, summaryFormat) => {
     setSummaries((prev) => [
@@ -204,7 +203,7 @@ const SummaryField = ({ videoRef, className }) => {
             if (data && data.completed) {
               setResponse("");
               insertNewTab(finalOutput, title, summaryFormat);
-              setCredits((prev) => (prev - creditCount).toFixed(1));
+              setCredits((prev) => (prev - creditAmount).toFixed(1));
               setActiveTab(0);
               return; // Stop further processing
             }
@@ -295,8 +294,8 @@ const SummaryField = ({ videoRef, className }) => {
                 </PopoverTrigger>
                 <PopoverContent className="w-fit font-roboto">
                   AI functions best with English language. For other languages,
-                  we recommend summarizing in English first, <br/> then translating
-                  using tools like{" "}
+                  we recommend summarizing in English first, <br /> then
+                  translating using tools like{" "}
                   <a
                     className="text-blue-500 cursor-pointer"
                     target="_blank"
