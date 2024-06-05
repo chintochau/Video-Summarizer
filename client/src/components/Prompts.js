@@ -38,27 +38,25 @@ export const summarizeOptions = {
       description: "Summarize the main ideas, insights, and key messages.",
       prompt: `Your output should use the following template, provide timestamp (in the form hh:mm:ss) for each perspective:
 
-      ### Main Body
-        #### perspective - title
-        - 
-        - 
-        ...
-        #### perspective - title
-        - 
-        - 
-        ...
-        ……
-      ### Conclusion for this part
+### Summary
+#### perspective - title
+- 
+- 
+...
+#### perspective - title
+- 
+- 
+...
+……
         
         You are given a part of the script from the video, it can be any type of video. You task is to write an summarize article based on the video content, and use the above template.
         
         When writing the summary, you must refer to the content from the provided video transcript. for every 2 mins of the video length, you must provide 1 perspective. for the content of the perspective,
         
-        For part 1, state what the video is about and the background. Introduction must be clear, ignore all promotional contents
+        For Abstract, state what this part is about. Abstract must be clear, ignore all promotional contents
         
-        For the part 2, you must list out the main perspectives and the title of that from the author. according to the timpstamp,  for each perspective, you must give supporting information why the author suggest that perspective, the supporting info can be example, fact, etc. for each of the perspective, you must refer the timestamp in the video
-        
-        For conclusion part, briefly summarize this part of the video`,
+        For perspectives section, you must list out the main perspectives and the title of that from the author. according to the timpstamp,  for each perspective, you must give supporting information why the author suggest that perspective, the supporting info can be example, fact, etc. for each of the perspective, you must refer the timestamp in the video
+`,
       premimum: true,
       type: "detail-summary",
     },
@@ -99,7 +97,7 @@ export const summarizeOptions = {
   quickSummaryOptions: [
     {
       id: "quick-essay-json",
-      title: "Summary",
+      title: "Structure Summary",
       description: `Analyze the video content from multiple angles and perspectives, then synthesize the information into a balanced, well-reasoned summary.`,
       prompt: `Your output should use the following json format, provide timestamp (in the form hh:mm:ss) for each perspective:
 

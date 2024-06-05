@@ -23,19 +23,8 @@ import SharePage from "./pages/SharePage.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
 
 function App() {
-  const [announcement, setAnnouncement] = useState({
-    message: "",
-    visible: false,
-  });
 
-  useEffect(() => {
-    fetch(
-      "https://raw.githubusercontent.com/chintochau/Fusion-AI-Announcement/main/announcement.json"
-    )
-      .then((response) => response.json())
-      .then((data) => setAnnouncement(data))
-      .catch((error) => console.error("Error fetching announcement:", error));
-  }, []);
+  
 
   return (
     <>

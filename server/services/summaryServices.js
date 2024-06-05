@@ -65,7 +65,7 @@ export const generateSummaryInJson = async (req, res) => {
       role: "user",
       content: `you are given a transcript of a video titles:${sourceTitle} + 
 Here is the instruction: ${prompt} 
-Video Transcript: ${transcript}`
+Video Transcript: ${transcript}`,
     },
   ];
   const data = {
@@ -89,9 +89,7 @@ Video Transcript: ${transcript}`
       break;
   }
   return fullResponseText;
-
-
-}
+};
 
 export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
   // input Array of transcripts separated by interval lenth, 10mins/ 20mins each part
@@ -115,7 +113,7 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
             promptInput,
         },
       ];
-      const max_tokens = 1024
+      const max_tokens = 1300;
 
       let stream;
       switch (selectedModel) {
@@ -177,12 +175,12 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
         role: "user",
         content: `
         give your response in a markdown, don't use a code interpreter, and you must answer in the language: ${language}
-        you are given the transcript of the first 5 minutes of a video titled: ${
+        you are given the transcript of the beginning of a video titled: ${
           video.sourceTitle
         }, 
         below is the transcript: ${getFirstNMinutesOfTranscript(transcript)}
-        You must use the template:
-        ### Summary
+        You task is to provide a context of the video, the context will explain what the video is about, and what the viewer can expect to learn from the video. the context wll also be used for reference when reading other part of the video, to prevent loss of context.
+        ### Video Abstract
         `,
       },
     ],
@@ -190,8 +188,8 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
     max_tokens: 1024,
     selectedModel,
   };
-  
-  let videoContext
+
+  let videoContext;
 
   switch (selectedModel) {
     case "gpt35":
@@ -219,13 +217,16 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
       here is the part of the video transcript you need to summarize:
       ${transcriptsArray[i]}
       ${prompt}
+      ${i + 1 === transcriptsArray.length ? "Provide the conclusion of this video at the end, using format ### Conclusion" : ""}
+        
+      }
       `;
       try {
         res.write(
-          "### Part " + (i + 1) + " of " + transcriptsArray.length + "\n"
+          "\n### Part " + (i + 1) + " of " + transcriptsArray.length + "\n"
         );
         fullResponseText +=
-          "### Part " + (i + 1) + " of " + transcriptsArray.length + "\n";
+          "\n### Part " + (i + 1) + " of " + transcriptsArray.length + "\n";
 
         const summary = await summarizePrompt(additionalPrompt);
         res.write("\n");
