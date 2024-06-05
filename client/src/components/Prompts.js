@@ -38,7 +38,7 @@ export const summarizeOptions = {
       description: "Summarize the main ideas, insights, and key messages.",
       prompt: `Your output should use the following template, provide timestamp (in the form hh:mm:ss) for each perspective:
 
-### Summary
+### Summary for this part
 #### perspective - title
 - 
 - 
@@ -55,7 +55,7 @@ export const summarizeOptions = {
         
         For Abstract, state what this part is about. Abstract must be clear, ignore all promotional contents
         
-        For perspectives section, you must list out the main perspectives and the title of that from the author. according to the timpstamp,  for each perspective, you must give supporting information why the author suggest that perspective, the supporting info can be example, fact, etc. for each of the perspective, you must refer the timestamp in the video
+        For perspectives section, you must list out the main perspectives and the title of that from the author. according to the timpstamp,  for each perspective, you must provide detail supporting information from the transcript why the author suggest that perspective, the supporting info can be example, fact, etc. for each of the perspective, you must refer the timestamp in the video
 `,
       premimum: true,
       type: "detail-summary",
