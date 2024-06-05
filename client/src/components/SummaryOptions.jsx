@@ -34,12 +34,29 @@ const OptionCard = (params) => {
   const { option, handleClick, creditCount, variant } = params;
   const { premimum } = option;
   const { videoDuration } = useVideoContext();
-  const { id, title, description, prompt, icon, beta } = option;
+  const { id, title, description, prompt, icon, beta,type } = option;
   const [adjustableCreditCount, setAdjustableCreditCount] = useState(0);
   const [interval, setInterval] = useState(600);
   const { parentSrtText } = useTranscriptContext();
   const { currentUser } = useAuth();
   const { selectedModelDetails } = useModels();
+  const [parts, setParts] = useState(3);
+
+
+
+  useEffect(() => {
+    if (videoDuration ) {
+      // set interval to 10 minutes, if the last part is less than 3 minutes, reduce the interval by 30 seconds
+      // until the last part is at more than 3 minutes
+      // each part should be at least 8 mins
+      let tempInterval = 600
+      while (videoDuration % tempInterval < 240 && tempInterval > 480) {
+        tempInterval = tempInterval - 30
+      }
+      setInterval(tempInterval);
+      setParts(Math.ceil(videoDuration / tempInterval));
+    }
+  }, [videoDuration])
 
   useEffect(() => {
     let factor;
@@ -48,8 +65,6 @@ const OptionCard = (params) => {
       setAdjustableCreditCount(1);
       return;
     }
-
-    const parts = Math.ceil(videoDuration / interval);
 
     switch (id) {
       case "long-summary":
