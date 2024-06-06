@@ -6,8 +6,11 @@ import {
   transformArticleWithClickableTimestamps,
   transformTimestampRangeFromArticleToSingleLink,
 } from "@/components/summary-field-conpoments/SummaryTab";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import { fusionaiLink } from "@/constants";
 import SummaryService from "@/services/SummaryService";
+import { DocumentDuplicateIcon, ShareIcon } from "@heroicons/react/24/outline";
 import { Loader2 } from "lucide-react";
 import Markdown from "markdown-to-jsx";
 import React, { useEffect, useRef, useState } from "react";
@@ -21,6 +24,8 @@ const SharePage = () => {
   const [loading, setLoading] = useState(true);
   const [videoTitle, setVideoTitle] = useState("");
   const [summaryFormat, setSummaryFormat] = useState(null);
+
+  const { toast } = useToast();
 
   const videoRef = useRef(null);
   // Effect hook to run once when the component mounts
@@ -239,8 +244,42 @@ const SharePage = () => {
           </span>
           <br /> {videoTitle}
         </h1>
+        <div className="w-full text-right py-2">
+          <Button
+            variant="ghost"
+            className="p-2 text-primary hover:text-secondary"
+            onClick={() => {
+              // copy the current url to clipboard
+              navigator.clipboard.writeText(window.location.href);
+              toast({
+                title: "Saved to clipboard",
+                description: "The link has been copied to your clipboard.",
+              });
+            }}
+          >
+            <ShareIcon className="w-6 h-6" />
+          </Button>
+          <Button
+            variant="ghost"
+            className="p-2 text-primary hover:text-secondary"
+            onClick={() => {
+              //copy the summary to clipboard
+              navigator.clipboard.writeText(summaryData.summary);
+              toast({
+                title: "Saved to clipboard",
+                description: "The summary has been copied to your clipboard.",
+              });
+            }}
+
+          >
+            <DocumentDuplicateIcon className="w-6 h-6" />
+          </Button>
+        </div>
         {summaryFormat === "json" ? (
-          <JsonSummaryField summary={summaryData.summary} handleTimestampClick={handleTimestampClick}/>
+          <JsonSummaryField
+            summary={summaryData.summary}
+            handleTimestampClick={handleTimestampClick}
+          />
         ) : (
           <Markdown className="prose" options={{ overrides: linkOverride }}>
             {transformTimestampRangeFromArticleToSingleLink(
@@ -248,8 +287,11 @@ const SharePage = () => {
             )}
           </Markdown>
         )}
-        <div className="text-sm text-gray-400 text-center">
-          This Summary is brought to you by <a href={fusionaiLink}>Fusion AI</a>
+        <div className="text-sm text-gray-400 text-center py-2">
+          This Summary is brought to you by{" "}
+          <a href={fusionaiLink} className=" text-blue-500">
+            Fusion AI
+          </a>
           , a AI-powered video summarization tool.
         </div>
       </div>

@@ -23,9 +23,6 @@ import SharePage from "./pages/SharePage.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
 
 function App() {
-
-  
-
   return (
     <>
       <div className="">
