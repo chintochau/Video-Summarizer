@@ -8,7 +8,7 @@ export const LinkToDashboard = ({ children, className }) => {
 
   return (
     <Link
-      to={currentUser ? "/console/youtube" : "summarizer"}
+      to={currentUser ? "/console/youtube" : "/summarizer"}
       className={cn(className)}
     >
       {children}
