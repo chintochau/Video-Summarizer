@@ -68,7 +68,7 @@ const OptionCard = (params) => {
 
     switch (id) {
       case "long-summary":
-        factor = (Math.max(1, 3 * parts) * selectedModelDetails.factor) / parts;
+        factor = (Math.max(1, 2.5 * parts) * selectedModelDetails.factor) / parts;
         setAdjustableCreditCount((creditCount * factor).toFixed(1));
 
         if (!videoDuration) {

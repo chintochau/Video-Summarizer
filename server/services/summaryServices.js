@@ -91,7 +91,7 @@ Video Transcript: ${transcript}`,
   return fullResponseText;
 };
 
-export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
+export const generateSummaryInSeries = async (transcriptsArray, req, res,chapters) => {
   // input Array of transcripts separated by interval lenth, 10mins/ 20mins each part
   const { language, selectedModel, video, transcript, option } = req.body;
   const { prompt } = option;
@@ -102,6 +102,7 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
   let fullResponseText = "";
   // Wrap the summary task in a function that returns a promise.
   const summarizePrompt = async (promptInput) => {
+    // each prompt is a part of the video transcript
     return new Promise(async (resolve, reject) => {
       const messages = [
         {
@@ -169,6 +170,7 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res) => {
   };
 
   const data = {
+    // context of the video
     system: "",
     messages: [
       {

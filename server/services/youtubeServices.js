@@ -38,3 +38,16 @@ export const YTconvertToSrt = (transcript) => {
 
   return srt;
 };
+
+
+export const getYoutubeChapters = async (youtubeId) => {
+  try {
+    const videoInfo = await ytdl.getInfo(youtubeId);
+    console.log("videoInfo", videoInfo.videoDetails.chapters);
+    const chapters = videoInfo.videoDetails.chapters;
+    return chapters;
+  } catch (error) {
+    console.error(error.message);
+  }
+
+}

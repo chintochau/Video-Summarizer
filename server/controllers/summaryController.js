@@ -10,6 +10,8 @@ import Summary from "../models/summaryModel.js";
 import Video from "../models/videoModel.js";
 import { checkUserCredit, deductCredits } from "../utils/creditUtils.js";
 import { getOrCreateVideoBySourceId } from "../services/videoServices.js";
+import { getYoutubeChapters } from "../services/youtubeServices.js";
+import {secondsToTime} from "../utils/timeUtils.js"
 
 export const handleSummaryRequest = async (req, res) => {
   try {
@@ -21,7 +23,7 @@ export const handleSummaryRequest = async (req, res) => {
 
     let existingVideo = await getOrCreateVideoBySourceId({ video, userId });
 
-    let summary
+    let summary;
 
     console.log("format", summaryFormat);
 
@@ -70,11 +72,23 @@ export const handleLongSummaryRequest = async (req, res) => {
     const { sourceId, sourceTitle, sourceType, author, videoDuration } = video;
     const textByInterval = parseSRTAndGroupByInterval(transcript, interval);
 
+    let chapters = null;
+    if (sourceType === "youtube") {
+      const chaptersArray = await getYoutubeChapters(sourceId);
+      if (chaptersArray) {
+        chapters = "";
+        chaptersArray.forEach((chapter, index) => {
+          chapters += `Timestamp: ${secondsToTime(chapter.start_time)} : Title:${chapter.title}\n`;
+        });
+        console.log("chapters", chapters);
+      }
+    }
+
     await checkUserCredit(userId, creditAmount);
 
     let existingVideo = await getOrCreateVideoBySourceId({ video, userId });
-    
-    const summary = await generateSummaryInSeries(textByInterval, req, res);
+
+    const summary = await generateSummaryInSeries(textByInterval, req, res, chapters);
 
     const newSummary = new Summary({
       userId,
@@ -96,7 +110,7 @@ export const handleLongSummaryRequest = async (req, res) => {
       { new: true }
     );
 
-    // Deduct credits after the summary task    
+    // Deduct credits after the summary task
 
     await deductCredits(userId, creditAmount);
     res.status(200).end();
@@ -105,8 +119,7 @@ export const handleLongSummaryRequest = async (req, res) => {
       .status(500)
       .json({ message: "Failed to generate summary", error: error.message });
   }
-  
-}
+};
 
 export const handleMeetingSummary = async (req, res) => {
   const { option, transcript, interval, userId } = req.body;
@@ -140,15 +153,15 @@ export const getAllVideosForUser = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 10;
     const startIndex = (page - 1) * limit;
-    let sourceType
+    let sourceType;
 
     switch (req.query.sourceType) {
       case "all":
         sourceType = { $exists: true };
         break;
       default:
-        sourceType = req.query.sourceType
-        break
+        sourceType = req.query.sourceType;
+        break;
     }
 
     // Count total number of videos for the specified userId
@@ -202,47 +215,54 @@ export const handleSummaryRequestWithQuota = async (req, res) => {
     const summary = await generateSummary(req, res);
     res.status(200).end();
   } catch (error) {
-    res.status(500).json({ message: "Failed to generate summary", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Failed to generate summary", error: error.message });
   }
-}
+};
 export const deleteSummary = async (req, res) => {
   try {
     const { userId, summaryId } = req.body;
-    const summary = await Summary.findOneAndDelete
-      ({ _id: summaryId, userId: userId });
+    const summary = await Summary.findOneAndDelete({
+      _id: summaryId,
+      userId: userId,
+    });
     if (!summary) {
-      return res.status(404).json({ success: false, message: "Summary not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Summary not found" });
     }
     res.status(200).json({ success: true, data: summary });
-  }
-  catch (error) {
+  } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
-}
+};
 export const deleteVideoAndSummaries = async (req, res) => {
   try {
     const { userId, sourceId } = req.body;
     const video = await Video.findOneAndDelete({ sourceId, userId });
     if (!video) {
-      return res.status(404).json({ success: false, message: "Video not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Video not found" });
     }
     const summaries = await Summary.deleteMany({ videoId: video._id });
     res.status(200).json({ success: true, data: { video, summaries } });
-  }
-  catch (error) {
+  } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
-}
+};
 
 export const getSummaryById = async (req, res) => {
   try {
     const summary = await Summary.findById(req.params.summaryId);
     if (!summary) {
-      return res.status(404).json({ success: false, message: "Summary not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Summary not found" });
     }
     res.status(200).json({ success: true, data: summary });
-  }
-  catch (error) {
+  } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
-}
+};
