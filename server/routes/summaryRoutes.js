@@ -8,7 +8,9 @@ import {
   deleteSummary,
   deleteVideoAndSummaries,
   handleLongSummaryRequest,
-  getSummaryById
+  getSummaryById,
+  deleteSummaries,
+  getAllSummaries
 } from "../controllers/summaryController.js";
 const router = express.Router();
 import bodyParser from "body-parser";
@@ -28,5 +30,9 @@ router.get("/user/:userId/videos",bodyParser.json({ limit: "10mb" }), getAllVide
 // delete summary
 router.post("/delete-summary",bodyParser.json({ limit: "10mb" }), deleteSummary);
 router.post("/delete-video",bodyParser.json({ limit: "10mb" }), deleteVideoAndSummaries);
+
+// batch delete
+router.post("/delete-summaries",bodyParser.json({ limit: "10mb" }), deleteSummaries);
+router.get("/get-summaries",bodyParser.json({ limit: "10mb" }), getAllSummaries);
 
 export default router;

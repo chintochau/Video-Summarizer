@@ -266,3 +266,29 @@ export const getSummaryById = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+
+//batch
+export const deleteSummaries = async (req, res) => {
+  try {
+    const date = new Date("2024-05-14T00:00:00.000Z");
+    const summaries = await Summary.deleteMany({ createdAt: { $lt: date } });
+    const videos = await Video.deleteMany({ lastUpdated: { $lt: date } });
+    res.status(200).json({ success: true, data: { summaries, videos } });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+
+}
+
+export const getAllSummaries = async (req, res) => {
+  try {
+    // get all summaries objects, only return the _id, exclude all other information, and in a raw text format, separated by line break
+    const summaries = await Summary.find({}, { _id: 1 }).lean();
+    const summaryIds = summaries.map((summary) => summary._id).join("\n");
+    res.status(200).send(summaryIds);
+
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
