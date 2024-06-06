@@ -59,7 +59,7 @@ export const generateSummaryInJson = async (req, res) => {
 
   let fullResponseText = "";
   const max_tokens = 2000;
-  const system = `your response must be in json format and start with the open bracket, and the language of the content should be ${language}`;
+  const system = `your response must be in json format and only give the json response wraped in a bracket, without extra words, because your response will be directly used in my function, any extra words will break the structure. So dont give extra words., and the language of the content should be ${language}`;
   const messages = [
     {
       role: "user",
