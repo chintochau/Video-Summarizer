@@ -281,7 +281,7 @@ const SharePage = () => {
             handleTimestampClick={handleTimestampClick}
           />
         ) : (
-          <Markdown className="prose" options={{ overrides: linkOverride }}>
+          <Markdown className="prose max-w-full" options={{ overrides: linkOverride }}>
             {transformTimestampRangeFromArticleToSingleLink(
               summaryData.summary
             )}
