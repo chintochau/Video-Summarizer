@@ -34,16 +34,19 @@ import { Signal, SignalHigh, SignalMedium } from "lucide-react";
 const classNames = (...classes) => classes.filter(Boolean).join(" ");
 
 const TranscriptOptions = (params) => {
+
+  const preselectedOptionIndex = 2
+
   const { uploadToCloudAndTranscribe } = params;
   const { setupTranscriptWithInputSRT } = useTranscriptContext();
   const { videoCredits, videoDuration } = useVideoContext();
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(preselectedOptionIndex);
   const { currentUser } = useAuth();
   const { selectedTranscribeOption, setSelectedTranscribeOption } =
     useTranscriptContext();
 
   useEffect(() => {
-    setSelectedTranscribeOption(transcribeOptions[0]);
+    setSelectedTranscribeOption(transcribeOptions[preselectedOptionIndex]);
   }, []);
 
   const getTranscriptWithUpload = (file) => {

@@ -182,7 +182,6 @@ app.post(
 );
 
 app.get("/", (req, res) => {
-  // redirect to "https://fusionaivideo.io"
   res.redirect("https://fusionaivideo.io");
 });
 

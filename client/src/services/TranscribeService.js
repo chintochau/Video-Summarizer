@@ -1,5 +1,3 @@
-import axios from "axios";
-
 const apiUrl = `${import.meta.env.VITE_API_BASE_URL}`;
 
 let controller = new AbortController();
@@ -59,7 +57,7 @@ class TranscribeService {
         formData.append("resourceType", resourceType);
 
         try {
-            const response = await fetch(apiUrl + "/api/processVideo", {
+            const response = await fetch(apiUrl + "/api/beta/processVideo", {
                 method: "POST",
                 body: formData,
                 signal: signal

@@ -13,7 +13,7 @@ import {
 } from "../services/videoServices.js";
 import { v4 as uuidv4 } from "uuid";
 import ytdl from "ytdl-core";
-import tmp from "tmp";
+import tmp, { file } from "tmp";
 import util from "util";
 import { pipeline } from "stream";
 import fs from "fs";
@@ -227,7 +227,7 @@ export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
     await pipelineAsync(audioStream, fileStream);
 
     const filePublicUrl = await uploadAudioToS3(tempFilePath, videoInfo);
-    const id = await transcribeLinkWithRunPod(filePublicUrl,transcribeOption.value || "base");
+    const id = await transcribeLinkWithRunPod(filePublicUrl, transcribeOption.value || "base");
     // const id = "a671ac14-4c07-4c09-a5c6-113c75b72b43-u1"
     // add id to array, and check status every 10 seconds
     let currentStatus = "IN_PROGRESS";
@@ -263,3 +263,58 @@ export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
   //   if (err) throw err;
   // });
 };
+
+
+export const processVideoBeta = async (req, res) => {
+  const { userId, link, publicId, resourceType } = req.body;
+  const video = JSON.parse(req.body.video);
+  const transcribeOption = JSON.parse(req.body.transcribeOption);
+  const { sourceTitle } = video;
+  
+  console.log("Processing video Beta", sourceTitle);
+  const writeData = (data) => {
+    res.write(`data: ${JSON.stringify(data)}\n\n`);
+  };
+  try {
+    const id = await transcribeLinkWithRunPod(link, transcribeOption.value || "base");
+    let progress = 0
+    let currentStatus = "IN_PROGRESS";
+    let data
+    while (currentStatus !== "COMPLETED") {
+      await new Promise((resolve) => setTimeout(resolve, 10000));
+      progress += 10;
+      writeData({ progress });
+
+      data = await checkTranscriptionStatusWithRunPod(id);
+
+      if (data.status === "FAILED") {
+        throw new Error("Transcription failed");
+      } else if (data.status === "COMPLETED") {
+        currentStatus = "COMPLETED";
+      }
+    }
+
+    const result = data.output.transcription;
+
+    await getOrCreateVideoAndUpdateTranscript({
+      video,
+      userId,
+      originalTranscript: result,
+    });
+    writeData({ transcript: result });
+
+    res.end()
+
+    res.on("close", () => {
+      res.end();
+    })
+
+    res.on("finish", () => {
+      res.end();
+    })
+
+  } catch {
+    res.status(500).send("Error occurred during transcription");
+  }
+
+}
