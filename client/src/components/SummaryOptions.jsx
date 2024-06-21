@@ -34,7 +34,7 @@ const OptionCard = (params) => {
   const { option, handleClick, creditCount, variant } = params;
   const { premimum } = option;
   const { videoDuration } = useVideoContext();
-  const { id, title, description, prompt, icon, beta,type } = option;
+  const { id, title, description, prompt, icon, beta, type } = option;
   const [adjustableCreditCount, setAdjustableCreditCount] = useState(0);
   const [interval, setInterval] = useState(600);
   const { parentSrtText } = useTranscriptContext();
@@ -45,7 +45,7 @@ const OptionCard = (params) => {
 
 
   useEffect(() => {
-    if (videoDuration ) {
+    if (videoDuration) {
       // set interval to 10 minutes, if the last part is less than 3 minutes, reduce the interval by 30 seconds
       // until the last part is at more than 3 minutes
       // each part should be at least 8 mins
@@ -183,10 +183,15 @@ const SummaryOptions = ({ handleClick, creditCount, setInterval }) => {
   const { quickSummaryOptions, detailSummaryOptions } = summarizeOptions;
   return (
     <div className="flex flex-col gap-y-4 mx-8 py-6">
+      <CardTitle
+        className="text-secondary/70 "
+      >
+        Step 3 of 3 : Generate Summary
+      </CardTitle>
       {/* <CardTitle className="text-primary/80">Custom prompt:</CardTitle>
       <OptionCard variant="custom" option={{ premimum: false }} /> */}
       <div className="flex items-center">
-        <h3 className=" text-2xl font-semibold text-primary">Quick Summary</h3>
+        <CardTitle className="text-primary">Quick Summary</CardTitle>
         <Popover>
           <PopoverTrigger>
             <Info className="w-5 h-5 ml-2 text-secondary hover:text-secondary/70" />
@@ -211,9 +216,9 @@ const SummaryOptions = ({ handleClick, creditCount, setInterval }) => {
           );
         })}
       </div>
-      <h3 className=" text-2xl font-semibold text-primary">
+      <CardTitle className="text-primary pt-4">
         Detail Summary for long video
-      </h3>
+      </CardTitle>
       <div className="flex flex-col gap-y-4 xl:gap-4">
         {detailSummaryOptions.map((option, index) => {
           return (

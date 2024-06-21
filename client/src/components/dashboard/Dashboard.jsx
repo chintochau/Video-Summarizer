@@ -8,7 +8,8 @@ import {
     PlayCircleIcon,
     UserCircleIcon,
     BookOpenIcon,
-    UserGroupIcon
+    UserGroupIcon,
+    ChevronDoubleLeftIcon
 } from '@heroicons/react/24/outline'
 import { Link, Route, Routes, useLocation } from 'react-router-dom'
 import HistoryPage from '../../pages/HistoryPage'
@@ -17,22 +18,20 @@ import YoutubeSummary from '../SummarizerPage/YoutubeSummary'
 import UploadSummary from '../SummarizerPage/UploadSummary'
 import SearchPage from '@/pages/SearchPage'
 import logo from '@/assets/logo.png'
+import MeetingSummary from '../SummarizerPage/MeetingSummary'
+import { cn } from '@/lib/utils'
+import { Button } from '../ui/button'
 
 
 const navigation = [
     { name: 'Youtube', to: 'youtube', icon: PlayCircleIcon, current: true },
     { name: 'Upload', to: 'upload', icon: CloudArrowUpIcon, current: false },
-    {name:"Meeting", to:"meeting", icon:UserGroupIcon, current:false},
+    { name: "Meeting", to: "meeting", icon: UserGroupIcon, current: false },
     { name: 'Search', to: 'search', icon: BookOpenIcon, current: false },
     { name: 'History', to: 'history', icon: ClockIcon, current: false },
     // { name: 'Billing', to: 'billing', icon: CreditCardIcon, current: false },
     { name: 'Profile', to: 'profile', icon: UserCircleIcon, current: false },
 ]
-
-function classNames(...classes) {
-    return classes.filter(Boolean).join(' ')
-}
-
 
 const Dashboard = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -41,6 +40,7 @@ const Dashboard = () => {
     useEffect(() => {
         setCurrentPathname(location.pathname.split("/")[2] || "youtube")
     }, [location.pathname])
+    const [openSideBar, setOpenSideBar] = useState(true)
 
     const Bar3Button = () => {
         return (
@@ -49,6 +49,10 @@ const Dashboard = () => {
                 <Bars3Icon className="h-6 w-6 mx-2" aria-hidden="true" />
             </button>
         )
+    }
+
+    const toggleSideBar = () => {
+        setOpenSideBar(!openSideBar)
     }
 
 
@@ -111,7 +115,7 @@ const Dashboard = () => {
                                                     <li key={item.name}>
                                                         <Link
                                                             to={item.to}
-                                                            className={classNames(
+                                                            className={cn(
                                                                 currentPathname === item.to
                                                                     ? 'bg-gray-800 text-white'
                                                                     : 'text-gray-400 hover:text-white hover:bg-gray-800',
@@ -134,17 +138,29 @@ const Dashboard = () => {
                 </Transition.Root>
 
                 {/* Static sidebar for desktop */}
-                <div className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block lg:p-4 lg:overflow-y-auto lg:bg-gray-900 lg:pb-4 w-44">
+                <div className={
+                    cn(
+                        "hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block  lg:overflow-y-auto lg:bg-gray-900 lg:pb-4 transition-all duration-300 ease-in-out overflow-hidden ",
+                        openSideBar ? "w-44 lg:p-4" : "w-12"
+                    )
+                }>
+
                     <Link to="/" className=" font-bold flex h-16 shrink-0 items-center justify-center text-white text-2xl text-left text-nowrap">
                         <img className="h-10 w-10 mr-1 " src={logo} alt="Fusion AI" />
-                        Fusion AI
+                        <span className={
+                            cn(
+                                openSideBar ? "block" : "hidden",
+                                "text-2xl transition-all duration-300 ease-in-out"
+                            )
+                        }>Fusion AI</span>
                     </Link>
+
                     <nav className="mt-4">
                         <ul role="list" className="flex flex-col items-center space-y-1 ">
                             {navigation.map((item) => (
                                 <Link key={item.name} to={item.to} className='w-full text-center'>
                                     <li key={item.name}
-                                        className={classNames(
+                                        className={cn(
                                             currentPathname === item.to ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800',
                                             'group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-semibold'
                                         )}>
@@ -154,11 +170,30 @@ const Dashboard = () => {
                                     </li>
                                 </Link>
                             ))}
+                            <div className={
+                                cn(
+                                    "",
+                                    openSideBar ? "text-right w-full" : "text-left"
+                                )
+                            }>
+                                <span className='sr-only'>Toggle sidebar</span>
+                                <Button
+                                    variant="ghost"
+                                    className="text-gray-400 hover:bg-gray-800 hover:text-white"
+                                    onClick={toggleSideBar}
+                                ><ChevronDoubleLeftIcon className={
+                                    cn(
+                                        "h-6 w-6 transition-all duration-300 ease-in-out",
+                                        openSideBar ? "" : "transform rotate-180"
+                                    )
+                                } /> 
+                                </Button>
+                            </div>
                         </ul>
                     </nav>
                 </div>
 
-                <div className={classNames(currentPathname === "youtube" || currentPathname === "upload" ? "hidden" : "", "sticky top-0 z-40 flex items-center gap-x-6 bg-gray-900 px-4 py-4 shadow-sm sm:px-6 lg:hidden")}>
+                <div className={cn(currentPathname === "youtube" || currentPathname === "upload" ? "hidden" : "", "sticky top-0 z-40 flex items-center gap-x-6 bg-gray-900 px-4 py-4 shadow-sm sm:px-6 lg:hidden")}>
                     <button type="button" className="-m-2.5 p-2.5 text-gray-400 lg:hidden" onClick={() => setSidebarOpen(true)}>
                         <span className="sr-only">Open sidebar</span>
                         <Bars3Icon className="h-6 w-6" aria-hidden="true" />
@@ -166,12 +201,17 @@ const Dashboard = () => {
                     <div className="flex-1 text-sm font-semibold leading-6 text-white capitalize">{currentPathname}</div>
                 </div>
 
-                <main className="lg:pl-44 h-[80vh] flex-1">
+                <main className={
+                    cn(
+                        "h-[80vh] flex-1 transition-all duration-300 ease-in-out",
+                        openSideBar ? "lg:pl-44 " : "lg:pl-12"
+                    )
+                }>
                     <Routes>
                         <Route path='' element={<YoutubeSummary Bar3Button={Bar3Button} />} />
                         <Route path='youtube' element={<YoutubeSummary Bar3Button={Bar3Button} />} />
                         <Route path='upload' element={<UploadSummary Bar3Button={Bar3Button} />} />
-                        <Route path='meeting' element={<UploadSummary Bar3Button={Bar3Button} />} />
+                        <Route path='meeting' element={<MeetingSummary Bar3Button={Bar3Button} />} />
                         <Route path='billing' element={<div />} />
                         <Route path='history' element={<HistoryPage />} />
                         <Route path='profile' element={<UserProfilePage />} />
