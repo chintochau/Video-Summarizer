@@ -6,11 +6,9 @@ import fs from "fs";
 import path from "path";
 import ffmpeg from "fluent-ffmpeg";
 import cors from "cors";
-import { CharacterTextSplitter } from "langchain/text_splitter";
-import { kmeans } from "ml-kmeans";
 import { pipeline } from "stream";
 import util from "util";
-import { openai, anthropic, assembly } from "./config/summaryConfig.js";
+import { openai, assembly } from "./config/summaryConfig.js";
 import summaryRoutes from "./routes/summaryRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import { connectDB } from "./config/db.js";
@@ -24,10 +22,6 @@ import ttsRoutes from "./routes/ttsRoutes.js";
 import { fileURLToPath } from "url";
 //running python code for testing
 import { pythonRunner } from "./utils/pythonRunner.js";
-import {
-  formatGroupedSubtitle,
-  groupSubtitlesByInterval,
-} from "./utils/transcripUtils.js";
 const variableToPass = "";
 pythonRunner("--version", [variableToPass])
   .then((output) => {
@@ -90,6 +84,7 @@ async function transcribeWithAssemblyAI(data) {
   const transcript = await assembly.transcripts.transcribe({
     audio: filePath,
     language_code: language,
+    speaker_labels:true
   });
 
   const srt = await assembly.transcripts.subtitles(transcript.id, "srt");

@@ -3,35 +3,26 @@ import { Dialog, Transition } from '@headlessui/react'
 import {
     Bars3Icon,
     XMarkIcon,
-    CreditCardIcon,
     ClockIcon,
     CloudArrowUpIcon,
     PlayCircleIcon,
     UserCircleIcon,
-    BookOpenIcon
+    BookOpenIcon,
+    UserGroupIcon
 } from '@heroicons/react/24/outline'
 import { Link, Route, Routes, useLocation } from 'react-router-dom'
 import HistoryPage from '../../pages/HistoryPage'
 import UserProfilePage from '../../pages/UserProfilePage'
 import YoutubeSummary from '../SummarizerPage/YoutubeSummary'
 import UploadSummary from '../SummarizerPage/UploadSummary'
-import { useNavigate } from 'react-router-dom';
 import SearchPage from '@/pages/SearchPage'
 import logo from '@/assets/logo.png'
 
 
-function RootRedirect() {
-    let navigate = useNavigate();
-    useEffect(() => {
-        navigate('youtube');
-    }, [navigate]);
-
-    return null;
-}
-
 const navigation = [
     { name: 'Youtube', to: 'youtube', icon: PlayCircleIcon, current: true },
     { name: 'Upload', to: 'upload', icon: CloudArrowUpIcon, current: false },
+    {name:"Meeting", to:"meeting", icon:UserGroupIcon, current:false},
     { name: 'Search', to: 'search', icon: BookOpenIcon, current: false },
     { name: 'History', to: 'history', icon: ClockIcon, current: false },
     // { name: 'Billing', to: 'billing', icon: CreditCardIcon, current: false },
@@ -48,9 +39,7 @@ const Dashboard = () => {
     const location = useLocation()
     const [currentPathname, setCurrentPathname] = useState("")
     useEffect(() => {
-        setCurrentPathname(location.pathname.split("/")[2])
-
-        console.log("currentPathname: ", currentPathname)
+        setCurrentPathname(location.pathname.split("/")[2] || "youtube")
     }, [location.pathname])
 
     const Bar3Button = () => {
@@ -182,6 +171,7 @@ const Dashboard = () => {
                         <Route path='' element={<YoutubeSummary Bar3Button={Bar3Button} />} />
                         <Route path='youtube' element={<YoutubeSummary Bar3Button={Bar3Button} />} />
                         <Route path='upload' element={<UploadSummary Bar3Button={Bar3Button} />} />
+                        <Route path='meeting' element={<UploadSummary Bar3Button={Bar3Button} />} />
                         <Route path='billing' element={<div />} />
                         <Route path='history' element={<HistoryPage />} />
                         <Route path='profile' element={<UserProfilePage />} />

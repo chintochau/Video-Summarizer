@@ -25,7 +25,6 @@ import AboutPage from "./pages/AboutPage.jsx";
 function App() {
   return (
     <>
-      <div className="">
         <ModelProvider>
           <VideoProvider>
             <SummaryProvider>
@@ -59,7 +58,6 @@ function App() {
           </VideoProvider>
         </ModelProvider>
         <Toaster />
-      </div>
     </>
   );
 }
