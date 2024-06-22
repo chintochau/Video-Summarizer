@@ -235,7 +235,7 @@ const UploadSummary = ({ Bar3Button }) => {
                   />
                 </div>
               </ResizablePanel>
-              <ResizableHandle className="w-1 bg-indigo-100 hidden md:flex" />
+              <ResizableHandle className="bg-indigo-100 hidden md:flex" />
               <ResizablePanel className="hidden sticky top-20 shrink-0 md:block w-full md:w-1/2  h-1/2  md:h-full p-1 bg-gray-50">
                 <SummaryField
                   videoRef={uploadRef}
