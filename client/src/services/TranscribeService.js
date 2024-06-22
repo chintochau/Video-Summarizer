@@ -70,16 +70,22 @@ class TranscribeService {
                 // response from server: data: {"progress":5}
                 // or
                 // response from server: data: {"transcript":"this is a transcript"}
+                // or
+                // response from server: data: {"outputVideo": {
+                // 
+                //}}
 
                 const chunk = value.split("data: ")[1]
                 const data = JSON.parse(chunk)
+
+                console.log("data", data);
 
                 if (data.errorMessage) {
                     throw new Error(data.errorMessage)
                 } else if (data.progress) {
                     onProgress(data.progress)
-                } else if (data.transcript) {
-                    return data.transcript
+                } else if (data.outputVideo) {
+                    return data.outputVideo
                 }
             }
         } catch (error) {

@@ -30,6 +30,9 @@ const VideoSchema = new mongoose.Schema({
     originalTranscript: {
         type: String,
     },
+    utterances: {
+        type: Array,
+    },
     lastUpdated: {
         type: Date,
         default: new Date(), // Initialize as null or a default date value

@@ -6,7 +6,7 @@ import {
   transcribeYoutubeVideo,
 } from "./Utils";
 import { useVideoContext } from "../contexts/VideoContext";
-import { timeToSeconds } from "../utils/timeUtils";
+import { secondsToTime, timeToSeconds } from "../utils/timeUtils";
 import { useAuth } from "../contexts/AuthContext";
 import { checkCredits } from "../utils/creditUtils";
 import TranscribeService from "../services/TranscribeService";
@@ -19,7 +19,6 @@ import {
 import TranscriptOptions from "./transcriptFieldComponents/TranscriptOptions";
 import { useTranscriptContext } from "@/contexts/TranscriptContext";
 import { ScrollArea } from "./ui/scroll-area";
-import { Textarea } from "./ui/textarea";
 import { Loader2 } from "lucide-react";
 import { Progress } from "./ui/progress";
 import { Label } from "./ui/label";
@@ -54,6 +53,8 @@ const TranscriptField = (params) => {
     loadingTranscript,
     editableTranscript,
     setEditableTranscript,
+    setUtterances,
+    utterances,
   } = useTranscriptContext();
   const { credits, userId } = useAuth();
   const [transcribeProgress, setTranscribeProgress] = useState(0);
@@ -114,6 +115,7 @@ const TranscriptField = (params) => {
       console.error(error);
     }
   };
+
   // transcribe video, youtube video, file upload or link
   const generateTranscript = async ({ fileLink, publicId, resourceType }) => {
     let result;
@@ -180,7 +182,8 @@ const TranscriptField = (params) => {
           }
           break;
       }
-      setupTranscriptWithInputSRT(result);
+      setupTranscriptWithInputSRT(result.originalTranscript);
+      setUtterances(result.utterances || []);
     } catch (error) {
       resetTranscript();
       console.error(error);
@@ -189,6 +192,9 @@ const TranscriptField = (params) => {
 
   // 點擊轉錄時跳轉視頻
   const handleTranscriptClick = (time) => {
+    if (time.split(":").length === 2) {
+      time = "00:" + time;
+    }
     const [hours, minutes, seconds] = time.split(":");
     const secondsTotal =
       parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseFloat(seconds);
@@ -353,13 +359,21 @@ const TranscriptField = (params) => {
                       <div className="h-12"></div>
                     </ScrollArea>
                   ) : (
-                    <div className="md:h-full p-1">
-                      <Textarea
-                        className="w-full h-[80vh] md:h-full px-2 border-none resize-none bg-gray-50"
-                        value={parentTranscriptText}
-                        readOnly
-                      ></Textarea>
-                    </div>
+                    <ScrollArea className="md:h-full p-1 ">
+                      {utterances.length > 0 ?
+                        <>
+                          {utterances.map((utterance, index) => (
+                            <UtteranceBox
+                              key={index}
+                              utterance={utterance}
+                              onClick={handleTranscriptClick}
+                            />
+                          ))}
+                        </>
+                        :
+                        <div className="text-center text-gray-400">No Speakers Identified</div>
+                      }
+                    </ScrollArea>
                   )}
                 </div>
               ) : (
@@ -456,6 +470,32 @@ const TranscriptBox = ({
           </button>
         </div>
       )}
+    </div>
+  );
+};
+
+
+const UtteranceBox = ({ utterance, onClick }) => {
+
+  const time = secondsToTime(utterance.start / 1000)
+
+  return (
+    <div className="flex gap-2 cursor-pointer hover:outline outline-blue-400 rounded-md mx-2 my-1 outline-1 p-1 border-b mb-2"
+    onClick={
+      () => onClick(time)
+    }
+    >
+      <div className=" text-center">
+        <div className=" text-primary">{utterance.speaker}</div>
+        <div
+        className="cursor-pointer underline text-xs text-nowrap text-blue-600 hover:text-blue-800"
+          onClick={
+            () => onClick(time)
+          }>{time}
+        </div>
+      </div>
+
+      <div className="flex-1">{utterance.text}</div>
     </div>
   );
 };

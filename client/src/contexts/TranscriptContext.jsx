@@ -16,6 +16,8 @@ export const TranscriptProvider = ({ children }) => {
   const [editableTranscript, setEditableTranscript] = useState([])
   const [generatingTranscriptWithAI, setGeneratingTranscriptWithAI] = useState(false)
   const [selectedTranscriptionLanguage, setSelectedTranscriptionLanguage] = useState("en")
+  const [speakerIdentification, setSpeakerIdentification] = useState(false)
+  const [utterances, setUtterances] = useState([])
 
   const setupTranscriptWithInputSRT = (srt) => {
     const transcriptArray = parseSRTToArray(srt);
@@ -58,6 +60,8 @@ export const TranscriptProvider = ({ children }) => {
     setGeneratingTranscriptWithAI,
     selectedTranscriptionLanguage,
     setSelectedTranscriptionLanguage,
+    speakerIdentification, setSpeakerIdentification,
+    utterances, setUtterances,
     
     setupTranscriptWithInputSRT,
     resetTranscript,
@@ -74,6 +78,8 @@ export const transcribeOptions = [
   { value: 'medium', label: 'Balanced', accuracy:2, information: 'Balances speed and accuracy for multilingual tasks.', creditFactor: 0.32, timeFactor: { lower: 0.08, upper: 0.16 }, available:true},
   { value: 'large-v3', label: 'Accurate', accuracy:3, information: 'Delivers superior accuracy for various languages.', creditFactor: 0.34, timeFactor: { lower: 0.13, upper: 0.26 }, available:true},
   // { value: 'dedicated', label: 'Dedicated Server', accuracy:3, information: 'Dedicated resources for optimized performance.', creditFactor: 0.6, timeFactor: { lower: 0.07, upper: 0.1 } , available:false},
-  // { value: 'server', label: 'Express Server', accuracy:3, information: 'Highest speed and accuracy for critical tasks.', creditFactor: 1, timeFactor: { lower: 0.033, upper: 0.06 } , available:false}
 ]
 
+export const otherTranscribeOptions = [
+  { value: 'assembly', label: 'Accurate and Identify Speakers', accuracy:3, information: 'Highest speed and accuracy for critical tasks.', creditFactor: 0.5, timeFactor: { lower: 0.033, upper: 0.06 } , available:true}
+]

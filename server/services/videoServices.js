@@ -46,7 +46,7 @@ export const getOrCreateVideoBySourceId = async ({ video, userId, originalTransc
   return existingVideo;
 }
 
-export const getOrCreateVideoAndUpdateTranscript = async ({ video, userId, originalTranscript }) => {
+export const getOrCreateVideoAndUpdateTranscript = async ({ video, userId, originalTranscript,utterances }) => {
   const { sourceId, sourceTitle, sourceType, author, videoDuration } = video;
   let videoThumbnail;
 
@@ -64,6 +64,7 @@ export const getOrCreateVideoAndUpdateTranscript = async ({ video, userId, origi
       videoThumbnail,
       videoDuration,
       originalTranscript,
+      utterances
     });
     existingVideo = await newVideo.save();
   }

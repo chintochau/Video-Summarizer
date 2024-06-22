@@ -31,7 +31,7 @@ const VideoField = ({
     video,
   } = useVideoContext();
   const { setSummaries } = useSummaryContext();
-  const { resetTranscript, setLoadingTranscript, setupTranscriptWithInputSRT } =
+  const { resetTranscript, setLoadingTranscript, setupTranscriptWithInputSRT,setUtterances } =
     useTranscriptContext();
   const { userId, currentUser } = useAuth();
   const [playing, setPlaying] = useState(false);
@@ -90,6 +90,10 @@ const VideoField = ({
           setSummaries((prev) => [...result.summaries, defaultNewSummary]);
           if (result && result.transcript) {
             setupTranscriptWithInputSRT(result.transcript);
+          }
+          if (result && result.utterances) {
+            console.log(result.utterances);
+            setUtterances(result.utterances);
           }
         }
       } catch (error) {

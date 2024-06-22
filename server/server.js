@@ -22,6 +22,7 @@ import ttsRoutes from "./routes/ttsRoutes.js";
 import { fileURLToPath } from "url";
 //running python code for testing
 import { pythonRunner } from "./utils/pythonRunner.js";
+import { transcribeWithAssemblyAI } from "./services/assemblyAiService.js";
 const variableToPass = "";
 pythonRunner("--version", [variableToPass])
   .then((output) => {
@@ -77,19 +78,6 @@ const transcribeWithWhisperApi = async (data) => {
   });
 
   return transcription;
-}
-
-async function transcribeWithAssemblyAI(data) {
-  const { filePath, language } = data;
-  const transcript = await assembly.transcripts.transcribe({
-    audio: filePath,
-    language_code: language,
-    speaker_labels:true
-  });
-
-  const srt = await assembly.transcripts.subtitles(transcript.id, "srt");
-
-  return srt;
 }
 
 // Function to extract audio from video

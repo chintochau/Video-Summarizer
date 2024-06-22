@@ -30,6 +30,7 @@ const UploadSummary = ({ Bar3Button }) => {
     parentSrtText,
     parentTranscriptText,
     setLoadingTranscript,
+    setUtterances,
   } = useTranscriptContext();
   const {
     setSourceId,
@@ -89,6 +90,7 @@ const UploadSummary = ({ Bar3Button }) => {
             setSummaries((prev) => [...result.summaries, ...prev]);
             if (result && result.transcript) {
               setupTranscriptWithInputSRT(result.transcript);
+              setUtterances(result.utterances);
             }
           }
           setLoadingTranscript(false);

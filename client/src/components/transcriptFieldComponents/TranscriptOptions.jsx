@@ -24,6 +24,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { secondsToTimeInMinutesAndSeconds } from "@/utils/timeUtils";
 import { CheckIcon, ClockIcon, CloudArrowUpIcon, SparklesIcon, UsersIcon } from "@heroicons/react/24/outline";
 import {
+  otherTranscribeOptions,
   transcribeOptions,
   useTranscriptContext,
 } from "@/contexts/TranscriptContext";
@@ -33,16 +34,12 @@ import { Signal, SignalHigh, SignalMedium } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
-
-
-const classNames = (...classes) => classes.filter(Boolean).join(" ");
-
 const TranscriptOptions = (params) => {
 
   const preselectedOptionIndex = 2
 
   const { uploadToCloudAndTranscribe } = params;
-  const { setupTranscriptWithInputSRT } = useTranscriptContext();
+  const { setupTranscriptWithInputSRT, speakerIdentification, setSpeakerIdentification } = useTranscriptContext();
   const { videoCredits, videoDuration } = useVideoContext();
   const [selectedIndex, setSelectedIndex] = useState(preselectedOptionIndex);
   const { currentUser } = useAuth();
@@ -52,6 +49,16 @@ const TranscriptOptions = (params) => {
   useEffect(() => {
     setSelectedTranscribeOption(transcribeOptions[preselectedOptionIndex]);
   }, []);
+
+  useEffect(() => {
+    if (speakerIdentification) {
+      setSelectedTranscribeOption(otherTranscribeOptions[0]);
+      setSelectedIndex(0);
+    } else {
+      setSelectedTranscribeOption(transcribeOptions[preselectedOptionIndex]);
+      setSelectedIndex(preselectedOptionIndex);
+    }
+  }, [speakerIdentification]);
 
   const getTranscriptWithUpload = (file) => {
     const reader = new FileReader();
@@ -93,7 +100,12 @@ const TranscriptOptions = (params) => {
           Speaker Identification
         </h3>
         <div className="flex space-x-2 mb-4 ">
-          <Checkbox id="identify-speaker" />
+          <Checkbox id="identify-speaker"
+            checked={speakerIdentification}
+            onCheckedChange={(checked) => {
+              setSpeakerIdentification(checked);
+            }}
+          />
           <div className="grid gap-1.5 leading-none">
             <label for="identify-speaker" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
             ><UsersIcon className="w-5 h-5  inline-block mr-1 text-primary/70" />
@@ -110,69 +122,106 @@ const TranscriptOptions = (params) => {
         >
           Speed and Accuracy
         </h3>
-        <RadioGroup>
-          {transcribeOptions.map((option, index) => (
-            <div
-              className="flex items-center gap-x-2 cursor-pointer "
-              key={
-                option.value
-              }
-              onClick={() => {
-                if (!option.available) return;
-                setSelectedIndex(index);
-                setSelectedTranscribeOption(option);
-              }
-              }
-            >
-              <RadioGroupItem
-                value={option.value}
-                checked={index === selectedIndex}
-                onChange={() => {
+        
+          <RadioGroup>
+            {!speakerIdentification && transcribeOptions.map((option, index) => (
+              <div
+                className="flex items-center gap-x-2 cursor-pointer "
+                key={
+                  option.value
+                }
+                onClick={() => {
                   if (!option.available) return;
                   setSelectedIndex(index);
                   setSelectedTranscribeOption(option);
-                }}
+                }
+                }
               >
-                {option.label}
-              </RadioGroupItem>
-              <p
-                className="text-sm text-gray-950 font-medium"
-              >
-                {option.label}
-              </p>
-            </div>
-          ))}
-        </RadioGroup>
+                <RadioGroupItem
+                  value={option.value}
+                  checked={index === selectedIndex}
+                  onChange={() => {
+                    if (!option.available) return;
+                    setSelectedIndex(index);
+                    setSelectedTranscribeOption(option);
+                  }}
+                >
+                  {option.label}
+                </RadioGroupItem>
+                <p
+                  className="text-sm text-gray-950 font-medium"
+                >
+                  {option.label}
+                </p>
+              </div>
+            ))}
 
-        <div
-          className="flex flex-col gap-y-1.5 p-2 bg-gray-100 rounded-md mt-2"
-        >
-          <p
-            className="text-sm text-muted-foreground"
+            {
+              speakerIdentification && otherTranscribeOptions.map((option, index) => (
+                <div
+                  className="flex items-center gap-x-2 cursor-pointer "
+                  key={
+                    option.value
+                  }
+                  onClick={() => {
+                    if (!option.available) return;
+                    setSelectedIndex(index);
+                    setSelectedTranscribeOption(option);
+                  }
+                  }
+                >
+                  <RadioGroupItem
+                    value={option.value}
+                    checked={index === selectedIndex}
+                    onChange={() => {
+                      if (!option.available) return;
+                      setSelectedIndex(index);
+                      setSelectedTranscribeOption(option);
+                    }}
+                  >
+                    {option.label}
+                  </RadioGroupItem>
+                  <p
+                    className="text-sm text-gray-950 font-medium"
+                  >
+                    {option.label}
+                  </p>
+                </div>
+              ))
+            }
+
+          </RadioGroup>
+  
+          <div
+            className="flex flex-col gap-y-1.5 p-2 bg-gray-100 rounded-md mt-2"
           >
-            {selectedTranscribeOption?.information}
-          </p>
-          <p
-            className="text-sm text-muted-foreground"
-          >
-            Estimated Time: {calculateTime(selectedTranscribeOption?.timeFactor)}
-          </p>
-          <p
-            className="text-sm text-muted-foreground flex items-center gap-x-1.5"
-          >
-            Accuracy Level for English: <Accuracy accuracy={3} />
-          </p>
-          <p
-            className="text-sm text-muted-foreground flex items-center gap-x-1.5"
-          >
-            Accuracy Level for other language: <Accuracy accuracy={selectedTranscribeOption?.accuracy} />
-          </p>
-          <p
-            className="text-sm text-muted-foreground flex items-center gap-x-1.5 "
-          >
-            Credits: {(videoCredits * selectedTranscribeOption?.creditFactor).toFixed(2)}
-          </p>
-        </div>
+            <p
+              className="text-sm text-muted-foreground"
+            >
+              {selectedTranscribeOption?.information}
+            </p>
+            <p
+              className="text-sm text-muted-foreground"
+            >
+              Estimated Time: {calculateTime(selectedTranscribeOption?.timeFactor)}
+            </p>
+            <p
+              className="text-sm text-muted-foreground flex items-center gap-x-1.5"
+            >
+              Accuracy Level for English: <Accuracy accuracy={3} />
+            </p>
+            <p
+              className="text-sm text-muted-foreground flex items-center gap-x-1.5"
+            >
+              Accuracy Level for other language: <Accuracy accuracy={selectedTranscribeOption?.accuracy} />
+            </p>
+            <p
+              className="text-sm text-muted-foreground flex items-center gap-x-1.5 "
+            >
+              Credits: {(videoCredits * selectedTranscribeOption?.creditFactor).toFixed(2)}
+            </p>
+          </div>
+
       </div>
     );
   };
@@ -284,13 +333,13 @@ const TranscriptOptions = (params) => {
         </div>
 
         <div className="relative mt-6">
-              <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                <div className="w-full border-t border-gray-200" />
-              </div>
-              <div className="relative flex justify-center text-sm font-medium leading-6">
-                <span className="bg-white px-6 text-gray-900">Or</span>
-              </div>
-            </div>
+          <div className="absolute inset-0 flex items-center" aria-hidden="true">
+            <div className="w-full border-t border-gray-200" />
+          </div>
+          <div className="relative flex justify-center text-sm font-medium leading-6">
+            <span className="bg-white px-6 text-gray-900">Or</span>
+          </div>
+        </div>
 
         <div className="flex-col ">
           <CardHeader>

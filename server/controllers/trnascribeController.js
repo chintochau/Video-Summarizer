@@ -22,6 +22,7 @@ import {
   transcribeLinkWithRunPod,
 } from "../services/runpodService.js";
 import { uploadAudioToS3 } from "../services/amazonService.js";
+import { transcribeWithAssemblyAI } from "../services/assemblyAiService.js";
 
 export const handleTranscribeRequest = async (req, res) => {
   const { userId } = req.body;
@@ -227,29 +228,51 @@ export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
     await pipelineAsync(audioStream, fileStream);
 
     const filePublicUrl = await uploadAudioToS3(tempFilePath, videoInfo);
-    const id = await transcribeLinkWithRunPod(filePublicUrl, transcribeOption.value || "base");
-    // const id = "a671ac14-4c07-4c09-a5c6-113c75b72b43-u1"
-    // add id to array, and check status every 10 seconds
-    let currentStatus = "IN_PROGRESS";
-    let data
-    while (currentStatus !== "COMPLETED") {
-      await new Promise((resolve) => setTimeout(resolve, 10000));
-      data = await checkTranscriptionStatusWithRunPod(id);
-      if (data.status === "FAILED") {
-        throw new Error("Transcription failed");
-      } else if (data.status === "COMPLETED") {
-        currentStatus = "COMPLETED";
-      }
+
+
+    let result;
+    let outputVideo;
+    switch (transcribeOption.value) {
+      case "assembly":
+        result = await transcribeWithAssemblyAI({
+          filePath: tempFilePath,
+          language: "en_us",
+        }
+        );
+        outputVideo = await getOrCreateVideoAndUpdateTranscript({
+          video,
+          userId,
+          originalTranscript: result.srt,
+          utterances: result.utterances,
+        });
+        break
+      default:
+        const id = await transcribeLinkWithRunPod(filePublicUrl, transcribeOption.value || "base");
+        // const id = "a671ac14-4c07-4c09-a5c6-113c75b72b43-u1"
+        // add id to array, and check status every 10 seconds
+        let currentStatus = "IN_PROGRESS";
+        let data
+        while (currentStatus !== "COMPLETED") {
+          await new Promise((resolve) => setTimeout(resolve, 10000));
+          data = await checkTranscriptionStatusWithRunPod(id);
+          if (data.status === "FAILED") {
+            throw new Error("Transcription failed");
+          } else if (data.status === "COMPLETED") {
+            currentStatus = "COMPLETED";
+          }
+        }
+
+        result = data.output.transcription;
+        outputVideo = await getOrCreateVideoAndUpdateTranscript({
+          video,
+          userId,
+          originalTranscript: result,
+        });
+        break
     }
 
-    const result = data.output.transcription;
-    await getOrCreateVideoAndUpdateTranscript({
-      video,
-      userId,
-      originalTranscript: result,
-    });
+    res.json(outputVideo);
 
-    res.json(result);
   } catch (error) {
     // 将错误消息发送回客户端
     console.error(error);
@@ -270,39 +293,56 @@ export const processVideoBeta = async (req, res) => {
   const video = JSON.parse(req.body.video);
   const transcribeOption = JSON.parse(req.body.transcribeOption);
   const { sourceTitle } = video;
-  
+
   console.log("Processing video Beta", sourceTitle);
   const writeData = (data) => {
     res.write(`data: ${JSON.stringify(data)}\n\n`);
   };
   try {
-    const id = await transcribeLinkWithRunPod(link, transcribeOption.value || "base");
+    let result;
+    let outputVideo;
     let progress = 0
-    let currentStatus = "IN_PROGRESS";
-    let data
-    while (currentStatus !== "COMPLETED") {
-      await new Promise((resolve) => setTimeout(resolve, 10000));
-      progress += 10;
-      writeData({ progress });
+    switch (transcribeOption.value) {
+      case "assembly":
+        result = await transcribeWithAssemblyAI({
+          fileLink: link,
+          language: "en_us",
+        });
 
-      data = await checkTranscriptionStatusWithRunPod(id);
+        outputVideo = await getOrCreateVideoAndUpdateTranscript({
+          video,
+          userId,
+          originalTranscript: result.srt,
+          utterances: result.utterances,
+        });
 
-      if (data.status === "FAILED") {
-        throw new Error("Transcription failed");
-      } else if (data.status === "COMPLETED") {
-        currentStatus = "COMPLETED";
-      }
+        break
+      default:
+        const id = await transcribeLinkWithRunPod(link, transcribeOption.value || "base");
+        let currentStatus = "IN_PROGRESS";
+        let data
+        while (currentStatus !== "COMPLETED") {
+          await new Promise((resolve) => setTimeout(resolve, 10000));
+          progress += 10;
+          writeData({ progress });
+
+          data = await checkTranscriptionStatusWithRunPod(id);
+
+          if (data.status === "FAILED") {
+            throw new Error("Transcription failed");
+          } else if (data.status === "COMPLETED") {
+            currentStatus = "COMPLETED";
+          }
+        }
+        result = data.output.transcription;
+        outputVideo = await getOrCreateVideoAndUpdateTranscript({
+          video,
+          userId,
+          originalTranscript: result,
+        });
+        break
     }
-
-    const result = data.output.transcription;
-
-    await getOrCreateVideoAndUpdateTranscript({
-      video,
-      userId,
-      originalTranscript: result,
-    });
-    writeData({ transcript: result });
-
+    writeData({ outputVideo });
     res.end()
 
     res.on("close", () => {

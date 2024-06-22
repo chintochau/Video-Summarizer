@@ -105,6 +105,7 @@ export default class SummaryService {
       const { video, data } = result;
       return {
         transcript: video.originalTranscript,
+        utterances: video.utterances,
         summaries: data,
         success: true,
       };

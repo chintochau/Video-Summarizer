@@ -45,7 +45,7 @@ export const ControlBar = (params) => {
 
   const tabs = [
     { name: "Transcript", label: "transcript" },
-    { name: "Text", label: "text" },
+    { name: "Speakers", label: "speaker" },
   ];
 
   const chineseConvert = () => {
