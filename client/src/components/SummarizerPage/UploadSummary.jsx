@@ -15,7 +15,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "../ui/resizable";
-import {  ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 
 const UploadSummary = ({ Bar3Button }) => {
   // state management
@@ -33,7 +33,6 @@ const UploadSummary = ({ Bar3Button }) => {
     setUtterances,
     setSpeakers,
     setTranscriptId,
-    resetTranscript,
   } = useTranscriptContext();
   const {
     setSourceId,
@@ -44,7 +43,7 @@ const UploadSummary = ({ Bar3Button }) => {
     setCurrentPlayTime,
     video,
   } = useVideoContext();
-  const { setSummaries,resetSummaries } = useSummaryContext();
+  const { setSummaries, resetSummaries } = useSummaryContext();
   const { sourceId, sourceType } = video;
   const { userId } = useAuth();
   //use Reference
@@ -87,15 +86,15 @@ const UploadSummary = ({ Bar3Button }) => {
   useEffect(() => {
     if (sourceId && sourceType === "user-upload" && !file) {
       setDisplayMode("transcript");
-      resetSummaries();
       SummaryService.getTranscriptAndSummaryForVideo(userId, sourceId)
         .then((result) => {
           if (result.success) {
+            resetSummaries();
             setSummaries((prev) => [...result.summaries, ...prev]);
             if (result && result.transcript) {
               setupTranscriptWithInputSRT(result.transcript);
             }
-            const {video} = result;
+            const { video } = result;
             if (video) {
               setUtterances(video.utterances);
               setSpeakers(video.speakers);
@@ -112,9 +111,6 @@ const UploadSummary = ({ Bar3Button }) => {
 
     return () => {
       // reset transcript, and summaries
-
-      resetTranscript();
-      resetSummaries();
     }
   }, [sourceId, sourceType]);
 
@@ -169,22 +165,22 @@ const UploadSummary = ({ Bar3Button }) => {
               ) : (
                 <p className=" m-auto text-gray-600 text-sm p-1 flex flex-col items-center text-center">
                   <ArrowUpTrayIcon className="w-14 h-14 mr-2 hidden lg:block" />
-                  Upload Audio/ Video here <br/>(100 MB limitation for now)
+                  Upload Audio/ Video here <br />(100 MB limitation for now)
                 </p>
               )}
             </div>
           </div>
 
-            <div className="flex-1">
-              <HistoryPage sourceType={"user-upload"} />
-            </div>
+          <div className="flex-1">
+            <HistoryPage sourceType={"user-upload"} />
+          </div>
         </div>
       )}
 
       {displayMode !== "empty" && (
         <div className="h-screen flex flex-col">
           <div className=" flex w-full">
-          {Bar3Button && <Bar3Button />}
+            {Bar3Button && <Bar3Button />}
             <Dropzone onDrop={handleFileChange}>
               {({ getRootProps, getInputProps }) => (
                 <div
