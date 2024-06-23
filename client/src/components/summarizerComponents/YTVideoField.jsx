@@ -28,10 +28,9 @@ const VideoField = ({
     setVideoCredits,
     setCurrentPlayTime,
     setAuthor,
-    video,
   } = useVideoContext();
   const { setSummaries } = useSummaryContext();
-  const { resetTranscript, setLoadingTranscript, setupTranscriptWithInputSRT,setUtterances } =
+  const { resetTranscript, setLoadingTranscript, setupTranscriptWithInputSRT,setUtterances,setSpeakers,setTranscriptId } =
     useTranscriptContext();
   const { userId, currentUser } = useAuth();
   const [playing, setPlaying] = useState(false);
@@ -87,13 +86,16 @@ const VideoField = ({
           youtubeId
         );
         if (result.success) {
+          console.log(result);
           setSummaries((prev) => [...result.summaries, defaultNewSummary]);
           if (result && result.transcript) {
             setupTranscriptWithInputSRT(result.transcript);
           }
-          if (result && result.utterances) {
-            console.log(result.utterances);
-            setUtterances(result.utterances);
+          const {video} = result;
+          if (video) {
+            setUtterances(video.utterances);
+            setSpeakers(video.speakers);
+            setTranscriptId(video._id);
           }
         }
       } catch (error) {

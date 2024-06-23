@@ -1,4 +1,11 @@
 
+// random color, with 10 copntrasting colors, cold and hot in consecutive order
+export const colors = [
+  "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
+  "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"
+  
+]
+
 export const languageList = [
   { code: 'en', name: 'English', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/US.svg" },
   { code: 'zh-tw', name: '繁體中文', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/TW.svg" },

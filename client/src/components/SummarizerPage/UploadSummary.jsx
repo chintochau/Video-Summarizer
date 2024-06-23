@@ -31,6 +31,8 @@ const UploadSummary = ({ Bar3Button }) => {
     parentTranscriptText,
     setLoadingTranscript,
     setUtterances,
+    setSpeakers,
+    setTranscriptId,
   } = useTranscriptContext();
   const {
     setSourceId,
@@ -90,7 +92,12 @@ const UploadSummary = ({ Bar3Button }) => {
             setSummaries((prev) => [...result.summaries, ...prev]);
             if (result && result.transcript) {
               setupTranscriptWithInputSRT(result.transcript);
-              setUtterances(result.utterances);
+            }
+            const {video} = result;
+            if (video) {
+              setUtterances(video.utterances);
+              setSpeakers(video.speakers);
+              setTranscriptId(video._id);
             }
           }
           setLoadingTranscript(false);

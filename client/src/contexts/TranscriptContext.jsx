@@ -18,6 +18,8 @@ export const TranscriptProvider = ({ children }) => {
   const [selectedTranscriptionLanguage, setSelectedTranscriptionLanguage] = useState("en")
   const [speakerIdentification, setSpeakerIdentification] = useState(false)
   const [utterances, setUtterances] = useState([])
+  const [speakers, setSpeakers] = useState([])
+  const [transcriptId, setTranscriptId] = useState(null)
 
   const setupTranscriptWithInputSRT = (srt) => {
     const transcriptArray = parseSRTToArray(srt);
@@ -62,6 +64,8 @@ export const TranscriptProvider = ({ children }) => {
     setSelectedTranscriptionLanguage,
     speakerIdentification, setSpeakerIdentification,
     utterances, setUtterances,
+    speakers, setSpeakers,
+    transcriptId, setTranscriptId,
     
     setupTranscriptWithInputSRT,
     resetTranscript,

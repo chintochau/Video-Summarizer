@@ -244,6 +244,7 @@ export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
           userId,
           originalTranscript: result.srt,
           utterances: result.utterances,
+          speakers: result.speakers,
         });
         break
       default:
@@ -314,6 +315,7 @@ export const processVideoBeta = async (req, res) => {
           userId,
           originalTranscript: result.srt,
           utterances: result.utterances,
+          speakers: result.speakers,
         });
 
         break

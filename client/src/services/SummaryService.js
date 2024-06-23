@@ -104,8 +104,10 @@ export default class SummaryService {
       const result = await response.json();
       const { video, data } = result;
       return {
+        video,
         transcript: video.originalTranscript,
         utterances: video.utterances,
+        speakers: video.speakers,
         summaries: data,
         success: true,
       };
