@@ -6,10 +6,12 @@ import { Button } from "../ui/button";
 import { DocumentArrowDownIcon } from '@heroicons/react/24/outline'
 import YoutubeService from "@/services/YoutubeService";
 import { cn } from "@/utils/utils";
+import { useTranscriptContext } from "@/contexts/TranscriptContext";
 
 const YoutubeBar = ({Bar3Button, className}) => {
   const { setYoutubeId, youtubeId } = useVideoContext();
   const [youtubeLink, setYoutubeLink] = useState(youtubeId ? "https://www.youtube.com/watch?v=" + youtubeId : "");
+  const {setTranscriptId} = useTranscriptContext();
 
   const submitYoutubeLink = (e) => {
     e.preventDefault();

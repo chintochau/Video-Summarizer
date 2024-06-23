@@ -41,6 +41,9 @@ export const TranscriptProvider = ({ children }) => {
     setTranscriptAvailable(false);
     setParentSrtText(null);
     setEditableTranscript([]);
+    setUtterances([]);
+    setSpeakers([]);
+    setTranscriptId(null);
   }
 
   const value = {

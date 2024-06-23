@@ -33,6 +33,7 @@ const UploadSummary = ({ Bar3Button }) => {
     setUtterances,
     setSpeakers,
     setTranscriptId,
+    resetTranscript,
   } = useTranscriptContext();
   const {
     setSourceId,
@@ -43,7 +44,7 @@ const UploadSummary = ({ Bar3Button }) => {
     setCurrentPlayTime,
     video,
   } = useVideoContext();
-  const { setSummaries } = useSummaryContext();
+  const { setSummaries,resetSummaries } = useSummaryContext();
   const { sourceId, sourceType } = video;
   const { userId } = useAuth();
   //use Reference
@@ -86,6 +87,7 @@ const UploadSummary = ({ Bar3Button }) => {
   useEffect(() => {
     if (sourceId && sourceType === "user-upload" && !file) {
       setDisplayMode("transcript");
+      resetSummaries();
       SummaryService.getTranscriptAndSummaryForVideo(userId, sourceId)
         .then((result) => {
           if (result.success) {
@@ -106,6 +108,13 @@ const UploadSummary = ({ Bar3Button }) => {
           console.error(error);
           setLoadingTranscript(false);
         });
+    }
+
+    return () => {
+      // reset transcript, and summaries
+
+      resetTranscript();
+      resetSummaries();
     }
   }, [sourceId, sourceType]);
 

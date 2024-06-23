@@ -29,7 +29,7 @@ export const ControlBar = (params) => {
     viewMode,
     setViewMode,
   } = params;
-  const { resetTranscript, parentSrtText,setEditableTranscript,setParentTranscript,parentTranscriptText, setParentTranscriptText } = useTranscriptContext();
+  const { resetTranscript, parentSrtText,setEditableTranscript,utterances } = useTranscriptContext();
   const { video } = useVideoContext();
   const { userId } = useAuth();
   const [currentTab, setCurrentTab] = useState("Transcript");
@@ -46,7 +46,7 @@ export const ControlBar = (params) => {
   const tabs = [
     { name: "Transcript", label: "transcript" },
     { name: "Speakers", label: "speaker" },
-  ];
+  ]
 
   const chineseConvert = () => {
     if (chinexeConvert === "traditional") {
@@ -69,7 +69,7 @@ export const ControlBar = (params) => {
         <div className="border-b border-gray-200 flex justify-between ">
           <nav className="-mb-px flex space-x-2 pl-2" aria-label="Tabs">
             {tabs.map((tab) => (
-              <button
+              (tab.name === "Transcript" || utterances.length > 0) && <button
                 key={tab.name}
                 onClick={() => {
                   setCurrentTab(tab.name);

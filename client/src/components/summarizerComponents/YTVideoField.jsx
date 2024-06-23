@@ -29,7 +29,7 @@ const VideoField = ({
     setCurrentPlayTime,
     setAuthor,
   } = useVideoContext();
-  const { setSummaries } = useSummaryContext();
+  const { setSummaries,resetSummaries } = useSummaryContext();
   const { resetTranscript, setLoadingTranscript, setupTranscriptWithInputSRT,setUtterances,setSpeakers,setTranscriptId } =
     useTranscriptContext();
   const { userId, currentUser } = useAuth();
@@ -86,7 +86,6 @@ const VideoField = ({
           youtubeId
         );
         if (result.success) {
-          console.log(result);
           setSummaries((prev) => [...result.summaries, defaultNewSummary]);
           if (result && result.transcript) {
             setupTranscriptWithInputSRT(result.transcript);
@@ -106,7 +105,7 @@ const VideoField = ({
     fetchTranscriptAndSummaries();
 
     return () => {
-      setSummaries([defaultNewSummary]);
+      resetSummaries();
       resetTranscript();
       document.title = "Fusion AI";
     };

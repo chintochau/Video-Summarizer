@@ -34,13 +34,14 @@ import {
 
 import { LinkToPricing } from "./common/RoutingLinks.jsx";
 import { InfoIcon } from "lucide-react";
+import { miniSecondsToSrtTime } from "@/utils/timeUtils.js";
 
 const SummaryField = ({ videoRef, className }) => {
   // use context
   const { summaries, setSummaries } = useSummaryContext();
   const { userId, setCredits, credits, currentUser } = useAuth();
   const { video } = useVideoContext();
-  const { parentTranscriptText, parentSrtText } = useTranscriptContext();
+  const { parentTranscriptText, parentSrtText, utterances, speakers } = useTranscriptContext();
   const { quota, setQuota } = useQuota();
   const { selectedModel, setSelectedModel, language, setLanguage } =
     useModels();
@@ -90,11 +91,40 @@ const SummaryField = ({ videoRef, className }) => {
   }, [parentTranscriptText]);
 
   const inputTranscript = (type) => {
+
+    let srtText = parentSrtText;
+    let transcriptText = parentTranscriptText;
+
+    if (utterances.length > 0) {
+      // map the utterances to srt format
+      srtText = utterances
+        .map((item, index) => {
+          const speaker = speakers.find((speaker) => speaker.id === item.speaker);
+          return `${index + 1}\n${miniSecondsToSrtTime(item.start) } --> ${miniSecondsToSrtTime(item.end)}\n${
+            speaker ? speaker.name + " : ": "Speaker"
+          }\n${item.text}\n`;
+        })
+        .join("\n");
+
+        
+        // map the utterances to transcript format
+        transcriptText = utterances
+        .map((item, index) => {
+          const speaker = speakers.find((speaker) => speaker.id === item.speaker);
+          return `${miniSecondsToSrtTime(item.start) } ${
+            speaker ? speaker.name + " : ": "Speaker"
+          } ${item.text}\n`;
+        })
+        .join("\n");
+    }
+
     switch (type) {
       case "detail-summary":
-        return parentSrtText;
+        console.log(srtText);
+        return srtText;
       default:
-        return parentTranscriptText;
+        console.log(transcriptText);
+        return transcriptText;
     }
   };
 

@@ -211,7 +211,7 @@ export const handleYoutubeTranscribeRequest = async (req, res) => {
 
 // processYoutubeVideo function using S3 and runpod
 export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
-  const { youtubeId, userId, video, transcribeOption } = req.body;
+  const { youtubeId, userId, video, transcribeOption, language } = req.body;
   const { sourceTitle } = video;
   let tempFilePath;
   try {
@@ -290,7 +290,7 @@ export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
 
 
 export const processVideoBeta = async (req, res) => {
-  const { userId, link, publicId, resourceType } = req.body;
+  const { userId, link, publicId, resourceType, language } = req.body;
   const video = JSON.parse(req.body.video);
   const transcribeOption = JSON.parse(req.body.transcribeOption);
   const { sourceTitle } = video;
@@ -359,4 +359,21 @@ export const processVideoBeta = async (req, res) => {
     res.status(500).send("Error occurred during transcription");
   }
 
+}
+
+// update transcript speakers
+export const updateTranscriptSpeakers = async (req, res) => {
+  const {transcriptId, speakers} = req.body;
+  try {
+    const speakersData = JSON.parse(speakers);
+    const video = await Video.findOneAndUpdate(
+      { _id: transcriptId },
+      { speakers: speakersData },
+      { new: true }
+    );
+    res.json(video);
+  } catch (error) {
+    console.error("fetch error", error);
+    res.status(500).send("Error occurred during transcription");
+  }
 }

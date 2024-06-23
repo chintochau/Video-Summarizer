@@ -42,3 +42,13 @@ export const convertMongoDBDateToLocalTime = (lastUpdated) => {
     const date = new Date(lastUpdated);
     return date.toLocaleString();
 };
+
+export const miniSecondsToSrtTime = (milliseconds) => {
+    const seconds = milliseconds / 1000;
+    const hours = Math.floor(seconds / 3600);
+    const remainingSeconds = seconds % 3600;
+    const minutes = Math.floor(remainingSeconds / 60);
+    const remainingSeconds2 = remainingSeconds % 60;
+
+    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${remainingSeconds2.toFixed(3).toString().padStart(6, "0")}`.replace(".", ",");
+}

@@ -55,6 +55,7 @@ const TranscriptField = (params) => {
     editableTranscript,
     setEditableTranscript,
     setUtterances,
+    setSpeakers,
   } = useTranscriptContext();
   const { credits, userId } = useAuth();
   const [transcribeProgress, setTranscribeProgress] = useState(0);
@@ -184,6 +185,7 @@ const TranscriptField = (params) => {
       }
       setupTranscriptWithInputSRT(result.originalTranscript);
       setUtterances(result.utterances || []);
+      setSpeakers(result.speakers || []);
     } catch (error) {
       resetTranscript();
       console.error(error);

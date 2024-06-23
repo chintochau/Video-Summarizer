@@ -78,8 +78,6 @@ class TranscribeService {
                 const chunk = value.split("data: ")[1]
                 const data = JSON.parse(chunk)
 
-                console.log("data", data);
-
                 if (data.errorMessage) {
                     throw new Error(data.errorMessage)
                 } else if (data.progress) {
@@ -110,6 +108,29 @@ class TranscribeService {
             return result;
         } catch (error) {
             console.error("fetch error", error);
+        }
+    }
+
+    static updateTranscriptSpeakers = async (data) => {
+        const { transcriptId, speakers } = data;
+        const formData = new FormData();
+        formData.append("transcriptId", transcriptId);
+        formData.append("speakers", JSON.stringify(speakers));
+
+        try {
+            const response = await fetch(apiUrl + "/api/updateTranscriptSpeakers", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error("Server Error - callwhisperapi(3)-Utils.js");
+            }
+
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error("upload error", error);
         }
     }
 }
