@@ -121,25 +121,6 @@ export const handleLongSummaryRequest = async (req, res) => {
   }
 };
 
-export const handleMeetingSummary = async (req, res) => {
-  const { option, transcript, interval, userId } = req.body;
-  const { creditAmount } = option;
-  const parsedSRT = parseSRT(transcript);
-
-  const textByInterval = getTextWithinInterval(parsedSRT, interval);
-
-  try {
-    await checkUserCredit(userId, creditAmount);
-    generateSummaryInSeries(textByInterval, req, res);
-    await deductCredits(userId, creditAmount);
-
-    res.status(200).end();
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to generate summary", error: error.message });
-  }
-};
 
 /**
  * Retrieves all videos for a specific user.

@@ -108,10 +108,6 @@ const UploadSummary = ({ Bar3Button }) => {
           setLoadingTranscript(false);
         });
     }
-
-    return () => {
-      // reset transcript, and summaries
-    }
   }, [sourceId, sourceType]);
 
   const className = (...classes) => {

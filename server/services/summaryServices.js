@@ -42,6 +42,7 @@ export const generateSummary = async (req, res) => {
       fullResponseText = await summarizeWithOpenAI(data);
       break;
     case "claude3h":
+      case "claude35s":
       fullResponseText = await summarizeWithAnthropic(data);
       break;
     case "llama3":
@@ -406,11 +407,24 @@ async function summarizeWithAnthropic({
   messages,
   fullResponseText,
   res,
+  selectedModel,
 }) {
+  let model
+  switch (selectedModel) {
+    case "claude3h":
+      model = "claude-3-haiku-20240307";
+      break;
+    case "claude35s":
+      model = "claude-3-5-sonnet-20240620";
+      break;
+    default:
+      break;
+  }
+  
   const stream = await anthropic.messages.create({
     max_tokens,
     messages,
-    model: "claude-3-haiku-20240307",
+    model,
     system,
     stream: true,
   });

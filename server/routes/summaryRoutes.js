@@ -1,7 +1,6 @@
 import express from "express";
 import {
   handleSummaryRequest,
-  handleMeetingSummary,
   getAllVideosForUser,
   getTranscriptAndSummariesForVideo,
   handleSummaryRequestWithQuota,
@@ -20,7 +19,6 @@ router.post("/get-summary",bodyParser.json({ limit: "10mb" }), handleSummaryRequ
 router.post("/get-long-summary",bodyParser.json({ limit: "10mb" }), handleLongSummaryRequest);
 
 router.post("/summarize-with-quota",bodyParser.json({ limit: "10mb" }), handleSummaryRequestWithQuota);
-router.post("/get-summary-meetings",bodyParser.json({ limit: "10mb" }), handleMeetingSummary);// currently not being used
 
 // get summary
 router.get("/summaries/:userId/:sourceId",bodyParser.json({ limit: "10mb" }), getTranscriptAndSummariesForVideo);

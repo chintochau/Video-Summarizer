@@ -46,6 +46,13 @@ export const TranscriptProvider = ({ children }) => {
     setTranscriptId(null);
   }
 
+  const setupVideoTranscript = (video) => {
+    setupTranscriptWithInputSRT(video.originalTranscript)
+    setUtterances(video.utterances)
+    setSpeakers(video.speakers)
+    setTranscriptId(video._id)
+  }
+
   const value = {
     setParentSrtText,
     parentSrtText,
@@ -72,6 +79,7 @@ export const TranscriptProvider = ({ children }) => {
     
     setupTranscriptWithInputSRT,
     resetTranscript,
+    setupVideoTranscript,
   };
 
   return (

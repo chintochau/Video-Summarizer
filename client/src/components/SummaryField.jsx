@@ -120,10 +120,8 @@ const SummaryField = ({ videoRef, className }) => {
 
     switch (type) {
       case "detail-summary":
-        console.log(srtText);
         return srtText;
       default:
-        console.log(transcriptText);
         return transcriptText;
     }
   };

@@ -17,7 +17,7 @@ import { ScrollArea } from '../ui/scroll-area';
 import { useTranscriptContext } from '@/contexts/TranscriptContext';
 
 const TranscriptHistoryTable = () => {
-    const { setupTranscriptWithInputSRT } = useTranscriptContext()
+    const { setupTranscriptWithInputSRT,setupVideoTranscript } = useTranscriptContext()
 
     const { userId } = useAuth()
     const page = 1
@@ -37,8 +37,8 @@ const TranscriptHistoryTable = () => {
         fetchVideos()
     }, [userId, page, sourceType])
 
-    const setTranscript = (transcript) => {
-        setupTranscriptWithInputSRT(transcript)
+    const setTranscript = (video) => {
+        setupVideoTranscript(video)
     }
 
 
@@ -59,7 +59,7 @@ const TranscriptHistoryTable = () => {
                                 return null
                             }
                             return (
-                                <TableRow key={video.sourceId} onClick={() => setTranscript(video.originalTranscript)} className=" cursor-pointer">
+                                <TableRow key={video.sourceId} onClick={() => setTranscript(video)} className=" cursor-pointer">
                                     <TableCell>{video.sourceTitle}</TableCell>
                                     <TableCell>{secondsToTime(video.videoDuration)}</TableCell>
                                     <TableCell>{convertMongoDBDateToLocalTime(video.lastUpdated)}</TableCell>

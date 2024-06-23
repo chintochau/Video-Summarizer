@@ -88,7 +88,7 @@ const OptionCard = (params) => {
 
   const showModifiedDescription = () => {
     switch (id) {
-      case "meeting-summary":
+      case "meeting-minutes":
         return `Video length: ${formatDuration(
           videoDuration
         )}\nBreakdown the video into ${Math.ceil(
@@ -130,8 +130,8 @@ ${summarizeOptions.quickSummaryOptions[3].prompt}`}
         "shadow-md text-left ",
         buttonDisalbed
           ? "bg-gray-100"
-          : "hover:outline hover:outline-1 hover:outline-primary cursor-pointer",
-        premimum && "border-2 border-yellow-400"
+          : "hover:outline hover:outline-2 hover:outline-primary cursor-pointer ",
+        premimum && "border-2 border-yellow-400 hover:outline-yellow-400"
       )}
       onClick={() => {
         if (!buttonDisalbed)
@@ -203,6 +203,7 @@ const SummaryOptions = ({ handleClick, creditCount, setInterval }) => {
           </PopoverContent>
         </Popover>
       </div>
+
       <div className="xl:grid xl:grid-cols-2 flex flex-col gap-y-4 xl:gap-4">
         {quickSummaryOptions.map((option, index) => {
           return (
@@ -219,6 +220,7 @@ const SummaryOptions = ({ handleClick, creditCount, setInterval }) => {
       <CardTitle className="text-primary pt-4">
         Detail Summary for long video
       </CardTitle>
+
       <div className="flex flex-col gap-y-4 xl:gap-4">
         {detailSummaryOptions.map((option, index) => {
           return (

@@ -111,23 +111,25 @@ const UtteranceBox = ({ utterance, onClick, currentPlayTime, speakers }) => {
     }, [speakers])
 
     return (
-        <div
-            className={cn("flex gap-2 cursor-pointer hover:outline outline-blue-400 rounded-md mx-2 my-1 outline-1 p-1 border-b mb-2", isCurrent && "bg-blue-100")}
-            onClick={() => onClick(time)}
-        >
+        <div className=' border-b py-1'>
             <div
-                className=" text-center w-24 mx-4">
-                <div style={{ color: color, }}>
-                    {speakerName}
-                </div>
+                className={cn("flex gap-2 cursor-pointer hover:outline outline-blue-400 rounded-md mx-2 my-1 outline-1 p-1 mb-2", isCurrent && "bg-blue-100")}
+                onClick={() => onClick(time)}
+            >
                 <div
-                    className="cursor-pointer underline text-xs text-nowrap text-blue-600 hover:text-blue-800"
-                    onClick={() => onClick(time)}>
-                    {time}
+                    className=" w-1/5  text-right mr-4 font-semibold">
+                    <div style={{ color: color, }}>
+                        {speakerName}
+                    </div>
+                        <div
+                            className="cursor-pointer text-xs text-nowrap text-blue-600 hover:text-blue-800"
+                            onClick={() => onClick(time)}>
+                            {time}
+                        </div>
                 </div>
+    
+                <div className="flex-1  text-gray-800 ">{utterance.text}</div>
             </div>
-
-            <div className="flex-1">{utterance.text}</div>
         </div>
     );
 };
