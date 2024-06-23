@@ -12,7 +12,13 @@ export function ThemeProvider({
     return localStorage.getItem(storageKey) || defaultTheme;
   });
 
+  const [isSideBarOpening, setIsSideBarOpening] = useState(() => {
+    return localStorage.getItem("sidebar") || true;
+  })
+
   useEffect(() => {
+    // dartktheme, To be implemented
+    return
     const root = window.document.documentElement;
 
     root.classList.remove("light", "dark");
@@ -30,12 +36,24 @@ export function ThemeProvider({
     root.classList.add(theme);
   }, [theme]);
 
+  useEffect(() => {
+    localStorage.getItem("sidebar") === "true" ? setIsSideBarOpening(true) : setIsSideBarOpening(false);
+  }, [])
+  
+
   const value = {
     theme,
     setTheme: (theme) => {
       localStorage.setItem(storageKey, theme);
       setTheme(theme);
     },
+    isSideBarOpening,
+    setIsSideBarOpening: (isSideBarOpening) => {
+      localStorage.setItem("sidebar", isSideBarOpening);
+      setIsSideBarOpening(isSideBarOpening);
+    }
+
+
   };
 
   return (

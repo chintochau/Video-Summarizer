@@ -21,6 +21,7 @@ import { Toaster } from "./components/ui/toaster.jsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
 import SharePage from "./pages/SharePage.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
+import { ThemeProvider } from "./contexts/ThemeProvider.jsx";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <SummaryProvider>
               <TranscriptProvider>
                 <QuotaProvider>
+                  <ThemeProvider>
                   <Routes>
                     <Route path="/Summarizer" element={<GeneralSummary />} />
                     <Route path="/" element={<HomePage />} />
@@ -52,6 +54,7 @@ function App() {
                       <Route path="rag" element={<SearchPage />} />
                     </Route>
                   </Routes>
+                  </ThemeProvider>
                 </QuotaProvider>
               </TranscriptProvider>
             </SummaryProvider>

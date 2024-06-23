@@ -21,6 +21,7 @@ import logo from '@/assets/logo.png'
 import MeetingSummary from '../SummarizerPage/MeetingSummary'
 import { cn } from '@/lib/utils'
 import { Button } from '../ui/button'
+import { useTheme } from '@/contexts/ThemeProvider'
 
 
 const navigation = [
@@ -40,7 +41,7 @@ const Dashboard = () => {
     useEffect(() => {
         setCurrentPathname(location.pathname.split("/")[2] || "youtube")
     }, [location.pathname])
-    const [openSideBar, setOpenSideBar] = useState(true)
+    const {isSideBarOpening, setIsSideBarOpening } = useTheme()
 
     const Bar3Button = () => {
         return (
@@ -52,7 +53,7 @@ const Dashboard = () => {
     }
 
     const toggleSideBar = () => {
-        setOpenSideBar(!openSideBar)
+        setIsSideBarOpening(!isSideBarOpening)
     }
 
 
@@ -141,7 +142,7 @@ const Dashboard = () => {
                 <div className={
                     cn(
                         "hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:block  lg:overflow-y-auto lg:bg-gray-900 lg:pb-4 transition-all duration-300 ease-in-out overflow-hidden ",
-                        openSideBar ? "w-44 lg:p-4" : "w-12"
+                        isSideBarOpening ? "w-44 lg:p-4" : "w-12"
                     )
                 }>
 
@@ -149,7 +150,7 @@ const Dashboard = () => {
                         <img className="h-10 w-10 mr-1 " src={logo} alt="Fusion AI" />
                         <span className={
                             cn(
-                                openSideBar ? "block" : "hidden",
+                                isSideBarOpening ? "block" : "hidden",
                                 "text-2xl transition-all duration-300 ease-in-out"
                             )
                         }>Fusion AI</span>
@@ -173,7 +174,7 @@ const Dashboard = () => {
                             <div className={
                                 cn(
                                     "",
-                                    openSideBar ? "text-right w-full" : "text-left"
+                                    isSideBarOpening ? "text-right w-full" : "text-left"
                                 )
                             }>
                                 <span className='sr-only'>Toggle sidebar</span>
@@ -184,7 +185,7 @@ const Dashboard = () => {
                                 ><ChevronDoubleLeftIcon className={
                                     cn(
                                         "h-6 w-6 transition-all duration-300 ease-in-out",
-                                        openSideBar ? "" : "transform rotate-180"
+                                        isSideBarOpening ? "" : "transform rotate-180"
                                     )
                                 } /> 
                                 </Button>
@@ -204,7 +205,7 @@ const Dashboard = () => {
                 <main className={
                     cn(
                         "h-[80vh] flex-1 transition-all duration-300 ease-in-out",
-                        openSideBar ? "lg:pl-44 " : "lg:pl-12"
+                        isSideBarOpening ? "lg:pl-44 " : "lg:pl-12"
                     )
                 }>
                     <Routes>
