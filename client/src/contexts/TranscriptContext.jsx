@@ -101,5 +101,6 @@ export const transcribeOptions = [
 ]
 
 export const otherTranscribeOptions = [
-  { value: 'assembly', label: 'Accurate and Identify Speakers', accuracy:3, information: 'Highest speed and accuracy for critical tasks.', creditFactor: 0.5, timeFactor: { lower: 0.033, upper: 0.06 } , available:true}
+  // { value: 'assembly', label: 'Balanced, Identify Speakers', accuracy:3, information: 'Highest speed and accuracy for critical tasks.', creditFactor: 0.4, timeFactor: { lower: 0.033, upper: 0.06 } , available:true},
+  { value: 'assembly', label: 'Accurate, Identify Speakers', accuracy:3, information: 'Highest speed and accuracy for critical tasks.', creditFactor: 0.77, timeFactor: { lower: 0.033, upper: 0.06 } , available:true}
 ]
