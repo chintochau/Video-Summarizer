@@ -3,7 +3,7 @@
 export const colors = [
   "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
   "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"
-  
+
 ]
 
 export const languageList = [
@@ -17,6 +17,19 @@ export const languageList = [
   { code: 'ru', name: 'Russian', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/RU.svg" },
   { code: 'pt', name: 'Portuguese', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/PT.svg" }
 ];
+
+export const transcribeLanguages = [
+  { code: 'auto', name: 'Auto' },
+  { code: 'en', name: 'English', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/US.svg" },
+  { code: 'zh', name: '中文', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/TW.svg" },
+  { code: 'jp', name: 'Japanese', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/JP.svg" },
+  { code: 'es', name: 'Spanish', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/ES.svg" },
+  { code: 'fr', name: 'French', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/FR.svg" },
+  { code: 'ar', name: 'Arabic', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/SA.svg" },
+  { code: 'ru', name: 'Russian', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/RU.svg" },
+  { code: 'pt', name: 'Portuguese', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/PT.svg" }
+]
+
 
 export function getLanguageNameByCode(code) {
   const language = languageList.find(lang => lang.code === code);
@@ -135,15 +148,15 @@ export const aboutPageContents = {
     headline: "Our Story",
     description: "Fusion AI was born out of the need to simplify the overwhelming amount of video content available online. Our founders, passionate about artificial intelligence and efficiency, set out to create a solution that would transform how people consume and interact with video content. Since our inception, we've been dedicated to innovation, constantly improving our platform to meet the evolving needs of our users."
   },
-  technology:{
+  technology: {
     headline: "Our Technology",
     description: "Our platform leverages state-of-the-art AI algorithms to deliver fast and accurate transcription and summarization services. We support multiple languages and formats, ensuring that you can work with a diverse range of content. Our cloud-based solution offers secure storage and advanced search capabilities, turning your video content into a powerful knowledge database."
   },
-  team:{
+  team: {
     headline: "Our Team",
     description: "Fusion AI is powered by a team of dedicated professionals with expertise in AI, machine learning, and software development. Our team's diverse backgrounds and shared passion for technology drive our commitment to excellence and continuous improvement. We're here to support you every step of the way, from initial use to advanced feature adoption."
   },
-  why:{
+  why: {
     headline: "Why Choose Fusion AI",
     description: "At Fusion AI, we're committed to providing you with the best possible experience when it comes to video transcription and summarization. Here are a few reasons why you should choose us:",
     reasons: [
@@ -165,8 +178,8 @@ export const aboutPageContents = {
       }
     ]
   },
-  cta:{
-    text: 
+  cta: {
+    text:
       "Join the Fusion AI community today and transform the way you interact with video content. Sign up for a free trial and experience the future of video summarization and transcription."
   }
 }

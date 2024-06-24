@@ -1,8 +1,7 @@
 import fetch from "node-fetch";
 import { runpodRUNUrl, runpodHeader, runpodSTATUSUrl } from "../config/runpodConfig.js";
 
-export const transcribeLinkWithRunPod = async (url,model) => {
-  console.log("transcribeLinkWithRunPod", url);
+export const transcribeLinkWithRunPod = async (url,model, language) => {
   try {
     const response = await fetch(runpodRUNUrl, {
       method: "POST",
@@ -12,6 +11,7 @@ export const transcribeLinkWithRunPod = async (url,model) => {
           audio: url,
           model: model,
           transcription: "srt",
+          language: language
         },
       }),
     });

@@ -54,3 +54,8 @@ export const calculateCredit = ({
       ).toFixed(1);
   }
 };
+
+export const calculateTranscribeCredits = (credits, factor) => {
+  return (credits * factor).toFixed(2);
+
+}

@@ -16,6 +16,7 @@ import {
   ResizablePanelGroup,
 } from "../ui/resizable";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import { CardDescription, CardTitle } from "../ui/card";
 
 const UploadSummary = ({ Bar3Button }) => {
   // state management
@@ -141,33 +142,55 @@ const UploadSummary = ({ Bar3Button }) => {
     <div className="flex flex-col h-full">
       {/*Dropzone */}
       {!file && displayMode === "empty" && (
-        <div className="flex flex-col lg:flex-row">
-          <div className=" w-full flex lg:w-1/3 lg:sticky lg:top-0 bg-gray-950 lg:bg-white">
+        <div className="flex flex-col lg:flex-row h-full">
+
+          <div className=" w-full lg:w-2/5  bg-gray-950 lg:bg-transparent  py-1 pr-1 lg:px-4">
+
+            <div className="w-full sticky top-0 flex">
+
             {Bar3Button && <Bar3Button />}
-            <div
-              {...getRootProps()}
-              className={className(
-                isFocused ? " border-[#2196f3] bg-blue-200" : "",
-                isDragAccept ? "border-[#00e676] bg-green-200" : "",
-                isDragReject ? "border-[#ff1744] bg-red-200" : "",
-                " flex-col flex items-center transition-all duration-300 ease-in-out lg:h-[calc(100vh-128px)] cursor-pointer lg:mx-4 lg:mt-16  border-2 m-1 rounded-lg bg-gray-50 px-4 shadow-lg w-full lg:sticky lg:top-20"
-              )}
-            >
-              <input {...getInputProps()} />
-              {file && file.name ? (
-                <p className=" text-gray-950">
-                  Selected File: {file.name} - {formatFileSize(file.size)}
-                </p>
-              ) : (
-                <p className=" m-auto text-gray-600 text-sm p-1 flex flex-col items-center text-center">
-                  <ArrowUpTrayIcon className="w-14 h-14 mr-2 hidden lg:block" />
-                  Upload Audio/ Video here <br />(100 MB limitation for now)
-                </p>
-              )}
+              <div className="w-full">
+                <CardTitle className="text-secondary/70 pt-10 px-2 hidden lg:block">Step 1 of 3: Choose an audio or video file</CardTitle>
+                <CardDescription className="text-gray-950 px-2 hidden lg:block">
+                  We support most common audio and video formats. The maximum file size is 100 MB.
+                </CardDescription>
+  
+                <dropbox
+                  {...getRootProps()}
+                  className={className(
+                    " flex-col flex items-center transition-all duration-300 ease-in-out lg:w-full lg:aspect-square cursor-pointer  rounded-lg w-full lg:p-2 ",
+                    isFocused ? " border-[#2196f3] bg-blue-200" : "bg-gray-100",
+                    isDragAccept ? "border-[#00e676] bg-green-200" : "bg-gray-100",
+                    isDragReject ? "border-[#ff1744] bg-red-200" : "bg-gray-100"
+                  )}
+                >
+                  <div className="size-full border-dashed lg:border-2 flex items-center justify-center">
+                    <input {...getInputProps()} />
+                    {file && file.name ? (
+                      <p className=" text-gray-950">
+                        Selected File: {file.name} - {formatFileSize(file.size)}
+                      </p>
+                    ) : (
+                      <div className=" text-gray-600 text-sm flex flex-col items-center text-center font-roboto h-9 justify-center ">
+                        <ArrowUpTrayIcon className="w-12 h-12 mr-2 hidden lg:block" />
+                        <p><span className="font-bold ">Choose a file</span> or drag it here</p>
+                      </div>
+                    )}
+                  </div>
+                </dropbox>
+              </div>
+
             </div>
+
           </div>
 
+          {/* <div className=" border my-4 mr-4" /> */}
+
           <div className="flex-1">
+            <CardTitle className="text-secondary/70 pt-10 px-2 hidden lg:block">History</CardTitle>
+            <CardDescription className="text-gray-950 px-2 hidden lg:block">
+              View your past uploads and summaries
+            </CardDescription>
             <HistoryPage sourceType={"user-upload"} />
           </div>
         </div>

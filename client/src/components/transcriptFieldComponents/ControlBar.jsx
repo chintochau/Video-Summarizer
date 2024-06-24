@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ArrowDownTrayIcon,
   ArrowPathIcon,
@@ -47,6 +47,12 @@ export const ControlBar = (params) => {
     { name: "Transcript", label: "transcript" },
     { name: "Speakers", label: "speaker" },
   ]
+
+  
+  useEffect(() => {
+    utterances.length > 0 && setCurrentTab("Speakers");
+  }, [utterances])
+  
 
   const chineseConvert = () => {
     if (chinexeConvert === "traditional") {

@@ -44,8 +44,8 @@ const SpeakersTab = (params) => {
 
 const SpeakerTable = ({ speakers, setSpeakers,updateSpeakers }) => {
     return (
-        <div className="flex flex-col gap-2 px-2">
-            Speakers {speakers.length > 0 && `(${speakers.length})`}
+        <div className="flex gap-2 px-2 py-1 border-b">
+            <p className=''>Speakers {speakers.length > 0 && `(${speakers.length})`}</p>
             <div className='flex gap-2'>{speakers.map((speaker, index) =>
                 <SpeakerTag key={index} speaker={speaker} setSpeakers={setSpeakers} updateSpeakers={updateSpeakers} />)}
             </div>

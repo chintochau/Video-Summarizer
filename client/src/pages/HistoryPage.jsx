@@ -208,7 +208,6 @@ const HistoryPage = ({ sourceType = "all", className }) => {
   return (
     <div className={
       cn(
-        "h-full",
         className
       )
     }>

@@ -11,18 +11,9 @@ import {
 import { Input } from "../ui/input";
 import { ScrollArea } from "../ui/scroll-area";
 import { Button } from "../ui/button";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../ui/table";
 import { useAuth } from "@/contexts/AuthContext";
 import { secondsToTimeInMinutesAndSeconds } from "@/utils/timeUtils";
-import { CheckIcon, ClockIcon, CloudArrowUpIcon, SparklesIcon, UsersIcon } from "@heroicons/react/24/outline";
+import { ClockIcon, CloudArrowUpIcon, SparklesIcon, UsersIcon } from "@heroicons/react/24/outline";
 import {
   otherTranscribeOptions,
   transcribeOptions,
@@ -33,22 +24,38 @@ import { Label } from "@/components/ui/label";
 import { Signal, SignalHigh, SignalMedium } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { calculateTranscribeCredits } from "@/utils/creditUtils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { transcribeLanguages } from "@/constants";
 
 const TranscriptOptions = (params) => {
 
   const preselectedOptionIndex = 2
 
   const { uploadToCloudAndTranscribe } = params;
-  const { setupTranscriptWithInputSRT, speakerIdentification, setSpeakerIdentification } = useTranscriptContext();
+  const { setupTranscriptWithInputSRT, speakerIdentification, setSpeakerIdentification, transcriptCredits, setTranscriptCredits, selectedTranscriptionLanguage, setSelectedTranscriptionLanguage } = useTranscriptContext();
   const { videoCredits, videoDuration } = useVideoContext();
   const [selectedIndex, setSelectedIndex] = useState(preselectedOptionIndex);
   const { currentUser } = useAuth();
   const { selectedTranscribeOption, setSelectedTranscribeOption } =
     useTranscriptContext();
 
+
   useEffect(() => {
     setSelectedTranscribeOption(transcribeOptions[preselectedOptionIndex]);
   }, []);
+
+  useEffect(() => {
+    const creditsNeeded = calculateTranscribeCredits(videoCredits, selectedTranscribeOption.creditFactor)
+    setTranscriptCredits(creditsNeeded)
+  }, [selectedTranscribeOption, videoCredits])
+
 
   useEffect(() => {
     if (speakerIdentification) {
@@ -122,9 +129,42 @@ const TranscriptOptions = (params) => {
         >
           Speed and Accuracy
         </h3>
-        
-          <RadioGroup>
-            {!speakerIdentification && transcribeOptions.map((option, index) => (
+
+        <RadioGroup>
+          {!speakerIdentification && transcribeOptions.map((option, index) => (
+            <div
+              className="flex items-center gap-x-2 cursor-pointer "
+              key={
+                option.value
+              }
+              onClick={() => {
+                if (!option.available) return;
+                setSelectedIndex(index);
+                setSelectedTranscribeOption(option);
+              }
+              }
+            >
+              <RadioGroupItem
+                value={option.value}
+                checked={index === selectedIndex}
+                onChange={() => {
+                  if (!option.available) return;
+                  setSelectedIndex(index);
+                  setSelectedTranscribeOption(option);
+                }}
+              >
+                {option.label}
+              </RadioGroupItem>
+              <p
+                className="text-sm text-gray-950 font-medium"
+              >
+                {option.label}
+              </p>
+            </div>
+          ))}
+
+          {
+            speakerIdentification && otherTranscribeOptions.map((option, index) => (
               <div
                 className="flex items-center gap-x-2 cursor-pointer "
                 key={
@@ -154,73 +194,62 @@ const TranscriptOptions = (params) => {
                   {option.label}
                 </p>
               </div>
-            ))}
+            ))
+          }
 
-            {
-              speakerIdentification && otherTranscribeOptions.map((option, index) => (
-                <div
-                  className="flex items-center gap-x-2 cursor-pointer "
-                  key={
-                    option.value
-                  }
-                  onClick={() => {
-                    if (!option.available) return;
-                    setSelectedIndex(index);
-                    setSelectedTranscribeOption(option);
-                  }
-                  }
-                >
-                  <RadioGroupItem
-                    value={option.value}
-                    checked={index === selectedIndex}
-                    onChange={() => {
-                      if (!option.available) return;
-                      setSelectedIndex(index);
-                      setSelectedTranscribeOption(option);
-                    }}
-                  >
-                    {option.label}
-                  </RadioGroupItem>
-                  <p
-                    className="text-sm text-gray-950 font-medium"
-                  >
-                    {option.label}
-                  </p>
-                </div>
-              ))
-            }
+        </RadioGroup>
 
-          </RadioGroup>
-  
-          <div
-            className="flex flex-col gap-y-1.5 p-2 bg-gray-100 rounded-md mt-2"
+        <div
+          className="flex flex-col gap-y-1.5 p-2 bg-gray-100 rounded-md mt-2"
+        >
+          <p
+            className="text-sm text-muted-foreground"
           >
-            <p
-              className="text-sm text-muted-foreground"
-            >
-              {selectedTranscribeOption?.information}
-            </p>
-            <p
-              className="text-sm text-muted-foreground"
-            >
-              Estimated Time: {calculateTime(selectedTranscribeOption?.timeFactor)}
-            </p>
-            <p
-              className="text-sm text-muted-foreground flex items-center gap-x-1.5"
-            >
-              Accuracy Level for English: <Accuracy accuracy={3} />
-            </p>
-            <p
-              className="text-sm text-muted-foreground flex items-center gap-x-1.5"
-            >
-              Accuracy Level for other language: <Accuracy accuracy={selectedTranscribeOption?.accuracy} />
-            </p>
-            <p
-              className="text-sm text-muted-foreground flex items-center gap-x-1.5 "
-            >
-              Credits: {(videoCredits * selectedTranscribeOption?.creditFactor).toFixed(2)}
-            </p>
-          </div>
+            {selectedTranscribeOption?.information}
+          </p>
+          <p
+            className="text-sm text-muted-foreground"
+          >
+            Estimated Time: {calculateTime(selectedTranscribeOption?.timeFactor)}
+          </p>
+          <p
+            className="text-sm text-muted-foreground flex items-center gap-x-1.5"
+          >
+            Accuracy Level for English: <Accuracy accuracy={3} />
+          </p>
+          <p
+            className="text-sm text-muted-foreground flex items-center gap-x-1.5"
+          >
+            Accuracy Level for other language: <Accuracy accuracy={selectedTranscribeOption?.accuracy} />
+          </p>
+          <p
+            className="text-sm text-muted-foreground flex items-center gap-x-1.5 "
+          >
+            Credits: {transcriptCredits}
+          </p>
+        </div>
+
+
+        <h3
+          className="text-lg font-semibold text-primary pt-4 "
+        >
+          Language
+        </h3>
+
+        <div className="w-28">
+          <Select onValueChange={setSelectedTranscriptionLanguage} value={selectedTranscriptionLanguage}>
+            <SelectTrigger className=" h-6">
+              <SelectValue placeholder="Select Language" />
+            </SelectTrigger>
+            <SelectContent>
+              {transcribeLanguages.map((item) => (
+                <SelectItem key={item.code} value={item.code}>
+                  {item.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
       </div>
     );
@@ -231,7 +260,7 @@ const TranscriptOptions = (params) => {
       return (
         <div className="flex flex-col gap-y-1">
           <Label htmlFor="model" className="pt-2">
-            Credits: {(videoCredits * selectedTranscribeOption.creditFactor).toFixed(2)}
+            Credits: {transcriptCredits}
           </Label>
         </div>
       );

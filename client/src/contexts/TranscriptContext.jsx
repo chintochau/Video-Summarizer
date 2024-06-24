@@ -9,17 +9,17 @@ export const useTranscriptContext = () => useContext(TranscriptContext);
 export const TranscriptProvider = ({ children }) => {
   const [parentSrtText, setParentSrtText] = useState(null);
   const [parentTranscriptText, setParentTranscriptText] = useState(null)
-  const [transcriptCredits, setTranscriptCredits] = useState(0);
   const [loadingTranscript, setLoadingTranscript] = useState(true)
   const [transcriptAvailable, setTranscriptAvailable] = useState(false)
   const [selectedTranscribeOption, setSelectedTranscribeOption] = useState(transcribeOptions[0])
   const [editableTranscript, setEditableTranscript] = useState([])
   const [generatingTranscriptWithAI, setGeneratingTranscriptWithAI] = useState(false)
-  const [selectedTranscriptionLanguage, setSelectedTranscriptionLanguage] = useState("en")
   const [speakerIdentification, setSpeakerIdentification] = useState(false)
   const [utterances, setUtterances] = useState([])
   const [speakers, setSpeakers] = useState([])
   const [transcriptId, setTranscriptId] = useState(null)
+  const [transcriptCredits, setTranscriptCredits] = useState(0);
+  const [selectedTranscriptionLanguage, setSelectedTranscriptionLanguage] = useState("auto")
 
   const setupTranscriptWithInputSRT = (srt) => {
     const transcriptArray = parseSRTToArray(srt);
@@ -53,6 +53,10 @@ export const TranscriptProvider = ({ children }) => {
     setTranscriptId(video._id)
   }
 
+  const calculateTranscriptCredits = (videoCredits, factor) => {
+    return (videoCredits * factor).toFixed(2);
+  }
+
   const value = {
     setParentSrtText,
     parentSrtText,
@@ -80,6 +84,7 @@ export const TranscriptProvider = ({ children }) => {
     setupTranscriptWithInputSRT,
     resetTranscript,
     setupVideoTranscript,
+    calculateTranscriptCredits,
   };
 
   return (

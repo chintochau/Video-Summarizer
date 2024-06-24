@@ -38,12 +38,11 @@ import SpeakersTab from "./transcriptFieldComponents/SpeakersTab";
 // Field
 const TranscriptField = (params) => {
   const { youtubeId, videoRef, file, displayMode, className } = params;
-  const [viewMode, setViewMode] = useState("transcript"); // 新增狀態變量
+  const [viewMode, setViewMode] = useState("speakers");
   const [isEditMode, setIsEditMode] = useState(false);
-  const { videoCredits, currentPlayTime, currentLine, setCurrentLine, video } =
+  const {currentPlayTime, currentLine, setCurrentLine, video } =
     useVideoContext();
   const {
-    parentTranscriptText,
     selectedTranscribeOption,
     transcriptAvailable,
     selectedTranscriptionLanguage,
@@ -56,8 +55,10 @@ const TranscriptField = (params) => {
     setEditableTranscript,
     setUtterances,
     setSpeakers,
+    utterances,
+    transcriptCredits,
   } = useTranscriptContext();
-  const { credits, userId } = useAuth();
+  const { credits, userId,setCredits } = useAuth();
   const [transcribeProgress, setTranscribeProgress] = useState(0);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -126,7 +127,7 @@ const TranscriptField = (params) => {
     }
 
     try {
-      checkCredits(parseFloat(credits), parseFloat(videoCredits * selectedTranscribeOption.creditFactor).toFixed(2))
+      checkCredits(parseFloat(credits), parseFloat(transcriptCredits))
     } catch (error) {
       toast({
         variant: "destructive",
@@ -153,6 +154,8 @@ const TranscriptField = (params) => {
             userId,
             video,
             transcribeOption: selectedTranscribeOption,
+            language: selectedTranscriptionLanguage,
+            videoCredits:transcriptCredits,
           });
           break;
         default: // file
@@ -160,7 +163,7 @@ const TranscriptField = (params) => {
             result = await TranscribeService.transcribeUserUploadFile({
               file,
               language: selectedTranscriptionLanguage,
-              videoCredits,
+              videoCredits:transcriptCredits,
               userId,
               video,
               transcribeOption: selectedTranscribeOption,
@@ -173,7 +176,7 @@ const TranscriptField = (params) => {
                 publicId,
                 resourceType,
                 language: selectedTranscriptionLanguage,
-                videoCredits,
+                videoCredits:transcriptCredits,
                 userId,
                 video,
                 transcribeOption: selectedTranscribeOption,
@@ -186,6 +189,7 @@ const TranscriptField = (params) => {
       setupTranscriptWithInputSRT(result.originalTranscript);
       setUtterances(result.utterances || []);
       setSpeakers(result.speakers || []);
+      setCredits((prev) => (prev - parseFloat(transcriptCredits)));
     } catch (error) {
       resetTranscript();
       console.error(error);
@@ -327,7 +331,10 @@ const TranscriptField = (params) => {
                   {/* 根據viewMode渲染不同的內容 */}
                   {/* Transcript Box */}
 
-                  {viewMode === "transcript" ? (
+                  {utterances.length > 0 && viewMode !== "transcript" ? (<SpeakersTab
+                    onClick={handleTranscriptClick}
+                  />
+                  ) : (
                     <ScrollArea className=" h-full px-2">
                       {editableTranscript.map(({ start, end, text }, index) => {
                         const startTime = timeToSeconds(start.split(",")[0]);
@@ -360,10 +367,6 @@ const TranscriptField = (params) => {
                       })}
                       <div className="h-12"></div>
                     </ScrollArea>
-                  ) : (
-                    <SpeakersTab
-                      onClick={handleTranscriptClick}
-                    />
                   )}
                 </div>
               ) : (

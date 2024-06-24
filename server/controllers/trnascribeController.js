@@ -23,6 +23,7 @@ import {
 } from "../services/runpodService.js";
 import { uploadAudioToS3 } from "../services/amazonService.js";
 import { transcribeWithAssemblyAI } from "../services/assemblyAiService.js";
+import { checkUserCredit, deductCredits } from "../utils/creditUtils.js";
 
 export const handleTranscribeRequest = async (req, res) => {
   const { userId } = req.body;
@@ -211,10 +212,11 @@ export const handleYoutubeTranscribeRequest = async (req, res) => {
 
 // processYoutubeVideo function using S3 and runpod
 export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
-  const { youtubeId, userId, video, transcribeOption, language } = req.body;
+  const { youtubeId, userId, video, transcribeOption, language, videoCredits } = req.body;
   const { sourceTitle } = video;
   let tempFilePath;
   try {
+    await checkUserCredit(userId, videoCredits); 
     const videoInfo = await ytdl.getInfo(youtubeId);
     // Check if the video has available audio streams
     const audioFormats = ytdl.filterFormats(videoInfo.formats, "audioonly");
@@ -236,7 +238,7 @@ export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
       case "assembly":
         result = await transcribeWithAssemblyAI({
           filePath: tempFilePath,
-          language: "en_us",
+          language: language === "auto" ? "en_us" : language
         }
         );
         outputVideo = await getOrCreateVideoAndUpdateTranscript({
@@ -248,7 +250,7 @@ export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
         });
         break
       default:
-        const id = await transcribeLinkWithRunPod(filePublicUrl, transcribeOption.value || "base");
+        const id = await transcribeLinkWithRunPod(filePublicUrl, transcribeOption.value || "base",language === "auto" ? null : language);
         // const id = "a671ac14-4c07-4c09-a5c6-113c75b72b43-u1"
         // add id to array, and check status every 10 seconds
         let currentStatus = "IN_PROGRESS";
@@ -271,7 +273,7 @@ export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
         });
         break
     }
-
+    await deductCredits(userId, videoCredits);
     res.json(outputVideo);
 
   } catch (error) {
@@ -290,16 +292,15 @@ export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
 
 
 export const processVideoBeta = async (req, res) => {
-  const { userId, link, publicId, resourceType, language } = req.body;
+  const { userId, link, publicId, resourceType, language,videoCredits } = req.body;
   const video = JSON.parse(req.body.video);
   const transcribeOption = JSON.parse(req.body.transcribeOption);
   const { sourceTitle } = video;
-
-  console.log("Processing video Beta", sourceTitle);
   const writeData = (data) => {
     res.write(`data: ${JSON.stringify(data)}\n\n`);
   };
   try {
+    await checkUserCredit(userId, videoCredits);
     let result;
     let outputVideo;
     let progress = 0
@@ -307,7 +308,7 @@ export const processVideoBeta = async (req, res) => {
       case "assembly":
         result = await transcribeWithAssemblyAI({
           fileLink: link,
-          language: "en_us",
+          language: language === "auto" ? "en_us" : language,
         });
 
         outputVideo = await getOrCreateVideoAndUpdateTranscript({
@@ -320,7 +321,7 @@ export const processVideoBeta = async (req, res) => {
 
         break
       default:
-        const id = await transcribeLinkWithRunPod(link, transcribeOption.value || "base");
+        const id = await transcribeLinkWithRunPod(link, transcribeOption.value || "base", language === "auto" ? null : language);
         let currentStatus = "IN_PROGRESS";
         let data
         while (currentStatus !== "COMPLETED") {
@@ -344,6 +345,8 @@ export const processVideoBeta = async (req, res) => {
         });
         break
     }
+    await deductCredits(userId, videoCredits);
+
     writeData({ outputVideo });
     res.end()
 
