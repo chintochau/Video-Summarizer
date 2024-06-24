@@ -37,7 +37,7 @@ const LoginPage = () => {
             <CardTitle className="text-center text-3xl font-extrabold leading-8 text-cyan-700/70 sm:text-4xl sm:leading-10 ">Sign In</CardTitle>
           </CardHeader>
           <CardContent>
-            <LoginForm />
+            {/* <LoginForm />
             <div className="relative mt-6">
               <div
                 className="absolute inset-0 flex items-center"
@@ -50,7 +50,7 @@ const LoginPage = () => {
                   Or continue with
                 </span>
               </div>
-            </div>
+            </div> */}
             <div className="flex items-center justify-center dark:bg-gray-800 mt-4">
               <button
                 onClick={AuthService.signInWithGoogle}
