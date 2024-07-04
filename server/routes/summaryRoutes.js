@@ -29,7 +29,7 @@ router.get("/user/:userId/videos",bodyParser.json({ limit: "10mb" }), getAllVide
 router.post("/delete-summary",bodyParser.json({ limit: "10mb" }), deleteSummary);
 router.post("/delete-video",bodyParser.json({ limit: "10mb" }), deleteVideoAndSummaries);
 
-// batch delete
+// batch admin controls
 router.post("/delete-summaries",bodyParser.json({ limit: "10mb" }), deleteSummaries);
 router.get("/get-summaries",bodyParser.json({ limit: "10mb" }), getAllSummaries);
 
