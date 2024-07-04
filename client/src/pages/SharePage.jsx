@@ -8,7 +8,7 @@ import {
 } from "@/components/summary-field-conpoments/SummaryTab";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { fusionaiLink } from "@/constants";
+import { fusionaiLink, shareLink } from "@/constants";
 import SummaryService from "@/services/SummaryService";
 import { DocumentDuplicateIcon, ShareIcon } from "@heroicons/react/24/outline";
 import { Loader2 } from "lucide-react";
@@ -225,7 +225,7 @@ const SharePage = () => {
           name="twitter:image"
           content={`https://img.youtube.com/vi/${sourceId}/0.jpg`}
         />
-        <link rel="canonical" href={`${fusionaiLink}/share?s=${summaryId}`} />
+        <link rel="canonical" href={`${shareLink}${summaryId}`} />
       </Helmet>
       <Header className="relative" />
       <div
