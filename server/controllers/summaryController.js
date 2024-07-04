@@ -266,7 +266,7 @@ export const getAllSummaries = async (req, res) => {
   try {
     // get all summaries objects, only return the _id, exclude all other information, and in a raw text format, separated by line break
     // only return sourceType = youtube
-    const summaries = await Summary.find({ sourceType: "youtube" }).select("_id");
+    const summaries = await Summary.find({}, { _id: 1 }).lean();
     const summaryIds = summaries.map((summary) => "https://fusionaivideo.io/share/"+summary._id).join("\n");
     res.status(200).send(summaryIds);
 
