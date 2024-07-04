@@ -11,7 +11,7 @@ export const renderSharePage = async (req, res) => {
                 title: `Summary: ${summary.sourceTitle} - Fusion AI Video Book`,
                 description: summary.summary,
                 imageUrl: summary.videoId.videoThumbnail,
-                url: `${process.env.CLIENT_URL}/share?s=${summary._id}`
+                url: `${process.env.SHARE_URL}${summary._id}`
              });
         } else {
             res.status(404).json({ success: false, error: "Summary not found" });

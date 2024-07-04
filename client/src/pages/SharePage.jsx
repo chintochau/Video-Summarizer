@@ -15,6 +15,7 @@ import { Loader2 } from "lucide-react";
 import Markdown from "markdown-to-jsx";
 import React, { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
+import { useParams } from "react-router-dom";
 
 const SharePage = () => {
   // State to store the extracted URL parameter
@@ -26,14 +27,15 @@ const SharePage = () => {
   const [summaryFormat, setSummaryFormat] = useState(null);
 
   const { toast } = useToast();
+  const {id} = useParams();
 
   const videoRef = useRef(null);
   // Effect hook to run once when the component mounts
   useEffect(() => {
     // Function to extract URL parameters
     const getSummaryId = () => {
-      const params = new URLSearchParams(window.location.search);
-      const summaryParam = params.get("s");
+      const params = new URLSearchParams(window.location.search)
+      const summaryParam = params.get("s") || id;
       setSummaryId(summaryParam);
       return summaryParam;
     };
@@ -44,7 +46,7 @@ const SharePage = () => {
       SummaryService.getSummary({ summaryId }).then((response) => {
         setLoading(false);
         // Check if the summary data was fetched
-        if (response.success) {
+        if (response && response.success) {
           // set the website title
           setVideoTitle(response.data.sourceTitle);
           setSummaryData(response.data);

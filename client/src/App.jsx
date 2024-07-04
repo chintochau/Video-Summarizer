@@ -35,7 +35,10 @@ function App() {
                   <Routes>
                     <Route path="/Summarizer" element={<GeneralSummary />} />
                     <Route path="/" element={<HomePage />} />
-                    <Route path="/share" element={<SharePage />} />
+                    <Route path="/share" element={<SharePage />} >
+                      <Route path="" element={<div />} />
+                      <Route path=":id" element={<div />} />
+                    </Route>
                     <Route path="/auth" element={<AuthCheckPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
