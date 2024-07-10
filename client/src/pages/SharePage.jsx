@@ -156,7 +156,6 @@ const SharePage = () => {
             name="twitter:description"
             content="Learn how to share video summaries with Fusion AI. Follow simple steps to create and share concise summaries of your favorite videos."
           />
-          <link rel="canonical" href={`${fusionaiLink}/share`} />
         </Helmet>
         <Header />
         <div className=" w-full flex flex-col py-20">
