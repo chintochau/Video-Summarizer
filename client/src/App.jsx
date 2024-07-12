@@ -22,6 +22,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
 import SharePage from "./pages/SharePage.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
 import { ThemeProvider } from "./contexts/ThemeProvider.jsx";
+import TranscriptionPage from "./pages/marketing/TranscriptionPage.jsx";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
                     <Route path="/profile" element={<UserProfilePage />} />
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                     <Route path="/about" element={<AboutPage />} />
+                    <Route path="/transcription" element={<TranscriptionPage />} />
                     <Route path="/console/*" element={<Dashboard />}>
                       <Route path="" element={<div />} />
                       <Route path="youtube" element={<YoutubeSummary />} />

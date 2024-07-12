@@ -12,7 +12,7 @@ import {
   getOrCreateVideoBySourceId,
 } from "../services/videoServices.js";
 import { v4 as uuidv4 } from "uuid";
-import ytdl from "ytdl-core";
+import ytdl from "@distube/ytdl-core";
 import tmp, { file } from "tmp";
 import util from "util";
 import { pipeline } from "stream";

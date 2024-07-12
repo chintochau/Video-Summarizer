@@ -1,7 +1,7 @@
 import YoutubeTranscriptService from "../services/youtubeTranscriptServer.js";
 import { YoutubeTranscript } from "youtube-transcript";
 import { YTconvertToSrt } from "../services/youtubeServices.js";
-import ytdl from "ytdl-core";
+import ytdl from "@distube/ytdl-core";
 
 export const getYoutubeTranscript = async (req, res) => {
   const { youtubeId } = req.params;
