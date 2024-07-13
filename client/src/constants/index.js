@@ -13,9 +13,11 @@ export const languageList = [
   { code: 'jp', name: 'Japanese', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/JP.svg" },
   { code: 'es', name: 'Spanish', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/ES.svg" },
   { code: 'fr', name: 'French', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/FR.svg" },
-  { code: 'ar', name: 'Arabic', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/SA.svg" },
   { code: 'ru', name: 'Russian', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/RU.svg" },
-  { code: 'pt', name: 'Portuguese', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/PT.svg" }
+  { code: 'pt', name: 'Portuguese', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/PT.svg" },
+  { code: 'ko', name: 'Korean', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/KR.svg" },
+  { code: 'de', name: 'German', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/DE.svg" },
+  { code: 'it', name: 'Italian', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/IT.svg" },
 ];
 
 export const transcribeLanguages = [
@@ -25,9 +27,11 @@ export const transcribeLanguages = [
   { code: 'jp', name: 'Japanese', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/JP.svg" },
   { code: 'es', name: 'Spanish', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/ES.svg" },
   { code: 'fr', name: 'French', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/FR.svg" },
-  { code: 'ar', name: 'Arabic', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/SA.svg" },
   { code: 'ru', name: 'Russian', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/RU.svg" },
-  { code: 'pt', name: 'Portuguese', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/PT.svg" }
+  { code: 'pt', name: 'Portuguese', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/PT.svg" },
+  { code: 'ko', name: 'Korean', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/KR.svg" },
+  { code: 'de', name: 'German', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/DE.svg" },
+  { code: 'it', name: 'Italian', flag: "http://purecatamphetamine.github.io/country-flag-icons/3x2/IT.svg" },
 ]
 
 

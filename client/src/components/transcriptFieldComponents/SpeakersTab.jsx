@@ -21,24 +21,26 @@ const SpeakersTab = (params) => {
     }
 
     return (
-        <ScrollArea className="md:h-full p-1 ">
-            <SpeakerTable speakers={speakers} setSpeakers={setSpeakers} updateSpeakers={updateSpeakers}/>
-            {utterances.length > 0 ?
-                <>
-                    {utterances.map((utterance, index) => {
-                        return (
-                            <UtteranceBox
-                                key={index}
-                                utterance={utterance}
-                                onClick={onClick}
-                                currentPlayTime={currentPlayTime}
-                                speakers={speakers}
-                            />
-                        )
-                    })}
-                </> : <div className="text-center text-gray-400">No Speakers Identified</div>
-            }
-        </ScrollArea>
+        <>
+                <SpeakerTable speakers={speakers} setSpeakers={setSpeakers} updateSpeakers={updateSpeakers}/>
+            <ScrollArea className="md:h-full p-1 ">
+                {utterances.length > 0 ?
+                    <>
+                        {utterances.map((utterance, index) => {
+                            return (
+                                <UtteranceBox
+                                    key={index}
+                                    utterance={utterance}
+                                    onClick={onClick}
+                                    currentPlayTime={currentPlayTime}
+                                    speakers={speakers}
+                                />
+                            )
+                        })}
+                    </> : <div className="text-center text-gray-400">No Speakers Identified</div>
+                }
+            </ScrollArea>
+        </>
     )
 }
 

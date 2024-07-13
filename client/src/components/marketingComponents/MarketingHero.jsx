@@ -2,14 +2,17 @@ import React from "react";
 import { Button } from "../ui/button";
 import { ArrowRightIcon } from "lucide-react";
 import { Link } from "react-router-dom";
+import { cn } from "@/utils/utils";
 
 const MarketingHero = (params) => {
-  const { title, description, image, button, action, path } = params;
+  const { title, description, image, button, action, path, className } = params;
 
   return (
-    <div className="w-full">
+    <div className={
+      cn("w-full", className)
+    }>
       <div
-        className="container flex flex-col justify-center items-center h-[600px] bg-cover bg-center bg-no-repeat"
+        className="container flex flex-col justify-center items-center bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${image})` }}
       >
         <h1 className="text-5xl font-semibold text-black/80">{title}</h1>

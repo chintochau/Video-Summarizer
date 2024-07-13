@@ -3,6 +3,7 @@ https://fusionaivideo.io/login
 https://fusionaivideo.io/summarizer
 https://fusionaivideo.io/share
 https://fusionaivideo.io/about
+https://fusionaivideo.io/transcription
 https://fusionaivideo.io/share/6642f7eda22129553bec387b
 https://fusionaivideo.io/share/6642fdf6a22129553bec38ad
 https://fusionaivideo.io/share/6643046ea22129553bec38c1
