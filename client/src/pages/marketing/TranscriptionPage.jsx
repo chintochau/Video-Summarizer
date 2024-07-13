@@ -14,17 +14,31 @@ import speakerLabel from "@/assets/speaker-labels.png";
 import multipleFile from "@/assets/multiple-file.png";
 import multipleOptions from "@/assets/multiple-options.png";
 import multipleLanguges from "@/assets/multiple-languages.png";
+import { fusionaiLink } from "@/constants";
 
 const TranscriptionPage = () => {
   const { userId } = useAuth();
   return (
     <>
       <Helmet>
-        <title>Transcription - Fusion AI</title>
+        <title>Free Video and Audio Transcription | Fusion AI</title>
         <meta
           name="description"
           content="Transcribe videos and audio files with high accuracy and speed. Get your free transcript."
         />
+        <meta
+          name="keywords"
+          content="video transcription, audio transcription, high accuracy, high speed, free transcript"
+        />
+        <link rel="canonical" href={`${fusionaiLink}/transcription`} />
+        <meta property="og:title" content="Free Video and Audio Transcription" />
+        <meta
+          property="og:description"
+          content="Transcribe videos and audio files with high accuracy and speed. Get your free transcript."
+        />
+        <meta property="og:url" content={`${fusionaiLink}/transcription`} />
+        <meta property="og:image" content={`${fusionaiLink}/fusionai-logo.png`} />
+        <meta property="og:image:alt" content="Fusion AI logo" />
       </Helmet>
       <Header />
       <MarketingHero
@@ -105,10 +119,9 @@ const TranscriptionPage = () => {
       <MarketingBlock
         right={
           <>
-            {" "}
             <h2 className="md:text-4xl text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2 md:mb-4 mt-4">
               Transcribe Audio in 10+ Languages
-            </h2>{" "}
+            </h2>
             <p className="md:text-xl text-base text-gray-600 dark:text-gray-300 font-light">
               We support: English, Chinese, Japanese, Spanish, French, Russian,
               German, Portuguese, Korean, Italian and more.

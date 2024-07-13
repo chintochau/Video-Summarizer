@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { LinkToDashboard } from "./RoutingLinks";
 
 const navigation = [
+  { name: "Transcription", to: "", href: "/transcription#top" },
   { name: "Features", to: "", href: "/#features" },
   { name: "Pricing", to: "", href: "/#pricing" },
   { name: "F&Q", to: "", href: "/#faq" },
