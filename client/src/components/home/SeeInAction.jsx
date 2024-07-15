@@ -73,7 +73,7 @@ const SeeInAction = () => {
       <h2 className=" text-3xl pb-2 mx-2.5 lg:px-6 lg:text-4xl font-bold sm:text-center text-cyan-700/70 py-2 lg:py-2">
         {inActionContents.headline}
       </h2>
-      <p className="mx-2.5 py-2 lg:px-6 lg:text-lg text-gray-800 sm:text-center lg:py-2 font-normal font-roboto">
+      <p className="mx-2.5 py-2 lg:px-6 lg:text-lg text-gray-500 sm:text-center lg:py-2 font-light text-xl pb-8 ">
         {inActionContents.description}
       </p>
       <Tabs className="w-full lg:text-center" defaultValue="video-0">

@@ -20,7 +20,7 @@ import {
   NavigationMenuViewport,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { CaptionsIcon, NotebookTextIcon } from "lucide-react";
+import { CaptionsIcon, NotebookPenIcon, NotebookTextIcon  } from "lucide-react";
 
 const navigation = [
   {
@@ -35,12 +35,20 @@ const navigation = [
         href: "/transcription#top",
         icon: <CaptionsIcon className="size-8" />,
       },
+      {
+        name: "Summarization",
+        description: " Fast and accurate summarization at lowest cost.",
+        to: "",
+        href: "/summarization#top",
+        icon: <NotebookTextIcon className="size-8" />,
+      },
       // {
-      //   name: "Summarization",
-      //   description: " Fast and accurate summarization at lowest cost.",
+      //   name: "Meetings Notes",
+      //   description: "Jot down your meetings for you.",
       //   to: "",
-      //   href: "/summarization#top",
-      //   icon: <NotebookTextIcon className="size-8" />,
+      //   href: "/meeting#top",
+      //   icon: <NotebookPenIcon className="size-8" />,
+
       // },
     ],
   },
@@ -116,7 +124,7 @@ const Header = ({ className }) => {
 
                   {item.submenu && (
                     <NavigationMenuContent>
-                        <div className="grid gap-3 p-2">
+                        <div className="grid  p-2 gap-3">
                           {item.submenu.map((item) => (
                             <NavigationMenuLink
                               key={item.name}
@@ -133,7 +141,7 @@ const Header = ({ className }) => {
                                   {item.icon}
                                 </div>
                                 <div className="flex flex-col w-80">
-                                  <h3 className=" text-md font-semibold">{item.name}</h3>
+                                  <h3 className=" text-md ">{item.name}</h3>
                                   <p className="text-gray-400">
                                     {item.description}
                                   </p>

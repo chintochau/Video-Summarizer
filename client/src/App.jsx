@@ -24,20 +24,21 @@ import AboutPage from "./pages/AboutPage.jsx";
 import { ThemeProvider } from "./contexts/ThemeProvider.jsx";
 import TranscriptionPage from "./pages/marketing/TranscriptionPage.jsx";
 import SummarizationPage from "./pages/marketing/SummarizationPage.jsx";
+import MeetingPage from "./pages/marketing/MeetingPage.jsx";
 
 function App() {
   return (
     <>
-        <ModelProvider>
-          <VideoProvider>
-            <SummaryProvider>
-              <TranscriptProvider>
-                <QuotaProvider>
-                  <ThemeProvider>
+      <ModelProvider>
+        <VideoProvider>
+          <SummaryProvider>
+            <TranscriptProvider>
+              <QuotaProvider>
+                <ThemeProvider>
                   <Routes>
                     <Route path="/Summarizer" element={<GeneralSummary />} />
                     <Route path="/" element={<HomePage />} />
-                    <Route path="/share" element={<SharePage />} >
+                    <Route path="/share" element={<SharePage />}>
                       <Route path="" element={<div />} />
                       <Route path=":id" element={<div />} />
                     </Route>
@@ -49,8 +50,15 @@ function App() {
                     <Route path="/profile" element={<UserProfilePage />} />
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                     <Route path="/about" element={<AboutPage />} />
-                    <Route path="/transcription" element={<TranscriptionPage />} />
-                    <Route path="/summarization" element={<SummarizationPage />} />
+                    <Route
+                      path="/transcription"
+                      element={<TranscriptionPage />}
+                    />
+                    <Route
+                      path="/summarization"
+                      element={<SummarizationPage />}
+                    />
+                    <Route path="/meeting" element={<MeetingPage />} />
                     <Route path="/console/*" element={<Dashboard />}>
                       <Route path="" element={<div />} />
                       <Route path="youtube" element={<YoutubeSummary />} />
@@ -61,13 +69,13 @@ function App() {
                       <Route path="rag" element={<SearchPage />} />
                     </Route>
                   </Routes>
-                  </ThemeProvider>
-                </QuotaProvider>
-              </TranscriptProvider>
-            </SummaryProvider>
-          </VideoProvider>
-        </ModelProvider>
-        <Toaster />
+                </ThemeProvider>
+              </QuotaProvider>
+            </TranscriptProvider>
+          </SummaryProvider>
+        </VideoProvider>
+      </ModelProvider>
+      <Toaster />
     </>
   );
 }

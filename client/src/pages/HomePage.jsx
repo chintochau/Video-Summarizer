@@ -16,7 +16,7 @@ import Header from "@/components/common/Header";
 
 const HomePage = () => {
   return (
-    <div className="mx-auto">
+    <>
       <Header />
       <div id="hero-section">
         <HeroSection />
@@ -45,7 +45,7 @@ const HomePage = () => {
       <div id="footer">
         <Footer />
       </div>
-    </div>
+    </>
   );
 };
 
