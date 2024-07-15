@@ -10,6 +10,11 @@
     animation: animation 3s ease infinite;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+}
+
 @keyframes animation {
     0%,
     100% {
