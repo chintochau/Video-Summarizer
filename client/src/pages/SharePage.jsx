@@ -1,5 +1,6 @@
 import { Footer } from "@/components";
 import Header from "@/components/common/Header";
+import { LinkToDashboard } from "@/components/common/RoutingLinks";
 import VideoField from "@/components/summarizerComponents/YTVideoField";
 import JsonSummaryField from "@/components/summary-field-conpoments/JsonSummaryField";
 import {
@@ -11,7 +12,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { fusionaiLink, shareLink } from "@/constants";
 import SummaryService from "@/services/SummaryService";
 import { DocumentDuplicateIcon, ShareIcon } from "@heroicons/react/24/outline";
-import { Loader2 } from "lucide-react";
+import { ArrowRightIcon, Loader2 } from "lucide-react";
 import Markdown from "markdown-to-jsx";
 import React, { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
@@ -27,14 +28,14 @@ const SharePage = () => {
   const [summaryFormat, setSummaryFormat] = useState(null);
 
   const { toast } = useToast();
-  const {id} = useParams();
+  const { id } = useParams();
 
   const videoRef = useRef(null);
   // Effect hook to run once when the component mounts
   useEffect(() => {
     // Function to extract URL parameters
     const getSummaryId = () => {
-      const params = new URLSearchParams(window.location.search)
+      const params = new URLSearchParams(window.location.search);
       const summaryParam = params.get("s") || id;
       setSummaryId(summaryParam);
       return summaryParam;
@@ -92,7 +93,6 @@ const SharePage = () => {
 
   // 點擊轉錄時跳轉視頻
   const handleTimestampClick = (time) => {
-    console.log(time);
     let [hours, minutes, seconds] = time.split(":");
     let secondsTotal;
 
@@ -123,76 +123,22 @@ const SharePage = () => {
     );
   }
 
-  if (!loading && !summaryData) {
+  if (!summaryData) {
     return (
       <>
-        <Helmet>
-          <title>Easy Steps to Share Your Summaries | Fusion AI</title>
-          <meta
-            name="title"
-            content="How to Share Video Summaries with Fusion AI | Easy Steps to Share Your Summaries"
-          />
-          <meta
-            name="description"
-            content="Learn how to share video summaries with Fusion AI. Follow simple steps to create and share concise summaries of your favorite videos."
-          />
-          <meta
-            name="keywords"
-            content="share video summaries, Fusion AI sharing instructions, how to share summaries, video summarization guide, share YouTube summaries"
-          />
-          <meta
-            property="og:title"
-            content="How to Share Video Summaries with Fusion AI | Easy Steps to Share Your Summaries"
-          />
-          <meta
-            property="og:description"
-            content="Learn how to share video summaries with Fusion AI. Follow simple steps to create and share concise summaries of your favorite videos."
-          />
-          <meta
-            name="twitter:title"
-            content="How to Share Video Summaries with Fusion AI | Easy Steps to Share Your Summaries"
-          />
-          <meta
-            name="twitter:description"
-            content="Learn how to share video summaries with Fusion AI. Follow simple steps to create and share concise summaries of your favorite videos."
-          />
-          <link rel="canonical" href={`${shareLink}${summaryId}`} />
-        </Helmet>
         <Header />
-        <div className=" w-full flex flex-col py-20">
-          <h1 className="text-2xl font-bold text-center">
-            How to Share Video Summaries with Fusion AI
-          </h1>
-          <p className="mx-auto">
-            To share video summaries with Fusion AI, follow these steps:
-          </p>
-          <ol className="list-decimal list-inside mx-auto space-y-2 py-4">
-            <li>Login to Fusion AI: Access your account on Fusion AI.</li>
-            <li>
-              Go to Console Page: Navigate to the console page to start
-              summarizing.
-            </li>
-            <li>
-              Input YouTube Link: If you want to summarize a YouTube video,
-              input the YouTube link in the text field.
-            </li>
-            <li>
-              Generate Transcript: If the video transcript is not available, use
-              our AI generation feature to create a transcript.
-            </li>
-            <li>
-              Select Summarization Option: Once the transcript is ready, choose
-              the summarization option that suits your needs.
-            </li>
-            <li>
-              Click the Share Button: After the summary is done, click the
-              sharebutton.
-            </li>
-            <li>
-              Share the Link: Share the generated link with your friends,
-              colleagues, or on social media.
-            </li>
-          </ol>
+        <h1 className=" w-full flex items-center flex-col text-3xl text-primary font-bold pt-20">
+          Summary not found
+        </h1>
+        <p className="w-full flex items-center flex-col pb-20 font-semibold text-gray-500">
+          Start your own summary with Fusion AI
+        </p>
+        <div className="w-full flex items-center flex-col">
+          <Button>
+            <LinkToDashboard className="flex items-center justify-center">
+              Summarize <ArrowRightIcon className="w-4 h-4" />
+            </LinkToDashboard>
+          </Button>
         </div>
       </>
     );
@@ -272,7 +218,6 @@ const SharePage = () => {
                 description: "The summary has been copied to your clipboard.",
               });
             }}
-
           >
             <DocumentDuplicateIcon className="w-6 h-6" />
           </Button>
@@ -283,7 +228,10 @@ const SharePage = () => {
             handleTimestampClick={handleTimestampClick}
           />
         ) : (
-          <Markdown className="prose max-w-full" options={{ overrides: linkOverride }}>
+          <Markdown
+            className="prose max-w-full"
+            options={{ overrides: linkOverride }}
+          >
             {transformTimestampRangeFromArticleToSingleLink(
               summaryData.summary
             )}

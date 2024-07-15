@@ -1,7 +1,6 @@
 https://fusionaivideo.io/
 https://fusionaivideo.io/login
 https://fusionaivideo.io/summarizer
-https://fusionaivideo.io/share
 https://fusionaivideo.io/about
 https://fusionaivideo.io/transcription
 https://fusionaivideo.io/share/6642f7eda22129553bec387b
