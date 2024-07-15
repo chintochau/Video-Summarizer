@@ -29,6 +29,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useSummaryContext } from "@/contexts/SummaryContext";
+import { secondsToTime } from "@/utils/timeUtils";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 const OptionCard = (params) => {
   const { option, handleClick, creditCount, variant } = params;
@@ -41,22 +44,40 @@ const OptionCard = (params) => {
   const { currentUser } = useAuth();
   const { selectedModelDetails } = useModels();
   const [parts, setParts] = useState(3);
-
-
+  const {
+    selectedSections,
+    setSelectedSections,
+    availableSections,
+    setAvailableSections,
+  } = useSummaryContext();
 
   useEffect(() => {
     if (videoDuration) {
       // set interval to 10 minutes, if the last part is less than 3 minutes, reduce the interval by 30 seconds
       // until the last part is at more than 3 minutes
       // each part should be at least 8 mins
-      let tempInterval = 600
+      let tempInterval = 600;
       while (videoDuration % tempInterval < 240 && tempInterval > 480) {
-        tempInterval = tempInterval - 30
+        tempInterval = tempInterval - 30;
       }
       setInterval(tempInterval);
       setParts(Math.ceil(videoDuration / tempInterval));
     }
-  }, [videoDuration])
+
+    // set available sections based on video duration, interval, available sections shoule be in format : [{id:1, start:0, end:540, checked:true}, {id:2, start:540, end:1080, checked:true},...]
+    if (videoDuration) {
+      let tempAvailableSections = [];
+      for (let i = 0; i < parts; i++) {
+        tempAvailableSections.push({
+          id: i + 1,
+          start: i * interval,
+          end: Math.min((i + 1) * interval, videoDuration),
+          checked: false,
+        });
+      }
+      setAvailableSections(tempAvailableSections);
+    }
+  }, [videoDuration]);
 
   useEffect(() => {
     let factor;
@@ -68,7 +89,8 @@ const OptionCard = (params) => {
 
     switch (id) {
       case "long-summary":
-        factor = (Math.max(1, 2.5 * parts) * selectedModelDetails.factor) / parts;
+        factor =
+          (Math.max(1, 2.5 * parts) * selectedModelDetails.factor) / parts;
         setAdjustableCreditCount((creditCount * factor).toFixed(1));
 
         if (!videoDuration) {
@@ -181,11 +203,15 @@ ${summarizeOptions.quickSummaryOptions[3].prompt}`}
 
 const SummaryOptions = ({ handleClick, creditCount, setInterval }) => {
   const { quickSummaryOptions, detailSummaryOptions } = summarizeOptions;
+  const {
+    selectedSections,
+    setSelectedSections,
+    availableSections,
+    setAvailableSections,
+  } = useSummaryContext();
   return (
     <div className="flex flex-col gap-y-4 mx-8 py-6">
-      <CardTitle
-        className="text-secondary/70 "
-      >
+      <CardTitle className="text-secondary/70 ">
         Step 3 of 3 : Generate Summary
       </CardTitle>
       {/* <CardTitle className="text-primary/80">Custom prompt:</CardTitle>
@@ -220,6 +246,30 @@ const SummaryOptions = ({ handleClick, creditCount, setInterval }) => {
       <CardTitle className="text-primary pt-4">
         Detail Summary for long video
       </CardTitle>
+
+      {/* <CardTitle>Pick Sections to Summarize</CardTitle>
+      <ToggleGroup type="multiple" className=" justify-start">
+        <ToggleGroupItem
+          value="all"
+          className="outline outline-1 outline-gray-300 hover:outline-primary hover:text-primary state-on:bg-primary state-on:text-white data-[state=on]:bg-primary data-[state=on]:text-white"
+        >
+          All
+        </ToggleGroupItem>
+        {availableSections.map((section, index) => {
+          return (
+            <ToggleGroupItem
+              className="outline outline-1 outline-gray-300 hover:outline-primary hover:text-primary state-on:bg-primary state-on:text-white data-[state=on]:bg-primary data-[state=on]:text-white"
+              key={index}
+              value={section.id}
+              onClick={() => {
+                console.log(section);
+              }}
+            >
+              {secondsToTime(section.start)}-{secondsToTime(section.end)}
+            </ToggleGroupItem>
+          );
+        })}
+      </ToggleGroup> */}
 
       <div className="flex flex-col gap-y-4 xl:gap-4">
         {detailSummaryOptions.map((option, index) => {

@@ -9,10 +9,41 @@ import { HashLink } from "react-router-hash-link";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import { cn } from "@/lib/utils";
 import { LinkToDashboard } from "./RoutingLinks";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuIndicator,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuViewport,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+import { CaptionsIcon, NotebookTextIcon } from "lucide-react";
 
 const navigation = [
-  { name: "Transcription", to: "", href: "/transcription#top" },
-  { name: "Features", to: "", href: "/#features" },
+  {
+    name: "Features",
+    to: "",
+    href: "/#features",
+    submenu: [
+      {
+        name: "Transcription",
+        description: "Leading Accuracy and Speed transcription at lowest cost.",
+        to: "",
+        href: "/transcription#top",
+        icon: <CaptionsIcon className="size-8" />,
+      },
+      // {
+      //   name: "Summarization",
+      //   description: " Fast and accurate summarization at lowest cost.",
+      //   to: "",
+      //   href: "/summarization#top",
+      //   icon: <NotebookTextIcon className="size-8" />,
+      // },
+    ],
+  },
   { name: "Pricing", to: "", href: "/#pricing" },
   { name: "F&Q", to: "", href: "/#faq" },
   // { name: "About", to: "", href: "/about" },
@@ -68,18 +99,57 @@ const Header = ({ className }) => {
             <p className="text-2xl font-semibold leading-6 ">Fusion AI</p>
           </Link>
         </div>
-        <div className="hidden md:flex md:gap-x-6 lg:gap-x-12">
-          {navigation.map((item) => (
-            <HashLink
-              smooth
-              key={item.name}
-              to={item.href}
-              className="text-sm font-semibold leading-6 "
-            >
-              {item.name}
-            </HashLink>
-          ))}
-        </div>
+        <NavigationMenu className="hidden md:flex md:gap-x-6 lg:gap-x-12">
+          <NavigationMenuList>
+            {navigation.map((item) => (
+              <NavigationMenuItem key={item.name}>
+                <HashLink smooth key={item.name} to={item.href}>
+                  {item.submenu ? (
+                    <NavigationMenuTrigger>{item.name}</NavigationMenuTrigger>
+                  ) : (
+                    <NavigationMenuLink
+                      className={navigationMenuTriggerStyle()}
+                    >
+                      {item.name}
+                    </NavigationMenuLink>
+                  )}
+
+                  {item.submenu && (
+                    <NavigationMenuContent>
+                        <div className="grid gap-3 p-2">
+                          {item.submenu.map((item) => (
+                            <NavigationMenuLink
+                              key={item.name}
+                              asChild
+                              className={navigationMenuTriggerStyle()}
+                            >
+                              <HashLink
+                                smooth
+                                key={item.name}
+                                to={item.href}
+                                className="text-sm font-semibold flex gap-4 h-20"
+                              >
+                                <div className="h-16 w-12 flex items-center justify-center bg-gray-700 rounded-md">
+                                  {item.icon}
+                                </div>
+                                <div className="flex flex-col w-80">
+                                  <h3 className=" text-md font-semibold">{item.name}</h3>
+                                  <p className="text-gray-400">
+                                    {item.description}
+                                  </p>
+                                </div>
+                              </HashLink>
+                            </NavigationMenuLink>
+                          ))}
+                        </div>
+                    </NavigationMenuContent>
+                  )}
+                </HashLink>
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
+
         <div className="flex flex-1 items-center justify-end gap-x-2 md:gap-x-6">
           {currentUser ? <SignedInMenu /> : <SignedOutMenu />}
         </div>

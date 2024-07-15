@@ -8,7 +8,8 @@ export const defaultNewSummary = { summary: "", summaryType: "New Summary" }
 
 export const SummaryProvider = ({ children }) => {
   const [summaries, setSummaries] = useState([defaultNewSummary])
-
+  const [selectedSections, setSelectedSections] = useState([]) // [{id:1, start:0, end:540}, {id:2, start:540, end:1080},...]
+  const [availableSections, setAvailableSections] = useState([]) // [{id:1, start:0, end:540}, {id:2, start:540, end:1080},...]
   const resetSummaries = () => {
     setSummaries([defaultNewSummary])
   }
@@ -16,7 +17,11 @@ export const SummaryProvider = ({ children }) => {
   const value = {
     summaries,
     setSummaries,
-    resetSummaries
+    resetSummaries,
+    selectedSections,
+    setSelectedSections,
+    availableSections,
+    setAvailableSections,
   };
 
   return (
