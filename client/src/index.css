@@ -1,8 +1,8 @@
 @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
+@tailwind components;
+@tailwind utilities;
 
-  .animated-background {
+.animated-background {
     background-size: 400%;
 
     -webkit-animation: animation 3s ease infinite;
