@@ -166,10 +166,10 @@ const SharePage = () => {
         />
         <link rel="canonical" href={url} />
       </Helmet>
-      <Header className="relative" />
+      <Header className="relative lg:fixed w-full" />
       <div className="lg:flex items-start">
         <div
-          className="z-10 sticky top-0 lg:top-14 left-0 w-full bg-white shadow-sm max-w-3xl mx-auto"
+          className="z-10 sticky top-0 lg:top-14 lg:min-w-[600px] left-0 w-full bg-white shadow-sm max-w-3xl mx-auto"
           id="videoDiv"
         >
           <VideoField
@@ -179,7 +179,7 @@ const SharePage = () => {
             className="max-w-2xl mx-auto shadow-md"
           />
         </div>
-        <div className="px-6 md:px-0 max-w-3xl lg:max-w-full mx-auto py-4 ">
+        <div className="px-6 md:px-0 max-w-3xl lg:max-w-full mx-auto py-4 lg:pt-20 lg:pr-10">
           <h1 className="text-2xl font-bold">
             <span className=" text-gray-400 font-semibold text-lg">
               Youtube Video Summary:{" "}
