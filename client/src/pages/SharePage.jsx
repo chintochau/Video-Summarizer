@@ -208,16 +208,19 @@ const SharePage = () => {
                 )}
               </Markdown>
             )}
-            <div className="text-sm text-gray-400 text-center py-2">
-              This Summary is brought to you by{" "}
-              <a href={fusionaiLink} className=" text-blue-500">
-                Fusion AI
-              </a>
-              , a AI-powered video summarization tool.
-            </div>
           </div>
         </div>
       )}
+
+      <div className="text-sm text-gray-400 text-center py-2 pt-20 pb-10">
+        This Summary is brought to you by{" "}
+        <span className=" text-gray-700">
+          Fusion AI
+        </span>
+        , a AI-powered video summarization tool. <br/>
+        You can start summarizing your videos from <LinkToDashboard className={"text-blue-500 underline"}>here</LinkToDashboard>.
+      </div>
+
     </>
   );
 };
