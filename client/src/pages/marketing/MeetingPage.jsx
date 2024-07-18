@@ -11,9 +11,31 @@ import multipleLanguges from "@/assets/multiple-languages.png";
 import multipleLLM from "@/assets/multiple-llm.png";
 import multipleSummaryOptions from "@/assets/multiple-summary-options.png";
 import { fusionaiLink } from "@/constants";
+import { ReactMediaRecorder } from "react-media-recorder";
+import { Button } from "@/components/ui/button";
 
 const MeetingPage = () => {
   const { userId } = useAuth();
+
+  return (
+
+  <div>
+    <Header/>
+  <ReactMediaRecorder
+    video
+    render={({ status, startRecording, stopRecording, mediaBlobUrl }) => (
+      <div className="flex flex-col container">
+        <p className=" mx-auto">Status {status}</p>
+        <div className="flex mx-auto">
+          <Button onClick={startRecording}>Start Recording</Button>
+          <Button onClick={stopRecording}>Stop Recording</Button>
+        </div>
+        <video src={mediaBlobUrl} controls autoPlay loop />
+      </div>
+    )}
+  />
+</div>
+  )
   return (
     <>
       <Helmet></Helmet>

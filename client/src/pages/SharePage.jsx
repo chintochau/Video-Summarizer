@@ -134,11 +134,11 @@ const SharePage = () => {
           Start your own summary with Fusion AI
         </p>
         <div className="w-full flex items-center flex-col">
-          <Button>
             <LinkToDashboard className="flex items-center justify-center">
+          <Button>
               Summarize <ArrowRightIcon className="w-4 h-4" />
-            </LinkToDashboard>
           </Button>
+            </LinkToDashboard>
         </div>
       </>
     );
@@ -147,7 +147,7 @@ const SharePage = () => {
   return (
     <>
       <Helmet>
-        <title>{videoTitle || "Video Summary"} | Fusion AI</title>
+        <title>{videoTitle || id} | Fusion AI</title>
         <meta name="title" content={`${videoTitle} | Fusion AI`} />
         <meta
           name="description"
@@ -171,7 +171,7 @@ const SharePage = () => {
           name="twitter:image"
           content={`https://img.youtube.com/vi/${sourceId}/0.jpg`}
         />
-        <link rel="canonical" href={`${shareLink}${summaryId}`} />
+        <link rel="canonical" href={`${fusionaiLink}/share/${summaryId}`} />
       </Helmet>
       <Header className="relative" />
       <div
