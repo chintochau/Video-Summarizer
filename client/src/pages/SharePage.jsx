@@ -167,75 +167,77 @@ const SharePage = () => {
         <link rel="canonical" href={url} />
       </Helmet>
       <Header className="relative" />
-      <div
-        className="z-10 sticky top-0 left-0 w-full bg-white shadow-sm max-w-3xl mx-auto"
-        id="videoDiv"
-      >
-        <VideoField
-          shareMode={true}
-          youtubeId={sourceId}
-          videoRef={videoRef}
-          className="max-w-2xl mx-auto shadow-md"
-        />
-      </div>
-      <div className="px-6 md:px-0 max-w-3xl mx-auto py-4">
-        <h1 className="text-2xl font-bold">
-          <span className=" text-gray-400 font-semibold text-lg">
-            Youtube Video Summary:{" "}
-          </span>
-          <br /> {videoTitle}
-        </h1>
-        <div className="w-full text-right py-2">
-          <Button
-            variant="ghost"
-            className="p-2 text-primary hover:text-secondary"
-            onClick={() => {
-              // copy the current url to clipboard
-              navigator.clipboard.writeText(window.location.href);
-              toast({
-                title: "Saved to clipboard",
-                description: "The link has been copied to your clipboard.",
-              });
-            }}
-          >
-            <ShareIcon className="w-6 h-6" />
-          </Button>
-          <Button
-            variant="ghost"
-            className="p-2 text-primary hover:text-secondary"
-            onClick={() => {
-              //copy the summary to clipboard
-              navigator.clipboard.writeText(summaryData.summary);
-              toast({
-                title: "Saved to clipboard",
-                description: "The summary has been copied to your clipboard.",
-              });
-            }}
-          >
-            <DocumentDuplicateIcon className="w-6 h-6" />
-          </Button>
-        </div>
-        {summaryFormat === "json" ? (
-          <JsonSummaryField
-            summary={summaryData.summary}
-            handleTimestampClick={handleTimestampClick}
+      <div className="lg:flex items-start">
+        <div
+          className="z-10 sticky top-0 lg:top-14 left-0 w-full bg-white shadow-sm max-w-3xl mx-auto"
+          id="videoDiv"
+        >
+          <VideoField
+            shareMode={true}
+            youtubeId={sourceId}
+            videoRef={videoRef}
+            className="max-w-2xl mx-auto shadow-md"
           />
-        ) : (
-          <Markdown
-            className="prose max-w-full"
-            options={{ overrides: linkOverride }}
-          >
-            {transformTimestampRangeFromArticleToSingleLink(
-              summaryData.summary
-            )}
-          </Markdown>
-        )}
-        <div className="text-sm text-gray-400 text-center py-2">
-          This Summary is brought to you by{" "}
-          <a href={fusionaiLink} className=" text-blue-500">
-            Fusion AI
-          </a>
-          , a AI-powered video summarization tool.
+        </div>
+        <div className="px-6 md:px-0 max-w-3xl lg:max-w-full mx-auto py-4 ">
+          <h1 className="text-2xl font-bold">
+            <span className=" text-gray-400 font-semibold text-lg">
+              Youtube Video Summary:{" "}
+            </span>
+            <br /> {videoTitle}
+          </h1>
+          <div className="w-full text-right py-2">
+            <Button
+              variant="ghost"
+              className="p-2 text-primary hover:text-secondary"
+              onClick={() => {
+                // copy the current url to clipboard
+                navigator.clipboard.writeText(window.location.href);
+                toast({
+                  title: "Saved to clipboard",
+                  description: "The link has been copied to your clipboard.",
+                });
+              }}
+            >
+              <ShareIcon className="w-6 h-6" />
+            </Button>
+            <Button
+              variant="ghost"
+              className="p-2 text-primary hover:text-secondary"
+              onClick={() => {
+                //copy the summary to clipboard
+                navigator.clipboard.writeText(summaryData.summary);
+                toast({
+                  title: "Saved to clipboard",
+                  description: "The summary has been copied to your clipboard.",
+                });
+              }}
+            >
+              <DocumentDuplicateIcon className="w-6 h-6" />
+            </Button>
+          </div>
+          {summaryFormat === "json" ? (
+            <JsonSummaryField
+              summary={summaryData.summary}
+              handleTimestampClick={handleTimestampClick}
+            />
+          ) : (
+            <Markdown
+              className="prose max-w-full"
+              options={{ overrides: linkOverride }}
+            >
+              {transformTimestampRangeFromArticleToSingleLink(
+                summaryData.summary
+              )}
+            </Markdown>
+          )}
+          <div className="text-sm text-gray-400 text-center py-2">
+            This Summary is brought to you by{" "}
+            <a href={fusionaiLink} className=" text-blue-500">
+              Fusion AI
+            </a>
+            , a AI-powered video summarization tool.
+          </div>
         </div>
       </div>
     </>
