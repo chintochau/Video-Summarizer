@@ -29,6 +29,7 @@ const SharePage = () => {
 
   const { toast } = useToast();
   const { id } = useParams();
+  const url = window.location.href;
 
   const videoRef = useRef(null);
   // Effect hook to run once when the component mounts
@@ -111,26 +112,12 @@ const SharePage = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <>
-        <Helmet>
-          <link rel="canonical" href={`${fusionaiLink}/share/${summaryId}`} />
-        </Helmet>
-        <Header />
-        <h1 className=" w-full flex items-center flex-col py-20">
-          <Loader2 size="50" className=" animate-spin" />
-          Loading...
-        </h1>
-      </>
-    );
-  }
 
   if (!summaryData) {
     return (
       <>
         <Helmet>
-          <link rel="canonical" href={`${fusionaiLink}/share/${summaryId}`} />
+          <link rel="canonical" href={url} />
         </Helmet>
         <Header />
         <h1 className=" w-full flex items-center flex-col text-3xl text-primary font-bold pt-20">
@@ -177,7 +164,7 @@ const SharePage = () => {
           name="twitter:image"
           content={`https://img.youtube.com/vi/${sourceId}/0.jpg`}
         />
-        <link rel="canonical" href={`${fusionaiLink}/share/${summaryId}`} />
+        <link rel="canonical" href={url} />
       </Helmet>
       <Header className="relative" />
       <div
