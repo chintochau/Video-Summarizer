@@ -42,6 +42,10 @@ function App() {
                       <Route path="" element={<div />} />
                       <Route path=":id" element={<div />} />
                     </Route>
+                    <Route path="/summary" element={<SharePage />}>
+                      <Route path="" element={<div />} />
+                      <Route path=":id" element={<div />} />
+                    </Route>
                     <Route path="/auth" element={<AuthCheckPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
