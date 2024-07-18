@@ -114,6 +114,9 @@ const SharePage = () => {
   if (loading) {
     return (
       <>
+        <Helmet>
+          <link rel="canonical" href={`${fusionaiLink}/share/${summaryId}`} />
+        </Helmet>
         <Header />
         <h1 className=" w-full flex items-center flex-col py-20">
           <Loader2 size="50" className=" animate-spin" />
@@ -126,6 +129,9 @@ const SharePage = () => {
   if (!summaryData) {
     return (
       <>
+        <Helmet>
+          <link rel="canonical" href={`${fusionaiLink}/share/${summaryId}`} />
+        </Helmet>
         <Header />
         <h1 className=" w-full flex items-center flex-col text-3xl text-primary font-bold pt-20">
           Summary not found
@@ -134,11 +140,11 @@ const SharePage = () => {
           Start your own summary with Fusion AI
         </p>
         <div className="w-full flex items-center flex-col">
-            <LinkToDashboard className="flex items-center justify-center">
-          <Button>
+          <LinkToDashboard className="flex items-center justify-center">
+            <Button>
               Summarize <ArrowRightIcon className="w-4 h-4" />
-          </Button>
-            </LinkToDashboard>
+            </Button>
+          </LinkToDashboard>
         </div>
       </>
     );

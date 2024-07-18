@@ -22,7 +22,8 @@ const MeetingPage = () => {
   <div>
     <Header/>
   <ReactMediaRecorder
-    video
+    screen
+    audio
     render={({ status, startRecording, stopRecording, mediaBlobUrl }) => (
       <div className="flex flex-col container">
         <p className=" mx-auto">Status {status}</p>
