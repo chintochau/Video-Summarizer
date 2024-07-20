@@ -36,9 +36,11 @@ export const generateSummary = async (req, res) => {
     selectedModel,
   };
 
+  console.log(selectedModel);
   switch (selectedModel) {
     case "gpt35":
     case "gpt4o":
+    case "gpt4om":
       fullResponseText = await summarizeWithOpenAI(data);
       break;
     case "claude3h":
@@ -80,6 +82,7 @@ Video Transcript: ${transcript}`,
   switch (selectedModel) {
     case "gpt35":
     case "gpt4o":
+    case "gpt4om":
       fullResponseText = await summarizeWithOpenAI(data);
       break;
     case "claude3h":
@@ -123,9 +126,12 @@ export const generateSummaryInSeries = async (
       const max_tokens = 1300;
 
       let stream;
+      let model;
       switch (selectedModel) {
         case "gpt35":
-          let model = "gpt-3.5-turbo";
+          model = "gpt-3.5-turbo";
+        case "gpt4om":
+          model = "gpt-4o-mini";
         case "gpt4o":
           model = "gpt-4o";
           const openaiStream = openai.beta.chat.completions.stream({
@@ -202,6 +208,7 @@ export const generateSummaryInSeries = async (
   switch (selectedModel) {
     case "gpt35":
     case "gpt4o":
+    case "gpt4om":
       videoContext = await summarizeWithOpenAI(data);
       break;
     case "claude3h":
