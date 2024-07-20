@@ -42,7 +42,7 @@ export const generateSummary = async (req, res) => {
       fullResponseText = await summarizeWithOpenAI(data);
       break;
     case "claude3h":
-      case "claude35s":
+    case "claude35s":
       fullResponseText = await summarizeWithAnthropic(data);
       break;
     case "llama3":
@@ -92,7 +92,12 @@ Video Transcript: ${transcript}`,
   return fullResponseText;
 };
 
-export const generateSummaryInSeries = async (transcriptsArray, req, res,chapters) => {
+export const generateSummaryInSeries = async (
+  transcriptsArray,
+  req,
+  res,
+  chapters
+) => {
   // input Array of transcripts separated by interval lenth, 10mins/ 20mins each part
   const { language, selectedModel, video, transcript, option } = req.body;
   const { prompt } = option;
@@ -220,7 +225,11 @@ export const generateSummaryInSeries = async (transcriptsArray, req, res,chapter
       here is the part of the video transcript you need to summarize:
       ${transcriptsArray[i]}
       ${prompt}
-      ${i + 1 === transcriptsArray.length ? "Provide the conclusion of this video at the end, using format ### Conclusion" : ""}
+      ${
+        i + 1 === transcriptsArray.length
+          ? "Provide the conclusion of this video at the end, using format ### Conclusion"
+          : ""
+      }
         
       }
       `;
@@ -409,7 +418,7 @@ async function summarizeWithAnthropic({
   res,
   selectedModel,
 }) {
-  let model
+  let model;
   switch (selectedModel) {
     case "claude3h":
       model = "claude-3-haiku-20240307";
@@ -420,7 +429,7 @@ async function summarizeWithAnthropic({
     default:
       break;
   }
-  
+
   const stream = await anthropic.messages.create({
     max_tokens,
     messages,
@@ -460,6 +469,8 @@ async function summarizeWithOpenAI({
     case "gpt35":
       model = "gpt-3.5-turbo";
       break;
+    case "gpt4om":
+      model = "gpt-4o-mini";
     case "gpt4o":
       model = "gpt-4o";
       break;

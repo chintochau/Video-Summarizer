@@ -7,19 +7,20 @@ export const defaultModels = [
     premimum: false,
   },
   {
+    name: "GPT4o-mini",
+    id: "gpt4om",
+    model: "gpt-4o-mini",
+    factor: 0.3,
+    premimum: false,
+
+  },
+  {
     name: "GPT3.5",
     id: "gpt35",
     model: "gpt-3.5-turbo-0125",
     factor: 1,
     premimum: false,
   },
-  // {
-  //   name: "Llama3",
-  //   id: "llama3",
-  //   model: "llama-3-20240307",
-  //   factor: 1,
-  //   premimum: true,
-  // },
   {
     name: "Claude3.5 Sonnet (cost x10)",
     id: "claude35s",
@@ -97,7 +98,7 @@ export const summarizeOptions = {
       description: "generate deatil meeting minutes",
       prompt: `Your task is to review the provided meeting notes and create a concise summary that captures the essential information, focusing on key takeaways and action items assigned to specific individuals or departments during the meeting. Use clear and professional language, and organize the summary in a logical manner using appropriate formatting such as headings, subheadings, and bullet points. Ensure that the summary is easy to understand and provides a comprehensive but succinct overview of the meeting’s content, with a particular focus on clearly indicating who is responsible for each action item. provide timestamp for each key takeaways, and action items`,
       premimum: true,
-      type: 'detail-summary'
+      type: "detail-summary",
     },
   ],
   // The quick summary options are displayed in the OptionField component
@@ -149,7 +150,7 @@ For the part 2, you must list out the main perspectives and the title of that fr
 For conclusion part, briefly summary the video`,
       summaryFormat: "json",
       type: "quick-summary",
-      beta:true,
+      beta: true,
     },
     {
       id: "quick-essay",
@@ -202,25 +203,25 @@ For conclusion part, briefly summary the video`,
   `,
       type: "quick-summary",
     },
-  //   {
-  //     id: "quick-list-json",
-  //     title: "List by Section",
-  //     description:
-  //       "Summarize the essential points from the video in a clean, easy-to-scan bulleted list format.",
-  //     prompt: `Summarize the text, give a title of the script, a brief about the script, then, List out at least 15 keypoints for the video transcript in a list format, as much key point as possible, for each point, give a starting timestamp reference. drop all unrelated info/ promotional info, such as advertising
- 
-  //   use the template
-  //   {"title": "Title",
-  //   "introduction": "summary",
-  //   "content":[
-  //     {"timestamp": hh:mm:ss,
-  //     "content": ["keypoint"] // only 1 keypoint is needed
-  //   }
-  //   ]}
-  // `,
-  //     type: "quick-summary",
-  //     summaryFormat: "json",
-  //   },
+    //   {
+    //     id: "quick-list-json",
+    //     title: "List by Section",
+    //     description:
+    //       "Summarize the essential points from the video in a clean, easy-to-scan bulleted list format.",
+    //     prompt: `Summarize the text, give a title of the script, a brief about the script, then, List out at least 15 keypoints for the video transcript in a list format, as much key point as possible, for each point, give a starting timestamp reference. drop all unrelated info/ promotional info, such as advertising
+
+    //   use the template
+    //   {"title": "Title",
+    //   "introduction": "summary",
+    //   "content":[
+    //     {"timestamp": hh:mm:ss,
+    //     "content": ["keypoint"] // only 1 keypoint is needed
+    //   }
+    //   ]}
+    // `,
+    //     type: "quick-summary",
+    //     summaryFormat: "json",
+    //   },
     {
       id: "how-to",
       title: "How to",

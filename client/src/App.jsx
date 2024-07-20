@@ -24,7 +24,6 @@ import AboutPage from "./pages/AboutPage.jsx";
 import { ThemeProvider } from "./contexts/ThemeProvider.jsx";
 import TranscriptionPage from "./pages/marketing/TranscriptionPage.jsx";
 import SummarizationPage from "./pages/marketing/SummarizationPage.jsx";
-import MeetingPage from "./pages/marketing/MeetingPage.jsx";
 
 function App() {
   return (
@@ -62,7 +61,7 @@ function App() {
                       path="/summarization"
                       element={<SummarizationPage />}
                     />
-                    <Route path="/meeting" element={<MeetingPage />} />
+                    {/* <Route path="/meeting" element={<MeetingPage />} /> */}
                     <Route path="/console/*" element={<Dashboard />}>
                       <Route path="" element={<div />} />
                       <Route path="youtube" element={<YoutubeSummary />} />
