@@ -66,7 +66,7 @@ if (!isProduction) {
 }
 
 // Serve HTML
-app.use('/:id', async (req, res) => {
+app.use('/summary/:id', async (req, res) => {
   try {
     const url = req.originalUrl.replace(base, '')
     const id = req.params.id
