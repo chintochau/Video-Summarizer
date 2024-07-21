@@ -12,9 +12,7 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import youtubeRoutes from "./routes/youtubeRoutes.js";
 import vastaiRoutes from "./routes/vastaiRoutes.js";
 import embeddingsRoutes from "./routes/embeddingsRoutes.js";
-import shareRoutes from "./routes/shareRoutes.js";
 import ttsRoutes from "./routes/ttsRoutes.js";
-import { fileURLToPath } from "url";
 import Summary from './models/summaryModel.js';
 
 // Constants
