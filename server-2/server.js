@@ -101,11 +101,17 @@ app.use('/:id', async (req, res) => {
     vite?.ssrFixStacktrace(e)
     console.log(e.stack)
     res.status(500).end(e.stack)
-
-    // if error, redirect to website
-    // res.redirect("https://fusionaivideo.io");
   }
 })
+
+app.get("/", (req, res) => {
+  res.redirect("https://fusionaivideo.io");
+});
+
+app.get('/robots.txt', function (req, res) {
+  res.type('text/plain');
+  res.send("User-agent: *\nDisallow: /");
+});
 
 // Start http server
 app.listen(port, () => {

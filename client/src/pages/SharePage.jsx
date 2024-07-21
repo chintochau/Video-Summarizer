@@ -9,10 +9,8 @@ import {
 } from "@/components/summary-field-conpoments/SummaryTab";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { fusionaiLink, shareLink } from "@/constants";
 import SummaryService from "@/services/SummaryService";
 import { DocumentDuplicateIcon, ShareIcon } from "@heroicons/react/24/outline";
-import { ArrowRightIcon, Loader2 } from "lucide-react";
 import Markdown from "markdown-to-jsx";
 import React, { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
@@ -142,6 +140,7 @@ const SharePage = () => {
         <link rel="canonical" href={url} />
       </Helmet>
       <Header className="relative lg:fixed w-full" />
+
       {summaryData && (
         <div className="lg:flex items-start">
           <div
@@ -155,6 +154,7 @@ const SharePage = () => {
               className="max-w-2xl mx-auto shadow-md"
             />
           </div>
+          
           <div className="px-6 md:px-0 max-w-3xl lg:max-w-full mx-auto py-4 lg:pt-20 lg:pr-10">
             <h1 className="text-2xl font-bold">
               <span className=" text-gray-400 font-semibold text-lg">

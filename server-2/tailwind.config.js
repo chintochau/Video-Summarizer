@@ -2,10 +2,10 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{js,jsx}',
-    './components/**/*.{js,jsx}',
-    './app/**/*.{js,jsx}',
-    './src/**/*.{js,jsx}',
+    "./pages/**/*.{js,jsx}",
+    "./components/**/*.{js,jsx}",
+    "./app/**/*.{js,jsx}",
+    "./src/**/*.{js,jsx}",
   ],
   prefix: "",
   theme: {
@@ -17,6 +17,43 @@ module.exports = {
       },
     },
     extend: {
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            color: theme("colors.foreground"),
+            a: {
+              color: theme("colors.primary.DEFAULT"),
+              "&:hover": {
+                color: theme("colors.primary.DEFAULT"),
+              },
+            },
+            "h1, h2,h3": {
+              color: theme("colors.primary"),
+            },
+            "h4": {
+              color: theme("colors.secondary.DEFAULT"),
+            },
+            h1: {
+              color: theme("colors.primary.DEFAULT"),
+            },
+            h2: {
+              color: theme("colors.primary.DEFAULT"),
+            },
+            h3: {
+              color: theme("colors.primary.DEFAULT"),
+            },
+            h4: {
+              color: theme("colors.primary.DEFAULT"),
+            },
+            h5: {
+              color: theme("colors.primary.DEFAULT"),
+            },
+            h6: {
+              color: theme("colors.primary.DEFAULT"),
+            },
+          },
+        },
+      }),
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -73,5 +110,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
-}
+  plugins: [require("@tailwindcss/typography"), require("tailwindcss-animate")],
+};
