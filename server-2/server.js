@@ -105,10 +105,12 @@ app.use('/summary/:id', async (req, res) => {
 })
 
 app.get("/", (req, res) => {
-  res.redirect("https://fusionaivideo.io");
+  // show simple welcome text
+  res.send("Welcome to Fusion AI!")
 });
 
-app.use(express.static('public'))
+// app.use(express.static('public'))
+
 
 // Start http server
 app.listen(port, () => {
