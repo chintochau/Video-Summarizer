@@ -110,14 +110,14 @@ const SharePage = () => {
     }
   };
 
-  return (
+  if (!loading) {return (
     <>
       <Helmet>
-        <title>{videoTitle || id} | Fusion AI</title>
+        <title>{videoTitle} | Fusion AI</title>
         <meta name="title" content={`${videoTitle} | Fusion AI`} />
         <meta
           name="description"
-          content={`Summary of the video: ${videoTitle}`}
+          content={`Summary of the video: ${videoTitle} \n ${summaryData.summary}`}
         />
         <meta name="og:title" content={`${videoTitle} | Fusion AI`} />
         <meta
@@ -140,7 +140,6 @@ const SharePage = () => {
         <link rel="canonical" href={url} />
       </Helmet>
       <Header className="relative lg:fixed w-full" />
-
       {summaryData && (
         <div className="lg:flex items-start">
           <div
@@ -154,7 +153,7 @@ const SharePage = () => {
               className="max-w-2xl mx-auto shadow-md"
             />
           </div>
-          
+
           <div className="px-6 md:px-0 max-w-3xl lg:max-w-full mx-auto py-4 lg:pt-20 lg:pr-10">
             <h1 className="text-2xl font-bold">
               <span className=" text-gray-400 font-semibold text-lg">
@@ -208,21 +207,21 @@ const SharePage = () => {
                 )}
               </Markdown>
             )}
+            <div className="text-sm text-gray-400 text-center py-2 pt-20 pb-10">
+              This Summary is brought to you by{" "}
+              <span className=" text-gray-700">Fusion AI</span>
+              , a AI-powered video summarization tool. <br />
+              You can start summarizing your videos from{" "}
+              <LinkToDashboard className={"text-blue-500 underline"}>
+                here
+              </LinkToDashboard>
+              .
+            </div>
           </div>
         </div>
       )}
-
-      <div className="text-sm text-gray-400 text-center py-2 pt-20 pb-10">
-        This Summary is brought to you by{" "}
-        <span className=" text-gray-700">
-          Fusion AI
-        </span>
-        , a AI-powered video summarization tool. <br/>
-        You can start summarizing your videos from <LinkToDashboard className={"text-blue-500 underline"}>here</LinkToDashboard>.
-      </div>
-
     </>
-  );
+  );}
 };
 
 export default SharePage;

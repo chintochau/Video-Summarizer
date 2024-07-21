@@ -20,7 +20,7 @@ import {
   NavigationMenuViewport,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { CaptionsIcon, NotebookPenIcon, NotebookTextIcon  } from "lucide-react";
+import { CaptionsIcon, NotebookPenIcon, NotebookTextIcon } from "lucide-react";
 
 const navigation = [
   {
@@ -111,48 +111,46 @@ const Header = ({ className }) => {
           <NavigationMenuList>
             {navigation.map((item) => (
               <NavigationMenuItem key={item.name}>
-                <HashLink smooth key={item.name} to={item.href}>
-                  {item.submenu ? (
-                    <NavigationMenuTrigger>{item.name}</NavigationMenuTrigger>
-                  ) : (
-                    <NavigationMenuLink
-                      className={navigationMenuTriggerStyle()}
-                    >
-                      {item.name}
-                    </NavigationMenuLink>
-                  )}
+                {item.submenu ? (
+                  <NavigationMenuTrigger>
+                    <HashLink to={item.href}>{item.name}</HashLink>
+                  </NavigationMenuTrigger>
+                ) : (
+                  
+                    <HashLink to={item.href} className={navigationMenuTriggerStyle()}>{item.name}</HashLink>
+                 
+                )}
 
-                  {item.submenu && (
-                    <NavigationMenuContent>
-                        <div className="grid  p-2 gap-3">
-                          {item.submenu.map((item) => (
-                            <NavigationMenuLink
-                              key={item.name}
-                              asChild
-                              className={navigationMenuTriggerStyle()}
-                            >
-                              <HashLink
-                                smooth
-                                key={item.name}
-                                to={item.href}
-                                className="text-sm font-semibold flex gap-4 h-20"
-                              >
-                                <div className="h-16 w-12 flex items-center justify-center bg-gray-700 rounded-md">
-                                  {item.icon}
-                                </div>
-                                <div className="flex flex-col w-80">
-                                  <h3 className=" text-md ">{item.name}</h3>
-                                  <p className="text-gray-400">
-                                    {item.description}
-                                  </p>
-                                </div>
-                              </HashLink>
-                            </NavigationMenuLink>
-                          ))}
-                        </div>
-                    </NavigationMenuContent>
-                  )}
-                </HashLink>
+                {item.submenu && (
+                  <NavigationMenuContent>
+                    <div className="grid  p-2 gap-3">
+                      {item.submenu.map((item) => (
+                        <NavigationMenuLink
+                          key={item.name}
+                          asChild
+                          className={navigationMenuTriggerStyle()}
+                        >
+                          <HashLink
+                            smooth
+                            key={item.name}
+                            to={item.href}
+                            className="text-sm font-semibold flex gap-4 h-20"
+                          >
+                            <div className="h-16 w-12 flex items-center justify-center bg-gray-700 rounded-md">
+                              {item.icon}
+                            </div>
+                            <div className="flex flex-col w-80">
+                              <h3 className=" text-md ">{item.name}</h3>
+                              <p className="text-gray-400">
+                                {item.description}
+                              </p>
+                            </div>
+                          </HashLink>
+                        </NavigationMenuLink>
+                      ))}
+                    </div>
+                  </NavigationMenuContent>
+                )}
               </NavigationMenuItem>
             ))}
           </NavigationMenuList>
@@ -162,10 +160,7 @@ const Header = ({ className }) => {
           {currentUser ? <SignedInMenu /> : <SignedOutMenu />}
         </div>
         <div className="flex md:hidden">
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(true)}
-          >
+          <button type="button" onClick={() => setMobileMenuOpen(true)}>
             <span className="sr-only">Open main menu</span>
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
