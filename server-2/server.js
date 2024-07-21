@@ -108,6 +108,11 @@ app.get("/", (req, res) => {
   res.redirect("https://fusionaivideo.io");
 });
 
+app.use('/robots.txt', function (req, res, next) {
+  res.type('text/plain')
+  res.send("User-agent: *\nDisallow: /");
+});
+
 app.get('/robots.txt', function (req, res) {
   res.type('text/plain');
   res.send("User-agent: *\nDisallow: /");
