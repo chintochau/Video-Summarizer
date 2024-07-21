@@ -108,25 +108,7 @@ app.get("/", (req, res) => {
   res.redirect("https://fusionaivideo.io");
 });
 
-app.use('/robots.txt', function (req, res, next) {
-  res.type('text/plain')
-  res.send(`
-User-agent: *
-Disallow:
-    
-Sitemap: https://fusionaivideo.io/sitemap.txt
-      `);
-});
-
-app.get('/robots.txt', function (req, res) {
-  res.type('text/plain');
-  res.send(`
-User-agent: *
-Disallow:
-    
-Sitemap: https://fusionaivideo.io/sitemap.txt
-      `);
-});
+app.use(express.static('public'))
 
 // Start http server
 app.listen(port, () => {
