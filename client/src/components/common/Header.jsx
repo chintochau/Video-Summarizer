@@ -102,9 +102,9 @@ const Header = ({ className }) => {
       >
         <div className="flex md:flex-1">
           <Link to="/" className="-m-1.5 flex items-center">
-            <span className="sr-only">Fusion AI</span>
+            <span className="sr-only">Fusion AI Video</span>
             <img className="h-10 w-10 ml-3 mr-1 " src={logo} alt="" />
-            <p className="text-2xl font-semibold leading-6 ">Fusion AI</p>
+            <p className="text-2xl font-semibold leading-6 ">Fusion AI Video</p>
           </Link>
         </div>
         <NavigationMenu className="hidden md:flex md:gap-x-6 lg:gap-x-12">
@@ -177,11 +177,11 @@ const Header = ({ className }) => {
         <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-gray-900 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center gap-x-6">
             <Link to="/" className="-m-1.5 p-1.5">
-              <span className="sr-only">Fusion AI</span>
+              <span className="sr-only">Fusion AI Video</span>
               <div className="flex items-center">
                 <img className="h-12 w-12" src={logo} alt="Fusion AI" />
                 <div className="text-3xl ml-2 font-semibold leading-6 text-white">
-                  Fusion AI
+                  Fusion AI Video
                 </div>
               </div>
             </Link>
