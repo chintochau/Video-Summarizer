@@ -111,20 +111,20 @@ app.get("/", (req, res) => {
 app.use('/robots.txt', function (req, res, next) {
   res.type('text/plain')
   res.send(`
-    User-agent: *
-    Disallow:
+User-agent: *
+Disallow:
     
-    Sitemap: https://fusionaivideo.io/sitemap.txt
+Sitemap: https://fusionaivideo.io/sitemap.txt
       `);
 });
 
 app.get('/robots.txt', function (req, res) {
   res.type('text/plain');
   res.send(`
-    User-agent: *
-    Disallow:
+User-agent: *
+Disallow:
     
-    Sitemap: https://fusionaivideo.io/sitemap.txt
+Sitemap: https://fusionaivideo.io/sitemap.txt
       `);
 });
 
