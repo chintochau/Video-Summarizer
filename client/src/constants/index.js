@@ -44,6 +44,14 @@ export const chromeStoreLink = "https://chromewebstore.google.com/detail/fusion-
 export const shareLink = import.meta.env.VITE_FUSIONAI_SHARE_URL
 export const fusionaiLink = import.meta.env.VITE_FUSIONAI_BASE_URL
 
+export const moreFeatures = [
+  "Meeting Minutes",
+  "Transcription",
+  "Speaker Identification",
+  "Cloud Storage",
+  "Summary Sharing",
+  "And More..."
+]
 
 export const inActionContents = {
   headline: "Experience in Action",

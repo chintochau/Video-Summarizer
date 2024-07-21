@@ -11,12 +11,11 @@ import VideoField from "../summarizerComponents/YTVideoField";
 import { useVideoContext } from "@/contexts/VideoContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import { Helmet } from "react-helmet-async";
-import { fusionaiLink } from "@/constants";
-import { Link } from "react-router-dom";
+import { fusionaiLink, moreFeatures } from "@/constants";
 import Header from "../common/Header";
 
 const GeneralSummary = () => {
@@ -82,31 +81,36 @@ const GeneralSummary = () => {
             <div className=" my-4">
               <YoutubeBar className="outline outline-1 rounded-lg outline-cyan-700/70" />
             </div>
-            <p className="w-full px-1  text-left text-sm md:text-lg text-gray-400 font-roboto font-normal max-w-3xl mx-auto">
-              Simply input the video link, and let our advanced AI generate a
-              precise summary for you. <br className="hidden" />
-              Save time and get straight to the point with Fusion AI.
-            </p>
+
             <p className="w-full px-1  text-left text-sm  text-gray-400 font-roboto font-normal max-w-3xl mx-auto py-2">
-              * Current we support GPT-3.5, GPT-4o, Claude3 and Llama3 models.
+              * We support GPT-4o-mini, GPT-4o, Claude3.5, Claude3, and GPT-3.5,
             </p>
-            <div className="text-right">
+            <div className="text-left md:text-center">
               <Separator className="mb-8 mt-16" />
-              <p className="text-gray-400 text-sm md:text-lg px-1 pb-4 text-left">
-                Want unlimited access and advanced features? Log in now to
-                unlock the full potential of Fusion AI, including more
-                summaries, cloud storage, and personalized video knowledge
-                database.
-              </p>
+
+              <h2 className="text-left md:text-center text-xl font-semibold text-secondary">
+                Sign up for more features and free quotas:
+              </h2>
 
               <Button
                 variant="link"
                 onClick={() => navigate("/login")}
-                className="mx-auto text-cyan-600"
+                className="px-0 text-cyan-600"
               >
-                Sign in now
+                Sign up now
                 <ArrowRight />
               </Button>
+
+              <div className="mt-4 text-left md:text-center">
+                {moreFeatures.map((item) => (
+                  <p
+                    key={item}
+                    className="text-gray-400 font-roboto font-normal"
+                  >
+                    {item}
+                  </p>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -135,7 +139,7 @@ const GeneralSummary = () => {
               <SummaryField videoRef={videoRef} />
             </div>
           </ResizablePanel>
-          <ResizableHandle className="w-1 bg-indigo-100 hidden md:flex" />
+          <ResizableHandle className=" bg-indigo-100 hidden md:flex" />
           <ResizablePanel className="hidden sticky shrink-0 md:block w-full md:w-1/2  h-1/2  md:h-full bg-gray-50">
             <SummaryField videoRef={videoRef} />
           </ResizablePanel>

@@ -1,25 +1,17 @@
 export const defaultModels = [
   {
-    name: "Claude3",
-    id: "claude3h",
-    model: "claude-3-haiku-20240307",
-    factor: 1,
-    premimum: false,
-  },
-  {
     name: "GPT4o-mini",
     id: "gpt4om",
     model: "gpt-4o-mini",
     factor: 0.3,
     premimum: false,
-
   },
   {
-    name: "GPT3.5",
-    id: "gpt35",
-    model: "gpt-3.5-turbo-0125",
+    name: "Claude3",
+    id: "claude3h",
+    model: "claude-3-haiku-20240307",
     factor: 1,
-    premimum: false,
+    premimum: true,
   },
   {
     name: "Claude3.5 Sonnet (cost x10)",
@@ -33,6 +25,13 @@ export const defaultModels = [
     id: "gpt4o",
     model: "gpt-4o",
     factor: 10,
+    premimum: true,
+  },
+  {
+    name: "GPT3.5 (legacy)",
+    id: "gpt35",
+    model: "gpt-3.5-turbo-0125",
+    factor: 1,
     premimum: true,
   },
 ];

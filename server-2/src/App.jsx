@@ -16,7 +16,7 @@ function App({ initialData }) {
       <Header />
 
       <div className="flex flex-col lg:flex-row items-start">
-        <div className="w-full bg-white sticky top-0 lg:w-1/2
+        <div className="w-full bg-white sticky top-0 lg:top-14 lg:w-1/2
         ">
           <div className="w-full max-w-3xl mx-auto ">
             {isLoaded && (
