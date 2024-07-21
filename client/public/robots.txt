@@ -1,6 +1,3 @@
 User-agent: *
-Disallow: /private/
-Disallow: /admin/
-Disallow: /secret-page.html
-Disallow: /share/$
+Disallow: 
 Sitemap: https://fusionaivideo.io/sitemap.txt
