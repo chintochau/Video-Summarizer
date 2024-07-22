@@ -1,0 +1,71 @@
+{
+  "hero": {
+    "headline1": "快速總結任何<2/><1>影片</1>、<1>演講</1>或<1>會議</1>",
+    "headline2": "",
+    "description": "我們幫助你在幾秒鐘內掌握關鍵點。跳過冗長的內容，充分利用你的時間。刪繁就簡，享受核心內容!",
+    "cta1": "前往控制台",
+    "cta2": "立即摘要",
+    "ctaChrome": "Chrome 擴充功能現已推出",
+    "chromeStore": "新增至 Chrome",
+    "howItWorks": "如何運作"
+  },
+  "inActionContents": {
+    "headline": "體驗效果",
+    "description": "選擇一個演示影片並點擊摘要按鈕，即可獲得即時摘要。",
+    "option0": {
+      "option": "教學影片",
+      "title": "2小時長影片的詳細摘要",
+      "additionalInfo": ""
+    },
+    "option1": {
+      "option": "讀書心得",
+      "title": "15分鐘影片的快速大綱",
+      "additionalInfo": ""
+    },
+    "option2": {
+      "option": "會議摘要",
+      "title": "1小時會議的會議紀要",
+      "additionalInfo": ""
+    },
+    "option3": {
+      "option": "產品評論",
+      "title": "15分鐘影片的快速大綱",
+      "additionalInfo": ""
+    },
+    "youtubeVideo": "Youtube 影片",
+    "generateSummary": "獲取摘要",
+    "cta": "立即開始"
+  },
+  "whyContents": {
+    "headline": "刪繁就簡，享受核心內容!",
+    "otherHeadline": [
+      "直擊重點，每一次都精準!",
+      "只需精華，無需浪費多餘的秒數!",
+      "刪繁就簡，享受核心內容!",
+      "最大化利用您的時間，最小化觀看!",
+      "聰明觀看，不要冗長!"
+    ],
+    "subheadline": "節省時間，做好筆記，輕鬆回顧內容",
+    "why": [
+      {
+        "subheader": "避免內容重複",
+        "description": "許多 YouTube 視頻共享相似內容。您不應該浪費時間重複觀看相同的信息。我們簡化您的體驗，為您提供獨特且有價值的見解，無需重複。",
+        "image": "avoidRredundancyInContent"
+      },
+      {
+        "subheader": "跳過冗餘",
+        "description": "視頻通常設計為易於消化，包含開場白、過渡和有時娛樂但無信息的內容。您不需要這些填充內容；您需要的是核心信息。我們提取精華，為您提供真正重要的內容。",
+        "image": "skipTheFluff"
+      },
+      {
+        "subheader": "提升學習效率",
+        "description": "從視頻中學習可以很有效，但也很費時。我們的服務專注於突出關鍵點，使學習更快、更高效。我們相信快速為您提供知識，使您能夠迅速學習和成長。",
+        "image": "improveLearningEfficiency"
+      }
+    ],
+    "cta": {
+      "text": "立即開始",
+      "link": "/register"
+    }
+  }
+}

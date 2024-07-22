@@ -18,8 +18,10 @@ import { getLanguageNameByCode, inActionContents } from "@/constants";
 import { Separator } from "../ui/separator";
 import { ArrowRight } from "lucide-react";
 import { LinkToDashboard } from "../common/RoutingLinks";
+import { useTranslation } from "react-i18next";
 
 const SeeInAction = () => {
+  const { t } = useTranslation();
   const videoRef = useRef(null);
   const [summaries, setSummaries] = useState(
     demoVideos.map((video, index) => video.summary.map((summary, index) => ""))
@@ -71,10 +73,10 @@ const SeeInAction = () => {
   return (
     <div className="bg-gray-50 pt-8 lg:pt-10 lg:pb-5">
       <h2 className=" text-3xl pb-2 mx-2.5 lg:px-6 lg:text-4xl font-bold sm:text-center text-cyan-700/70 py-2 lg:py-2">
-        {inActionContents.headline}
+        {t("inActionContents.headline")}
       </h2>
       <p className="mx-2.5 py-2 lg:px-6 lg:text-lg text-gray-500 sm:text-center lg:py-2 font-light text-xl pb-8 ">
-        {inActionContents.description}
+        {t("inActionContents.description")}
       </p>
       <Tabs className="w-full lg:text-center" defaultValue="video-0">
         <div className=" overflow-x-auto pb-2 md:pb-0 mb-2">
@@ -85,7 +87,7 @@ const SeeInAction = () => {
                 value={`video-${index}`}
                 className=" data-[state=active]:bg-cyan-600/70 data-[state=active]:text-white data-[state=active]:hover:bg-cyan-800 data-[state=active]:hover:text-white border mx-1 rounded-lg hover:bg-cyan-100 hover:text-cyan-900 hover:border-cyan-200"
               >
-                {video.option}
+                {t(`inActionContents.option${index}.option`)}
               </TabsTrigger>
             ))}
           </TabsList>
@@ -95,9 +97,8 @@ const SeeInAction = () => {
             <Card className="border-indigo-50 md:shadow-md container px-0 lg:px-2 my-2 rounded-xl border-0 sm:border">
               <CardHeader className="text-left py-4 lg:pt-10 pb-2  lg:px-5 lg:pb-4 ">
                 <CardTitle className=" text-gray-800 lg:text-cyan-600/70">
-                  {video.title}
+                  {t(`inActionContents.option${index}.title`)}
                 </CardTitle>
-                <CardDescription>{video.additionalInfo}</CardDescription>
               </CardHeader>
               <div className="w-full px-2 lg:px-6 pb-4">
                 <Separator className="w-full" />
@@ -110,7 +111,7 @@ const SeeInAction = () => {
                     videoRef={videoRef}
                   />
                   <CardDescription className="text-left font-semibold text-base hidden md:block">
-                    Youtube Video:
+                    {t("inActionContents.youtubeVideo")}
                   </CardDescription>
                   <CardDescription className="text-left text-gray-800 text-xl font-semibold items-center gap-2 pb-2  lg:text-2xl hidden md:block">
                     {video.videoTitle} - ({video.videoLength})
@@ -170,7 +171,7 @@ const SeeInAction = () => {
                               }, 70);
                             }}
                           >
-                            Generate Summary
+                            {t("inActionContents.generateSummary")}
                           </Button>
                         </div>
                       ) : (
@@ -193,15 +194,13 @@ const SeeInAction = () => {
                 <Separator className="w-full my-2 " />
               </div>
               <CardFooter className="pb-4 lg:pb-6 lg:pt-3">
-                <LinkToDashboard
-                  className="flex items-center gap-x-2 mx-auto"
-                >
+                <LinkToDashboard className="flex items-center gap-x-2 mx-auto">
                   <Button
                     className="w-full text-cyan-500"
                     variant="link"
                     size="lg"
                   >
-                    Summarize your own videos now
+                    {t("inActionContents.cta")}
                     <ArrowRight size={20} />
                   </Button>
                 </LinkToDashboard>

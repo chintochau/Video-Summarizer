@@ -24,6 +24,7 @@ import AboutPage from "./pages/AboutPage.jsx";
 import { ThemeProvider } from "./contexts/ThemeProvider.jsx";
 import TranscriptionPage from "./pages/marketing/TranscriptionPage.jsx";
 import SummarizationPage from "./pages/marketing/SummarizationPage.jsx";
+import './translations/i18n.js';
 
 function App() {
   return (

@@ -1,0 +1,71 @@
+{
+  "hero": {
+    "headline1": "Understand any <1>Long Videos</1>",
+    "headline2": "Easier than ever",
+    "description": "We help you grasp key points in seconds. Skip the fluff, and make the most of your time. Watch smarter, not longer!",
+    "cta1": "Go To Console",
+    "cta2": "Summarize Now",
+    "ctaChrome": "Chrome Extension is available on Chrome Store",
+    "chromeStore": "Add to Chrome",
+    "howItWorks": "How it works"
+  },
+  "inActionContents": {
+    "headline": "Experience in Action",
+    "description": "Pick one demo video and click the summarization button to get an instant summary.",
+    "option0": {
+      "option": "Long Tutorial",
+      "title": "Detail Summary of a 2-hour long video",
+      "additionalInfo": ""
+    },
+    "option1": {
+      "option": "Book Review",
+      "title": "Quick Outline of a 15 mins video",
+      "additionalInfo": ""
+    },
+    "option2": {
+      "option": "Meeting Minutes",
+      "title": "Meeting Minutes of a 1-hour meeting",
+      "additionalInfo": ""
+    },
+    "option3": {
+      "option": "Product Review",
+      "title": "Quick Outline of a 15 mins video",
+      "additionalInfo": ""
+    },
+    "youtubeVideo": "Youtube Video",
+    "generateSummary": "Generate Summary",
+    "cta": "Summarize your own videos now"
+  },
+  "whyContents": {
+    "headline": "Watch Smarter, Not Longer!",
+    "otherHeadline": [
+      "Get to the Point, Every Time!",
+      "Only the Essentials, No Extra Seconds Wasted!",
+      "Cut the Clutter, Enjoy the Core Content!",
+      "Maximize Your Time, Minimize the Watch!",
+      "Watch Smarter, Not Longer!"
+    ],
+    "subheadline": "Save Time, Take Better Notes, and Revisit Content Easily",
+    "why": [
+      {
+        "subheader": "Avoid Redundancy in Content",
+        "description": "Many YouTube videos share similar content. You shouldn't have to waste time watching the same information over and over again. We streamline your experience, providing you with unique and valuable insights without the repetition.",
+        "image": "avoidRredundancyInContent"
+      },
+      {
+        "subheader": "Skip the Fluff",
+        "description": "Videos are often designed for easy consumption, featuring openings, transitions, and sometimes entertaining but non-informative content. You don't need these fillers; you need the core information. We extract the essentials, giving you what truly matters.",
+        "image": "skipTheFluff"
+      },
+      {
+        "subheader": "Improve Learning Efficiency",
+        "description": "Learning from videos can be effective, but also time-intensive. Our service focuses on highlighting the critical points, making learning faster and more efficient. We believe in empowering you with knowledge quickly, so you can learn and grow without delays.",
+        "image": "improveLearningEfficiency"
+      }
+    ],
+    "cta": {
+      "text": "Get Started",
+      "link": "/register"
+    }
+  }
+}

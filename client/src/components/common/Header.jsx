@@ -21,6 +21,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { CaptionsIcon, NotebookPenIcon, NotebookTextIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const navigation = [
   {
@@ -62,14 +63,36 @@ const Header = ({ className }) => {
   const location = useLocation();
   const pathname = location.pathname.substring(1);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { i18n } = useTranslation();
+
+  const DisplayLanguageSelection = () => {
+
+    const language = i18n.language === "zh" ? "en" : "zh";
+
+    const handleLanguageChange = () => {
+      i18n.changeLanguage(language);
+    };
+
+    return (
+      <div className="flex items-center">
+        <Button
+          variant="link"
+          className="text-white px-2"
+          onClick={() => i18n.changeLanguage(language)}
+        >
+          {i18n.language === "zh" ? "English" : "中文"}
+        </Button>
+      </div>
+    );
+  };
 
   const SignedOutMenu = () => {
     return (
       <div className=" flex items-center">
+        <DisplayLanguageSelection />
         <Button size="sm">
           <LinkToDashboard>Summarize</LinkToDashboard>
         </Button>
-
         <div className="flex items-center">
           <Link to="/login">
             <Button variant="link" className="text-white px-2">
@@ -85,6 +108,7 @@ const Header = ({ className }) => {
   const SignedInMenu = () => {
     return (
       <div className=" flex items-center">
+        <DisplayLanguageSelection />
         <LinkToDashboard>
           <Button size="sm">Console</Button>
         </LinkToDashboard>
@@ -116,9 +140,12 @@ const Header = ({ className }) => {
                     <HashLink to={item.href}>{item.name}</HashLink>
                   </NavigationMenuTrigger>
                 ) : (
-                  
-                    <HashLink to={item.href} className={navigationMenuTriggerStyle()}>{item.name}</HashLink>
-                 
+                  <HashLink
+                    to={item.href}
+                    className={navigationMenuTriggerStyle()}
+                  >
+                    {item.name}
+                  </HashLink>
                 )}
 
                 {item.submenu && (
@@ -155,7 +182,6 @@ const Header = ({ className }) => {
             ))}
           </NavigationMenuList>
         </NavigationMenu>
-
         <div className="flex flex-1 items-center justify-end gap-x-2 md:gap-x-6">
           {currentUser ? <SignedInMenu /> : <SignedOutMenu />}
         </div>
