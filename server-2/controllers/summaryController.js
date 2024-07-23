@@ -25,7 +25,6 @@ export const handleSummaryRequest = async (req, res) => {
 
     let summary;
 
-    console.log("format", summaryFormat);
 
     if (summaryFormat && summaryFormat === "json") {
       summary = await generateSummaryInJson(req, res);
