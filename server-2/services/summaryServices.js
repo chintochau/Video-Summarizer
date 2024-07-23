@@ -79,6 +79,7 @@ Video Transcript: ${transcript}`,
     max_tokens,
     res,
     selectedModel,
+    response_format:{ "type": "json_object" }
   };
   switch (selectedModel) {
     case "gpt35":
@@ -473,6 +474,7 @@ async function summarizeWithOpenAI({
   max_tokens,
   res,
   selectedModel,
+  response_format
 }) {
   let model;
   switch (selectedModel) {
@@ -492,7 +494,9 @@ async function summarizeWithOpenAI({
     stream: true,
     temperature: 0.4,
     max_tokens,
+    response_format
   });
+
   stream.on("content", (delta, snapshot) => {
     fullResponseText += delta;
     if (res) {
