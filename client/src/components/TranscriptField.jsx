@@ -40,7 +40,7 @@ const TranscriptField = (params) => {
   const { youtubeId, videoRef, file, displayMode, className } = params;
   const [viewMode, setViewMode] = useState("speakers");
   const [isEditMode, setIsEditMode] = useState(false);
-  const {currentPlayTime, currentLine, setCurrentLine, video } =
+  const { currentPlayTime, currentLine, setCurrentLine, video } =
     useVideoContext();
   const {
     selectedTranscribeOption,
@@ -58,7 +58,8 @@ const TranscriptField = (params) => {
     utterances,
     transcriptCredits,
   } = useTranscriptContext();
-  const { credits, userId,setCredits } = useAuth();
+  const { videoDuration } = useVideoContext();
+  const { credits, userId, setCredits } = useAuth();
   const [transcribeProgress, setTranscribeProgress] = useState(0);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -75,6 +76,7 @@ const TranscriptField = (params) => {
       setTranscribeProgress(progress);
     }
   };
+
   const onUploadProgress = (progress) => {
     setUploadProgress(progress);
   };
@@ -95,10 +97,14 @@ const TranscriptField = (params) => {
     resetProgress();
     setGeneratingTranscriptWithAI(true);
     try {
-
       if (displayMode === "youtube") {
-        generateTranscript({ fileLink: null, publicId: null, resourceType: null });
-      } else { // display mode is file
+        generateTranscript({
+          fileLink: null,
+          publicId: null,
+          resourceType: null,
+        });
+      } else {
+        // display mode is file
         const uploadResult = await UploadService.uploadVideo(
           file,
           onUploadProgress
@@ -112,7 +118,6 @@ const TranscriptField = (params) => {
 
         generateTranscript(data);
       }
-
     } catch (error) {
       console.error(error);
     }
@@ -127,19 +132,23 @@ const TranscriptField = (params) => {
     }
 
     try {
-      checkCredits(parseFloat(credits), parseFloat(transcriptCredits))
+      checkCredits(parseFloat(credits), parseFloat(transcriptCredits));
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Insufficient Credits",
         description: "Please purchase more credits to continue.",
-        action: <Button
-          variant="outline"
-          altText="Get more Credits"
-          onClick={() => {
-            window.location.href = "/pricing";
-          }}
-        >Get more Credits</Button>,
+        action: (
+          <Button
+            variant="outline"
+            altText="Get more Credits"
+            onClick={() => {
+              window.location.href = "/pricing";
+            }}
+          >
+            Get more Credits
+          </Button>
+        ),
       });
       setGeneratingTranscriptWithAI(false);
       return;
@@ -147,6 +156,20 @@ const TranscriptField = (params) => {
 
     try {
       setGeneratingTranscriptWithAI(true);
+
+      // update progress bar when transcribing every 5 seconds
+      const timeEstimated =
+        selectedTranscribeOption.timeFactor.upper * 0.7 * videoDuration;
+
+      console.log(timeEstimated);
+
+      const interval = setInterval(() => {
+        const progress = (3 / timeEstimated) * 100;
+        if (transcribeProgress !== -100) {
+          setTranscribeProgress((prev) => prev + progress);
+        }
+      }, 3000);
+
       switch (displayMode) {
         case "youtube":
           result = await transcribeYoutubeVideo({
@@ -155,41 +178,29 @@ const TranscriptField = (params) => {
             video,
             transcribeOption: selectedTranscribeOption,
             language: selectedTranscriptionLanguage,
-            videoCredits:transcriptCredits,
+            videoCredits: transcriptCredits,
           });
           break;
         default: // file
-          if (!fileLink) {
-            result = await TranscribeService.transcribeUserUploadFile({
-              file,
-              language: selectedTranscriptionLanguage,
-              videoCredits:transcriptCredits,
-              userId,
-              video,
-              transcribeOption: selectedTranscribeOption,
-            });
-          } else {
-            result = await TranscribeService.transcribeUserUploadFileWithLink(
-              {
-                // user api/processVideo
-                link: fileLink,
-                publicId,
-                resourceType,
-                language: selectedTranscriptionLanguage,
-                videoCredits:transcriptCredits,
-                userId,
-                video,
-                transcribeOption: selectedTranscribeOption,
-              },
-              onTranscribeProgress
-            );
-          }
+          result = await TranscribeService.transcribeUserUploadFileWithLink({
+            // user api/processVideo
+            link: fileLink,
+            publicId,
+            resourceType,
+            language: selectedTranscriptionLanguage,
+            videoCredits: transcriptCredits,
+            userId,
+            video,
+            transcribeOption: selectedTranscribeOption,
+          });
           break;
       }
+
+      clearInterval(interval);
       setupTranscriptWithInputSRT(result.originalTranscript);
       setUtterances(result.utterances || []);
       setSpeakers(result.speakers || []);
-      setCredits((prev) => (prev - parseFloat(transcriptCredits)));
+      setCredits((prev) => prev - parseFloat(transcriptCredits));
     } catch (error) {
       resetTranscript();
       console.error(error);
@@ -268,10 +279,7 @@ const TranscriptField = (params) => {
   };
 
   return (
-    <div className={cn(
-      "flex-col h-full flex",
-      className
-    )}>
+    <div className={cn("flex-col h-full flex", className)}>
       {loadingTranscript ? (
         <div className="flex-col pt-12">
           <Loader2 className="mx-auto size-16 opacity-20 animate-spin" />
@@ -331,9 +339,8 @@ const TranscriptField = (params) => {
                   {/* 根據viewMode渲染不同的內容 */}
                   {/* Transcript Box */}
 
-                  {utterances.length > 0 && viewMode !== "transcript" ? (<SpeakersTab
-                    onClick={handleTranscriptClick}
-                  />
+                  {utterances.length > 0 && viewMode !== "transcript" ? (
+                    <SpeakersTab onClick={handleTranscriptClick} />
                   ) : (
                     <ScrollArea className=" h-full px-2">
                       {editableTranscript.map(({ start, end, text }, index) => {
@@ -405,8 +412,9 @@ const TranscriptBox = ({
 
   return (
     <div
-      className={`flex mx-2 rounded-md  ${isCurrent ? " bg-indigo-100" : ""
-        } hover:outline outline-1 outline-indigo-300 cursor-pointer`}
+      className={`flex mx-2 rounded-md  ${
+        isCurrent ? " bg-indigo-100" : ""
+      } hover:outline outline-1 outline-indigo-300 cursor-pointer`}
       onClick={() => onClick(start)}
     >
       <div className="p-1 pt-0">
@@ -439,8 +447,9 @@ const TranscriptBox = ({
             {/**merge up */}
             {
               <button
-                className={`text-gray-200  w-full ${index !== 0 && "hover:text-blue-500"
-                  }`}
+                className={`text-gray-200  w-full ${
+                  index !== 0 && "hover:text-blue-500"
+                }`}
                 onClick={() => mergeTranscriptToPrevious(index)}
                 disabled={index === 0}
               >
@@ -466,8 +475,5 @@ const TranscriptBox = ({
     </div>
   );
 };
-
-
-
 
 export default TranscriptField;

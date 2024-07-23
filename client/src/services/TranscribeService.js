@@ -41,7 +41,7 @@ class TranscribeService {
         }
     };
 
-    static transcribeUserUploadFileWithLink = async (data, onProgress) => {
+    static transcribeUserUploadFileWithLink = async (data) => {
         const { link, language, userId, video, videoCredits, transcribeOption,publicId,resourceType } = data;
         if (!link) {
             return null;
@@ -62,30 +62,32 @@ class TranscribeService {
                 body: formData,
                 signal: signal
             });
-            const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
-            while (true) {
-                const { value, done } = await reader.read();
-                if (done) break;
 
-                // response from server: data: {"progress":5}
-                // or
-                // response from server: data: {"transcript":"this is a transcript"}
-                // or
-                // response from server: data: {"outputVideo": {
-                // 
-                //}}
-
-                const chunk = value.split("data: ")[1]
-                const data = JSON.parse(chunk)
-
-                if (data.errorMessage) {
-                    throw new Error(data.errorMessage)
-                } else if (data.progress) {
-                    onProgress(data.progress)
-                } else if (data.outputVideo) {
-                    return data.outputVideo
-                }
+            if (!response.ok) {
+                throw new Error("Server Error - callwhisperapi(1)-Utils.js");
             }
+
+            const result = await response.json();
+            return result;
+
+            // this is code for response streaming for reference
+            // const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
+            // while (true) {
+            //     const { value, done } = await reader.read();
+            //     if (done) break;
+
+            //     const chunk = value.split("data: ")[1]
+            //     const data = JSON.parse(chunk)
+
+            //     if (data.errorMessage) {
+            //         throw new Error(data.errorMessage)
+            //     } else if (data.progress) {
+            //         onProgress(data.progress)
+            //     } else if (data.outputVideo) {
+            //         return data.outputVideo
+            //     }
+            // }
+
         } catch (error) {
             console.error("upload error", error);
             throw new Error(error.response?.data?.message || "Server Error ");
