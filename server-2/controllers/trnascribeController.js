@@ -51,7 +51,6 @@ export const fetchVideoTranscription = async (req, res) => {
       { sourceId: sourceId },
       { originalTranscript: 1 }
     );
-    console.log("video", video);
     if (!video) {
       throw new Error("Video not found");
     }

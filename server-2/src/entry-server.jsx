@@ -5,7 +5,6 @@ import { generateMetaTags } from "../utils/ssrUtils";
 
 export function render(params) {
   const metaTgas = generateMetaTags(params.summary);
-
   const html = ReactDOMServer.renderToString(
     <React.StrictMode>
       <App initialData={params.summary} />

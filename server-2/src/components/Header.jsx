@@ -15,7 +15,7 @@ const Header = () => {
             className="text-white p-1 text-2xl font-semibold"
           >
             {" "}
-            Fusion AI Video
+            Fusion AI Summary
           </a>
         </div>
 
@@ -25,7 +25,6 @@ const Header = () => {
             onClick={() => {
               window.location.href = "https://fusionaivideo.io/summarizer";
             }}
-
           >
             Summarize
           </Button>

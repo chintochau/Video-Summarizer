@@ -1,4 +1,43 @@
 {
+  "header": {
+    "menu": [
+      {
+        "name": "功能",
+        "href": "/#features",
+        "submenu": [
+          {
+            "name": "轉錄",
+            "description": "快速準確的轉錄，成本最低。",
+            "to": "",
+            "href": "/transcription#top",
+            "icon": "CaptionsIcon"
+          },
+          {
+            "name": "摘要",
+            "description": "快速精準的摘要，成本最低。",
+            "to": "",
+            "href": "/summarization#top",
+            "icon": "NotebookTextIcon"
+          }
+        ]
+      },
+      {
+        "name": "定價",
+        "href": "/#pricing"
+      },
+      {
+        "name": "常見問題",
+        "href": "/#faq"
+      },
+      {
+        "name": "關於我們",
+        "href": "/about"
+      }
+    ],
+    "button2": "控制台",
+    "button1": "摘要",
+    "signIn": "登入"
+  },
   "hero": {
     "headline1": "快速總結任何<2/><1>影片</1>、<1>演講</1>或<1>會議</1>",
     "headline2": "",
@@ -10,7 +49,7 @@
     "howItWorks": "如何運作"
   },
   "inActionContents": {
-    "headline": "體驗效果",
+    "headline": "示範",
     "description": "選擇一個演示影片並點擊摘要按鈕，即可獲得即時摘要。",
     "option0": {
       "option": "教學影片",
@@ -67,5 +106,48 @@
       "text": "立即開始",
       "link": "/register"
     }
+  },
+  "featuresContents": {
+    "headline": "用 AI 改變您的學習方式",
+    "subheadline": "利用我們創新的 AI 摘要技術，提升您的學習過程。迅速獲取關鍵資訊，讓您的視頻觀看更加高效。",
+    "features": [
+      {
+        "title": "低成本、高速度的轉錄",
+        "description": "體驗先進 AI 技術的強大功能，提供快速且準確的語音轉文本和視頻轉文本服務。我們的平台支持多種語言，提供低成本的解決方案，無論速度還是質量都不妥協。",
+        "mobileDescription": "先進 AI 以低成本提供快速、準確的語音轉文本服務，支持多種語言。",
+        "image": "BoltIcon"
+      },
+      {
+        "title": "YouTube 視頻支持",
+        "description": "與 YouTube 無縫整合，允許您直接從平台上總結和轉錄視頻。輕鬆快速地獲取您喜愛的 YouTube 內容的見解。",
+        "mobileDescription": "輕鬆地總結和轉錄 YouTube 視頻。",
+        "image": "PlayCircleIcon"
+      },
+      {
+        "title": "上傳您的視頻/音頻",
+        "description": "無論是講座、會議還是個人內容，我們的服務都支持上傳您的視頻或音頻文件。獲取精確的轉錄和摘要，滿足您的特定需求。",
+        "mobileDescription": "為您的視頻/音頻文件獲取精確的轉錄和摘要。",
+        "image": "ArrowUpTrayIcon"
+      },
+      {
+        "title": "多樣的摘要選擇",
+        "description": "從各種摘要選擇中挑選以滿足任何需求。從簡短概述到詳細摘要，我們的平台能夠根據您的需求提供所需的詳細程度。",
+        "mobileDescription": "從簡短概述到詳細摘要，滿足您的需求。",
+        "image": "DocumentTextIcon"
+      },
+      {
+        "title": "保存與檢索內容",
+        "description": "保存您的視頻，並通過提問輕鬆檢索內容。我們直觀的搜索功能確保您隨時找到所需的準確信息。",
+        "mobileDescription": "保存視頻並通過我們的搜索功能輕鬆找到內容。",
+        "image": "ArchiveBoxArrowDownIcon"
+      },
+      {
+        "title": "輕鬆分享",
+        "description": "輕鬆地與朋友、同事和團隊分享您的摘要。通過提供快速訪問關鍵信息，提升協作和溝通效果。",
+        "mobileDescription": "與朋友、同事和團隊分享摘要，提升協作效果。",
+        "image": "ShareIcon"
+      }
+    ],
+    "cta": "立即開始"
   }
 }

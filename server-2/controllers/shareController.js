@@ -2,7 +2,6 @@ import Summary from '../models/summaryModel.js';
 
 export const renderSharePage = async (req, res) => {
     try {
-        console.log(req.params.summaryId);
 
         const summary = await Summary.findById(req.params.summaryId).populate("videoId");
 

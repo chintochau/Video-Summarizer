@@ -1,6 +1,6 @@
 import Header from "./components/common/Header.jsx";
 import HomePage from "./pages/HomePage.jsx";
-import { Route, Router, Routes } from "react-router-dom";
+import { Route, Router, Routes, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
@@ -24,7 +24,9 @@ import AboutPage from "./pages/AboutPage.jsx";
 import { ThemeProvider } from "./contexts/ThemeProvider.jsx";
 import TranscriptionPage from "./pages/marketing/TranscriptionPage.jsx";
 import SummarizationPage from "./pages/marketing/SummarizationPage.jsx";
-import './translations/i18n.js';
+import i18n from "./translations/i18n.js";
+import { useTranslation } from "react-i18next";
+import { Helmet } from "react-helmet-async";
 
 function App() {
   return (
@@ -36,8 +38,9 @@ function App() {
               <QuotaProvider>
                 <ThemeProvider>
                   <Routes>
-                    <Route path="/Summarizer" element={<GeneralSummary />} />
+                    <Route path="/:lang" element={<LocalizedApp />} />
                     <Route path="/" element={<HomePage />} />
+                    <Route path="/Summarizer" element={<GeneralSummary />} />
                     <Route path="/share" element={<SharePage />}>
                       <Route path="" element={<div />} />
                       <Route path=":id" element={<div />} />
@@ -62,7 +65,6 @@ function App() {
                       path="/summarization"
                       element={<SummarizationPage />}
                     />
-                    {/* <Route path="/meeting" element={<MeetingPage />} /> */}
                     <Route path="/console/*" element={<Dashboard />}>
                       <Route path="" element={<div />} />
                       <Route path="youtube" element={<YoutubeSummary />} />
@@ -83,5 +85,39 @@ function App() {
     </>
   );
 }
+
+const LocalizedApp = () => {
+  const { lang } = useParams();
+  const { i18n } = useTranslation();
+
+  useEffect(() => {
+    i18n.changeLanguage(lang);
+  }, [lang, i18n]);
+
+  const hrefLangTags = [
+    { href: "https://fusionaivideo.io", hreflang: "x-default" },
+    { href: "https://fusionaivideo.io/en", hreflang: "en" },
+    { href: "https://fusionaivideo.io/zh", hreflang: "zh" },
+  ];
+
+  return (
+    <>
+      <Helmet>
+        {hrefLangTags.map((tag) => (
+          <link
+            key={tag.hreflang}
+            rel="alternate"
+            href={tag.href}
+            hreflang={tag.hreflang}
+          />
+        ))}
+      </Helmet>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        {/* Add other routes here */}
+      </Routes>
+    </>
+  );
+};
 
 export default App;

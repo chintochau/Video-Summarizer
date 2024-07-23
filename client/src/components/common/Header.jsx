@@ -63,10 +63,11 @@ const Header = ({ className }) => {
   const location = useLocation();
   const pathname = location.pathname.substring(1);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
+
+  const menu = t("header.menu", { returnObjects: true });
 
   const DisplayLanguageSelection = () => {
-
     const language = i18n.language === "zh" ? "en" : "zh";
 
     const handleLanguageChange = () => {
@@ -91,12 +92,12 @@ const Header = ({ className }) => {
       <div className=" flex items-center">
         <DisplayLanguageSelection />
         <Button size="sm">
-          <LinkToDashboard>Summarize</LinkToDashboard>
+          <LinkToDashboard>{t("header.button1")}</LinkToDashboard>
         </Button>
         <div className="flex items-center">
           <Link to="/login">
             <Button variant="link" className="text-white px-2">
-              Sign in
+              {t("header.signIn")}
               <ArrowRightIcon className="w-4 h-4" />
             </Button>
           </Link>
@@ -110,10 +111,15 @@ const Header = ({ className }) => {
       <div className=" flex items-center">
         <DisplayLanguageSelection />
         <LinkToDashboard>
-          <Button size="sm">Console</Button>
+          <Button size="sm">{t("header.button2")}</Button>
         </LinkToDashboard>
       </div>
     );
+  };
+
+  const iconMapping = {
+    NotebookTextIcon: NotebookTextIcon,
+    CaptionsIcon: CaptionsIcon,
   };
 
   return (
@@ -128,58 +134,69 @@ const Header = ({ className }) => {
           <Link to="/" className="-m-1.5 flex items-center">
             <span className="sr-only">Fusion AI Video</span>
             <img className="h-10 w-10 ml-3 mr-1 " src={logo} alt="" />
-            <p className="text-2xl font-semibold leading-6 ">Fusion AI Video</p>
+            <p className="text-2xl font-semibold leading-6 ">
+              Fusion AI <span className="hidden sm:inline">Video</span>
+            </p>
           </Link>
         </div>
         <NavigationMenu className="hidden md:flex md:gap-x-6 lg:gap-x-12">
           <NavigationMenuList>
-            {navigation.map((item) => (
-              <NavigationMenuItem key={item.name}>
-                {item.submenu ? (
-                  <NavigationMenuTrigger>
-                    <HashLink to={item.href}>{item.name}</HashLink>
-                  </NavigationMenuTrigger>
-                ) : (
-                  <HashLink
-                    to={item.href}
-                    className={navigationMenuTriggerStyle()}
-                  >
-                    {item.name}
-                  </HashLink>
-                )}
+            {menu.map((item) => {
+              return (
+                <NavigationMenuItem key={item.name}>
+                  {item.submenu ? (
+                    <NavigationMenuTrigger
+                      className={navigationMenuTriggerStyle()}
+                    >
+                      <HashLink to={item.href}>{item.name}</HashLink>
+                    </NavigationMenuTrigger>
+                  ) : (
+                    <HashLink
+                      to={item.href}
+                      className={navigationMenuTriggerStyle()}
+                    >
+                      {item.name}
+                    </HashLink>
+                  )}
 
-                {item.submenu && (
-                  <NavigationMenuContent>
-                    <div className="grid  p-2 gap-3">
-                      {item.submenu.map((item) => (
-                        <NavigationMenuLink
-                          key={item.name}
-                          asChild
-                          className={navigationMenuTriggerStyle()}
-                        >
-                          <HashLink
-                            smooth
-                            key={item.name}
-                            to={item.href}
-                            className="text-sm font-semibold flex gap-4 h-20"
-                          >
-                            <div className="h-16 w-12 flex items-center justify-center bg-gray-700 rounded-md">
-                              {item.icon}
-                            </div>
-                            <div className="flex flex-col w-80">
-                              <h3 className=" text-md ">{item.name}</h3>
-                              <p className="text-gray-400">
-                                {item.description}
-                              </p>
-                            </div>
-                          </HashLink>
-                        </NavigationMenuLink>
-                      ))}
-                    </div>
-                  </NavigationMenuContent>
-                )}
-              </NavigationMenuItem>
-            ))}
+                  {item.submenu && (
+                    <NavigationMenuContent>
+                      <div className="grid  p-2 gap-3">
+                        {item.submenu.map((item) => {
+                          const IconComponent = iconMapping[item.icon];
+                          return (
+                            <NavigationMenuLink
+                              key={item.name}
+                              asChild
+                              className={navigationMenuTriggerStyle()}
+                            >
+                              <HashLink
+                                smooth
+                                key={item.name}
+                                to={item.href}
+                                className="text-sm font-semibold flex gap-4 h-20"
+                              >
+                                <div className="h-16 w-12 flex items-center justify-center bg-gray-700 rounded-md">
+                                  {IconComponent && (
+                                    <IconComponent className="size-8" />
+                                  )}
+                                </div>
+                                <div className="flex flex-col w-80">
+                                  <h3 className=" text-md ">{item.name}</h3>
+                                  <p className="text-gray-400">
+                                    {item.description}
+                                  </p>
+                                </div>
+                              </HashLink>
+                            </NavigationMenuLink>
+                          );
+                        })}
+                      </div>
+                    </NavigationMenuContent>
+                  )}
+                </NavigationMenuItem>
+              );
+            })}
           </NavigationMenuList>
         </NavigationMenu>
         <div className="flex flex-1 items-center justify-end gap-x-2 md:gap-x-6">
@@ -201,13 +218,17 @@ const Header = ({ className }) => {
       >
         <div className="fixed inset-0 z-10" />
         <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-gray-900 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-          <div className="flex items-center gap-x-6">
+          <div className="flex items-center gap-x-3">
             <Link to="/" className="-m-1.5 p-1.5">
               <span className="sr-only">Fusion AI Video</span>
               <div className="flex items-center">
-                <img className="h-12 w-12" src={logo} alt="Fusion AI" />
-                <div className="text-3xl ml-2 font-semibold leading-6 text-white">
-                  Fusion AI Video
+                <img
+                  className="size-10 sm:size-12"
+                  src={logo}
+                  alt="Fusion AI"
+                />
+                <div className="text-2xl sm:text-3xl ml-1 sm:ml-2 font-semibold leading-6 text-white">
+                  Fusion AI <span className="hidden sm:inline">Video</span>
                 </div>
               </div>
             </Link>

@@ -1,4 +1,34 @@
 {
+  "header": {
+    "menu": [
+      {
+        "name": "Features",
+        "href": "/#features",
+        "submenu": [
+          {
+            "name": "Transcription",
+            "description": "Fast and accurate transcription at lowest cost.",
+            "to": "",
+            "href": "/transcription#top",
+            "icon": "CaptionsIcon"
+          },
+          {
+            "name": "Summarization",
+            "description": "Fast and accurate summarization at lowest cost.",
+            "to": "",
+            "href": "/summarization#top",
+            "icon": "NotebookTextIcon"
+          }
+        ]
+      },
+      { "name": "Pricing", "href": "/#pricing" },
+      { "name": "FAQ", "href": "/#faq" },
+      { "name": "About", "href": "/about" }
+    ],
+    "button2": "Console",
+    "button1": "Summarize",
+    "signIn": "Sign In"
+  },
   "hero": {
     "headline1": "Understand any <1>Long Videos</1>",
     "headline2": "Easier than ever",
@@ -67,5 +97,111 @@
       "text": "Get Started",
       "link": "/register"
     }
+  },
+  "featuresContents": {
+    "headline": "Transform Your Learning with AI",
+    "subheadline": "Enhance your learning process with our innovative AI summarization. Gain quick access to critical information and make your video consumption more effective.",
+    "features": [
+      {
+        "title": "Low Cost, High Speed Transcription",
+        "description": "Experience the power of advanced AI technologies that deliver fast and accurate speech-to-text and video-to-text services. Our platform supports various languages, offering low-cost solutions without compromising on speed or quality.",
+        "mobileDescription": "Advanced AI delivers quick, accurate speech-to-text for multiple languages at a low cost.",
+        "image": "BoltIcon"
+      },
+      {
+        "title": "YouTube Video Support",
+        "description": "Seamlessly integrate with YouTube, allowing you to summarize and transcribe videos directly from the platform. Enjoy quick and easy access to insights from your favorite YouTube content.",
+        "mobileDescription": "Summarize and transcribe YouTube videos effortlessly.",
+        "image": "PlayCircleIcon"
+      },
+      {
+        "title": "Upload Your Own Video/Audio",
+        "description": "Whether it's a lecture, a meeting, or personal content, our service supports uploading your own video or audio files. Get precise transcriptions and summaries tailored to your specific needs.",
+        "mobileDescription": "Get precise transcriptions and summaries for your own video/audio files.",
+        "image": "ArrowUpTrayIcon"
+      },
+      {
+        "title": "Variety Summary Options",
+        "description": "Choose from a range of summarization options to suit any requirement. From brief overviews to detailed summaries, our platform adapts to provide the level of detail you need.",
+        "mobileDescription": "Choose from brief overviews to detailed summaries to fit your needs.",
+        "image": "DocumentTextIcon"
+      },
+      {
+        "title": "Save and Retrieve Content",
+        "description": "Save your videos and easily retrieve the content by asking questions. Our intuitive search feature ensures you can find the exact information you need, whenever you need it.",
+        "mobileDescription": "Save videos and find content easily with our search feature.",
+        "image": "ArchiveBoxArrowDownIcon"
+      },
+      {
+        "title": "Easy Sharing",
+        "description": "Share your summaries effortlessly with friends, colleagues, and teams. Enhance collaboration and communication by providing quick access to essential information.",
+        "mobileDescription": "Share summaries with friends, colleagues, and teams for better collaboration.",
+        "image": "ShareIcon"
+      }
+    ],
+    "cta": "Summarize Now"
+  },
+  "pricingContents": {
+    "headline": "Pricing Plans",
+    "subheadline": "Choose the plan that fits your needs and budget. Start saving time today!",
+    "plans": [
+      {
+        "id": "credits",
+        "header": "Fusion AI Credits",
+        "subheader": "Pay as You Go, When You Need It.",
+        "description:": "Dive into the future of content summarization and transcription with Fusion AI Credits. Tailored for those who prefer flexibility, our credit-based plan lets you purchase exactly what you need. From concise YouTube summaries to comprehensive video transcriptions, every credit delivers precision. Choose between two seamless credit packs to fit your needs:",
+        "bullets": [
+          "$5 for 200 Credits: Perfect for up to 200 hours of Quick Summarization or 6 hours of Transcription. Includes SRT Editor and Summary History.",
+          "$10 for 500 Credits: Ideal for up to 500 hours of Quick Summarization or 12 hours of Transcription. Also includes SRT Editor and Summary History."
+        ],
+        "closing": "Experience the elegance of choice without the commitment of a subscription.",
+        "itemName": "Fusion AI Credits",
+        "price": { "monthly": "$0", "annually": "$0" },
+        "priceOptions": [
+          {
+            "price": 5,
+            "value": 200,
+            "featureList": [
+              "Youtube Quick Summaries",
+              "Youtube Transcription",
+              "200 Credits on purchase \n - up to 200 hours Quick summarization \n - up to 6 hours video Transcription",
+              "SRT Editor",
+              "Summary History"
+            ]
+          },
+          {
+            "price": 10,
+            "value": 500,
+            "featureList": [
+              "Youtube Quick Summaries",
+              "Youtube Transcription",
+              "500 Credits on purchase \n - up to 500 hours Quick summarization \n - up to 12 hours video Transcription",
+              "SRT Editor",
+              "Summary History"
+            ]
+          }
+        ],
+        "features": ["error"],
+        "available": true
+      },
+      {
+        "id": "tier-professional",
+        "header": "Fusion AI Professional Plan",
+        "subheader": "Unleash Your Full Potential.",
+        "description:": "Elevate your professional workflow with the Fusion AI Professional Plan. Crafted for corporate excellence, this plan offers unlimited access to a suite of advanced features. Enjoy the luxury of limitless summarization, detailed insights, and transcription capabilities with 800 credits each month. Whether it's YouTube content or uploaded videos and audios, transform how you manage and consume information.",
+        "bullets": ["Monthly: $12.99", "Annually: $119.99"],
+        "closing": "This plan is the ultimate tool for professionals who demand the best in content processing and efficiency.",
+        "itemName": "Fusion AI Professional Plan",
+        "price": { "monthly": 12.99, "annually": 119.99 },
+        "features": [
+          "Unlimited YouTube Quick and Detail Summaries",
+          "Comprehensive Transcription for Videos and Audios",
+          "800 Credits: Up to 800 hours of Quick Summarization, 400 hours of Detail Summarization, and 24 hours of Video Transcription",
+          "SRT Editor and Summary History"
+        ],
+
+        "available": false
+      }
+    ]
   }
 }

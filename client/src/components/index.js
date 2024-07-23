@@ -1,4 +1,4 @@
-import HowItWorks from "./home/HowItWorks";
+import Features from "./home/Features";
 import About from "./home/About";
 import Footer from "./common/Footer";
 import Summarizer from "./Summarizer";
@@ -16,7 +16,7 @@ export {
   Footer,
   Summarizer,
   HeroSection,
-  HowItWorks,
+  Features,
   FeaturesAndBenefits,
   SocialProof,
   ChromeExtension,
