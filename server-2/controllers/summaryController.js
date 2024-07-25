@@ -11,7 +11,8 @@ import Video from "../models/videoModel.js";
 import { checkUserCredit, deductCredits } from "../utils/creditUtils.js";
 import { getOrCreateVideoBySourceId } from "../services/videoServices.js";
 import { getYoutubeChapters } from "../services/youtubeServices.js";
-import {secondsToTime} from "../utils/timeUtils.js"
+import { secondsToTime } from "../utils/timeUtils.js";
+import FreeServiceUsage from "../models/freeServiceUsageModel.js";
 
 export const handleSummaryRequest = async (req, res) => {
   try {
@@ -24,7 +25,6 @@ export const handleSummaryRequest = async (req, res) => {
     let existingVideo = await getOrCreateVideoBySourceId({ video, userId });
 
     let summary;
-
 
     if (summaryFormat && summaryFormat === "json") {
       summary = await generateSummaryInJson(req, res);
@@ -77,7 +77,9 @@ export const handleLongSummaryRequest = async (req, res) => {
       if (chaptersArray) {
         chapters = "";
         chaptersArray.forEach((chapter, index) => {
-          chapters += `Timestamp: ${secondsToTime(chapter.start_time)} : Title:${chapter.title}\n`;
+          chapters += `Timestamp: ${secondsToTime(
+            chapter.start_time
+          )} : Title:${chapter.title}\n`;
         });
         console.log("chapters", chapters);
       }
@@ -87,7 +89,12 @@ export const handleLongSummaryRequest = async (req, res) => {
 
     let existingVideo = await getOrCreateVideoBySourceId({ video, userId });
 
-    const summary = await generateSummaryInSeries(textByInterval, req, res, chapters);
+    const summary = await generateSummaryInSeries(
+      textByInterval,
+      req,
+      res,
+      chapters
+    );
 
     const newSummary = new Summary({
       userId,
@@ -119,7 +126,6 @@ export const handleLongSummaryRequest = async (req, res) => {
       .json({ message: "Failed to generate summary", error: error.message });
   }
 };
-
 
 /**
  * Retrieves all videos for a specific user.
@@ -192,6 +198,16 @@ export const getTranscriptAndSummariesForVideo = async (req, res) => {
 };
 export const handleSummaryRequestWithQuota = async (req, res) => {
   try {
+    let ipAddress = req.ip;
+
+    FreeServiceUsage.create({
+      timestamp: new Date(),
+      ipAddress: ipAddress,
+      userAgent: req.headers["user-agent"],
+      service: "summary", 
+    })
+
+
     const summary = await generateSummary(req, res);
     res.status(200).end();
   } catch (error) {
@@ -247,7 +263,6 @@ export const getSummaryById = async (req, res) => {
   }
 };
 
-
 //batch
 export const deleteSummaries = async (req, res) => {
   try {
@@ -258,18 +273,18 @@ export const deleteSummaries = async (req, res) => {
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
-
-}
+};
 
 export const getAllSummaries = async (req, res) => {
   try {
     // get all summaries objects, only return the _id, exclude all other information, and in a raw text format, separated by line break
     // only return sourceType = youtube
     const summaries = await Summary.find({}, { _id: 1 }).lean();
-    const summaryIds = summaries.map((summary) => "https://fusionaivideo.io/share/"+summary._id).join("\n");
+    const summaryIds = summaries
+      .map((summary) => "https://fusionaivideo.io/share/" + summary._id)
+      .join("\n");
     res.status(200).send(summaryIds);
-
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
-}
+};
