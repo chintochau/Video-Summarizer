@@ -43,22 +43,24 @@ const VideoField = ({
     },
   };
 
-  useEffect(() => {
-    // update current play time every 500ms when video is playing
-    const intervalId = setInterval(async () => {
-      setCurrentPlayTime(
-        await videoRef.current.internalPlayer.getCurrentTime()
-      );
-    }, 500);
 
-    if (!playing) {
-      clearInterval(intervalId);
-    }
+  // stop updating current play time, to to avoid unnecessary re-renders
+  // useEffect(() => {
+  //   // update current play time every 500ms when video is playing
+  //   const intervalId = setInterval(async () => {
+  //     setCurrentPlayTime(
+  //       await videoRef.current.internalPlayer.getCurrentTime()
+  //     );
+  //   }, 500);
 
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [playing]);
+  //   if (!playing) {
+  //     clearInterval(intervalId);
+  //   }
+
+  //   return () => {
+  //     clearInterval(intervalId);
+  //   };
+  // }, [playing]);
 
   useEffect(() => {
     if (shareMode || homeMode) {
