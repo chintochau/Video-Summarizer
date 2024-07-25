@@ -109,9 +109,6 @@ app.get("/", (req, res) => {
   res.send("Welcome to Fusion AI!")
 });
 
-// app.use(express.static('public'))
-
-
 // Start http server
 app.listen(port, () => {
   console.log(`Server started at http://localhost:${port}`)
