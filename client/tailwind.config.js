@@ -28,7 +28,7 @@ module.exports = {
                 color: theme("colors.primary.DEFAULT"),
               },
             },
-            "h1, h2,h3": {
+            "h1,h2,h3": {
               color: theme("colors.primary"),
             },
             "h4": {
@@ -52,6 +52,9 @@ module.exports = {
             h6: {
               color: theme("colors.primary.DEFAULT"),
             },
+            strong: {
+              color: theme("colors.secondary.DEFAULT"),
+            }
           },
         },
       }),
