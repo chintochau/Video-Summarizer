@@ -46,6 +46,7 @@
     "react-dom": "^18.2.0",
     "react-youtube": "^10.1.0",
     "sirv": "^2.0.4",
+    "socket.io": "^4.7.5",
     "stripe": "^14.23.0",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",

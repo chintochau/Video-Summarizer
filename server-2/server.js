@@ -14,6 +14,9 @@ import vastaiRoutes from "./routes/vastaiRoutes.js";
 import embeddingsRoutes from "./routes/embeddingsRoutes.js";
 import ttsRoutes from "./routes/ttsRoutes.js";
 import Summary from './models/summaryModel.js';
+import summaryHandlers from './handlers/summaryHandlers.js';
+import http from 'http';
+import {Server as socketIo} from 'socket.io';
 
 // Constants
 const isProduction = process.env.NODE_ENV === 'production'
@@ -32,6 +35,13 @@ const ssrManifest = isProduction
 // Create http server
 const app = express()
 const upload = multer({ dest: "uploads/" });
+const server = http.createServer(app)
+const io = new socketIo(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
 
 // middleware
 app.use(cors());
@@ -47,6 +57,9 @@ app.use("/api", cors(), youtubeRoutes);
 app.use("/api", cors(), embeddingsRoutes);
 app.use("/api", cors(), ttsRoutes);
 app.use("/", cors(), vastaiRoutes);
+
+//Sockets.io handlers
+summaryHandlers(io);
 
 // Add Vite or respective production middlewares
 let vite
@@ -64,6 +77,8 @@ if (!isProduction) {
   app.use(compression())
   app.use(base, sirv('./dist/client', { extensions: [] }))
 }
+
+
 
 // Serve HTML
 app.use('/share/:id', async (req, res) => {
@@ -110,6 +125,7 @@ app.get("/", (req, res) => {
 });
 
 // Start http server
-app.listen(port, () => {
+
+server.listen(port, () => {
   console.log(`Server started at http://localhost:${port}`)
 })

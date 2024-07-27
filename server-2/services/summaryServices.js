@@ -1,9 +1,57 @@
+import { modelMap } from "./../utils/constants.js";
 import {
   openai,
   anthropic,
   deepInfraHeaders,
 } from "../config/summaryConfig.js";
 import fetch from "node-fetch";
+
+export const generateSummarySocket = async (input, socket) => {
+  const { option, transcript, language, selectedModel, userId, video } = input;
+  const { prompt } = option;
+  const { sourceTitle } = video;
+
+  let fullResponseText = "";
+  const max_tokens = 1300;
+  const system =
+    "give your response in a makrdown, dont use a code interpreter and you must answer in the language: " +
+    language;
+  const messages = [
+    {
+      role: "user",
+      content:
+        `you are given a transcript of a video titles:${sourceTitle}` +
+        prompt +
+        "Video Transcript:" +
+        transcript,
+    },
+  ];
+
+  const data = {
+    system,
+    messages,
+    fullResponseText,
+    max_tokens,
+    socket,
+    selectedModel,
+  };
+
+  switch (selectedModel) {
+    case "gpt35":
+    case "gpt4o":
+    case "gpt4om":
+      fullResponseText = await summarizeWithOpenAI(data);
+      break;
+    case "claude3h":
+    case "claude35s":
+      fullResponseText = await summarizeWithAnthropic(data);
+      break;
+    default:
+      console.log("No model selected");
+  }
+
+  return fullResponseText;
+};
 
 export const generateSummary = async (req, res) => {
   const { option, transcript, language, selectedModel, userId, video } =
@@ -79,7 +127,7 @@ Video Transcript: ${transcript}`,
     max_tokens,
     res,
     selectedModel,
-    response_format:{ "type": "json_object" }
+    response_format: { type: "json_object" },
   };
   switch (selectedModel) {
     case "gpt35":
@@ -128,58 +176,61 @@ export const generateSummaryInSeries = async (
       ];
       const max_tokens = 1300;
 
-      let stream;
-      let model;
+      const usingOpenAI = async (model) => {
+        const openaiStream = openai.beta.chat.completions.stream({
+          model,
+          messages,
+          stream: true,
+          temperature: 0.4,
+          max_tokens,
+        });
+        openaiStream.on("content", (delta, snapshot) => {
+          fullResponseText += delta;
+          if (res) {
+            res.write(delta);
+          }
+        });
+        try {
+          await openaiStream.finalChatCompletion();
+        } catch (error) {
+          console.log(error.message);
+          if (res) {
+            res.write("exceed length");
+          }
+        }
+        resolve();
+      };
+
+      const usingAnthropic = async (model) => {
+        const stream = await anthropic.messages.create({
+          max_tokens,
+          messages,
+          model,
+          stream: true,
+        });
+        for await (const messageStreamEvent of stream) {
+          if (
+            messageStreamEvent &&
+            messageStreamEvent.delta &&
+            messageStreamEvent.delta.text
+          ) {
+            res.write(messageStreamEvent.delta.text);
+            fullResponseText += messageStreamEvent.delta.text;
+          }
+        }
+        resolve();
+      };
+
+      const model = modelMap[selectedModel];
       switch (selectedModel) {
         case "gpt35":
-          model = "gpt-3.5-turbo";
-        case "gpt4om":
-          model = "gpt-4o-mini";
         case "gpt4o":
-          model = "gpt-4o";
-          const openaiStream = openai.beta.chat.completions.stream({
-            model,
-            messages,
-            stream: true,
-            temperature: 0.4,
-            max_tokens,
-          });
-          openaiStream.on("content", (delta, snapshot) => {
-            fullResponseText += delta;
-            if (res) {
-              res.write(delta);
-            }
-          });
-          try {
-            await openaiStream.finalChatCompletion();
-          } catch (error) {
-            console.log(error.message);
-            if (res) {
-              res.write("exceed length");
-            }
-          }
-          resolve();
+        case "gpt4om":
+          await usingOpenAI(model);
           break;
         default:
-          // anthropic AI
-          stream = await anthropic.messages.create({
-            max_tokens,
-            messages,
-            model: "claude-3-haiku-20240307",
-            stream: true,
-          });
-
-          for await (const messageStreamEvent of stream) {
-            if (
-              messageStreamEvent &&
-              messageStreamEvent.delta &&
-              messageStreamEvent.delta.text
-            ) {
-              res.write(messageStreamEvent.delta.text);
-              fullResponseText += messageStreamEvent.delta.text;
-            }
-          }
-          resolve();
+          await usingAnthropic(model);
+          break;
       }
     });
   };
@@ -428,18 +479,9 @@ async function summarizeWithAnthropic({
   fullResponseText,
   res,
   selectedModel,
+  socket,
 }) {
-  let model;
-  switch (selectedModel) {
-    case "claude3h":
-      model = "claude-3-haiku-20240307";
-      break;
-    case "claude35s":
-      model = "claude-3-5-sonnet-20240620";
-      break;
-    default:
-      break;
-  }
+  const model = modelMap[selectedModel];
 
   const stream = await anthropic.messages.create({
     max_tokens,
@@ -458,6 +500,9 @@ async function summarizeWithAnthropic({
       if (res) {
         res.write(messageStreamEvent.delta.text);
       }
+      if (socket) {
+        socket.emit("text", messageStreamEvent.delta.text);
+      }
     } else {
       console.log(
         "The 'text' property is undefined or does not exist in the delta object."
@@ -474,33 +519,27 @@ async function summarizeWithOpenAI({
   max_tokens,
   res,
   selectedModel,
-  response_format
+  response_format,
+  socket,
 }) {
-  let model;
-  switch (selectedModel) {
-    case "gpt4o":
-      model = "gpt-4o";
-      break;
-    case "gpt35":
-      model = "gpt-3.5-turbo";
-      break;
-    case "gpt4om":
-      model = "gpt-4o-mini";
-      break;
-  }
+  const model = modelMap[selectedModel];
+
   const stream = openai.beta.chat.completions.stream({
     model,
     messages: [{ role: "system", content: system }, ...messages],
     stream: true,
     temperature: 0.4,
     max_tokens,
-    response_format
+    response_format,
   });
 
   stream.on("content", (delta, snapshot) => {
     fullResponseText += delta;
     if (res) {
       res.write(delta);
+    }
+    if (socket) {
+      socket.emit("text", { text: delta });
     }
   });
   try {
@@ -520,6 +559,7 @@ const summarizeWithLlama3 = async ({
   fullResponseText,
   max_tokens,
   res,
+  socket,
 }) => {
   try {
     const stream = await fetch(
@@ -552,6 +592,9 @@ const summarizeWithLlama3 = async ({
         if (content) {
           if (res) {
             res.write(content);
+          }
+          if (socket) {
+            socket.emit("text", { text: content });
           }
         }
       });

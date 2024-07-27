@@ -27,6 +27,7 @@ import SummarizationPage from "./pages/marketing/SummarizationPage.jsx";
 import i18n from "./translations/i18n.js";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
+import TestingPage from "./pages/TestingPage.jsx";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
               <QuotaProvider>
                 <ThemeProvider>
                   <Routes>
+                    <Route path="/testing" element={<TestingPage />} />
                     <Route path="/:lang" element={<LocalizedApp />} />
                     <Route path="/" element={<HomePage />} />
                     <Route path="/Summarizer" element={<GeneralSummary />} />
