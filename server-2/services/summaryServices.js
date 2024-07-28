@@ -33,7 +33,7 @@ const selectSummaryModel = async (selectedModel, data) => {
 
 export const generateSummarySocket = async (input, socket) => {
   const { option, transcript, language, selectedModel, userId, video } = input;
-  const { prompt } = option;
+  const { prompt,summaryFormat } = option;
   const { sourceTitle } = video;
 
   let fullResponseText = "";
@@ -59,6 +59,7 @@ export const generateSummarySocket = async (input, socket) => {
     max_tokens,
     socket,
     selectedModel,
+    response_format:summaryFormat === "json" ? { type: "json_object" } : null,
   };
 
   fullResponseText = await selectSummaryModel(selectedModel, data);

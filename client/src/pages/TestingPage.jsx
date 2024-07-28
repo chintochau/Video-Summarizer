@@ -35,26 +35,8 @@ This is yet another sample transcript.
 };
 
 const TestingPage = () => {
-  const [progress, setProgress] = useState(0);
-  const [summary, setSummary] = useState("");
-  const [summaryObject, setSummaryObject] = useState({});
-  
-
-  const requestSummary = async (data) => {
-    SummaryHandler.requestSummary(data, (response) => {
-      if (response.text) {
-        setSummary((prev) => prev + response.text);
-      } else if (response.summary) {
-        setSummaryObject(response.summary);
-      }
-    });
-  }
-
   return (
     <>
-      <Button onClick={() => requestSummary(data)}>Testing</Button>
-      <div className="text-2xl">Summary: {summary}</div><br/>
-      <div className="text-2xl">Summary Object: {JSON.stringify(summaryObject)}</div>
     </>
   );
 };

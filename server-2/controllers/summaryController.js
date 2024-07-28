@@ -199,6 +199,7 @@ export const getTranscriptAndSummariesForVideo = async (req, res) => {
 export const handleSummaryRequestWithQuota = async (req, res) => {
   try {
     let ipAddress = req.ip;
+    const {summaryFormat} = req.body.option; 
 
     FreeServiceUsage.create({
       timestamp: new Date(),
@@ -207,8 +208,15 @@ export const handleSummaryRequestWithQuota = async (req, res) => {
       service: "summary", 
     })
 
+    console.log(summaryFormat);
 
-    const summary = await generateSummary(req, res);
+    if(summaryFormat === "json"){
+      await generateSummaryInJson(req, res);
+    } else {
+      await generateSummary(req, res);
+    }
+
+
     res.status(200).end();
   } catch (error) {
     res

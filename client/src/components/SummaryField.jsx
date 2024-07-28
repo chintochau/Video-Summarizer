@@ -35,6 +35,7 @@ import {
 import { LinkToPricing } from "./common/RoutingLinks.jsx";
 import { InfoIcon } from "lucide-react";
 import { miniSecondsToSrtTime } from "@/utils/timeUtils.js";
+import SummaryHandler from "../handlers/SummaryHandler.js";
 
 const SummaryField = ({ videoRef, className }) => {
   // use context
@@ -219,22 +220,28 @@ const SummaryField = ({ videoRef, className }) => {
 
       try {
         updateSummaryOfIndex(activeTab, "sourceType", title);
-        await SummaryService.summarizeWithAI(data, (error, data) => {
-          if (error) {
-            // Handle error
-            console.error("An error occurred:", error);
-            return;
+
+        SummaryHandler.requestSummary(data, (response) => {
+
+          if (response.text) {
+            setStartSummary(false);
+            finalOutput += response.text;
+            setResponse((prev) => prev + response.text);
           }
-          // Check if the data signals completion
-          if (data && data.completed) {
-            completeSummary();
+
+          if (response.success && response.summary) {
+            setSummaries((prev) => [response.summary, ...prev]);
+            setActiveTab(0);
             setCredits((prev) => (prev - creditAmount).toFixed(1));
-            return; // Stop further processing
+            setResponse("")
           }
-          // Append the received data to the response
-          setStartSummary(false);
-          setResponse((prev) => prev + data);
-          finalOutput += data;
+
+          if (response.error) {
+            setStartSummary(false);
+            setResponse((prev) => prev + response.error);
+            finalOutput += response.error;
+          }
+
         });
       } catch (error) {
         console.error(error.message);
