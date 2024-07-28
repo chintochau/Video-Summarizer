@@ -139,8 +139,23 @@ const SummaryField = ({ videoRef, className }) => {
   const performSummarize = async (option) => {
     setStartSummary(true);
     const { interval, creditAmount, title, summaryFormat } = option;
+    const data = {
+      option,
+      transcript: inputTranscript(option.type),
+      language,
+      interval,
+      selectedModel,
+      video,
+      userId,
+    };
 
     let finalOutput = "";
+
+    const completeSummary = () => {
+      setResponse("");
+      insertNewTab(finalOutput, title, summaryFormat);
+      setActiveTab(0);
+    };
 
     if (!currentUser) {
       // use quota if user is not logged in
@@ -149,34 +164,22 @@ const SummaryField = ({ videoRef, className }) => {
         QuotaService.decrementQuota(); // save to loca storage
         setQuota((prev) => prev - 1); // update context
         updateSummaryOfIndex(activeTab, "sourceType", title);
-        await SummaryService.summarizeWithAIUsingQuota(
-          {
-            option,
-            transcript: parentTranscriptText,
-            selectedModel: selectedModel,
-            video,
-            language,
-          },
-          (error, data) => {
-            if (error) {
-              // Handle error
-              console.error("An error occurred:", error);
-              return;
-            }
-            // Check if the data signals completion
-            if (data && data.completed) {
-              console.log("Summary process completed.");
-              setResponse("");
-              insertNewTab(finalOutput, title, summaryFormat);
-              setActiveTab(0);
-              return; // Stop further processing
-            }
-            // Append the received data to the response
-            setStartSummary(false);
-            setResponse((prev) => prev + data);
-            finalOutput += data;
+        await SummaryService.summarizeWithAIUsingQuota(data, (error, data) => {
+          if (error) {
+            // Handle error
+            console.error("An error occurred:", error);
+            return;
           }
-        );
+          // Check if the data signals completion
+          if (data && data.completed) {
+            completeSummary();
+            return; // Stop further processing
+          }
+          // Append the received data to the response
+          setStartSummary(false);
+          setResponse((prev) => prev + data);
+          finalOutput += data;
+        });
         return;
       } catch (error) {
         console.error(error);
@@ -216,36 +219,23 @@ const SummaryField = ({ videoRef, className }) => {
 
       try {
         updateSummaryOfIndex(activeTab, "sourceType", title);
-        await SummaryService.summarizeWithAI(
-          {
-            option,
-            transcript: inputTranscript(option.type),
-            language,
-            interval,
-            selectedModel: selectedModel,
-            userId,
-            video,
-          },
-          (error, data) => {
-            if (error) {
-              // Handle error
-              console.error("An error occurred:", error);
-              return;
-            }
-            // Check if the data signals completion
-            if (data && data.completed) {
-              setResponse("");
-              insertNewTab(finalOutput, title, summaryFormat);
-              setCredits((prev) => (prev - creditAmount).toFixed(1));
-              setActiveTab(0);
-              return; // Stop further processing
-            }
-            // Append the received data to the response
-            setStartSummary(false);
-            setResponse((prev) => prev + data);
-            finalOutput += data;
+        await SummaryService.summarizeWithAI(data, (error, data) => {
+          if (error) {
+            // Handle error
+            console.error("An error occurred:", error);
+            return;
           }
-        );
+          // Check if the data signals completion
+          if (data && data.completed) {
+            completeSummary();
+            setCredits((prev) => (prev - creditAmount).toFixed(1));
+            return; // Stop further processing
+          }
+          // Append the received data to the response
+          setStartSummary(false);
+          setResponse((prev) => prev + data);
+          finalOutput += data;
+        });
       } catch (error) {
         console.error(error.message);
         setStartSummary(false);
@@ -293,8 +283,11 @@ const SummaryField = ({ videoRef, className }) => {
                     const modelAvailable = currentUser ? true : !item.premimum;
                     return item.field ? (
                       <div
-                      className="text-sm text-primary px-8 border-b"
-                       key={item.name}>{item.name}</div>
+                        className="text-sm text-primary px-8 border-b"
+                        key={item.name}
+                      >
+                        {item.name}
+                      </div>
                     ) : (
                       <SelectItem
                         key={item.id}
