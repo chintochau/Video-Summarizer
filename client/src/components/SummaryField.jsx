@@ -41,7 +41,8 @@ const SummaryField = ({ videoRef, className }) => {
   const { summaries, setSummaries } = useSummaryContext();
   const { userId, setCredits, credits, currentUser } = useAuth();
   const { video } = useVideoContext();
-  const { parentTranscriptText, parentSrtText, utterances, speakers } = useTranscriptContext();
+  const { parentTranscriptText, parentSrtText, utterances, speakers } =
+    useTranscriptContext();
   const { quota, setQuota } = useQuota();
   const { selectedModel, setSelectedModel, language, setLanguage } =
     useModels();
@@ -91,7 +92,6 @@ const SummaryField = ({ videoRef, className }) => {
   }, [parentTranscriptText]);
 
   const inputTranscript = (type) => {
-
     let srtText = parentSrtText;
     let transcriptText = parentTranscriptText;
 
@@ -99,20 +99,25 @@ const SummaryField = ({ videoRef, className }) => {
       // map the utterances to srt format
       srtText = utterances
         .map((item, index) => {
-          const speaker = speakers.find((speaker) => speaker.id === item.speaker);
-          return `${index + 1}\n${miniSecondsToSrtTime(item.start) } --> ${miniSecondsToSrtTime(item.end)}\n${
-            speaker ? speaker.name + " : ": "Speaker"
+          const speaker = speakers.find(
+            (speaker) => speaker.id === item.speaker
+          );
+          return `${index + 1}\n${miniSecondsToSrtTime(
+            item.start
+          )} --> ${miniSecondsToSrtTime(item.end)}\n${
+            speaker ? speaker.name + " : " : "Speaker"
           }\n${item.text}\n`;
         })
         .join("\n");
 
-        
-        // map the utterances to transcript format
-        transcriptText = utterances
+      // map the utterances to transcript format
+      transcriptText = utterances
         .map((item, index) => {
-          const speaker = speakers.find((speaker) => speaker.id === item.speaker);
-          return `${miniSecondsToSrtTime(item.start) } ${
-            speaker ? speaker.name + " : ": "Speaker"
+          const speaker = speakers.find(
+            (speaker) => speaker.id === item.speaker
+          );
+          return `${miniSecondsToSrtTime(item.start)} ${
+            speaker ? speaker.name + " : " : "Speaker"
           } ${item.text}\n`;
         })
         .join("\n");
@@ -281,9 +286,16 @@ const SummaryField = ({ videoRef, className }) => {
                   <SelectValue placeholder="Select Language" />
                 </SelectTrigger>
                 <SelectContent>
+                  <div className="text-base text-gray-800 px-8 py-1  font-bold">
+                    Model (Cost)
+                  </div>
                   {defaultModels.map((item) => {
                     const modelAvailable = currentUser ? true : !item.premimum;
-                    return (
+                    return item.field ? (
+                      <div
+                      className="text-sm text-primary px-8 border-b"
+                       key={item.name}>{item.name}</div>
+                    ) : (
                       <SelectItem
                         key={item.id}
                         value={item.id}

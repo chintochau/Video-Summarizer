@@ -9,7 +9,7 @@ export const useModels = () => useContext(ModelContext);
 
 export const ModelProvider = ({ children }) => {
   
-  const [languageModel, setLanguageModel] = useState(defaultModels[0].id); //claude3h
+  const [languageModel, setLanguageModel] = useState(defaultModels[1].id); 
   const [language, setLanguage] = useState("English");
 
   useEffect(() => {

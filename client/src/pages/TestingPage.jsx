@@ -38,44 +38,7 @@ const TestingPage = () => {
   const [progress, setProgress] = useState(0);
   const [summary, setSummary] = useState("");
   const [summaryObject, setSummaryObject] = useState({});
-  /**
-   * createdAt
-: 
-"2024-07-27T02:45:57.264Z"
-language
-: 
-"en"
-sourceId
-: 
-"abc123"
-sourceTitle
-: 
-"Sample Video"
-summary
-: 
-"# Video Summary: Sample Video\n\nThe video titled \"Sample Video\" features a brief introduction where the speaker presents a series of sample transcripts. Throughout the video, the speaker emphasizes the repetitive nature of the content, stating, \"This is a sample transcript\" multiple times. The overall tone is straightforward and focused on demonstrating the format of a transcript."
-summaryFormat
-: 
-"json"
-summaryType
-: 
-"Example Summary"
-userId
-: 
-"65fdfcd6c93e352bfb21f440"
-videoId
-: 
-"66a456fde1a544f5ec06bab8"
-__v
-: 
-0
-_id
-: 
-"66a45f65333567bf9080652c"
-   * 
-   * 
-   * 
-   */
+  
 
   const requestSummary = async (data) => {
     SummaryHandler.requestSummary(data, (response) => {

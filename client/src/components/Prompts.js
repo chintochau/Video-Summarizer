@@ -1,39 +1,56 @@
 export const defaultModels = [
+  { name: "ChatGPT ", field: true },
   {
-    name: "GPT4o-mini",
+    name: "GPT4o-mini (x0.3)",
     id: "gpt4om",
     model: "gpt-4o-mini",
     factor: 0.3,
     premimum: false,
   },
   {
-    name: "Claude3",
-    id: "claude3h",
-    model: "claude-3-haiku-20240307",
-    factor: 1,
-    premimum: true,
-  },
-  {
-    name: "Claude3.5 Sonnet (cost x10)",
-    id: "claude35s",
-    model: "claude-3-5-sonnet-20240620",
-    factor: 10,
-    premimum: true,
-  },
-  {
-    name: "GPT4o (cost x10)",
+    name: "GPT4o (x10)",
     id: "gpt4o",
     model: "gpt-4o",
     factor: 10,
     premimum: true,
   },
   {
-    name: "GPT3.5 (legacy)",
+    name: "GPT3.5 (legacy) (x1)",
     id: "gpt35",
     model: "gpt-3.5-turbo-0125",
     factor: 1,
     premimum: true,
   },
+  { name: "Claude ", field: true },
+  {
+    name: "Claude3 (x1)",
+    id: "claude3h",
+    model: "claude-3-haiku-20240307",
+    factor: 1,
+    premimum: true,
+  },
+  {
+    name: "Claude3.5 Sonnet (x10)",
+    id: "claude35s",
+    model: "claude-3-5-sonnet-20240620",
+    factor: 10,
+    premimum: true,
+  },
+  // { name: "Llama", field: true },
+  // {
+  //   name: "Llama3.1 8B (x0.2)",
+  //   id: "llama8b",
+  //   model: "Llama-3.1-8B-Instruct",
+  //   factor: 0.12,
+  //   premimum: true,
+  // },
+  // {
+  //   name: "Llama3.1 70B (x1.5)",
+  //   id: "llama70b",
+  //   model: "Llama-3.1-70B-Instruct",
+  //   factor: 1.5,
+  //   premimum: true,
+  // },
 ];
 
 export const summarizeOptions = {

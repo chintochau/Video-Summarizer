@@ -12,7 +12,6 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import { Slider } from "./ui/slider";
 import { useAuth } from "@/contexts/AuthContext";
 import { BoltIcon, LockClosedIcon } from "@heroicons/react/24/solid";
 import { cn } from "@/utils/utils";
@@ -30,8 +29,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useSummaryContext } from "@/contexts/SummaryContext";
-import { secondsToTime } from "@/utils/timeUtils";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 const OptionCard = (params) => {
   const { option, handleClick, creditCount, variant } = params;
@@ -88,6 +85,7 @@ const OptionCard = (params) => {
     }
 
     switch (id) {
+      case "meeting-minutes":
       case "long-summary":
         factor =
           (Math.max(1, 2.5 * parts) * selectedModelDetails.factor) / parts;
@@ -101,7 +99,7 @@ const OptionCard = (params) => {
         break;
       default:
         if (creditCount !== 0) {
-          setAdjustableCreditCount(creditCount * selectedModelDetails.factor);
+          setAdjustableCreditCount((creditCount * selectedModelDetails.factor).toFixed(1));
         } else {
           setAdjustableCreditCount(1);
         }

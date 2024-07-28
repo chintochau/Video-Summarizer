@@ -11,12 +11,3 @@ export const colors = [
   "#bcbd22",
   "#17becf",
 ];
-
-
-export const modelMap = {
-  gpt4o: "gpt-4o",
-  gpt35: "gpt-3.5-turbo",
-  gpt4om: "gpt-4o-mini",
-  claude3h: "claude-3-haiku-20240307",
-  claude35s: "claude-3-5-sonnet-20240620",
-};

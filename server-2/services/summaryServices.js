@@ -1,10 +1,35 @@
-import { modelMap } from "./../utils/constants.js";
 import {
   openai,
   anthropic,
   deepInfraHeaders,
 } from "../config/summaryConfig.js";
 import fetch from "node-fetch";
+
+const modelMap = {
+  gpt4o: "gpt-4o",
+  gpt35: "gpt-3.5-turbo",
+  gpt4om: "gpt-4o-mini",
+  claude3h: "claude-3-haiku-20240307",
+  claude35s: "claude-3-5-sonnet-20240620",
+  llama8b: "meta-llama/Meta-Llama-3.1-8B-Instruct",
+  llama70b: "meta-llama/Meta-Llama-3.1-70B-Instruct",
+};
+
+// select summaryModel
+const selectSummaryModel = async (selectedModel, data) => {
+  switch (selectedModel) {
+    case "gpt35":
+    case "gpt4o":
+    case "gpt4om":
+      return await summarizeWithOpenAI(data);
+    case "claude3h":
+    case "claude35s":
+      return await summarizeWithAnthropic(data);
+    case "llama8b":
+    case "llama70b":
+      return await summarizeWithLlama3(data);
+  }
+};
 
 export const generateSummarySocket = async (input, socket) => {
   const { option, transcript, language, selectedModel, userId, video } = input;
@@ -36,19 +61,7 @@ export const generateSummarySocket = async (input, socket) => {
     selectedModel,
   };
 
-  switch (selectedModel) {
-    case "gpt35":
-    case "gpt4o":
-    case "gpt4om":
-      fullResponseText = await summarizeWithOpenAI(data);
-      break;
-    case "claude3h":
-    case "claude35s":
-      fullResponseText = await summarizeWithAnthropic(data);
-      break;
-    default:
-      console.log("No model selected");
-  }
+  fullResponseText = await selectSummaryModel(selectedModel, data);
 
   return fullResponseText;
 };
@@ -84,22 +97,8 @@ export const generateSummary = async (req, res) => {
     selectedModel,
   };
 
-  console.log(selectedModel);
+  fullResponseText = await selectSummaryModel(selectedModel, data);
 
-  switch (selectedModel) {
-    case "gpt35":
-    case "gpt4o":
-    case "gpt4om":
-      fullResponseText = await summarizeWithOpenAI(data);
-      break;
-    case "claude3h":
-    case "claude35s":
-      fullResponseText = await summarizeWithAnthropic(data);
-      break;
-    case "llama3":
-      fullResponseText = await summarizeWithLlama3(data);
-      break;
-  }
   return fullResponseText;
 };
 
@@ -129,20 +128,9 @@ Video Transcript: ${transcript}`,
     selectedModel,
     response_format: { type: "json_object" },
   };
-  switch (selectedModel) {
-    case "gpt35":
-    case "gpt4o":
-    case "gpt4om":
-      fullResponseText = await summarizeWithOpenAI(data);
-      break;
-    case "claude3h":
-    case "claude35s":
-      fullResponseText = await summarizeWithAnthropic(data);
-      break;
-    case "llama3":
-      fullResponseText = await summarizeWithLlama3(data);
-      break;
-  }
+
+  fullResponseText = await selectSummaryModel(selectedModel, data);
+
   return fullResponseText;
 };
 
@@ -221,6 +209,47 @@ export const generateSummaryInSeries = async (
         resolve();
       };
 
+      const usingLlama = async (model) => {
+        const stream = await fetch(
+          "https://api.deepinfra.com/v1/openai/chat/completions",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              model,
+              messages,
+              max_tokens,
+              stream: true,
+            }),
+            headers: deepInfraHeaders,
+          }
+        );
+
+        await new Promise((resolve, reject) => {
+          stream.body.on("data", (chunk) => {
+            // data.choices[0].delta.content
+            const data = chunk.toString().split("data:")[1];
+            // try to parse the data
+            if (data && data.trim() === "[DONE]") {
+              resolve();
+            } else if (!data) {              
+              resolve();
+
+            }
+            const parsedData = JSON.parse(data);
+            const content = parsedData.choices[0].delta.content;
+            fullResponseText += content;
+            if (content) {
+              if (res) {
+                res.write(content);
+              }
+            }
+          });
+          stream.body.on("end", () => {
+            resolve();
+          });
+        });
+      };
+
       const model = modelMap[selectedModel];
       switch (selectedModel) {
         case "gpt35":
@@ -228,8 +257,13 @@ export const generateSummaryInSeries = async (
         case "gpt4om":
           await usingOpenAI(model);
           break;
-        default:
+        case "claude3h":
+        case "claude35s":
           await usingAnthropic(model);
+          break;
+        case "llama8b":
+        case "llama70b":
+          await usingLlama(model);
           break;
       }
     });
@@ -258,21 +292,7 @@ export const generateSummaryInSeries = async (
   };
 
   let videoContext;
-
-  switch (selectedModel) {
-    case "gpt35":
-    case "gpt4o":
-    case "gpt4om":
-      videoContext = await summarizeWithOpenAI(data);
-      break;
-    case "claude3h":
-    case "claude35s":
-      videoContext = await summarizeWithAnthropic(data);
-      break;
-    case "llama3":
-      videoContext = await summarizeWithLlama3(data);
-      break;
-  }
+  videoContext = await selectSummaryModel(selectedModel, data);
 
   res.write(videoContext + "\n");
   fullResponseText += videoContext + "\n";
@@ -560,14 +580,19 @@ const summarizeWithLlama3 = async ({
   max_tokens,
   res,
   socket,
+  selectedModel,
 }) => {
   try {
+    const model = modelMap[selectedModel];
+
+    console.log("model", model);
+
     const stream = await fetch(
       "https://api.deepinfra.com/v1/openai/chat/completions",
       {
         method: "POST",
         body: JSON.stringify({
-          model: "meta-llama/Meta-Llama-3-70B-Instruct",
+          model,
           messages: [{ role: "system", content: system }, ...messages],
           max_tokens,
           stream: true,
