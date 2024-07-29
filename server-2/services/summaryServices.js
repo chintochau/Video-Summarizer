@@ -32,8 +32,16 @@ const selectSummaryModel = async (selectedModel, data) => {
 };
 
 export const generateSummarySocket = async (input, socket) => {
-  const { option, transcript, language, selectedModel, userId, video } = input;
-  const { prompt,summaryFormat } = option;
+  const {
+    option,
+    transcript,
+    language,
+    selectedModel,
+    userId,
+    video,
+    interval,
+  } = input;
+  const { prompt, summaryFormat, type } = option;
   const { sourceTitle } = video;
 
   let fullResponseText = "";
@@ -55,14 +63,92 @@ export const generateSummarySocket = async (input, socket) => {
   const data = {
     system,
     messages,
-    fullResponseText,
     max_tokens,
     socket,
     selectedModel,
-    response_format:summaryFormat === "json" ? { type: "json_object" } : null,
+    response_format: summaryFormat === "json" ? { type: "json_object" } : null,
   };
 
-  fullResponseText = await selectSummaryModel(selectedModel, data);
+  switch (type) {
+    case "detail-summary":
+      // generate context of first 5 mins
+      const contextData = {
+        // context of the video
+        system: "",
+        messages: [
+          {
+            role: "user",
+            content: `
+            give your response in a markdown, don't use a code interpreter, and you must answer in the language: ${language}
+            you are given the transcript of the beginning of a video titled: ${
+              video.sourceTitle
+            }, 
+            below is the transcript: ${getFirstNMinutesOfTranscript(transcript)}
+            You task is to provide a context of the video, the context will explain what the video is about, and what the viewer can expect to learn from the video. the context wll also be used for reference when reading other part of the video, to prevent loss of context.
+            ### Video Abstract
+            `,
+          },
+        ],
+        max_tokens: 1024,
+        selectedModel,
+        socket,
+      };
+
+      const videoContext = await selectSummaryModel(selectedModel, contextData);
+      fullResponseText = videoContext;
+
+      console.log("full text 1", fullResponseText);
+
+      const transcriptsArray = parseSRTAndGroupByInterval(transcript, interval);
+
+      for (let i = 0; i < transcriptsArray.length; i++) {
+        const additionalPrompt = `you are given the ${i + 1} of ${
+          transcriptsArray.length
+        } part of a video, 
+        here is the brief context of the video:
+        ${videoContext}
+        here is the part of the video transcript you need to summarize:
+        ${transcriptsArray[i]}
+        ${prompt}
+        ${
+          i + 1 === transcriptsArray.length
+            ? "Provide the conclusion of this video at the end, using format ### Conclusion"
+            : ""
+        }
+        }
+        `;
+
+        socket.emit("text", {
+          text:
+            "\n### Part " + (i + 1) + " of " + transcriptsArray.length + "\n",
+        });
+        fullResponseText +=
+          "\n### Part " + (i + 1) + " of " + transcriptsArray.length + "\n";
+
+
+        const responseText = await selectSummaryModel(selectedModel, {
+          system,
+          messages: [
+            {
+              role: "user",
+              content: additionalPrompt,
+            },
+          ],
+          fullResponseText,
+          max_tokens,
+          socket,
+          selectedModel,
+          response_format: null,
+        }) + "\n"
+
+        fullResponseText += responseText;
+      }
+
+      break;
+    default:
+      fullResponseText = await selectSummaryModel(selectedModel, data);
+      break;
+  }
 
   return fullResponseText;
 };
@@ -232,9 +318,8 @@ export const generateSummaryInSeries = async (
             // try to parse the data
             if (data && data.trim() === "[DONE]") {
               resolve();
-            } else if (!data) {              
+            } else if (!data) {
               resolve();
-
             }
             const parsedData = JSON.parse(data);
             const content = parsedData.choices[0].delta.content;
@@ -497,7 +582,6 @@ async function summarizeWithAnthropic({
   system,
   max_tokens,
   messages,
-  fullResponseText,
   res,
   selectedModel,
   socket,
@@ -511,6 +595,9 @@ async function summarizeWithAnthropic({
     system,
     stream: true,
   });
+
+  let fullResponseText = "";
+
   for await (const messageStreamEvent of stream) {
     if (
       messageStreamEvent &&
@@ -536,7 +623,6 @@ async function summarizeWithAnthropic({
 async function summarizeWithOpenAI({
   system,
   messages,
-  fullResponseText,
   max_tokens,
   res,
   selectedModel,
@@ -553,6 +639,8 @@ async function summarizeWithOpenAI({
     max_tokens,
     response_format,
   });
+
+  let fullResponseText = "";
 
   stream.on("content", (delta, snapshot) => {
     fullResponseText += delta;
@@ -577,7 +665,6 @@ async function summarizeWithOpenAI({
 const summarizeWithLlama3 = async ({
   system,
   messages,
-  fullResponseText,
   max_tokens,
   res,
   socket,
@@ -601,6 +688,9 @@ const summarizeWithLlama3 = async ({
         headers: deepInfraHeaders,
       }
     );
+
+  let fullResponseText = "";
+
 
     await new Promise((resolve, reject) => {
       stream.body.on("data", (chunk) => {

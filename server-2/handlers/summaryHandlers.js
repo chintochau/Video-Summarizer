@@ -1,19 +1,24 @@
-import Video from '../models/videoModel.js';
-import Summary from '../models/summaryModel.js';
-import { generateSummary, generateSummaryInJson, generateSummarySocket } from '../services/summaryServices.js';
-import { checkUserCredit, deductCredits } from '../utils/creditUtils.js';
-import { getOrCreateVideoBySourceId } from '../services/videoServices.js';
+import Video from "../models/videoModel.js";
+import Summary from "../models/summaryModel.js";
+import {
+  generateSummary,
+  generateSummaryInJson,
+  generateSummaryInSeries,
+  generateSummarySocket,
+} from "../services/summaryServices.js";
+import { checkUserCredit, deductCredits } from "../utils/creditUtils.js";
+import { getOrCreateVideoBySourceId } from "../services/videoServices.js";
 
 const summaryHandlers = (io) => {
-  io.on('connection', (socket) => {
-    console.log('A user connected for summary');
+  io.on("connection", (socket) => {
+    console.log("A user connected for summary");
 
-    socket.on('summaryRequest', async (data) => {
+    socket.on("summaryRequest", async (data) => {
       try {
-        console.log(data);
         const { option, video, userId, language } = data;
-        const { creditAmount, title, summaryFormat } = option;
-        const { sourceId, sourceTitle, sourceType, author, videoDuration } = video;
+        const { creditAmount, title, summaryFormat, type } = option;
+        const { sourceId, sourceTitle, sourceType, author, videoDuration } =
+          video;
 
         await checkUserCredit(userId, creditAmount);
 
@@ -46,14 +51,18 @@ const summaryHandlers = (io) => {
 
         await deductCredits(userId, creditAmount);
 
-        socket.emit('summaryResponse', { success: true, summary: newSummary });
+        socket.emit("summaryResponse", { success: true, summary: newSummary });
       } catch (error) {
-        socket.emit('summaryResponse', { success: false, message: "Failed to generate summary", error: error.message });
+        socket.emit("summaryResponse", {
+          success: false,
+          message: "Failed to generate summary",
+          error: error.message,
+        });
       }
     });
 
-    socket.on('disconnect', () => {
-      console.log('User disconnected from summary');
+    socket.on("disconnect", () => {
+      console.log("User disconnected from summary");
     });
   });
 };

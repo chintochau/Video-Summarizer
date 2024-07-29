@@ -31,7 +31,7 @@ module.exports = {
             "h1,h2,h3": {
               color: theme("colors.primary"),
             },
-            "h4": {
+            h4: {
               color: theme("colors.secondary.DEFAULT"),
             },
             h1: {
@@ -54,7 +54,16 @@ module.exports = {
             },
             strong: {
               color: theme("colors.secondary.DEFAULT"),
-            }
+            },
+
+            "ul, ol": {
+              padding: "0 2rem",
+              margin: "1.25rem 1rem 1.25rem 0.4rem",
+              "li p": {
+                "margin-top": "0.25em",
+                "margin-bottom": "0.25em",
+              },
+            },
           },
         },
       }),

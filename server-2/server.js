@@ -2,7 +2,6 @@ import fs from 'node:fs/promises'
 import express from 'express'
 import multer from "multer";
 import "dotenv/config";
-import path from "path";
 import cors from "cors";
 import summaryRoutes from "./routes/summaryRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
