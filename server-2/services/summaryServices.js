@@ -97,8 +97,6 @@ export const generateSummarySocket = async (input, socket) => {
       const videoContext = await selectSummaryModel(selectedModel, contextData);
       fullResponseText = videoContext;
 
-      console.log("full text 1", fullResponseText);
-
       const transcriptsArray = parseSRTAndGroupByInterval(transcript, interval);
 
       for (let i = 0; i < transcriptsArray.length; i++) {
@@ -125,21 +123,20 @@ export const generateSummarySocket = async (input, socket) => {
         fullResponseText +=
           "\n### Part " + (i + 1) + " of " + transcriptsArray.length + "\n";
 
-
-        const responseText = await selectSummaryModel(selectedModel, {
-          system,
-          messages: [
-            {
-              role: "user",
-              content: additionalPrompt,
-            },
-          ],
-          fullResponseText,
-          max_tokens,
-          socket,
-          selectedModel,
-          response_format: null,
-        }) + "\n"
+        const responseText =
+          (await selectSummaryModel(selectedModel, {
+            system,
+            messages: [
+              {
+                role: "user",
+                content: additionalPrompt,
+              },
+            ],
+            max_tokens,
+            socket,
+            selectedModel,
+            response_format: null,
+          })) + "\n";
 
         fullResponseText += responseText;
       }
@@ -609,7 +606,7 @@ async function summarizeWithAnthropic({
         res.write(messageStreamEvent.delta.text);
       }
       if (socket) {
-        socket.emit("text", messageStreamEvent.delta.text);
+        socket.emit("text", { text: messageStreamEvent.delta.text });
       }
     } else {
       console.log(
@@ -689,8 +686,7 @@ const summarizeWithLlama3 = async ({
       }
     );
 
-  let fullResponseText = "";
-
+    let fullResponseText = "";
 
     await new Promise((resolve, reject) => {
       stream.body.on("data", (chunk) => {
