@@ -94,6 +94,7 @@ export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
           language: language === "auto" ? "en_us" : language
         }
         );
+        console.log(result);
         outputVideo = await getOrCreateVideoAndUpdateTranscript({
           video,
           userId,
@@ -102,6 +103,7 @@ export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
           speakers: result.speakers,
         });
         break
+
       default:
         const id = await transcribeLinkWithRunPod(filePublicUrl, transcribeOption.value || "base",language === "auto" ? null : language);
         // const id = "a671ac14-4c07-4c09-a5c6-113c75b72b43-u1"
@@ -126,6 +128,7 @@ export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
         });
         break
     }
+
     await deductCredits(userId, videoCredits);
     res.json(outputVideo);
 
