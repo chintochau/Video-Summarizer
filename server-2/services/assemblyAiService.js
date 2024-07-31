@@ -15,6 +15,7 @@ export const transcribeWithAssemblyAI = async(data) => {
 
     // only get the end, start, speaker, and text from the utterances
 
+    console.log("utterancesL: ",transcript.utterances);
     const utterances = transcript.utterances.map(utterance => {
       return {
         start: utterance.start,
