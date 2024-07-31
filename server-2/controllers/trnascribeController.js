@@ -94,7 +94,6 @@ export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
           language: language === "auto" ? "en_us" : language
         }
         );
-        console.log(result);
         outputVideo = await getOrCreateVideoAndUpdateTranscript({
           video,
           userId,
@@ -102,7 +101,6 @@ export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
           utterances: result.utterances,
           speakers: result.speakers,
         });
-        console.log(outputVideo);
         break
 
       default:
