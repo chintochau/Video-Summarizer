@@ -102,6 +102,7 @@ export const handleYoutubeTranscribeRequestBeta = async (req, res) => {
           utterances: result.utterances,
           speakers: result.speakers,
         });
+        console.log(outputVideo);
         break
 
       default:
