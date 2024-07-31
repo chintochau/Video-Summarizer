@@ -319,7 +319,7 @@ const SummaryTab = (data) => {
             />
           ) : (
             <Markdown
-              className="prose max-w-full h-full p-2 px-4 text-start leading-5 prose-sm sm:prose lg:prose-lg dark:prose-invert"
+              className="prose max-w-full md:max-w-full lg:max-w-full h-full p-2 px-4 text-start leading-5 prose-sm sm:prose lg:prose-lg dark:prose-invert"
               options={{ overrides: linkOverride }}
             >
               {transformTimestampRangeFromArticleToSingleLink(showText())}

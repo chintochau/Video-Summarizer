@@ -51,7 +51,7 @@ const MenuBar = ({ editor, setIsEditing, isEditing,summaryId }) => {
 
 
   return (
-    <div className=" p-1 w-1/2 fixed space-x-1 z-10  flex items-center  bg-white">
+    <div className=" p-1 w-2/5 fixed space-x-1 z-10  flex items-center  bg-white flex-wrap ">
       <Button
         variant="ghost"
         onClick={() => {
