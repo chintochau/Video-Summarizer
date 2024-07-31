@@ -9,7 +9,8 @@ import {
   handleLongSummaryRequest,
   getSummaryById,
   deleteSummaries,
-  getAllSummaries
+  getAllSummaries,
+  updateSummaryById
 } from "../controllers/summaryController.js";
 const router = express.Router();
 import bodyParser from "body-parser";
@@ -24,6 +25,9 @@ router.post("/summarize-with-quota",bodyParser.json({ limit: "10mb" }), handleSu
 router.get("/summaries/:userId/:sourceId",bodyParser.json({ limit: "10mb" }), getTranscriptAndSummariesForVideo);
 router.get("/summary/:summaryId",bodyParser.json({ limit: "10mb" }), getSummaryById);
 router.get("/user/:userId/videos",bodyParser.json({ limit: "10mb" }), getAllVideosForUser);
+
+//update summary
+router.post("/update-summary",bodyParser.json({ limit: "10mb" }), updateSummaryById);
 
 // delete summary
 router.post("/delete-summary",bodyParser.json({ limit: "10mb" }), deleteSummary);

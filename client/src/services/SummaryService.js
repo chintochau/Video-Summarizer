@@ -177,7 +177,7 @@ export default class SummaryService {
       return null;
     }
   };
-  static getSummary = async ({summaryId}) => {
+  static getSummary = async ({ summaryId }) => {
     try {
       const response = await fetch(apiUrl + `/api/summary/${summaryId}`, {
         method: "GET",
@@ -192,6 +192,26 @@ export default class SummaryService {
       return data;
     } catch (error) {
       console.error("Error fetching summary:", error);
+      return null;
+    }
+  };
+
+  static updateSummary = async ({ summaryId, summary }) => {
+    try {
+      const response = await fetch(apiUrl + `/api/update-summary`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ summaryId, summary }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update summary");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error updating summary:", error);
       return null;
     }
   };

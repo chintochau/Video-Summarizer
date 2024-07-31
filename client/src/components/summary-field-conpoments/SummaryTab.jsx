@@ -4,9 +4,12 @@ import SummaryOptions from "../SummaryOptions";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "../ui/button";
 import {
+  CheckIcon,
   ClipboardDocumentIcon,
+  PencilSquareIcon,
   ShareIcon,
   TrashIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useToast } from "../ui/use-toast";
 import SummaryService from "@/services/SummaryService";
@@ -19,8 +22,11 @@ import {
 import { Label } from "../ui/label";
 import { shareLink } from "@/constants";
 import JsonSummaryField from "./JsonSummaryField";
+import SummaryEditField from "./SummaryEditField";
 
-export const transformArticleWithClickableTimestamps = (articleContent="") => {
+export const transformArticleWithClickableTimestamps = (
+  articleContent = ""
+) => {
   // Updated regex to match hh:mm:ss and mm:ss and m:ss formats
   const timestampRegex =
     /(\d{1,2}:\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2})/g;
@@ -31,9 +37,11 @@ export const transformArticleWithClickableTimestamps = (articleContent="") => {
   );
 };
 
-export const transformTimestampRangeFromArticleToSingleLink = (articleContent="") => {
+export const transformTimestampRangeFromArticleToSingleLink = (
+  articleContent = ""
+) => {
   const timestampRegex =
-  /(\d{1,2}:\d{1,2}:\d{1,2} - \d{1,2}:\d{1,2}:\d{1,2} |\d{1,2}:\d{1,2} - \d{1,2}:\d{1,2} |\d{1,2}:\d{1,2} - \d{1,2}:\d{1,2} |\d{1,2}:\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2})/g;
+    /(\d{1,2}:\d{1,2}:\d{1,2} - \d{1,2}:\d{1,2}:\d{1,2} |\d{1,2}:\d{1,2} - \d{1,2}:\d{1,2} |\d{1,2}:\d{1,2} - \d{1,2}:\d{1,2} |\d{1,2}:\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2}|\d{1,2}:\d{1,2})/g;
 
   return articleContent.replace(
     timestampRegex,
@@ -57,18 +65,18 @@ const SummaryTab = (data) => {
     return null;
   }
 
-  const [displayFormat, setDisplayFormat] = useState(null)
+  const [displayFormat, setDisplayFormat] = useState(null);
   const { summary, sourceId, summaryFormat, _id } = summaryObject;
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    if (summaryFormat) { 
-      setDisplayFormat(summaryFormat)
+    if (summaryFormat) {
+      setDisplayFormat(summaryFormat);
     }
     return () => {
-      setDisplayFormat(null)
-    }
-  }, [summaryFormat])
-
+      setDisplayFormat(null);
+    };
+  }, [summaryFormat]);
 
   const showText = () => {
     if (summary !== "") {
@@ -150,11 +158,23 @@ const SummaryTab = (data) => {
     },
   };
 
-   return (
+  return (
     <ScrollArea className="overflow-y-auto px-2">
       {summary !== "" && (
         <>
-          <div className="hidden md:block md:absolute top-0 right-0 ">
+          <div className="hidden md:block md:absolute top-0 right-0 z-20">
+            {isEditing ? null : (
+              <Button
+                variant="transparent"
+                className="p-2"
+                onClick={() => {
+                  setIsEditing(!isEditing);
+                }}
+              >
+                <PencilSquareIcon className="w-6 h-6" />
+              </Button>
+            )}
+
             <Button
               className="p-2"
               variant="transparent"
@@ -172,7 +192,11 @@ const SummaryTab = (data) => {
             {sourceId && (
               <Popover>
                 <PopoverTrigger>
-                  <Button variant="transparent" className="p-2" onClick={(e) => copyLink(e)}>
+                  <Button
+                    variant="transparent"
+                    className="p-2"
+                    onClick={(e) => copyLink(e)}
+                  >
                     <ShareIcon className="w-6 h-6" />
                   </Button>
                 </PopoverTrigger>
@@ -224,7 +248,11 @@ const SummaryTab = (data) => {
             {sourceId && (
               <Popover>
                 <PopoverTrigger>
-                  <Button variant="ghost" className="p-2" onClick={(e) => copyLink(e)}>
+                  <Button
+                    variant="ghost"
+                    className="p-2"
+                    onClick={(e) => copyLink(e)}
+                  >
                     <ShareIcon className="w-6 h-6" />
                   </Button>
                 </PopoverTrigger>
@@ -275,17 +303,27 @@ const SummaryTab = (data) => {
               <div className="mx-auto animate-spin rounded-full h-10 w-10 border-r-2 border-b-2 border-indigo-600" />{" "}
               Loading Summary...
             </div>
+          ) : displayFormat === "json" ? (
+            <div className="p-4">
+              <JsonSummaryField
+                summary={showText()}
+                handleTimestampClick={handleTimestampClick}
+              />
+            </div>
+          ) : isEditing ? (
+            <SummaryEditField
+              summary={showText()}
+              setIsEditing={setIsEditing}
+              isEditing={isEditing}
+              summaryId={_id}
+            />
           ) : (
-            displayFormat === "json" ? (
-              <div className="p-4"><JsonSummaryField summary={showText()} handleTimestampClick={handleTimestampClick}/></div>
-            ) : (
             <Markdown
               className="prose max-w-full h-full p-2 px-4 text-start leading-5"
               options={{ overrides: linkOverride }}
             >
               {transformTimestampRangeFromArticleToSingleLink(showText())}
             </Markdown>
-            )
           )}
           <div className="h-20" />
         </div>

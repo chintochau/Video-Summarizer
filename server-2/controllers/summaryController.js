@@ -199,23 +199,22 @@ export const getTranscriptAndSummariesForVideo = async (req, res) => {
 export const handleSummaryRequestWithQuota = async (req, res) => {
   try {
     let ipAddress = req.ip;
-    const {summaryFormat} = req.body.option; 
+    const { summaryFormat } = req.body.option;
 
     FreeServiceUsage.create({
       timestamp: new Date(),
       ipAddress: ipAddress,
       userAgent: req.headers["user-agent"],
-      service: "summary", 
-    })
+      service: "summary",
+    });
 
     console.log(summaryFormat);
 
-    if(summaryFormat === "json"){
+    if (summaryFormat === "json") {
       await generateSummaryInJson(req, res);
     } else {
       await generateSummary(req, res);
     }
-
 
     res.status(200).end();
   } catch (error) {
@@ -266,6 +265,23 @@ export const getSummaryById = async (req, res) => {
         .json({ success: false, message: "Summary not found" });
     }
     res.status(200).json({ success: true, data: summary });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+export const updateSummaryById = async (req, res) => {
+  try {
+    const { summaryId, summary } = req.body;
+    const existingSummary = await Summary.findByIdAndUpdate(summaryId, {summary}, {
+      new: true,
+    });
+    if (!existingSummary) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Summary not found" });
+    }
+    res.status(200).json({ success: true, data: existingSummary });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }

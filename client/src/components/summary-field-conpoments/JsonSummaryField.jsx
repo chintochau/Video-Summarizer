@@ -10,8 +10,6 @@ const JsonSummaryField = (params) => {
   const [cta, setCta] = useState("");
 
   useEffect(() => {
-    console.log("JsonSummaryField", summary);
-
     let partialData = summary;
 
     try {
@@ -21,7 +19,6 @@ const JsonSummaryField = (params) => {
       if (json.content) setContent(json.content);
       if (json.conclusion) setConclusion(json.conclusion);
       if (json.cta) setCta(json.cta);
-      
 
       // Clear partialData after successful parsing
       partialData = "";
@@ -61,20 +58,22 @@ const JsonSummaryField = (params) => {
           </ul>
         </div>
       ))}
-      {conclusion !=="" && <div id="conclusion">
-        <h2 className="text-xl font-bold text-left text-secondary">
-          Conclusion
-        </h2>
-        <p>{conclusion}</p>
-      </div>}
-      {cta !== "" &&<div
-        id="cta"
-      >
-        <h2 className="text-xl font-bold text-left text-secondary">
-          Call to Action
-        </h2>
-        <p>{cta}</p>
-      </div>}
+      {conclusion !== "" && (
+        <div id="conclusion">
+          <h2 className="text-xl font-bold text-left text-secondary">
+            Conclusion
+          </h2>
+          <p>{conclusion}</p>
+        </div>
+      )}
+      {cta !== "" && (
+        <div id="cta">
+          <h2 className="text-xl font-bold text-left text-secondary">
+            Call to Action
+          </h2>
+          <p>{cta}</p>
+        </div>
+      )}
     </div>
   );
 };

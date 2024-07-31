@@ -138,6 +138,7 @@ const SummaryField = ({ videoRef, className }) => {
   };
 
   const performSummarize = async (option) => {
+console.log("triggered");
     setStartSummary(true);
     const { interval, creditAmount, title, summaryFormat } = option;
     const data = {
