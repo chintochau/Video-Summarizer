@@ -67,6 +67,27 @@ const GeneralSummary = () => {
             content="Use Fusion AI's free YouTube video summarizer to quickly get concise summaries. Try it now with a free quota and register for more features!"
           />
           <link rel="canonical" href={`${fusionaiLink}/summarizer`} />
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              name: "Fusion AI YouTube Summarizer",
+              description:
+                "Use Fusion AI's free YouTube video summarizer to quickly get concise summaries. Try it now with a free quota and register for more features!",
+              applicationCategory: "WebApplication",
+              operatingSystem: "All",
+              url: `${fusionaiLink}/summarizer`,
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "USD",
+              },
+              publisher: {
+                "@type": "Organization",
+                name: "Fusion AI",
+              },
+            })}
+          </script>
         </Helmet>
         <div className="w-full px-2 pt-16 pb-20 md:py-40">
           <div className="flex flex-col justify-center mx-auto max-w-3xl w-full  ">
