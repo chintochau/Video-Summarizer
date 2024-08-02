@@ -18,8 +18,8 @@ import { Separator } from "../ui/separator";
 import { ArrowRight } from "lucide-react";
 import { LinkToDashboard } from "../common/RoutingLinks";
 import { useTranslation } from "react-i18next";
-const YTVideoField = lazy(() => import("../summarizerComponents/YTVideoField"));
-// import { YTVideoField } from "..";
+// const YTVideoField = lazy(() => import("../summarizerComponents/YTVideoField"));
+import { YTVideoField } from "..";
 
 const SeeInAction = () => {
   const { t } = useTranslation();
