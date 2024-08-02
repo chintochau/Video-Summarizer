@@ -1,5 +1,4 @@
 import { parse } from "node-html-parser";
-import { ProxyAgent } from "proxy-agent";
 import { PROXIES } from "../utils/constants.js";
 const RE_YOUTUBE =
   /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
@@ -26,15 +25,13 @@ class YoutubeTranscript {
     const identifier = this.retrieveVideoId(videoId);
     const lang = config?.lang ?? "zh-Hant";
     const proxy = PROXIES[Math.floor(Math.random() * PROXIES.length)];
-    const agent = new ProxyAgent(proxy);
     try {
       const transcriptUrl = await fetch(
         `https://www.youtube.com/watch?v=${identifier}`,
         {
           headers: {
             "User-Agent": USER_AGENT,
-          },
-          agent,
+          }        
         }
       )
         .then((res) => res.text())

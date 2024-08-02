@@ -41,7 +41,6 @@
     "node-fetch": "^3.3.2",
     "node-html-parser": "^6.1.13",
     "openai": "^4.47.1",
-    "proxy-agent": "^6.4.0",
     "queue": "^7.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
