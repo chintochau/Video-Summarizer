@@ -37,7 +37,7 @@ const HeroSection = () => {
           <p className="pt-2">{t("hero.headline2")}</p>
         </h1>
 
-        <p className="mx-auto mt-6 max-w-2xl text-lg  text-gray-200 font-normal font-roboto">
+        <p className="mx-auto mt-6 max-w-2xl text-lg  text-gray-200 font-normal ">
           {t("hero.description")}
         </p>
 
@@ -54,7 +54,7 @@ const HeroSection = () => {
 
         <p
           id="chrome-extension"
-          className="text-lg text-slate-200 font-normal font-roboto pt-10"
+          className="text-lg text-slate-200 font-normal pt-10"
         >
           {t("hero.ctaChrome")}
         </p>
