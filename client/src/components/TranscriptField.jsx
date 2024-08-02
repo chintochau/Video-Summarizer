@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import {
   parseSRTToArray,
   exportSRT,
@@ -344,14 +344,6 @@ const TranscriptField = (params) => {
                   ) : (
                     <ScrollArea className=" h-full px-2">
                       {editableTranscript.map(({ start, end, text }, index) => {
-                        const startTime = timeToSeconds(start.split(",")[0]);
-                        const endTime = timeToSeconds(end.split(",")[0]);
-                        const isCurrent =
-                          currentPlayTime > startTime &&
-                          currentPlayTime < endTime;
-                        if (isCurrent) {
-                          setCurrentLine(text);
-                        }
                         return (
                           <TranscriptBox
                             key={index}
@@ -359,7 +351,7 @@ const TranscriptField = (params) => {
                             end={end}
                             text={text}
                             index={index}
-                            isCurrent={isCurrent}
+                            isCurrent={currentLine === text}
                             isEditMode={isEditMode}
                             setCurrentLine={setCurrentLine}
                             onClick={handleTranscriptClick}
@@ -392,7 +384,7 @@ const TranscriptField = (params) => {
 };
 
 // Box
-const TranscriptBox = ({
+const TranscriptBox = memo(({
   start,
   end,
   text,
@@ -474,6 +466,6 @@ const TranscriptBox = ({
       )}
     </div>
   );
-};
+});
 
 export default TranscriptField;

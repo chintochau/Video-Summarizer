@@ -20,6 +20,7 @@ import SummaryService from "@/services/SummaryService";
 import { useTranscriptContext } from "@/contexts/TranscriptContext";
 import YoutubeService from "@/services/YoutubeService";
 import { cn } from "@/lib/utils";
+import { timeToSeconds } from "../../utils/timeUtils";
 
 const VideoField = ({
   youtubeId,
@@ -36,6 +37,8 @@ const VideoField = ({
     setVideoCredits,
     setCurrentPlayTime,
     setAuthor,
+    setCurrentLine,
+    currentLine,
   } = useVideoContext();
   const { setSummaries, resetSummaries } = useSummaryContext();
   const {
@@ -45,6 +48,7 @@ const VideoField = ({
     setUtterances,
     setSpeakers,
     setTranscriptId,
+    editableTranscript,
   } = useTranscriptContext();
   const { userId, currentUser } = useAuth();
   const [playing, setPlaying] = useState(false);
@@ -55,6 +59,39 @@ const VideoField = ({
       autoplay: 0,
     },
   };
+
+  useEffect(() => {
+    // update current play time every 500ms when video is playing
+    const intervalId = setInterval(async () => {
+      const currentTime =
+        await videoRef.current.internalPlayer.getCurrentTime();
+      // use current Time to find the current line in the transcript, compare it to the current line
+
+      const newCurrentLine = editableTranscript.findLast((line) => {
+        let check =
+          timeToSeconds(line.start.split(",")[0]) <= currentTime &&
+          timeToSeconds(line.end.split(",")[0]) > currentTime;
+        if (check) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+
+      if (newCurrentLine !== currentLine) {
+        setCurrentLine(newCurrentLine.text);
+        setCurrentPlayTime(currentTime);
+      }
+    }, 500);
+
+    if (!playing) {
+      clearInterval(intervalId);
+    }
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [playing]);
 
   useEffect(() => {
     if (shareMode || homeMode) {
