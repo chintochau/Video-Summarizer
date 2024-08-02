@@ -1,6 +1,6 @@
 import { parse } from "node-html-parser";
 import { ProxyAgent } from "proxy-agent";
-import { PROXIES } from "../utils/constants";
+import { PROXIES } from "../utils/constants.js";
 const RE_YOUTUBE =
   /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
 const USER_AGENT =
