@@ -1,19 +1,10 @@
 import { parse } from "node-html-parser";
 import { ProxyAgent } from "proxy-agent";
+import { PROXIES } from "../utils/constants";
 const RE_YOUTUBE =
   /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
 const USER_AGENT =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36,gzip(gfe)";
-const PROXIES = [
-  "http://18.228.150.127:8080",
-  "http://23.94.86.138:80",
-  "http://72.10.160.174:13093",
-  "http://130.180.208.145:80",
-  "http://154.65.39.8:80",
-  "http://82.136.72.102:80",
-  "http://50.175.212.77:80",
-];
-
 
 class YoutubeTranscriptError extends Error {
   constructor(message) {
