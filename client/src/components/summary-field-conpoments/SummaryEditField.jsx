@@ -176,7 +176,7 @@ const SummaryEditField = (params) => {
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm sm:prose lg:prose-lg dark:prose-invert md:max-w-full p-4 focus:outline-none mt-10",
+          "prose prose-sm sm:prose  dark:prose-invert md:max-w-full p-4 focus:outline-none mt-10",
       },
     },
   });
