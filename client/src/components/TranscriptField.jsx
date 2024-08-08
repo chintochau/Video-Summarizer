@@ -6,7 +6,7 @@ import {
   transcribeYoutubeVideo,
 } from "./Utils";
 import { useVideoContext } from "../contexts/VideoContext";
-import { secondsToTime, timeToSeconds } from "../utils/timeUtils";
+import { secondsToTime, secondsToTimeInMinutesAndSeconds, timeToSeconds } from "../utils/timeUtils";
 import { useAuth } from "../contexts/AuthContext";
 import { checkCredits } from "../utils/creditUtils";
 import TranscribeService from "../services/TranscribeService";
@@ -324,8 +324,10 @@ const TranscriptField = (params) => {
               {transcriptAvailable ? (
                 <div className="h-full flex flex-col">
                   <div className=" bg-gray-50">
-                    <div className="text-center font-semibold rounded-sm text-lg ">
-                      {currentLine}
+                    <div 
+                    className="hover:bg-blue-200 text-center rounded-sm text-lg flex justify-between space-x-2 px-2">
+                      <div className="mx-4 text-blue-500">{secondsToTimeInMinutesAndSeconds(currentPlayTime)}</div>
+                      <div className="flex-1">{currentLine}</div>
                     </div>
                     <ControlBar
                       exportSRT={exportSRT}
