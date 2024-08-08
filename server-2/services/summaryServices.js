@@ -118,10 +118,10 @@ export const generateSummarySocket = async (input, socket) => {
 
         socket.emit("text", {
           text:
-            "\n### Part " + (i + 1) + " of " + transcriptsArray.length + "\n",
+            "\n\n### Part " + (i + 1) + " of " + transcriptsArray.length + "\n",
         });
         fullResponseText +=
-          "\n### Part " + (i + 1) + " of " + transcriptsArray.length + "\n";
+          "\n\n### Part " + (i + 1) + " of " + transcriptsArray.length + "\n";
 
         const responseText =
           (await selectSummaryModel(selectedModel, {
