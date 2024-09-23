@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranscriptContext } from "../../contexts/TranscriptContext";
-import { formatFileSize, generateUUID } from "../Utils";
+import { formatFileSize, generateUUID } from "../../utils/Utils";
 import Dropzone, { useDropzone } from "react-dropzone";
 import HistoryPage from "../../pages/HistoryPage";
 import { useVideoContext } from "../../contexts/VideoContext";

@@ -9,7 +9,8 @@ import {
     UserCircleIcon,
     BookOpenIcon,
     UserGroupIcon,
-    ChevronDoubleLeftIcon
+    ChevronDoubleLeftIcon,
+    LanguageIcon
 } from '@heroicons/react/24/outline'
 import { Link, Route, Routes, useLocation } from 'react-router-dom'
 import HistoryPage from '../../pages/HistoryPage'
@@ -22,11 +23,13 @@ import MeetingSummary from '../SummarizerPage/MeetingSummary'
 import { Button } from '../ui/button'
 import { useTheme } from '@/contexts/ThemeProvider'
 import { cn } from '@/utils/utils'
+import CaptionPage from '../CaptionPage/CaptionPage'
 
 
 const navigation = [
     { name: 'Youtube', to: 'youtube', icon: PlayCircleIcon, current: true },
     { name: 'Upload', to: 'upload', icon: CloudArrowUpIcon, current: false },
+    { name: 'Captions', to: 'captions', icon: LanguageIcon, current: false },
     // { name: "Meeting", to: "meeting", icon: UserGroupIcon, current: false },
     { name: 'Search', to: 'search', icon: BookOpenIcon, current: false },
     { name: 'History', to: 'history', icon: ClockIcon, current: false },
@@ -217,6 +220,7 @@ const Dashboard = () => {
                         <Route path='history' element={<HistoryPage />} />
                         <Route path='profile' element={<UserProfilePage />} />
                         <Route path='search' element={<SearchPage />} />
+                        <Route path='captions' element={<CaptionPage />} />
                     </Routes>
                 </main>
 

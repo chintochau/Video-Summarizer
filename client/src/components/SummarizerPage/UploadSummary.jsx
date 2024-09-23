@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranscriptContext } from "../../contexts/TranscriptContext";
-import { formatFileSize, generateUUID } from "../Utils";
+import { formatFileSize, generateUUID } from "../../utils/Utils";
 import Dropzone, { useDropzone } from "react-dropzone";
 import HistoryPage from "../../pages/HistoryPage";
 import { useVideoContext } from "../../contexts/VideoContext";
@@ -155,7 +155,7 @@ const UploadSummary = ({ Bar3Button }) => {
                   We support most common audio and video formats. The maximum file size is 100 MB.
                 </CardDescription>
   
-                <dropbox
+                <div
                   {...getRootProps()}
                   className={className(
                     " flex-col flex items-center transition-all duration-300 ease-in-out lg:w-full lg:aspect-square cursor-pointer  rounded-lg w-full lg:p-2 ",
@@ -177,7 +177,7 @@ const UploadSummary = ({ Bar3Button }) => {
                       </div>
                     )}
                   </div>
-                </dropbox>
+                </div>
               </div>
 
             </div>

@@ -21,6 +21,7 @@ export const secondsToTimeInMinutesAndSeconds = (seconds) => {
     return `${minutes.toString().padStart(2, "0")}:${remainingSeconds.toFixed(0).toString().padStart(2, "0")}`;
 }
 
+
 export const secondsToTime = (seconds) => {
     // Convert seconds to mm:ss format, if less than an hour
     // Convert seconds to hh:mm:ss format, if more than an hour

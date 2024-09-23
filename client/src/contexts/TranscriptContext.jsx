@@ -1,4 +1,4 @@
-import { parseSRTToArray } from "@/components/Utils";
+import { parseSRTToArray } from "@/utils/Utils";
 import { createContext, useContext, useEffect, useState } from "react";
 
 
