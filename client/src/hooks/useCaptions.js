@@ -46,6 +46,8 @@ export const useCaptions = (videoId) => {
   const uploadRef = useRef(null);
   const [masterCaptions, setMasterCaptions] = useState(parseSRTToArray(rawSrt));
   const [subCaptions, setSubCaptions] = useState([]);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const [currentPlaytime, setCurrentPlaytime] = useState(0);
 
   const clearMasterCaptions = () => {
     setMasterCaptions([]);
@@ -74,6 +76,20 @@ export const useCaptions = (videoId) => {
     }
   };
 
+  useEffect(() => {
+    if (file) {
+      setAudioBlob(file);
+    }
+  }, [file]);
+
+  useEffect(() => {
+    // update current playtime every second, using ref
+    const interval = setInterval(() => {
+      setCurrentPlaytime(uploadRef.current.currentTime);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [currentPlaytime, uploadRef]);
+
   return {
     file,
     setFile,
@@ -88,6 +104,8 @@ export const useCaptions = (videoId) => {
     clearFile,
     subCaptions,
     setSubCaptions,
-    handleFileChange
+    handleFileChange,
+    audioBlob,
+    setCurrentPlaytime
   };
 };

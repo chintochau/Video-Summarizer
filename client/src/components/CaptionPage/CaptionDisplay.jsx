@@ -36,7 +36,7 @@ const CaptionDisplay = ({ data }) => {
       <TableHeader className="sticky top-0 outline outline-1 outline-gray-100">
         <TableRow className="hover:bg-white bg-white ">
           <TableHead className="w-[10px]"></TableHead>
-          <TableHead className="flex items-center">
+          <TableHead className="flex items-center w-[400px]">
             <p>Original</p>
             <XCircleIcon
               className="w-4 h-4 ml-2 duration-300 transition-colors hover:text-red-500 cursor-pointer"
@@ -44,7 +44,7 @@ const CaptionDisplay = ({ data }) => {
             />
           </TableHead>
           <TableHead>
-            <div className="flex">
+            <div className="flex flex-wrap gap-x-2 ">
               <Select>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select Language" />
@@ -55,14 +55,14 @@ const CaptionDisplay = ({ data }) => {
                 </SelectContent>
               </Select>
               <Button
-                className="h-8 ml-2 border-cyan-500 text-primary hover:text-primary/70"
+                className="h-8 border-cyan-500 text-primary hover:text-primary/70"
                 variant="outline"
               >
                 Translate
                 <SparklesIcon className="w-4 h-4 ml-2" />
               </Button>
               <Button
-                className="h-8 ml-2 border-cyan-500 text-primary hover:text-primary/70"
+                className="h-8 border-cyan-500 text-primary hover:text-primary/70"
                 variant="outline"
               >
                 Merge{" "}
@@ -84,10 +84,10 @@ const CaptionDisplay = ({ data }) => {
             </TableCell>
             <TableCell>{caption.transcript}</TableCell>
             <TableCell className="w-36">
-              <Input value={caption.start} className="w-32 " />
+              <Input defaultValue={caption.start} className="w-32 " />
             </TableCell>
             <TableCell className="w-36">
-              <Input value={caption.end} className="w-32 " />
+              <Input defaultValue={caption.end} className="w-32 " />
             </TableCell>
             <TableCell>
               <XCircleIcon className=" size-6 text-gray-300 hover:text-red-500 cursor-pointer duration-300 transition" />

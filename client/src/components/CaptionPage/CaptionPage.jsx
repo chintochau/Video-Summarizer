@@ -11,6 +11,8 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { AudioVisualizer } from "react-audio-visualize";
+import { secondsToTime } from "../../utils/timeUtils";
 
 const CaptionPage = () => {
   const {
@@ -27,8 +29,35 @@ const CaptionPage = () => {
     setSubCaptions,
     clearFile,
     clearMasterCaptions,
-    handleFileChange
+    handleFileChange,
+    audioBlob,
+    setCurrentPlaytime,
   } = useCaptions();
+
+  const [hoverPosition, setHoverPosition] = useState(null);
+  const [percentage, setPercentage] = useState(0);
+  const containerRef = useRef(null);
+
+  const handleMouseMove = (event) => {
+    const rect = containerRef.current.getBoundingClientRect();
+    const xPosition = event.clientX - rect.left; // Get mouse X position relative to the container
+    setHoverPosition(xPosition);
+
+    const percentage = (xPosition / rect.width) * 100;
+    setPercentage(percentage);
+  };
+
+  const handleMouseLeave = () => {
+    setHoverPosition(null); // Hide the bar when mouse leaves
+  };
+
+  const handleMouseClick = () => {
+    if (uploadRef.current && uploadRef.current.duration) {
+      uploadRef.current.currentTime =
+        (uploadRef.current.duration * percentage) / 100;
+      setCurrentPlaytime(uploadRef.current.currentTime);
+    }
+  };
 
   //Dropzone
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
@@ -45,7 +74,7 @@ const CaptionPage = () => {
       direction="vertical"
     >
       <ResizablePanel
-        className="h-1/2 aspect-video flex items-center justify-center"
+        className="h-1/2 aspect-video flex items-center justify-center flex-col"
         defaultSize={30}
         minSize={10}
       >
@@ -77,11 +106,16 @@ const CaptionPage = () => {
             </div>
           </div>
         )}
-
         {audioSrc && (
           <div className="w-full h-full flex flex-col items-center justify-center gap-2">
             <div className="flex justify-center items-center w-full">
-              <audio controls src={audioSrc} className="w-2/3" />
+              <audio
+                controls
+                src={audioSrc}
+                className="w-2/3"
+                ref={uploadRef}
+              />
+
               <XCircleIcon
                 className="size-8 ml-2 cursor-pointer text-gray-400 hover:text-red-500 duration-300 transition"
                 onClick={clearFile}
@@ -90,17 +124,52 @@ const CaptionPage = () => {
             <p className="text-gray-950 text-center">{file && file.name}</p>
           </div>
         )}
-
         {videoSrc && (
           <div className="flex justify-center h-full">
-            <video controls src={videoSrc} />
+            <video controls src={videoSrc} ref={uploadRef} />
           </div>
         )}
+        {secondsToTime((percentage / 100) * uploadRef?.current?.duration)}/
+        {secondsToTime(uploadRef?.current?.duration)}
+        <div
+          ref={containerRef}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+          className="relative w-fit h-20"
+          onClick={handleMouseClick}
+        >
+          {/* AudioVisualizer component */}
+          <AudioVisualizer
+            blob={audioBlob}
+            width={uploadRef?.current?.clientWidth}
+            height={70}
+            barWidth={1}
+            ref={uploadRef}
+            currentTime={uploadRef?.current?.currentTime}
+          />
+
+          {/* Overlay for hover position */}
+          {hoverPosition !== null && (
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: hoverPosition,
+                width: "1px",
+                height: "100%",
+                backgroundColor: "red", // Vertical bar color
+                pointerEvents: "none", // Prevent this div from blocking mouse events
+              }}
+            />
+          )}
+        </div>
       </ResizablePanel>
       <ResizableHandle />
       <ResizablePanel className="overflow-scroll">
         <div className="h-full overflow-auto">
-          <CaptionDisplay data={{ masterCaptions, subCaptions, clearMasterCaptions }} />
+          <CaptionDisplay
+            data={{ masterCaptions, subCaptions, clearMasterCaptions }}
+          />
         </div>
       </ResizablePanel>
     </ResizablePanelGroup>
