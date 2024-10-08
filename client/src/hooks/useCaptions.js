@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { parseSRTToArray } from "../utils/Utils";
+import { parseSRTToArray } from "@/utils/utils";
 
 const rawSrt = `1
 00:00:00,000 --> 00:00:07,000

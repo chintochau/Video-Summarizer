@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { summarizeOptions } from "./Prompts";
 import { useVideoContext } from "../contexts/VideoContext";
-import { formatDuration } from "../utils/Utils";
+import { formatDuration } from "@/utils/utils";
 import { useTranscriptContext } from "@/contexts/TranscriptContext";
 import { Button } from "./ui/button";
 import {

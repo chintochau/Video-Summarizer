@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
-import { cn, formatFileSize } from "../../utils/Utils";
+import { cn, formatFileSize } from "@/utils/utils";
 import { ArrowUpTrayIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { useCaptions } from "../../hooks/useCaptions";
 import CaptionDisplay from "./CaptionDisplay";

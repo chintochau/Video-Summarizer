@@ -9,7 +9,7 @@ import {
   acceptStyle,
 } from "../pages/styles";
 import VideoField from "./summarizerComponents/YTVideoField";
-import { formatFileSize, generateUUID } from "../utils/Utils";
+import { formatFileSize, generateUUID } from "@/utils/utils";
 import TranscriptField from "./TranscriptField";
 import SummaryField from "./SummaryField";
 import { useVideoContext } from "../contexts/VideoContext";

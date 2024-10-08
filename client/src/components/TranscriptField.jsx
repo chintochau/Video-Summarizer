@@ -4,7 +4,7 @@ import {
   exportSRT,
   transcribeWithAI,
   transcribeYoutubeVideo,
-} from "../utils/Utils";
+} from "@/utils/utils";
 import { useVideoContext } from "../contexts/VideoContext";
 import { secondsToTime, secondsToTimeInMinutesAndSeconds, timeToSeconds } from "../utils/timeUtils";
 import { useAuth } from "../contexts/AuthContext";

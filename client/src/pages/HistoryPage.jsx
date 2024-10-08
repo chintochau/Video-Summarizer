@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import SummaryService from "../services/SummaryService";
-import { formatDuration } from "../utils/Utils";
+import { formatDuration } from "@/utils/utils";
 import { convertMongoDBDateToLocalTime } from "../utils/timeUtils";
 import { useVideoContext } from "../contexts/VideoContext";
 import { ChevronLeftIcon, ChevronRightIcon, TrashIcon } from "@heroicons/react/24/outline";
