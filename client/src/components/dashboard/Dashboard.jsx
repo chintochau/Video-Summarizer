@@ -29,7 +29,7 @@ import CaptionPage from '../CaptionPage/CaptionPage'
 const navigation = [
     { name: 'Youtube', to: 'youtube', icon: PlayCircleIcon, current: true },
     { name: 'Upload', to: 'upload', icon: CloudArrowUpIcon, current: false },
-    { name: 'Captions', to: 'captions', icon: LanguageIcon, current: false },
+    // { name: 'Captions', to: 'captions', icon: LanguageIcon, current: false },
     // { name: "Meeting", to: "meeting", icon: UserGroupIcon, current: false },
     { name: 'Search', to: 'search', icon: BookOpenIcon, current: false },
     { name: 'History', to: 'history', icon: ClockIcon, current: false },
