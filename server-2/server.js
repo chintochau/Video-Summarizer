@@ -14,6 +14,7 @@ import embeddingsRoutes from "./routes/embeddingsRoutes.js";
 import ttsRoutes from "./routes/ttsRoutes.js";
 import Summary from './models/summaryModel.js';
 import summaryHandlers from './handlers/summaryHandlers.js';
+import blogRoutes from "./routes/blogPostRoutes.js";
 import http from 'http';
 import {Server as socketIo} from 'socket.io';
 
@@ -56,6 +57,7 @@ app.use("/api", cors(), youtubeRoutes);
 app.use("/api", cors(), embeddingsRoutes);
 app.use("/api", cors(), ttsRoutes);
 app.use("/", cors(), vastaiRoutes);
+app.use("/blog", cors(),blogRoutes );
 
 //Sockets.io handlers
 summaryHandlers(io);
