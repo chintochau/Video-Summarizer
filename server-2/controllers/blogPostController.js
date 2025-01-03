@@ -1,5 +1,6 @@
 import BlogPost from "../models/blogPostModel.js";
 import {
+  deleteFileFromS3,
   getAllFilesFromS3,
   uploadBlogFileToS3,
 } from "../services/amazonService.js";
@@ -27,9 +28,13 @@ export const getBlogPosts = async (req, res) => {
 
 export const updateBlogPost = async (req, res) => {
   try {
-    const blogPost = await BlogPost.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const blogPost = await BlogPost.findByIdAndUpdate(
+      req.body._id,
+      { ...req.body, updatedAt: new Date() },
+      {
+        new: true,
+      }
+    );
     return res.status(200).json(blogPost);
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -62,7 +67,7 @@ export const uploadBlogFile = async (req, res) => {
       success: true,
       filePublicUrl: filePublicUrl,
       fileName: file.originalname,
-    }); 
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   } finally {
@@ -86,6 +91,15 @@ export const getAllFiles = async (req, res) => {
         };
       }),
     });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+export const deleteFile = async (req, res) => {
+  try {
+    const file = await deleteFileFromS3(req.body.fileName);
+    return res.status(200).json({ success: true });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

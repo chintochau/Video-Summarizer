@@ -1,7 +1,7 @@
 import { Upload } from "@aws-sdk/lib-storage";
 import { s3Client } from "../config/amazonConfig.js";
 import fs from "fs";
-import { ListObjectsV2Command } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
 
 const Bucket = process.env.S3_BUCKET;
 const CDNBucket = process.env.S3_CDN_BUCKET;
@@ -51,4 +51,14 @@ export const getAllFilesFromS3 = async (bucket = CDNBucket) => {
   });
   const response = await s3Client.send(command);
   return response.Contents;
+};
+
+export const deleteFileFromS3 = async (fileName, bucket = CDNBucket) => {
+  const params = {
+    Bucket: bucket,
+    Key: fileName,
+  };
+  const command = new DeleteObjectCommand(params);
+  const file = await s3Client.send(command);
+  return file;
 };
