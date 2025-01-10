@@ -16,6 +16,11 @@ const BlogPostSchema = new mongoose.Schema({
     trim: true,
     index: true, // Makes the slug searchable
   },
+  excerpt: {
+    type: String,
+    required: true,
+    trim: true,
+  },
   content: {
     type: String,
     required: true, // The body/content of the post
