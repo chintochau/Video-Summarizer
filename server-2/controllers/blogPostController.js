@@ -104,3 +104,15 @@ export const deleteFile = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+
+export const getBlogPost = async (req, res) => {
+  // url = http://localhost:3000/blogPost/slug
+  
+  try {
+    const blogPost = await BlogPost.findOne({ slug: req.params.slug });
+    return res.status(200).json(blogPost);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};

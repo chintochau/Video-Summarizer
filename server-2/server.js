@@ -20,7 +20,7 @@ import {Server as socketIo} from 'socket.io';
 
 // Constants
 const isProduction = process.env.NODE_ENV === 'production'
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3001
 const base = process.env.BASE || '/'
 connectDB();
 
