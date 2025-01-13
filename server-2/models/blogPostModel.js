@@ -49,6 +49,11 @@ const BlogPostSchema = new mongoose.Schema({
   image: {
     type: String, // URL or path to the image
   },
+  type: {
+    type: String,
+    enum: ['blog', 'project','service'],
+    default: 'blog',
+  }
 });
 
 // Add a pre-save hook to update the `updatedAt` field on modification
