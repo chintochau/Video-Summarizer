@@ -16,7 +16,8 @@ import Summary from './models/summaryModel.js';
 import summaryHandlers from './handlers/summaryHandlers.js';
 import blogRoutes from "./routes/blogPostRoutes.js";
 import http from 'http';
-import {Server as socketIo} from 'socket.io';
+import { Server as socketIo } from 'socket.io';
+import aiSimsRoutes from "./ai-sims/ai-sims-routing/aiSimsRoutes.js";
 
 // Constants
 const isProduction = process.env.NODE_ENV === 'production'
@@ -59,26 +60,32 @@ app.use("/api", cors(), ttsRoutes);
 app.use("/", cors(), vastaiRoutes);
 app.use("/blog", cors(),blogRoutes );
 
+app.use("/ai-sims-api",cors(), aiSimsRoutes);
+
 //Sockets.io handlers
 summaryHandlers(io);
 
 // Add Vite or respective production middlewares
 let vite
-if (!isProduction) {
-  const { createServer } = await import('vite')
-  vite = await createServer({
-    server: { middlewareMode: true },
-    appType: 'custom',
-    base
-  })
-  app.use(vite.middlewares)
-} else {
-  const compression = (await import('compression')).default
-  const sirv = (await import('sirv')).default
-  app.use(compression())
-  app.use(base, sirv('./dist/client', { extensions: [] }))
+
+const setUpServer = async () => {
+  if (!isProduction) {
+    const { createServer } = await import('vite')
+    vite = await createServer({
+      server: { middlewareMode: true },
+      appType: 'custom',
+      base
+    })
+    app.use(vite.middlewares)
+  } else {
+    const compression = (await import('compression')).default
+    const sirv = (await import('sirv')).default
+    app.use(compression())
+    app.use(base, sirv('./dist/client', { extensions: [] }))
+  }
 }
 
+// setUpServer()
 
 
 // Serve HTML
@@ -89,7 +96,7 @@ app.use('/share/:id', async (req, res) => {
 
     const summary = await Summary.findById(id).populate("videoId");
 
-    if (!summary)  {
+    if (!summary) {
       res.status(404).json({ success: false, error: "Summary not found" });
     }
 
@@ -105,7 +112,7 @@ app.use('/share/:id', async (req, res) => {
       render = (await import('./dist/server/entry-server.js')).render
     }
 
-    const rendered = await render({summary}, ssrManifest);
+    const rendered = await render({ summary }, ssrManifest);
 
     const html = template
       .replace(`<!--app-head-->`, rendered.head ?? '')
