@@ -15,13 +15,14 @@ import ttsRoutes from "./routes/ttsRoutes.js";
 import Summary from './models/summaryModel.js';
 import summaryHandlers from './handlers/summaryHandlers.js';
 import blogRoutes from "./routes/blogPostRoutes.js";
+import llmRoutes from "./routes/llmRoutes.js";
 import http from 'http';
 import { Server as socketIo } from 'socket.io';
-import aiSimsRoutes from "./ai-sims/ai-sims-routing/aiSimsRoutes.js";
+import { aiSimsMain } from './ai-sims/ai-sims-main.js';
 
 // Constants
 const isProduction = process.env.NODE_ENV === 'production'
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 3000
 const base = process.env.BASE || '/'
 connectDB();
 
@@ -60,7 +61,11 @@ app.use("/api", cors(), ttsRoutes);
 app.use("/", cors(), vastaiRoutes);
 app.use("/blog", cors(),blogRoutes );
 
-app.use("/ai-sims-api",cors(), aiSimsRoutes);
+app.use("/llm",cors(), llmRoutes)
+
+// ai-sims
+aiSimsMain(app);
+
 
 //Sockets.io handlers
 summaryHandlers(io);
