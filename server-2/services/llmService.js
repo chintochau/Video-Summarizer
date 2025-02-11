@@ -10,16 +10,23 @@ class LlmService {
     this.model = model;
   }
 
-  async getChatCompletion(messages) {
+  async getChatCompletion(messages, response_format = null) {
     try {
-      const response = await this.openai.chat.completions.create({
+      const requestPayload = {
         model: this.model,
-        messages: [
-          { role: "system", content: "You are Jason Chau." },
-          ...messages,
-        ],
-      });
-      console.log("response", response);
+        messages: messages,
+      };
+
+      
+      
+      if (response_format !== null) {
+        requestPayload.response_format = response_format;
+      }
+
+      const response = await this.openai.chat.completions.create(requestPayload);
+
+      console.log("total tokens", response.usage.total_tokens, response.usage);
+      
       return response.choices[0].message.content;
     } catch (error) {
       throw new Error(`Chat completion failed: ${error.message}`);
