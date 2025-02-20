@@ -1,33 +1,35 @@
 import OpenAI from "openai";
+import { DEFAULT_CHAT_MODEL } from "../ai-sims/constants.js";
 
 class LlmService {
   constructor(openaiClient) {
     this.openai = openaiClient;
-    this.model = "deepseek-chat"; // Default model
+    this.model = DEFAULT_CHAT_MODEL; // Default model
   }
 
   setModel(model) {
     this.model = model;
   }
 
-  async getChatCompletion(messages, response_format = null) {
+  async getChatCompletion({ messages, response_format, tools }) {
     try {
       const requestPayload = {
         model: this.model,
         messages: messages,
       };
 
-      
-      
       if (response_format !== null) {
         requestPayload.response_format = response_format;
       }
 
-      const response = await this.openai.chat.completions.create(requestPayload);
+      if (tools !== null) {
+        requestPayload.tools = tools;
+      }
 
-      console.log("total tokens", response.usage.total_tokens, response.usage);
-      
-      return response.choices[0].message.content;
+      const response = await this.openai.chat.completions.create(
+        requestPayload
+      );
+      return response.choices[0].message;
     } catch (error) {
       throw new Error(`Chat completion failed: ${error.message}`);
     }
@@ -65,7 +67,7 @@ const openaiService = createLlmService(
 );
 
 const deepInfraService = createLlmService(
-  'https://api.deepinfra.com/v1/openai',
+  "https://api.deepinfra.com/v1/openai",
   process.env["DEEPINFRA_API_KEY"],
   "meta-llama/Llama-3.3-70B-Instruct-Turbo"
 );

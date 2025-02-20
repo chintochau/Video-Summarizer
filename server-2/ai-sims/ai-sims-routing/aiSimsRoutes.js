@@ -1,18 +1,39 @@
 import express from "express";
-import { getDataForAgent, initializeSimsWorld, resetAgentsLocation, showAiSimsStatus, updateAgentInformation, updateSimulation } from "../ai-sims-controller/aiSimsController.js";
+import {
+  getOrControlAgent,
+  initializeSimsWorld,
+  moveObject,
+  resetAgentsLocation,
+  showAiSimsStatus,
+  updateAgentInformation,
+  updateSimulation,
+  askQuestion,
+  modifyMemory,
+} from "../ai-sims-controller/aiSimsController.js";
 
 
-// {bseUrl}/sims
+// {baseUrl}/sims
 
 const router = express.Router();
-router.post("/init",express.json({ limit: "10mb" }),initializeSimsWorld);
-router.get("/data",express.json({ limit: "10mb" }),showAiSimsStatus);
-router.get("/data/world",express.json({ limit: "10mb" }),showAiSimsStatus);
-router.get("/data/agents",express.json({ limit: "10mb" }),showAiSimsStatus);
-router.get("/agent/:agentId/:data",express.json({ limit: "10mb" }),getDataForAgent);
-router.get("/agent/resetAllLocations",express.json({ limit: "10mb" }),resetAgentsLocation);
-router.post("/agent/:agentId/update",express.json({ limit: "10mb" }),updateAgentInformation);
-router.get("/progress",express.json({ limit: "10mb" }),updateSimulation);
 
+// World
+router.post("/init", express.json({ limit: "10mb" }), initializeSimsWorld);
+router.get("/data", express.json({ limit: "10mb" }), showAiSimsStatus);
+router.get("/data/world", express.json({ limit: "10mb" }), showAiSimsStatus);
+
+// Agents
+router.get("/agent/:agentId/:data", express.json({ limit: "10mb" }), getOrControlAgent);
+router.post("/agent/:agentId/update", express.json({ limit: "10mb" }), updateAgentInformation);
+router.post("/agent/:agentId/question", express.json({ limit: "10mb" }), askQuestion);
+router.get("/agent/resetAllLocations", express.json({ limit: "10mb" }), resetAgentsLocation);
+
+// Progress
+router.get("/progress", express.json({ limit: "10mb" }), updateSimulation);
+
+// Map
+router.post("/map/object/move", express.json({ limit: "10mb" }), moveObject);
+
+// Memory
+router.post("/memory/:memoryId", express.json({ limit: "10mb" }), modifyMemory);
 
 export default router;

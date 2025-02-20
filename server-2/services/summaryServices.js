@@ -12,7 +12,7 @@ const modelMap = {
   claude3h: "claude-3-haiku-20240307",
   claude35s: "claude-3-5-sonnet-20240620",
   llama8b: "meta-llama/Meta-Llama-3.1-8B-Instruct",
-  llama70b: "meta-llama/Meta-Llama-3.1-70B-Instruct",
+  llama70b: "meta-llama/Llama-3.3-70B-Instruct-Turbo",
 };
 
 // select summaryModel

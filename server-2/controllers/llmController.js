@@ -6,8 +6,7 @@ import {
 
 class LlmController {
   async getChatCompletion(req, res) {
-    const { messages, selectedModel, response_format } = req.body;
-
+    const { messages, selectedModel, response_format, tools } = req.body;
     // Determine which service to use based on the selected model
     let service;
     switch (selectedModel) {
@@ -25,6 +24,7 @@ class LlmController {
         service = deepInfraService;
         break;
       default:
+        if (!res) return "Unsupported model selected";
         return res.status(400).json({ error: "Unsupported model selected" });
     }
 
@@ -32,10 +32,11 @@ class LlmController {
     service.setModel(selectedModel);
 
     try {
-      const response = await service.getChatCompletion(
+      const response = await service.getChatCompletion({
         messages,
-        response_format
-      );
+        response_format,
+        tools,
+      });
 
       if (res) {
         return res.status(200).json(response);
@@ -43,6 +44,7 @@ class LlmController {
         return response;
       }
     } catch (error) {
+      console.error(error);
       if (res) {
         return res.status(500).json({ error: error.message });
       } else {
@@ -50,7 +52,6 @@ class LlmController {
       }
     }
   }
-  
 }
 
 export default new LlmController();

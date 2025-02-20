@@ -1,75 +1,41 @@
 import llmController from "../../controllers/llmController.js";
-import { DEFAULT_JSON_CHAT_MODEL, DEFAULT_WORLD_SIZE } from "../constants.js";
+import { DEFAULT_JSON_CHAT_MODEL, DEFAULT_WORLD_SIZE, TOWN_LAYOUT } from "../constants.js";
 
-export function generateTown() {
-  const size = DEFAULT_WORLD_SIZE;
-  const grid = Array(size)
-    .fill()
-    .map(() => Array(size).fill({ type: "grass" }));
+// Town Configuration Structure
 
-  addTreeClusters(grid, 90);
-  // Create main roads
-  createRoad(grid, { x: 25, y: 0 }, { x: 25, y: size - 1 }); // Vertical main street
-  createRoad(grid, { x: 26, y: 0 }, { x: 26, y: size - 1 }); // Vertical main street
-  createRoad(grid, { x: 0, y: 25 }, { x: size - 1, y: 25 }); // Horizontal main street
-  createRoad(grid, { x: 0, y: 26 }, { x: size - 1, y: 26 }); // Horizontal main street
+// New generateTown function
+export function generateTown(layout = TOWN_LAYOUT) {
+  const grid = initializeGrid(layout.size);
 
-  // Add park area
-  createPark(grid, { x: 28, y: 28 }, 11, 11);
-  // Add random features
-  addBenches(grid, 10);
-  addStreetLamps(grid, 15);
-// Commercial buildings  
-addBuilding(grid, "market", { x: 30, y: 15 }, 8, 8, [  
-  { type: "sign", x: 6, y: 1, text: "Willow Market", },  
-  { type: "shelf", x: 2, y: 2, contents: "groceries", actions: ["viewItems", "buyGroceries"] },  
-  { type: "counter", x: 4, y: 1, actions: ["checkout", "askForDiscount"] },  
-  { type: "pharmacy", x: 6, y: 3, actions: ["buyMedicine", "getPrescription"] },  
-]);  
+  layout.features.forEach((feature) => {
+    switch (feature.type) {
+      case "roads":
+        feature.items.forEach((road) => {
+          if (road.direction) {
+            createAxisRoad(grid, road.direction, road.position, road.length);
+          } else {
+            createRoad(grid, road.start, road.end);
+          }
+        });
+        break;
+      case "park":
+        createPark(grid, feature.position, feature.width, feature.height);
+        break;
+      case "trees":
+        addTreeClusters(grid, feature.count);
+        break;
+      case "benches":
+        addBenches(grid, feature.count);
+        break;
+      case "lamps":
+        addStreetLamps(grid, feature.count);
+        break;
+    }
+  });
 
-addBuilding(grid, "flowerShop", { x: 14, y: 28 }, 6, 6, [  
-  { type: "sign", x: 4, y: 1, text: "Mary's Flower Shop" },  
-  { type: "flowerDisplay", x: 2, y: 2, actions: ["viewFlowers", "purchaseFlower"] },  
-  { type: "gardeningTools", x: 4, y: 3, actions: ["trimFlowers", "checkStock"] },  
-  { type: "orderForm", x: 3, y: 4, actions: ["createOrder", "submitOrder"] },  
-]);  
-
-addBuilding(grid, "cafe", { x: 3, y: 28 }, 6, 8, [  
-  { type: "sign", x: 4, y: 1, text: "Local Café" },  
-  { type: "coffeeMachine", x: 1, y: 2, actions: ["brewCoffee", "cleanMachine"] },  
-  { type: "table", x: 3, y: 2, chairs: 4, actions: ["sitDown", "orderCoffee"] },  
-  { type: "snackBar", x: 1, y: 3, actions: ["buySnack", "restockSnacks"] },  
-]);  
-
-// Residential neighborhood  
-addBuilding(grid, "house", { x: 6, y: 5 }, 8, 8, [  
-  { type: "sign", x: 1, y: 1, text: "Jason's Home" },  
-  { type: "desk", x: 3, y: 3, hasComputer: true, actions: ["useComputer", "writeReport"] },  
-  { type: "officeChair", x: 3, y: 4, actions: ["sit", "spinChair"] },  
-  { type: "bookshelf", x: 4, y: 3, actions: ["readBook", "organizeBooks"] },  
-], "south");  
-
-addBuilding(grid, "house", { x: 16, y: 5 }, 8, 8, [  
-  { type: "sign", x: 1, y: 1, text: "Willow's Home" },  
-  { type: "oven", x: 4, y: 4, actions: ["bakeCake", "preheatOven"] },  
-  { type: "counter", x: 3, y: 3, actions: ["prepareFood", "cleanCounter"] },  
-  { type: "cateringSupplies", x: 5, y: 5, actions: ["checkInventory", "restockSupplies"] },  
-], "south");  
-
-createRoad(grid, { x: 6, y: 14 }, { x: 25, y: 14 });  
-
-addBuilding(grid, "house", { x: 6, y: 16 }, 8, 8, [  
-  { type: "sign", x: 1, y: 1, text: "Jessie's Home" },  
-  { type: "desk", x: 3, y: 3, hasComputer: true, actions: ["useComputer", "designGraphic"] },  
-  { type: "designTable", x: 4, y: 4, actions: ["sketchDesign", "organizeTools"] },  
-  { type: "sketchpad", x: 3, y: 5, actions: ["draw", "erase"] },  
-], "south");  
-
-addBuilding(grid, "house", { x: 16, y: 16 }, 8, 8, [  
-  { type: "sign", x: 1, y: 1, text: "Max's Home" },  
-  { type: "desk", x: 3, y: 3, hasComputer: true, actions: ["useComputer", "browseInternet"] },  
-  { type: "bookshelf", x: 4, y: 3, actions: ["readBook", "organizeBooks"] },  
-], "south");
+  layout.buildings.forEach((building) => {
+    addBuilding(grid, building);
+  });
 
   return grid;
 }
@@ -207,282 +173,215 @@ function addStreetLamps(grid, count) {
     }
   }
 }
-function addBuilding(
-  grid,
-  type,
-  start,
-  width,
-  height,
-  furniture,
-  doorFacing = "north"
-) {
-  // Create external walls and floors
+
+function addBuilding(grid, config) {
+  const {
+    name,
+    position,
+    width,
+    height,
+    rooms = ["main"],
+    furniture = [],
+    doorFacing = "south",
+    exteriorType = "wall",
+  } = config;
+
+  // Create exterior structure
+  createExteriorWalls(grid, name, position, width, height, exteriorType);
+  addDoor(grid, name, position, width, height, doorFacing);
+
+  // Handle room creation (empty array = open layout)
+  const createdRooms =
+    rooms.length > 0
+      ? createRooms(grid, name, position, width, height, rooms)
+      : [createOpenSpace(grid, name, position, width, height)];
+
+  // Add furniture
+  addFurnitureToGrid(grid, position, createdRooms, furniture);
+}
+
+// Helper functions
+function createExteriorWalls(grid, type, start, width, height,exteriorType) {
   for (let x = start.x; x < start.x + width; x++) {
     for (let y = start.y; y < start.y + height; y++) {
-      if (
+      const isWall =
         x === start.x ||
         x === start.x + width - 1 ||
         y === start.y ||
-        y === start.y + height - 1
-      ) {
-        grid[x][y] = { type: "wall", buildingType: type };
-      } else {
-        grid[x][y] = { type: "floor", buildingType: type };
-      }
+        y === start.y + height - 1;
+      grid[x][y] = {
+        type: isWall ? exteriorType : "floor",
+        building: type,
+        room: "exterior",
+      };
     }
   }
+}
 
-  switch (type) {
-    case "house":
-      const area = width * height;
-      let numRooms = 1;
-      if (area >= 50) numRooms = 2;
-      if (area >= 75) numRooms = 3;
-      if (area >= 100) numRooms = 4;
+function addDoor(grid, type, start, width, height, doorFacing) {
+  const doorPositions = {
+    north: { x: start.x + width - 2, y: start.y },
+    south: { x: start.x + 1, y: start.y + height - 1 },
+    east: { x: start.x + width - 1, y: start.y + height - 2 },
+    west: { x: start.x, y: start.y + 1 },
+  };
 
-      let roomAreas = [];
-      if (numRooms >= 2) {
-        // Determine split direction based on aspect ratio
-        if (width >= height) {
-          // Vertical split
-          let splitX = start.x + Math.floor(width * 0.4);
-          splitX = Math.max(start.x + 1, Math.min(splitX, start.x + width - 2));
-          const openingY = start.y + Math.floor(height / 2);
-          for (let y = start.y + 1; y < start.y + height - 1; y++) {
-            if (y !== openingY)
-              grid[splitX][y] = { type: "wall", buildingType: type };
-          }
-          roomAreas.push(
-            {
-              type: "bedroom",
-              x1: start.x + 1,
-              x2: splitX - 1,
-              y1: start.y + 1,
-              y2: start.y + height - 2,
-            },
-            {
-              type: "living room",
-              x1: splitX + 1,
-              x2: start.x + width - 2,
-              y1: start.y + 1,
-              y2: start.y + height - 2,
-            }
-          );
-        } else {
-          // Horizontal split
-          let splitY = start.y + Math.floor(height * 0.4);
-          splitY = Math.max(
-            start.y + 1,
-            Math.min(splitY, start.y + height - 2)
-          );
-          const openingX = start.x + Math.floor(width / 2);
-          for (let x = start.x + 1; x < start.x + width - 1; x++) {
-            if (x !== openingX)
-              grid[x][splitY] = { type: "wall", buildingType: type };
-          }
-          roomAreas.push(
-            {
-              type: "bedroom",
-              x1: start.x + 1,
-              x2: start.x + width - 2,
-              y1: start.y + 1,
-              y2: splitY - 1,
-            },
-            {
-              type: "living room",
-              x1: start.x + 1,
-              x2: start.x + width - 2,
-              y1: splitY + 1,
-              y2: start.y + height - 2,
-            }
-          );
-        }
-      }
+  const pos = doorPositions[doorFacing] || doorPositions.south;
+  grid[pos.x][pos.y] = { type: "door", building: type, room: "entrance" };
+}
 
-      if (numRooms >= 3) {
-        const livingRoom = roomAreas[1];
-        const lrWidth = livingRoom.x2 - livingRoom.x1 + 1;
-        const lrHeight = livingRoom.y2 - livingRoom.y1 + 1;
+function createRooms(grid, type, start, width, height, roomTypes) {
+  let rooms = [
+    {
+      x1: start.x + 1,
+      x2: start.x + width - 2,
+      y1: start.y + 1,
+      y2: start.y + height - 2,
+      type: "main",
+    },
+  ];
 
-        if (lrWidth >= lrHeight) {
-          // Vertical split
-          let splitX = livingRoom.x1 + Math.floor(lrWidth * 0.4);
-          splitX = Math.max(
-            livingRoom.x1 + 1,
-            Math.min(splitX, livingRoom.x2 - 1)
-          );
-          const openingY = livingRoom.y1 + Math.floor(lrHeight / 2);
-          for (let y = livingRoom.y1; y <= livingRoom.y2; y++) {
-            if (y !== openingY)
-              grid[splitX][y] = { type: "wall", buildingType: type };
-          }
-          roomAreas[1] = { ...livingRoom, x2: splitX - 1 };
-          roomAreas.push({
-            type: "kitchen",
-            x1: splitX + 1,
-            x2: livingRoom.x2,
-            y1: livingRoom.y1,
-            y2: livingRoom.y2,
-          });
-        } else {
-          // Horizontal split
-          let splitY = livingRoom.y1 + Math.floor(lrHeight * 0.4);
-          splitY = Math.max(
-            livingRoom.y1 + 1,
-            Math.min(splitY, livingRoom.y2 - 1)
-          );
-          const openingX = livingRoom.x1 + Math.floor(lrWidth / 2);
-          for (let x = livingRoom.x1; x <= livingRoom.x2; x++) {
-            if (x !== openingX)
-              grid[x][splitY] = { type: "wall", buildingType: type };
-          }
-          roomAreas[1] = { ...livingRoom, y2: splitY - 1 };
-          roomAreas.push({
-            type: "kitchen",
-            x1: livingRoom.x1,
-            x2: livingRoom.x2,
-            y1: splitY + 1,
-            y2: livingRoom.y2,
-          });
-        }
-      }
+  while (rooms.length < roomTypes.length) {
+    const roomIndex = findLargestRoom(rooms);
+    if (roomIndex === -1) break; // Prevent errors if no valid room found
 
-      if (numRooms >= 4) {
-        const bedroom = roomAreas[0];
-        const brWidth = bedroom.x2 - bedroom.x1 + 1;
-        const brHeight = bedroom.y2 - bedroom.y1 + 1;
+    const [room1, room2] = splitRoom(grid, type, rooms[roomIndex]);
 
-        if (brWidth >= brHeight) {
-          // Vertical split
-          let splitX = bedroom.x1 + Math.floor(brWidth * 0.4);
-          splitX = Math.max(bedroom.x1 + 1, Math.min(splitX, bedroom.x2 - 1));
-          const openingY = bedroom.y1 + Math.floor(brHeight / 2);
-          for (let y = bedroom.y1; y <= bedroom.y2; y++) {
-            if (y !== openingY)
-              grid[splitX][y] = { type: "wall", buildingType: type };
-          }
-          roomAreas[0] = { ...bedroom, x2: splitX - 1 };
-          roomAreas.push({
-            type: "bathroom",
-            x1: splitX + 1,
-            x2: bedroom.x2,
-            y1: bedroom.y1,
-            y2: bedroom.y2,
-          });
-        } else {
-          // Horizontal split
-          let splitY = bedroom.y1 + Math.floor(brHeight * 0.4);
-          splitY = Math.max(bedroom.y1 + 1, Math.min(splitY, bedroom.y2 - 1));
-          const openingX = bedroom.x1 + Math.floor(brWidth / 2);
-          for (let x = bedroom.x1; x <= bedroom.x2; x++) {
-            if (x !== openingX)
-              grid[x][splitY] = { type: "wall", buildingType: type };
-          }
-          roomAreas[0] = { ...bedroom, y2: splitY - 1 };
-          roomAreas.push({
-            type: "bathroom",
-            x1: bedroom.x1,
-            x2: bedroom.x2,
-            y1: splitY + 1,
-            y2: bedroom.y2,
-          });
-        }
-      }
+    if (!room1 || !room2) break; // Ensure valid rooms
 
-      // Add default furniture if none provided
-      if (furniture.length === 0) {
-        roomAreas.forEach((room) => {
-          const centerX = room.x1 + Math.floor((room.x2 - room.x1) / 2);
-          const centerY = room.y1 + Math.floor((room.y2 - room.y1) / 2);
-          const localX = centerX - start.x;
-          const localY = centerY - start.y;
-
-          switch (room.type) {
-            case "bedroom":
-              furniture.push(
-                { type: "bed", x: localX, y: localY },
-                { type: "wardrobe", x: localX + 1, y: localY }
-              );
-              break;
-            case "living room":
-              furniture.push(
-                { type: "sofa", x: localX, y: localY },
-                { type: "table", x: localX + 1, y: localY }
-              );
-              break;
-            case "kitchen":
-              furniture.push(
-                { type: "counter", x: localX, y: localY },
-                { type: "oven", x: localX + 1, y: localY }
-              );
-              break;
-            case "bathroom":
-              furniture.push(
-                { type: "toilet", x: localX, y: localY },
-                { type: "shower", x: localX + 1, y: localY }
-              );
-              break;
-          }
-        });
-      }
-
-      break;
-    case "market":
-      break;
-    default:
-      break;
+    rooms.splice(roomIndex, 1, room1, room2);
   }
 
-  switch (doorFacing) {
-    case "north":
-      grid[start.x + width - 2][start.y] = {
-        type: "door",
-        buildingType: type,
-      };
-      break;
-    case "south":
-      grid[start.x + 1][start.y + height - 1] = {
-        type: "door",
-        buildingType: type,
-      };
-      break;
-    case "east":
-      grid[start.x + width - 1][start.y + height - 1] = {
-        type: "door",
-        buildingType: type,
-      };
-      break;
-    case "west":
-      grid[start.x][start.y + height - 1] = {
-        type: "door",
-        buildingType: type,
-      };
-      break;
-    default:
-      grid[start.x + Math.floor(width / 2)][start.y + height - 1] = {
-        type: "door",
-        buildingType: type,
-      };
-  }
+  // Assign room types from the provided list
+  rooms.forEach((room, i) => {
+    room.type = roomTypes[i % roomTypes.length]; // Cycle if fewer types than rooms
+    updateRoomTiles(grid, room);
+  });
 
-  // Add furniture
-  furniture.forEach((item) => {
-    console.log("Furnature Item", item);
+  return rooms;
+}
 
-    const posX = start.x + item.x;
-    const posY = start.y + item.y;
-    if (grid[posX][posY].type === "floor") {
-      grid[posX][posY] = {
-        ...grid[posX][posY],
-        object: Object.keys(item).reduce((obj, key) => {
-          if (key !== "x" && key !== "y") {
-            obj[key] = item[key];
-          }
-          return obj;
-        }, {}),
-      };
+function findLargestRoom(rooms) {
+  let maxIndex = 0;
+  let maxArea = 0;
+  rooms.forEach((room, i) => {
+    const area = (room.x2 - room.x1) * (room.y2 - room.y1);
+    if (area > maxArea) {
+      maxArea = area;
+      maxIndex = i;
     }
   });
+  return maxIndex;
+}
+
+function splitRoom(grid, buildingType, room) {
+  const width = room.x2 - room.x1;
+  const height = room.y2 - room.y1;
+  const splitVertically = width > height;
+
+  let splitCoord, opening;
+  if (splitVertically) {
+    splitCoord = room.x1 + Math.floor(width * 0.4);
+    opening = room.y1 + Math.floor(height / 2);
+    for (let y = room.y1; y <= room.y2; y++) {
+      if (y !== opening) {
+        grid[splitCoord][y] = { type: "wall", building: buildingType };
+      }
+    }
+    return [
+      { ...room, x2: splitCoord - 1 },
+      { ...room, x1: splitCoord + 1 },
+    ];
+  } else {
+    splitCoord = room.y1 + Math.floor(height * 0.4);
+    opening = room.x1 + Math.floor(width / 2);
+    for (let x = room.x1; x <= room.x2; x++) {
+      if (x !== opening) {
+        grid[x][splitCoord] = { type: "wall", building: buildingType };
+      }
+    }
+    return [
+      { ...room, y2: splitCoord - 1 },
+      { ...room, y1: splitCoord + 1 },
+    ];
+  }
+}
+
+function updateRoomTiles(grid, room) {
+  for (let x = room.x1; x <= room.x2; x++) {
+    for (let y = room.y1; y <= room.y2; y++) {
+      if (grid[x][y].type === "floor") {
+        grid[x][y].room = room.type;
+      }
+    }
+  }
+}
+
+function addFurnitureToGrid(grid, start, rooms, furniture) {
+  if (furniture.length === 0) {
+    furniture = generateDefaultFurniture(start, rooms);
+  }
+
+  console.log(rooms, furniture);
+
+  furniture.forEach((item) => {
+    const x = start.x + item.x;
+    const y = start.y + item.y;
+    console.log(x, y, item);
+
+    grid[x][y].object = item;
+  });
+}
+
+// Helper functions
+function createOpenSpace(grid, buildingName, position, width, height) {
+  const openSpace = {
+    x1: position.x + 1,
+    x2: position.x + width - 2,
+    y1: position.y + 1,
+    y2: position.y + height - 2,
+    type: "open",
+  };
+
+  updateRoomTiles(grid, openSpace);
+  return openSpace;
+}
+
+function initializeGrid(size) {
+  return Array(size)
+    .fill()
+    .map(() => Array(size).fill({ type: "grass" }));
+}
+
+function createAxisRoad(grid, direction, position, length) {
+  const start = length === "full" ? 0 : position;
+  const end = length === "full" ? DEFAULT_WORLD_SIZE - 1 : position + length;
+
+  if (direction === "vertical") {
+    createRoad(grid, { x: position, y: start }, { x: position, y: end });
+  } else {
+    createRoad(grid, { x: start, y: position }, { x: end, y: position });
+  }
+}
+
+function generateDefaultFurniture(start, rooms) {
+  const furniture = [];
+  const types = {
+    bedroom: ["bed", "wardrobe"],
+    "living room": ["sofa", "table"],
+    kitchen: ["counter", "oven"],
+    bathroom: ["toilet", "shower"],
+  };
+
+  rooms.forEach((room) => {
+    const centerX = Math.floor((room.x1 + room.x2) / 2) - start.x;
+    const centerY = Math.floor((room.y1 + room.y2) / 2) - start.y;
+    (types[room.type] || []).forEach((type, i) => {
+      furniture.push({ type, x: centerX + i, y: centerY });
+    });
+  });
+
+  return furniture;
 }
 
 export const initializeAgentMomories = async (agent, initialMemory) => {
@@ -518,7 +417,7 @@ export const initializeAgentMomories = async (agent, initialMemory) => {
     const initialMemoryObjects = await llmController.getChatCompletion({
       body: body,
     });
-    const parsedInitialMemoryObjects = JSON.parse(initialMemoryObjects);
+    const parsedInitialMemoryObjects = JSON.parse(initialMemoryObjects.content);
     return parsedInitialMemoryObjects.memories;
   } catch (error) {
     console.error("Error getting initial memories:", error);

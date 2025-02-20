@@ -14,16 +14,12 @@ const agentSchema = new mongoose.Schema({
     x: { type: Number, required: true },
     y: { type: Number, required: true },
   },
-  triats: {
+  traits: {
     type: Array,
   },
-  currentAction: {
+  currentStatus: {
     type: String,
     default: "idle",
-  },
-  currentGoal: {
-    type: String,
-    default: "none",
   },
 });
 
