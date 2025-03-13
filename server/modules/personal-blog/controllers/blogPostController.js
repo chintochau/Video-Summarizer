@@ -3,7 +3,7 @@ import {
   deleteFileFromS3,
   getAllFilesFromS3,
   uploadBlogFileToS3,
-} from "../services/amazonService.js";
+} from "../../../services/amazonService.js";
 import fs from "fs";
 
 export const createBlogPost = async (req, res) => {

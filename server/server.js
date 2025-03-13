@@ -13,7 +13,7 @@ import vastaiRoutes from "./routes/vastaiRoutes.js";
 import embeddingsRoutes from "./routes/embeddingsRoutes.js";
 import ttsRoutes from "./routes/ttsRoutes.js";
 import summaryHandlers from './handlers/summaryHandlers.js';
-import blogRoutes from "./routes/blogPostRoutes.js";
+import blogRoutes from "./modules/personal-blog/routes.js";
 import llmRoutes from "./routes/llmRoutes.js";
 import http from 'http';
 import { Server as socketIo } from 'socket.io';
@@ -25,13 +25,6 @@ const port = process.env.PORT || 3001
 const base = process.env.BASE || '/'
 connectDB();
 
-// Cached production assets
-const templateHtml = isProduction
-  ? await fs.readFile('./dist/client/index.html', 'utf-8')
-  : ''
-const ssrManifest = isProduction
-  ? await fs.readFile('./dist/client/.vite/ssr-manifest.json', 'utf-8')
-  : undefined
 
 // Create http server
 const app = express()
