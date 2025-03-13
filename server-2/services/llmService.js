@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { DEFAULT_CHAT_MODEL } from "../ai-sims/constants.js";
+import { DEFAULT_CHAT_MODEL } from "../ai-sims/worldConfig.js";
 
 class LlmService {
   constructor(openaiClient) {
@@ -29,8 +29,18 @@ class LlmService {
       const response = await this.openai.chat.completions.create(
         requestPayload
       );
-      return response.choices[0].message;
+      const responseMessage = response.choices[0].message;
+
+      if (responseMessage.tool_calls) {
+        console.log(
+          responseMessage.tool_calls.map((tool_call) => JSON.stringify(tool_call))
+        );
+      } else {
+        console.log(responseMessage.content);
+      }
+      return responseMessage;
     } catch (error) {
+      console.error(error);
       throw new Error(`Chat completion failed: ${error.message}`);
     }
   }

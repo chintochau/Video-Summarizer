@@ -53,7 +53,13 @@ const BlogPostSchema = new mongoose.Schema({
     type: String,
     enum: ['blog', 'project','service'],
     default: 'blog',
-  }
+  },
+  n8nWorkflow:{
+    type:String,
+  },
+  n8nWorkflowDescription:{
+    type: String,
+  },
 });
 
 // Add a pre-save hook to update the `updatedAt` field on modification

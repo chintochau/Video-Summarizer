@@ -6,14 +6,12 @@ import {
   summarizeObservationAndGetImportance,
   recallMemories,
 } from "./memoryLogic.js";
-import {
-  callTool,
-  getAgentObservationGrid,
-} from "./gridWorldLogic.js";
+import { callTool, getAgentObservationGrid } from "./gameWorldLogic.js";
 import { Memory } from "../ai-sims-models/memoryModel.js";
 import dayjs from "dayjs";
-import { DEFAULT_CHAT_MODEL } from "../constants.js";
-import { agentActions } from "./llmTools.js";
+import { DEFAULT_CHAT_MODEL, TOWN_LAYOUT } from "../worldConfig.js";
+import { agentActions, movingActions } from "./llmTools.js";
+import { World } from "../ai-sims-models/worldModel.js";
 
 export const progressAnAgent = async (agentId) => {
   console.log("progressing an agent", agentId);
@@ -28,8 +26,8 @@ export const progressAnAgent = async (agentId) => {
   // 2. Find the agent's plan for today, otherwise come up with a plan based on previous (mostly from yesterday) plan and traits
   // 3. Obtain an observation of the environment, and add it to memories
   // 4. Ask if they should react to the observation, attached context from memories to help form decision
-  // 5. If they should react, create a memory of their reaction
-  // 6. Otherwise, continue the plan
+  // 5. create a memory of their reaction
+  // 6. continue the plan
   // 7. Ask where should the agent go to execute the plan
   // 8. Execute the plan (go to the place specified), prefer to stay in the same place if they can
   // 9. Update the agent's location, current action and current goal
@@ -65,6 +63,7 @@ export const progressAnAgent = async (agentId) => {
   const reaction = await reactToObservation(agent, observation);
   console.log(`${agent.name}'s reaction: ${reaction.content}`);
 
+  // STEP 5: Create a memory of their reaction
   const memory = await saveAsMemory(
     agentId,
     `${observation}\n ${reaction.content}`,
@@ -72,7 +71,13 @@ export const progressAnAgent = async (agentId) => {
     importance || 1
   );
 
-  return { reaction };
+  // STEP 6: continue the plan
+  const place = findPlaceToGo(agent, todaysPlan);
+
+  // STEP 7: Ask where should the agent go to execute the plan
+  // STEP 8: Execute the plan (go to the place specified), prefer to stay in the same place if they can
+  // STEP 9: Update the agent's location, current action and current goal
+  return { reaction: reaction + "going to place: " + place };
 };
 
 const comeUpWithTodayPlan = async (agent) => {
@@ -126,7 +131,7 @@ const comeUpWithTodayPlan = async (agent) => {
         Name: ${agent.name}
         Traits: ${agent.traits}
         ${broadPlan.content}
-       decomposes the plan to create finer-grained actions into a 15-minute schedule:
+       decomposes the plan to create finer-grained actions into a 15  to 30 mins schedule:
        1.
        2.`,
       },
@@ -138,7 +143,9 @@ const comeUpWithTodayPlan = async (agent) => {
     body: body2,
   });
 
-  return `Plan for ${dayjs().format("dddd, DD/MM/YYYY")}: ${fineGrainedPlan.content}`;
+  return `Plan for ${dayjs().format("dddd, DD/MM/YYYY")}: ${
+    fineGrainedPlan.content
+  }`;
 };
 
 export const getObservationFromLLM = async (agent) => {
@@ -158,9 +165,9 @@ export const getObservationFromLLM = async (agent) => {
 const reactToObservation = async (agent, observation) => {
   //TODO: implement reaction to observation
   const { agentId } = agent;
-  const relatedMemories = await recallMemories(agentId, observation);
+  const relatedMemories = await recallMemories(agentId, observation, false);
   const relatedMemoriesInArray = relatedMemories.map(
-    (memory) => memory.content+"\n"
+    (m) => `${dayjs(m.createdAt).fromNow()} : ${m.content}`
   );
 
   let messages = [
@@ -168,20 +175,25 @@ const reactToObservation = async (agent, observation) => {
       role: "user",
       content: `[Agent’s Summary Description] 
       It is ${dayjs().format("YYYY-MM-DD HH:mm:ss")} 
+      ------------
+      Relevant context from ${agent.name}'s memory (happened already):
+      ${relatedMemoriesInArray}
+      
+      ------------
       ${agent.name}'s currentStatus: ${agent.currentStatus} 
-      Observation: ${observation}
+      Current Observation: ${observation}
       Traits: ${agent.traits}
-      Summary of relevant context from ${
-        agent.name
-      }’s memory: ${relatedMemoriesInArray}.
        Should ${
          agent.name
-       } react to the observation, and if so, what would be an appropriate reaction? control the agent using the tools provided. Note: thinking and self reflection means not to react.
-       your response should be already summarized (e.g. Anson saw the oven burning, Anson Choose not to react, optionally you can add thoughts and emotions).`,
+       } react to the current observation, and if so, what would be an appropriate reaction? control the agent using the tools provided. 
+       your response should be already summarized (e.g. Peter saw Eddy approaching, Said Hi to Eddy).`,
     },
   ];
 
-  console.log("reacting to observation:", messages.map((m) => m.content));
+  console.log(
+    "reacting to observation:",
+    messages.map((m) => m.content)
+  );
   const payload = {
     body: {
       messages,
@@ -204,7 +216,12 @@ const reactToObservation = async (agent, observation) => {
           const toolName = tool_call.function.name;
 
           // Call the tool function
-          const toolResponse = await callTool(toolName, args, agentId, messages);
+          const toolResponse = await callTool(
+            toolName,
+            args,
+            agentId,
+            messages
+          );
 
           // Return structured message for later use
           return {
@@ -250,4 +267,58 @@ const reactToObservation = async (agent, observation) => {
     },
   });
   return completion;
+};
+
+export const findPlaceToGo = async (agent) => {
+  const { name, location, currentStatus } = agent || {};
+  const { x, y } = location || {};
+  const map = await World.findOne({});
+
+  const mapGrid = map.grid;
+  const currentPlace = mapGrid[y][x];
+
+  const { building: currentBuilding, room: currentRoom } = currentPlace || {};
+
+  const buildings = TOWN_LAYOUT.buildings.map((building) => ({
+    name: building.name,
+    rooms: building.rooms,
+  }));
+
+  const knownBuildings = buildings.map((building) => building.name);
+
+  const currentBuildingLayout = buildings.find(
+    (building) => building.name === currentBuilding
+  );
+
+  const prompt = `
+  [Agent’s Summary Description] 
+  ${name} is currently in ${currentRoom || "-"} at ${
+    currentBuilding || "Outdoor area"
+  } that has ${currentBuildingLayout?.rooms?.join(
+    ", "
+  )}. ${name} knows of the following areas: ${JSON.stringify(buildings)}. 
+  * Prefer to stay in the current area if the activity can be done there. 
+  
+  ${name} is ${currentStatus}. Which area should ${name} go to? use tool`;
+
+  const movingPayload = {
+    body: {
+      selectedModel: DEFAULT_CHAT_MODEL,
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      tools: movingActions,
+    },
+  };
+
+  const response = await llmController.getChatCompletion(movingPayload);
+
+
+  console.log(response);
+  
+
+  return "TODO"
 };

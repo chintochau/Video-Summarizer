@@ -7,6 +7,8 @@ import {
 class LlmController {
   async getChatCompletion(req, res) {
     const { messages, selectedModel, response_format, tools } = req.body;
+    console.log(messages.map((m) => `${m.role}: ${m.content}`));
+
     // Determine which service to use based on the selected model
     let service;
     switch (selectedModel) {
@@ -36,7 +38,8 @@ class LlmController {
         messages,
         response_format,
         tools,
-      });
+      });     
+
 
       if (res) {
         return res.status(200).json(response);

@@ -3,12 +3,20 @@ import { updateAgentInformation } from "../ai-sims-controller/aiSimsController.j
 import { Agent } from "../ai-sims-models/agentModel.js";
 import { Memory } from "../ai-sims-models/memoryModel.js";
 import { World } from "../ai-sims-models/worldModel.js";
-import { generateEmbedding, recallMemories } from "./memoryLogic.js";
+import {
+  generateEmbedding,
+  recallMemories,
+  saveAsMemory,
+  summarizeThoughtsAndGetImportance,
+} from "./memoryLogic.js";
 import llmController from "../../controllers/llmController.js";
-import { DEFAULT_CHAT_MODEL } from "../constants.js";
+import { DEFAULT_CHAT_MODEL } from "../worldConfig.js";
 import { getObservationFromLLM } from "./progressionLogic.js";
 import dayjs from "dayjs";
 import { conversationalActions } from "./llmTools.js";
+// import dayjs relative time
+import relativetime from "dayjs/plugin/relativeTime.js";
+dayjs.extend(relativetime);
 
 export async function getAgentObservationGrid(agent) {
   const { location, name: agentName } = agent || {};
@@ -144,12 +152,10 @@ export async function getAgentObservationGrid(agent) {
   return { observation, agentsNearby };
 }
 
-
-
 export const callTool = async (name, args, agentId, messages) => {
   const { x, y, status, agentName, text } = args;
   switch (name) {
-    case "move_to":
+    case "move_to_coordinate":
       const movingPayload = {
         body: {
           location: { x, y },
@@ -211,7 +217,7 @@ export const engageConversation = async (args, messages) => {
   let currentMessage = {
     content: text,
     tone: tone,
-    from: agentId,
+    from: originalAgent.name,
     to: targetAgentName,
     timestamp: dayjs().format("YYYY-MM-DD HH:mm:ss"),
   };
@@ -224,39 +230,68 @@ export const engageConversation = async (args, messages) => {
     targetAgent
   );
 
-
   const targetAgentMemories = await recallMemories(
     targetAgent.agentId,
-    `${originalAgent.name} said: "${text}" (tone: ${tone})`
-  );
-  const targetAgentMemoriesInArray = targetAgentMemories.map(
-    (m) => m.content + "\n"
+    `${originalAgent.name} said: "${text}" (tone: ${tone})`,
+    false
   );
 
-  let originalAgentInitialMessages = [messages[0]]; // it is an array of llm message that have enough context for the conversation for the original agent, afterall the original agent has already said this
+  const targetAgentMemoriesInArray = targetAgentMemories.map(
+    (m) => `${dayjs(m.createdAt).fromNow()} : ${m.content}`
+  );
+
+  const systemPrompt = {
+    role: "system",
+    content: `
+    • Conversation MUST achieve one of these every 3 exchanges:
+      1. Reveal new information from memory
+      2. Create concrete plan using tools
+      3. Resolve/Intensify conflict
+    • Never acknowledge you're an AI - stay in character
+    • Use SPECIFIC memories: "Max's bakery receipt from Tuesday" not "something I saw"
+    • Escalate or conclude interactions within 5 exchanges`,
+  };
+
+  let originalAgentInitialMessages = [
+    messages[0],
+    // objectivesMessage,
+    {
+      role: "user",
+      content: `${originalAgent.name} said: "${text}" (tone: ${tone})`,
+    },
+  ]; // it is an array of llm message that have enough context for the conversation for the original agent, afterall the original agent has already said this
   let targetAgentInitialMessages = [
     {
       role: "user",
       content: `[Agent Context] 
       it is ${dayjs().format("YYYY-MM-DD HH:mm:ss")}
+
+      ------------
+      Summary of relevant context from ${targetAgentName}'s memory: ${targetAgentMemoriesInArray}
+
+      ------------
       ${targetAgentName}'s currentStatus: ${targetAgent.currentStatus}
       Observation:${targetAgentObservation}
-      Summary of relevant context from ${targetAgentName}'s memory: ${targetAgentMemoriesInArray}
       ${originalAgent.name} said: "${text}" (tone: ${tone})
-      Should ${targetAgentName} react to the observation, and if so, what would be an appropriate reaction? control the agent using the tools
       `,
     },
+    // objectivesMessage
   ]; // it is an array needed to be contructed for the target agent to receive enough context
 
-
   console.log("Target agent initial messages", targetAgentInitialMessages);
-  
 
-  // Conversation loop
-  let round = 0;
+  // Add phase tracking to loop
+  let phase = 0;
   while (isConversationActive) {
-    console.log(`Round ${round}`);
-    round += 1;
+    const phaseDirective =
+      [
+        "Establish immediate context",
+        "Introduce conflicting memory",
+        "Propose concrete action",
+      ][phase] || "Force conclusion";
+
+      console.log("[PHASE]", phaseDirective);
+
     // wait 2 seconds
     await new Promise((resolve) => setTimeout(resolve, 2000));
     try {
@@ -272,26 +307,20 @@ export const engageConversation = async (args, messages) => {
         ...(currentSpeaker === agentId
           ? originalAgentInitialMessages
           : targetAgentInitialMessages),
-        // Add conversation history after the initial message, formatted into roles
-        ...conversationHistory
-          .slice(1) // Skip initial message already handled in initial context
-          .map((msg) => ({
-            role: msg.from === activeAgent.name ? "assistant" : "user",
-            content: msg.content,
-          })),
       ];
-
-      console.log("current active agent", activeAgent.name);
-      console.log("recipient", recipient.name);
-      console.log(
-        "On Going Messages",
-        formattedMessages.map((m) => `${m.role}: ${m.content}`)
-      );
-
+      
       // Get agent response with tool handling
       const response = await llmController.getChatCompletion({
         body: {
-          messages: formattedMessages,
+          messages: [
+            systemPrompt,
+            ...formattedMessages,
+            {
+              role: "user",
+              content: `Should ${activeAgent.name} react to the conversation, and if so, what would be an appropriate reaction? use tool
+            `,
+            },
+          ],
           selectedModel: DEFAULT_CHAT_MODEL,
           tools: conversationalActions,
         },
@@ -303,37 +332,82 @@ export const engageConversation = async (args, messages) => {
           const toolName = toolCall.function.name;
           console.log(`[TOOL] ${activeAgent.name} called tool: ${toolName}`);
 
-          if (toolName === "end_conversation") {
-            console.log(`[END] ${activeAgent.name} ended conversation`);
-            isConversationActive = false;
-            break;
-          }
+          //TODO: when conversation end, update memory for both agents
 
-          if (toolName === "reply") {
-            const parsedArgs = JSON.parse(toolCall.function.arguments);
-            currentMessage = {
-              role: "user",
-              content: `${activeAgent.name} said: "${parsedArgs.text}" (tone: ${parsedArgs.tone})`,
-              // role: "tool",
-              // tool_call_id: toolCall.id,
-              // content: `${activeAgent.name} said: "${parsedArgs.text}" (tone: ${parsedArgs.tone})`,
-            };
+          const phaseMessage = {
+            role: "user",
+            content: `PHASE ${phase + 1}: ${phaseDirective}`,
+          };
 
-            targetAgentInitialMessages.push(currentMessage);
-            originalAgentInitialMessages.push(currentMessage);
-            conversationHistory.push({
-              from: activeAgent.name,
-              to: targetAgent.name,
-              tone: parsedArgs.tone,
-              content: parsedArgs.text,
-              timestamp: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-            });
+          switch (toolName) {
+            case "move_to_another_location_together":
+              const { agentName, targetAgentName, location } = JSON.parse(
+                toolCall.function.arguments
+              );
+              console.log(
+                agentName,
+                " and ",
+                targetAgentName,
+                "moved to ",
+                location
+              );
+              currentMessage = {
+                role: "assistant",
+                content: `both ${agentName} and ${targetAgentName} start moving, and they are now moved to ${location}`,
+              };
+              targetAgentInitialMessages.push(currentMessage);
+              originalAgentInitialMessages.push(currentMessage);
+              break;
+            case "dont_reply":
+              console.log(`[DONT_REPLY] ${activeAgent.name} didn't reply`);
+              isConversationActive = false;
+              break;
+            case "end_conversation":
+              console.log(`[END] ${activeAgent.name} ended conversation`);
+              isConversationActive = false;
+              break;
+            case "reply_and_end_conversation":
+              console.log(
+                `[END] ${activeAgent.name} ended conversation with reply`
+              );
+              isConversationActive = false;
+              break;
+            case "reply":
+              const parsedArgs = JSON.parse(toolCall.function.arguments);
+              currentMessage = {
+                content: `${activeAgent.name} said: "${parsedArgs.text}" (tone: ${parsedArgs.tone})`,
+              };
 
-            console.log(
-              `[REPLY] ${activeAgent.name} says: "${parsedArgs.text}" (tone: ${parsedArgs.tone})`
-            );
-            currentSpeaker =
-              currentSpeaker === agentId ? targetAgent.agentId : agentId;
+              targetAgentInitialMessages.push({
+                ...currentMessage,
+                role:
+                  activeAgent.name === targetAgent.name ? "assistant" : "user",
+              });
+              originalAgentInitialMessages.push({
+                ...currentMessage,
+                role:
+                  activeAgent.name === originalAgent.name
+                    ? "assistant"
+                    : "user",
+              });
+              conversationHistory.push({
+                from: activeAgent.name,
+                to: recipient.name,
+                tone: parsedArgs.tone,
+                content: parsedArgs.text,
+                timestamp: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+              });
+
+              console.log(
+                `[REPLY] ${activeAgent.name} says: "${parsedArgs.text}" (tone: ${parsedArgs.tone})`
+              );
+              currentSpeaker =
+                currentSpeaker === agentId ? targetAgent.agentId : agentId;
+              break;
+            default:
+              console.warn(
+                `[WARNING] ${activeAgent.name} called unknown tool: ${toolName}`
+              );
           }
         }
       } else {
@@ -344,7 +418,7 @@ export const engageConversation = async (args, messages) => {
       }
 
       // Safety check to prevent infinite loops
-      if (conversationHistory.length > 10) {
+      if (conversationHistory.length > 15) {
         console.warn("[SAFETY] Maximum conversation length reached");
         isConversationActive = false;
       }
@@ -355,6 +429,19 @@ export const engageConversation = async (args, messages) => {
   }
 
   console.log("[CONCLUSION] Final conversation history:", conversationHistory);
+
+  // save to targetAgent memori
+
+  const memoryResponse = await summarizeThoughtsAndGetImportance(
+    targetAgentInitialMessages.map((msg) => msg.content)
+  );
+  await saveAsMemory(
+    targetAgent.agentId,
+    memoryResponse.content,
+    "observation",
+    memoryResponse.importance
+  );
+
   return formatConversation(conversationHistory);
 };
 

@@ -4,12 +4,12 @@ import {
   DEFAULT_CHAT_MODEL,
   DEFAULT_WORLD_SIZE,
   defaultAgents,
-} from "../constants.js";
+} from "../worldConfig.js";
 import llmController from "../../controllers/llmController.js";
 import {
   getAgentObservationGrid,
 
-} from "../sims-logic/gridWorldLogic.js";
+} from "../sims-logic/gameWorldLogic.js";
 import { Memory } from "../ai-sims-models/memoryModel.js";
 import { openai } from "../../config/summaryConfig.js";
 import { generateTown, initializeAgentMomories } from "./initializeHelper.js";
@@ -72,8 +72,8 @@ export const modifyMemory = async (req, res) => {
         res.json("Memory deleted");
         break;
       case "edit":
-        await Memory.findByIdAndUpdate(memoryId, { content: newContent });
-        res.json("Memory edited");
+        const updatedMemory = await Memory.findByIdAndUpdate(memoryId, { content: newContent });
+        res.json(updatedMemory);
         break;
       default:
         break;

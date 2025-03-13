@@ -3,7 +3,7 @@ import { openai } from "../../config/summaryConfig.js";
 import llmController from "../../controllers/llmController.js";
 import { Agent } from "../ai-sims-models/agentModel.js";
 import { Memory } from "../ai-sims-models/memoryModel.js";
-import { DEFAULT_CHAT_MODEL, DEFAULT_CHEAP_MODEL } from "../constants.js";
+import { DEFAULT_CHAT_MODEL, DEFAULT_CHEAP_MODEL } from "../worldConfig.js";
 import mongoose from "mongoose";
 
 /**
@@ -12,7 +12,7 @@ import mongoose from "mongoose";
  * @param {string} query - The query string to search for.
  * @returns {Promise<Array>} - A promise that resolves to an array of matching memories.
  */
-export async function recallMemories(agentId, query) {
+export async function recallMemories(agentId, query, includePlan = true) {
   // Convert the query string to an embedding vector
   const queryEmbedding = await generateEmbedding(query);
 
@@ -27,6 +27,7 @@ export async function recallMemories(agentId, query) {
         numCandidates: 100, // Number of candidates to consider
         filter: {
           relatedAgentId: new mongoose.Types.ObjectId(agentId), // Filter inside vector search
+          type: { $in: includePlan ? ["observation", "plan", "reflection"] : ["observation", "reflection"] }, // Only consider observation, plan, and reflection types
         },
       },
     },
@@ -36,6 +37,7 @@ export async function recallMemories(agentId, query) {
         content: 1,
         importance: 1,
         recentAccessTimestamp: 1,
+        createdAt: 1,
         relevance: {
           $meta: "vectorSearchScore",
         },
@@ -43,12 +45,12 @@ export async function recallMemories(agentId, query) {
     },
     {
       $match: {
-        relevance: { $gt: 0.5 },
+        relevance: { $gt: 0.6 },
       },
     },
   ]);
 
-  const memories = retrieveMemories(sourceMemories);
+  const memories = scoreAndRankMemories(sourceMemories);
   // update recentAccessTimestamp for each memory
 
 
@@ -60,7 +62,7 @@ export async function recallMemories(agentId, query) {
   return memories;
 }
 
-function retrieveMemories(memories) {
+function scoreAndRankMemories(memories) {
   const now = dayjs();
   const decayFactor = 0.995;
 
@@ -76,11 +78,12 @@ function retrieveMemories(memories) {
 
       // Weighted sum (adjust weights as needed)
       const retrievalScore =
-        recencyScore + importanceScore + relevanceScore * 2;
+        recencyScore + importanceScore + relevanceScore;
 
       return { ...memory, retrievalScore };
     })
     .sort((a, b) => b.retrievalScore - a.retrievalScore) // Sort by descending score
+    .sort((a, b) => b.createdAt - a.createdAt) // Sort by newest first
     .slice(0, 7); // Only return the first 7 results
 }
 
@@ -142,14 +145,20 @@ export const getImportance = async (content) => {
   }
 };
 
-export const summarizeThoughtsAndGetImportance = async(text) => {
+/**
+ * Summarizes a given text and returns an object with the summary and importance.
+ * The importance is on a scale of 1 to 10, where 1 is purely mundane and 10 is extremely poignant.
+ * @param {string} text The text to summarize and rate.
+ * @returns {Promise<{content: string, importance: number}>}
+ */
+export const summarizeThoughtsAndGetImportance = async (text) => {
   try {
     const response = await llmController.getChatCompletion({
       body: {
         messages: [
           {
             role: "user",
-            content: `you will be given a thought, you task is to summarize it pricesly. And you will access the importance on the scale of 1 to 10, where 1 is purely mundane (e.g., brushing teeth, making bed) and 10 is extremely poignant (e.g., a break up, college acceptance), rate the likely poignancy of that memory.`,
+            content: `you will be given a thought/ a piece of conversation, you task is to summarize it pricesly. And you will access the importance on the scale of 1 to 10, where 1 is purely mundane (e.g., brushing teeth, making bed) and 10 is extremely poignant (e.g., a break up, college acceptance), rate the likely poignancy of that memory.`,
           },
           {
             role: "user",
@@ -172,10 +181,13 @@ export const summarizeThoughtsAndGetImportance = async(text) => {
       },
     });
     const parsedResponse = JSON.parse(response.content);
-    return parsedResponse;
+    return {
+      content: parsedResponse.content,
+      importance: parsedResponse.importance,
+    };
   } catch (error) {
     console.error(error);
-    return "Error summarizing text";
+    return { content: "Error summarizing text", importance: 0 };
   }
 };
 
@@ -187,7 +199,7 @@ export const summarizeObservationAndGetImportance = async (content) => {
         messages: [
           {
             role: "user",
-            content: `describe the environment around the character (e.g. Anson saw Peter Approaching, Anson saw Eddy leaving or Anson saw the oven buning). describe what other characters are around the character as much as you can.
+            content: `describe the environment around the character (e.g. Anson saw Peter Approaching, Anson saw Eddy leaving or Anson saw the oven buning). describe all the people you can see, and dont add any additional details or emotions which are not provided.
              dont add any additional details or emotions which are not provided. 
             And you will access the importance on the scale of 1 to 10, where 1 is purely mundane
             (e.g., brushing teeth, making bed) and 10 is

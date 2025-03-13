@@ -1,5 +1,5 @@
 import llmController from "../../controllers/llmController.js";
-import { DEFAULT_JSON_CHAT_MODEL, DEFAULT_WORLD_SIZE, TOWN_LAYOUT } from "../constants.js";
+import { DEFAULT_JSON_CHAT_MODEL, DEFAULT_WORLD_SIZE, TOWN_LAYOUT } from "../worldConfig.js";
 
 // Town Configuration Structure
 
@@ -223,7 +223,7 @@ function addDoor(grid, type, start, width, height, doorFacing) {
     north: { x: start.x + width - 2, y: start.y },
     south: { x: start.x + 1, y: start.y + height - 1 },
     east: { x: start.x + width - 1, y: start.y + height - 2 },
-    west: { x: start.x, y: start.y + 1 },
+    west: { x: start.x, y: start.y + height - 2 },
   };
 
   const pos = doorPositions[doorFacing] || doorPositions.south;
