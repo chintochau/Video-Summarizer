@@ -1,8 +1,6 @@
-import llmController from "../controllers/llmController.js";
-import { Agent } from "./ai-sims-models/agentModel.js";
-import { World } from "./ai-sims-models/worldModel.js";
-import aiSimsRoutes from "./ai-sims-routing/aiSimsRoutes.js";
+
 import cors from "cors";
+import aiSimsRoutes from "./routes.js";
 
 
 export const aiSimsMain = (app) => {

@@ -1,5 +1,5 @@
-import llmController from "../../controllers/llmController.js";
-import { Agent } from "../ai-sims-models/agentModel.js";
+import llmController from "../../shared/controllers/llmController.js";
+import { Agent } from "../models/agentModel.js";
 import {
   getImportance,
   saveAsMemory,
@@ -7,11 +7,11 @@ import {
   recallMemories,
 } from "./memoryLogic.js";
 import { callTool, getAgentObservationGrid } from "./gameWorldLogic.js";
-import { Memory } from "../ai-sims-models/memoryModel.js";
+import { Memory } from "../models/memoryModel.js";
 import dayjs from "dayjs";
-import { DEFAULT_CHAT_MODEL, TOWN_LAYOUT } from "../worldConfig.js";
+import { DEFAULT_CHAT_MODEL, TOWN_LAYOUT } from "../configs/worldConfig.js";
 import { agentActions, movingActions } from "./llmTools.js";
-import { World } from "../ai-sims-models/worldModel.js";
+import { World } from "../models/worldModel.js";
 
 export const progressAnAgent = async (agentId) => {
   console.log("progressing an agent", agentId);

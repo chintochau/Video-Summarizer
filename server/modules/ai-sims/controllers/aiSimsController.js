@@ -1,17 +1,16 @@
-import { Agent } from "../ai-sims-models/agentModel.js";
-import { World } from "../ai-sims-models/worldModel.js";
+import { Agent } from "../models/agentModel.js";
+import { World } from "../models/worldModel.js";
 import {
   DEFAULT_CHAT_MODEL,
   DEFAULT_WORLD_SIZE,
   defaultAgents,
-} from "../worldConfig.js";
-import llmController from "../../controllers/llmController.js";
+} from "../configs/worldConfig.js";
+import  llmController  from "../../shared/controllers/llmController.js";
 import {
   getAgentObservationGrid,
 
 } from "../sims-logic/gameWorldLogic.js";
-import { Memory } from "../ai-sims-models/memoryModel.js";
-import { openai } from "../../config/summaryConfig.js";
+import { Memory } from "../models/memoryModel.js";
 import { generateTown, initializeAgentMomories } from "./initializeHelper.js";
 import { progressAnAgent } from "../sims-logic/progressionLogic.js";
 import {
@@ -19,6 +18,7 @@ import {
   recallMemories,
   removeAllMemoriesForAgent,
 } from "../sims-logic/memoryLogic.js";
+import { openai } from "../../../config/summaryConfig.js";
 
 export const moveObject = async (req, res) => {
   const { oldPosition, newPosition } = req.body;

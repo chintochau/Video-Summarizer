@@ -2,7 +2,7 @@ import {
   deepInfraService,
   deepseekService,
   openaiService,
-} from "../services/llmService.js";
+} from "../../../services/llmService.js";
 
 class LlmController {
   async getChatCompletion(req, res) {

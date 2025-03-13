@@ -1,9 +1,8 @@
 import dayjs from "dayjs";
-import { openai } from "../../config/summaryConfig.js";
-import llmController from "../../controllers/llmController.js";
-import { Agent } from "../ai-sims-models/agentModel.js";
-import { Memory } from "../ai-sims-models/memoryModel.js";
-import { DEFAULT_CHAT_MODEL, DEFAULT_CHEAP_MODEL } from "../worldConfig.js";
+import { openai } from "../../../config/summaryConfig.js";
+import llmController from "../../shared/controllers/llmController.js";
+import { Memory } from "../models/memoryModel.js";
+import { DEFAULT_CHAT_MODEL, DEFAULT_CHEAP_MODEL } from "../configs/worldConfig.js";
 import mongoose from "mongoose";
 
 /**

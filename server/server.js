@@ -12,13 +12,12 @@ import youtubeRoutes from "./routes/youtubeRoutes.js";
 import vastaiRoutes from "./routes/vastaiRoutes.js";
 import embeddingsRoutes from "./routes/embeddingsRoutes.js";
 import ttsRoutes from "./routes/ttsRoutes.js";
-import Summary from './models/summaryModel.js';
 import summaryHandlers from './handlers/summaryHandlers.js';
 import blogRoutes from "./routes/blogPostRoutes.js";
 import llmRoutes from "./routes/llmRoutes.js";
 import http from 'http';
 import { Server as socketIo } from 'socket.io';
-import { aiSimsMain } from './ai-sims/ai-sims-main.js';
+import { aiSimsMain } from "./modules/ai-sims/ai-sims-main.js";
 
 // Constants
 const isProduction = process.env.NODE_ENV === 'production'
@@ -90,47 +89,6 @@ const setUpServer = async () => {
   }
 }
 
-// setUpServer()
-
-
-// Serve HTML
-app.use('/share/:id', async (req, res) => {
-  try {
-    const url = req.originalUrl.replace(base, '')
-    const id = req.params.id
-
-    const summary = await Summary.findById(id).populate("videoId");
-
-    if (!summary) {
-      res.status(404).json({ success: false, error: "Summary not found" });
-    }
-
-    let template
-    let render
-    if (!isProduction) {
-      // Always read fresh template in development
-      template = await fs.readFile('./index.html', 'utf-8')
-      template = await vite.transformIndexHtml(url, template)
-      render = (await vite.ssrLoadModule('/src/entry-server.jsx')).render
-    } else {
-      template = templateHtml
-      render = (await import('./dist/server/entry-server.js')).render
-    }
-
-    const rendered = await render({ summary }, ssrManifest);
-
-    const html = template
-      .replace(`<!--app-head-->`, rendered.head ?? '')
-      .replace(`<!--app-html-->`, rendered.html ?? '')
-      .replace(`<!--summary-data-->`, JSON.stringify(summary));
-
-    res.status(200).set({ 'Content-Type': 'text/html' }).send(html)
-  } catch (e) {
-    vite?.ssrFixStacktrace(e)
-    console.log(e.stack)
-    res.status(500).end(e.stack)
-  }
-})
 
 app.get("/", (req, res) => {
   // show simple welcome text

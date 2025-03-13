@@ -1,16 +1,16 @@
 import mongoose from "mongoose";
-import { updateAgentInformation } from "../ai-sims-controller/aiSimsController.js";
-import { Agent } from "../ai-sims-models/agentModel.js";
-import { Memory } from "../ai-sims-models/memoryModel.js";
-import { World } from "../ai-sims-models/worldModel.js";
+import { updateAgentInformation } from "../controllers/aiSimsController.js";
+import { Agent } from "../models/agentModel.js";
+import { Memory } from "../models/memoryModel.js";
+import { World } from "../models/worldModel.js";
 import {
   generateEmbedding,
   recallMemories,
   saveAsMemory,
   summarizeThoughtsAndGetImportance,
 } from "./memoryLogic.js";
-import llmController from "../../controllers/llmController.js";
-import { DEFAULT_CHAT_MODEL } from "../worldConfig.js";
+import  llmController  from "../../shared/controllers/llmController.js";
+import { DEFAULT_CHAT_MODEL } from "../configs/worldConfig.js";
 import { getObservationFromLLM } from "./progressionLogic.js";
 import dayjs from "dayjs";
 import { conversationalActions } from "./llmTools.js";

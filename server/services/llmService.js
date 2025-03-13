@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { DEFAULT_CHAT_MODEL } from "../ai-sims/worldConfig.js";
+import { DEFAULT_CHAT_MODEL } from "../modules/ai-sims/configs/worldConfig.js";
 
 class LlmService {
   constructor(openaiClient) {

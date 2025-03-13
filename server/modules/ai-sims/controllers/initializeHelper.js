@@ -1,5 +1,5 @@
-import llmController from "../../controllers/llmController.js";
-import { DEFAULT_JSON_CHAT_MODEL, DEFAULT_WORLD_SIZE, TOWN_LAYOUT } from "../worldConfig.js";
+import llmController from "../../shared/controllers/llmController.js";
+import { DEFAULT_JSON_CHAT_MODEL, DEFAULT_WORLD_SIZE, TOWN_LAYOUT } from "../configs/worldConfig.js";
 
 // Town Configuration Structure
 
