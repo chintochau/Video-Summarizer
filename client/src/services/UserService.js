@@ -2,7 +2,7 @@ const apiUrl = `${import.meta.env.VITE_API_BASE_URL}`;
 
 export const getUserDataByEmail = async ({ email }) => {
   try {
-    const response = await fetch(`${apiUrl}/users/${email}`);
+    const response = await fetch(`${apiUrl}/users/profile/${email}`);
     const userData = await response.json();
 
     // Do something with the userData received
